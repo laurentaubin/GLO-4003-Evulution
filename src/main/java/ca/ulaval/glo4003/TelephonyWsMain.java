@@ -17,6 +17,8 @@ import ca.ulaval.glo4003.ws.infrastructure.calllog.CallLogDevDataFactory;
 import ca.ulaval.glo4003.ws.infrastructure.calllog.CallLogRepositoryInMemory;
 import ca.ulaval.glo4003.ws.infrastructure.contact.ContactDevDataFactory;
 import ca.ulaval.glo4003.ws.infrastructure.contact.ContactRepositoryInMemory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
@@ -33,13 +35,14 @@ public class TelephonyWsMain {
     public static boolean isDev = true; // Would be a JVM argument or in a .property file
     public static final String BASE_URI = "http://localhost:8080/";
 
+    static final Logger logger = LogManager.getLogger(TelephonyWsMain.class);
+
     public static void main(String[] args)
             throws Exception {
 
         // Setup resources (API)
         ContactResource contactResource = createContactResource();
         CallLogResource callLogResource = createCallLogResource();
-
 
         final AbstractBinder binder = new AbstractBinder() {
             @Override
@@ -54,12 +57,10 @@ public class TelephonyWsMain {
         config.register(new CORSResponseFilter());
         config.packages("ca.ulaval.glo4003.ws.api");
 
-
         try {
             // Setup http server
             final Server server =
                     JettyHttpContainerFactory.createServer(URI.create(BASE_URI), config);
-
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {

@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class ContactRepositoryInMemoryTest {
@@ -37,7 +37,6 @@ public class ContactRepositoryInMemoryTest {
         List<Contact> contacts = contactRepositoryInMemory.findAll();
 
         // then
-        assertThat(contacts, org.hamcrest.Matchers.hasItem(contact));
+        assertThat(contacts).contains(contact);
     }
-
 }

@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class ContactResourceImplTest {
@@ -40,8 +40,7 @@ public class ContactResourceImplTest {
         List<ContactDto> contactDtos = contactResource.getContacts();
 
         // then
-        assertThat(contactDtos, org.hamcrest.Matchers.hasItem(contactDto));
+        assertThat(contactDtos).contains(contactDto);
         Mockito.verify(contactService).findAllContacts();
     }
-
 }

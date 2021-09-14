@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.ws.domain.contact;
 
 import ca.ulaval.glo4003.ws.api.contact.dto.ContactDto;
 import com.google.common.collect.Lists;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.AdditionalMatchers.eq;
+import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class ContactServiceTest {
@@ -47,7 +45,7 @@ public class ContactServiceTest {
         List<ContactDto> contactDtos = contactService.findAllContacts();
 
         // then
-        assertThat(contactDtos, org.hamcrest.Matchers.hasItem(contactDto));
+        assertThat(contactDtos).contains(contactDto);
         Mockito.verify(contactRepository).findAll();
         Mockito.verify(contactAssembler).create(contact);
     }
