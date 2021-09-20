@@ -23,6 +23,7 @@
         <log4j.version>2.14.1</log4j.version>
         <rest-assured.version>4.4.0</rest-assured.version>
         <guava.version>30.1.1-jre</guava.version>
+        <fmt-maven-plugin.version>2.12</fmt-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -120,6 +121,11 @@
             <version>${google.truth.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.coveo</groupId>
+            <artifactId>fmt-maven-plugin</artifactId>
+            <version>${fmt-maven-plugin.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -202,6 +208,18 @@
                         <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.coveo</groupId>
+                <artifactId>fmt-maven-plugin</artifactId>
+                <version>${fmt-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>

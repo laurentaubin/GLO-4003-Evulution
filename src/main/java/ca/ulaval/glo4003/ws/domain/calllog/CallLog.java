@@ -6,7 +6,6 @@ public class CallLog {
   private String date;
   private int durationInSeconds;
 
-
   public String getId() {
     return id;
   }

@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.calllog;
 
 import ca.ulaval.glo4003.ws.api.calllog.dto.CallLogDto;
-
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;

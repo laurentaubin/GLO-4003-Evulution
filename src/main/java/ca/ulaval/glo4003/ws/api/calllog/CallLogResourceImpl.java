@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.ws.api.calllog;
 
 import ca.ulaval.glo4003.ws.api.calllog.dto.CallLogDto;
 import ca.ulaval.glo4003.ws.domain.calllog.CallLogService;
-
 import java.util.List;
 
 public class CallLogResourceImpl implements CallLogResource {
