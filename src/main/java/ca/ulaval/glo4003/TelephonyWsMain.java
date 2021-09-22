@@ -29,9 +29,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 /** RESTApi setup without using DI or spring */
 @SuppressWarnings("all")
 public class TelephonyWsMain {
-
   public static boolean isDev = true; // Would be a JVM argument or in a .property file
-  public static final String BASE_URI = "http://localhost:8080/";
+  public static final String BASE_URI = "http://localhost";
+  private static String defaultPort = "8080";
+  private static String portJavaOption = "port";
 
   static final Logger logger = LogManager.getLogger(TelephonyWsMain.class);
 
@@ -57,8 +58,10 @@ public class TelephonyWsMain {
 
     try {
       // Setup http server
-      final Server server = JettyHttpContainerFactory.createServer(URI.create(BASE_URI), config);
+      String port = getHttpPortFromArgs();
 
+      final Server server =
+          JettyHttpContainerFactory.createServer(URI.create(BASE_URI + ":" + port), config);
       Runtime.getRuntime()
           .addShutdownHook(
               new Thread(
@@ -114,5 +117,14 @@ public class TelephonyWsMain {
     CallLogService callLogService = new CallLogService(callLogRepository, callLogAssembler);
 
     return new CallLogResourceImpl(callLogService);
+  }
+
+  private static String getHttpPortFromArgs() {
+    String httpPort = System.getProperty(portJavaOption);
+
+    if (httpPort == null) {
+      httpPort = defaultPort;
+    }
+    return httpPort;
   }
 }

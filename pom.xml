@@ -10,6 +10,7 @@
     <name>telephony-ws</name>
 
     <properties>
+        <appName>ev-ul-tion</appName>
         <java.version>13</java.version>
         <junit.version>5.7.2</junit.version>
         <mockito.version>2.28.2</mockito.version>
@@ -24,6 +25,7 @@
         <rest-assured.version>4.4.0</rest-assured.version>
         <guava.version>30.1.1-jre</guava.version>
         <fmt-maven-plugin.version>2.12</fmt-maven-plugin.version>
+        <heroku-maven-plugin.version>3.0.3</heroku-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -223,6 +225,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>${heroku-maven-plugin.version}</version>
+                <configuration>
+                    <appName>${appName}</appName>
+                </configuration>
             </plugin>
         </plugins>
     </build>
