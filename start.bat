@@ -1,2 +1,2 @@
 mvn clean package
-java -jar target/jersey-jetty.jar
+java -Dport=$PORT -jar target/jersey-jetty.jar

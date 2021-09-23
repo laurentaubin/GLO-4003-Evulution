@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -29,6 +30,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 /** RESTApi setup without using DI or spring */
 @SuppressWarnings("all")
 public class TelephonyWsMain {
+
   public static boolean isDev = true; // Would be a JVM argument or in a .property file
   public static final String BASE_URI = "http://localhost";
   private static String defaultPort = "8080";
@@ -58,10 +60,11 @@ public class TelephonyWsMain {
 
     try {
       // Setup http server
-      String port = getHttpPortFromArgs();
+        String port = getHttpPortFromArgs();
 
-      final Server server =
-          JettyHttpContainerFactory.createServer(URI.create(BASE_URI + ":" + port), config);
+        final Server server =
+                JettyHttpContainerFactory.createServer(URI.create(BASE_URI + ":" + port), config);
+
       Runtime.getRuntime()
           .addShutdownHook(
               new Thread(
@@ -119,12 +122,13 @@ public class TelephonyWsMain {
     return new CallLogResourceImpl(callLogService);
   }
 
-  private static String getHttpPortFromArgs() {
-    String httpPort = System.getProperty(portJavaOption);
+    private static String getHttpPortFromArgs() {
+        String httpPort = System.getProperty(portJavaOption);
 
-    if (httpPort == null) {
-      httpPort = defaultPort;
+        if (httpPort == null) {
+            httpPort = defaultPort;
+        }
+        return httpPort;
     }
-    return httpPort;
-  }
+
 }

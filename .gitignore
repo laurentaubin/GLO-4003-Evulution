@@ -20,3 +20,6 @@ target/
 .classpath
 .project
 .settings
+
+# Project-specific files
+setup_heroku_cli.sh
