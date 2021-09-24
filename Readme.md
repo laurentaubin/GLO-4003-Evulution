@@ -15,13 +15,13 @@
 * With Java 13 and Maven installed and the `JAVA_HOME` environment variable set;
     * On Windows: run `start.bat`
     * On Linux/OSX: run `start.sh`
-    * In an IDE: run the `TelephonyWsMain` class as a `Java Application`
-* Alternatively you can use `heroku local web` to start up the app (it might start up on port 80 or 5000)
-* Once started, the app exposes the following enpoints:
-    * http://localhost:8080/api/telephony/contacts
-    * http://localhost:8080/api/telephony/calllogs
+    * In an IDE: run the `Evulution` class as a `Java Application`
+* Once started, the app exposes the following endpoints:
+    * http://localhost:8080/customers
 
 ## Run the app on heroku
+
+> > > > > > > main
 
 * Install the Heroku CLI from [here](https://devcenter.heroku.com/articles/heroku-cli)
 * Run `sh deploy_main.sh` to deploy the `main` branch on heroku
