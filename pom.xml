@@ -31,6 +31,8 @@
     <rest-assured.version>4.4.0</rest-assured.version>
     <guava.version>30.1.1-jre</guava.version>
     <bean-validation.version>2.31</bean-validation.version>
+    <jakarta-annotation>2.0.0</jakarta-annotation>
+    <jackson-databind>2.12.2</jackson-databind>
 
     <!-- Plugins -->
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
@@ -90,6 +92,11 @@
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
       <version>${jakarta-annotation}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson-databind}</version>
     </dependency>
 
     <!-- Jersey DI and core-->
@@ -282,35 +289,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven-checkstyle-plugin.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>9.0</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>checkstyle-check</id>
-            <phase>verify</phase>
-            <configuration>
-              <configLocation>tools/checkstyle.xml</configLocation>
-              <failOnViolation>true</failOnViolation>
-              <failsOnError>true</failsOnError>
-              <logViolationsToConsole>true</logViolationsToConsole>
-              <maxAllowedViolations>0</maxAllowedViolations>
-              <violationSeverity>warning</violationSeverity>
-            </configuration>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco.version}</version>
@@ -345,11 +323,12 @@
                     <exclude>ca.ulaval.glo4003.EvulutionMain.1</exclude>
                     <exclude>ca.ulaval.glo4003.ws.http.CorsResponseFilter
                     </exclude>
-                    <exclude>ca.ulaval.glo4003.ws.api.ExceptionResponse
+                    <exclude>ca.ulaval.glo4003.ws.api.shared.ExceptionResponse
                     </exclude>
                     <exclude>
                       ca.ulaval.glo4003.ws.api.customer.exception.InvalidFormatException
                     </exclude>
+                    <exclude>ca.ulaval.glo4003.ws.http.CORSResponseFilter</exclude>
                     <exclude>
                       ca.ulaval.glo4003.ws.api.mappers.CatchEmailAlreadyInUseExceptionMapper
                     </exclude>

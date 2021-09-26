@@ -10,15 +10,27 @@ import ca.ulaval.glo4003.ws.api.filters.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.mappers.CatchEmailAlreadyInUseExceptionMapper;
 import ca.ulaval.glo4003.ws.api.mappers.CatchInvalidRequestFormatMapper;
 import ca.ulaval.glo4003.ws.api.mappers.CatchLoginFailedMapper;
+import ca.ulaval.glo4003.ws.api.mappers.InvalidRequestExceptionMapper;
+import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
+import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
+import ca.ulaval.glo4003.ws.api.transaction.VehicleRequestAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.api.util.DateParser;
 import ca.ulaval.glo4003.ws.domain.auth.LoginTokenAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.LoginTokenFactory;
 import ca.ulaval.glo4003.ws.domain.auth.LoginTokenRepository;
 import ca.ulaval.glo4003.ws.domain.customer.CustomerRepository;
 import ca.ulaval.glo4003.ws.domain.customer.CustomerService;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionHandler;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
 import ca.ulaval.glo4003.ws.infrastructure.authnz.InMemoryLoginTokenRepository;
 import ca.ulaval.glo4003.ws.infrastructure.customer.InMemoryCustomerRepository;
+import ca.ulaval.glo4003.ws.infrastructure.transaction.TransactionRepositoryInMemory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validation;
 import java.net.URI;
 import java.time.format.DateTimeFormatter;
@@ -53,11 +65,13 @@ public class EvulutionMain {
     // Setup resources (API)
     CustomerResource customerResource =
         createCustomerResource(customerRepository, loginTokenRepository, loginTokenAdministrator);
+    TransactionResource transactionResource = createSalesResource();
 
     final AbstractBinder binder =
         new AbstractBinder() {
           @Override
           protected void configure() {
+            bind(transactionResource).to(TransactionResource.class);
             bind(customerResource).to(CustomerResource.class);
           }
         };
@@ -68,10 +82,14 @@ public class EvulutionMain {
     config.register(new CatchInvalidRequestFormatMapper());
     config.register(new CatchLoginFailedMapper());
     config.register(new CatchEmailAlreadyInUseExceptionMapper());
+    config.register(new InvalidRequestExceptionMapper());
+
     config.register(
         new AuthenticationFilter(
             AUTHENTICATION_HEADER_NAME, new LoginTokenFactory(), loginTokenAdministrator));
     config.packages("ca.ulaval.glo4003.ws.api");
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     String port = getHttpPortFromArgs();
 
@@ -98,10 +116,28 @@ public class EvulutionMain {
 
       // block and wait shut down signal, like CTRL+C
       Thread.currentThread().join();
-
     } catch (InterruptedException e) {
       LOGGER.info("Thread was interrupted without joining properly", e);
     }
+  }
+
+  private static TransactionResource createSalesResource() {
+    // Setup resources' dependencies (DOMAIN + INFRASTRUCTURE)
+    TransactionRepository transactionRepository = new TransactionRepositoryInMemory();
+    VehicleRequestAssembler vehicleRequestAssembler = new VehicleRequestAssembler();
+    CreatedTransactionResponseAssembler createdTransactionResponseAssembler =
+        new CreatedTransactionResponseAssembler();
+    TransactionHandler transactionHandler = new TransactionHandler();
+    TransactionService transactionService =
+        new TransactionService(transactionRepository, transactionHandler);
+    VehicleRequestValidator vehicleRequestValidator =
+        new VehicleRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
+
+    return new TransactionResourceImpl(
+        transactionService,
+        createdTransactionResponseAssembler,
+        vehicleRequestAssembler,
+        vehicleRequestValidator);
   }
 
   private static CustomerResource createCustomerResource(
