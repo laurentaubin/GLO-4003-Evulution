@@ -5,7 +5,12 @@ import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
+import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
 import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.user.Role;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +27,8 @@ class TransactionResourceImplTest {
   @Mock private CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
   @Mock private VehicleRequestAssembler vehicleRequestAssembler;
   @Mock private VehicleRequestValidator vehicleRequestValidator;
+  @Mock private RoleValidator roleValidator;
+  @Mock private ContainerRequestContext containerRequestContext;
 
   private Transaction transaction;
   private TransactionResource transactionResource;
@@ -34,7 +41,8 @@ class TransactionResourceImplTest {
             transactionService,
             createdTransactionResponseAssembler,
             vehicleRequestAssembler,
-            vehicleRequestValidator);
+            vehicleRequestValidator,
+            roleValidator);
   }
 
   @Test
@@ -43,10 +51,36 @@ class TransactionResourceImplTest {
     when(transactionService.createTransaction()).thenReturn(transaction);
 
     // when
-    transactionResource.createTransaction();
+    transactionResource.createTransaction(containerRequestContext);
 
     // then
     verify(createdTransactionResponseAssembler).create(transaction);
+  }
+
+  @Test
+  void whenCreateTransaction_thenRolesAreValidated() {
+    // given
+    var vehicleRequest = createVehicleRequest();
+
+    // when
+    transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
+
+    // then
+    verify(roleValidator)
+        .validate(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
+  }
+
+  @Test
+  void whenVehicleRequest_thenRolesAreValidated() {
+    // given
+    var vehicleRequest = createVehicleRequest();
+
+    // when
+    transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
+
+    // then
+    verify(roleValidator)
+        .validate(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
   }
 
   @Test
@@ -55,7 +89,7 @@ class TransactionResourceImplTest {
     var vehicleRequest = createVehicleRequest();
 
     // when
-    transactionResource.addVehicle(AN_ID.toString(), vehicleRequest);
+    transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
     verify(vehicleRequestValidator).validate(vehicleRequest);
@@ -69,7 +103,7 @@ class TransactionResourceImplTest {
     when(vehicleRequestAssembler.create(vehicleRequest)).thenReturn(vehicle);
 
     // when
-    transactionResource.addVehicle(AN_ID.toString(), vehicleRequest);
+    transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
     verify(transactionService).addVehicle(AN_ID, vehicle);

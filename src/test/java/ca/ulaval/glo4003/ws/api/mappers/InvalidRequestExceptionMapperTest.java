@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.api.mappers;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
@@ -19,7 +20,7 @@ class InvalidRequestExceptionMapperTest {
   }
 
   @Test
-  void givenFormatException_whenToResponse_thenResponseHasRightErrorAndDescription() {
+  void givenInvalidFormatException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     InvalidFormatException exception = new InvalidFormatException(A_PROPERTY);
 
@@ -30,5 +31,6 @@ class InvalidRequestExceptionMapperTest {
     // then
     assertEquals(exception.error, exceptionResponse.getError());
     assertEquals(exception.description, exceptionResponse.getDescription());
+    assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
   }
 }

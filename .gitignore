@@ -170,7 +170,7 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,macos
 
 .idea/*
-TelephonyWs.iml
+Evulution.iml
 target
 .mvn/.mvn.iml
 

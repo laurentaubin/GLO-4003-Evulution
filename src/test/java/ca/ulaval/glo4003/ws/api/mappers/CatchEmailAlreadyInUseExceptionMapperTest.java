@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.api.mappers;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.ExceptionResponse;
-import ca.ulaval.glo4003.ws.api.customer.exception.EmailAlreadyInUseException;
+import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

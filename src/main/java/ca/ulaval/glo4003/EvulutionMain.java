@@ -1,38 +1,37 @@
 package ca.ulaval.glo4003;
 
-import ca.ulaval.glo4003.ws.api.customer.CustomerAssembler;
-import ca.ulaval.glo4003.ws.api.customer.CustomerResource;
-import ca.ulaval.glo4003.ws.api.customer.CustomerResourceImpl;
-import ca.ulaval.glo4003.ws.api.customer.LoginResponseAssembler;
-import ca.ulaval.glo4003.ws.api.customer.validator.DateFormatValidator;
-import ca.ulaval.glo4003.ws.api.customer.validator.RegisterCustomerDtoValidator;
-import ca.ulaval.glo4003.ws.api.filters.AuthenticationFilter;
-import ca.ulaval.glo4003.ws.api.mappers.CatchEmailAlreadyInUseExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mappers.CatchInvalidRequestFormatMapper;
-import ca.ulaval.glo4003.ws.api.mappers.CatchLoginFailedMapper;
-import ca.ulaval.glo4003.ws.api.mappers.InvalidRequestExceptionMapper;
+import ca.ulaval.glo4003.ws.api.filters.secured.AuthenticationFilter;
+import ca.ulaval.glo4003.ws.api.mappers.*;
 import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
 import ca.ulaval.glo4003.ws.api.transaction.VehicleRequestAssembler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
+import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
+import ca.ulaval.glo4003.ws.api.user.UserAssembler;
+import ca.ulaval.glo4003.ws.api.user.UserResource;
+import ca.ulaval.glo4003.ws.api.user.UserResourceImpl;
+import ca.ulaval.glo4003.ws.api.user.validator.DateFormatValidator;
+import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
 import ca.ulaval.glo4003.ws.api.util.DateParser;
-import ca.ulaval.glo4003.ws.domain.auth.LoginTokenAdministrator;
-import ca.ulaval.glo4003.ws.domain.auth.LoginTokenFactory;
-import ca.ulaval.glo4003.ws.domain.auth.LoginTokenRepository;
-import ca.ulaval.glo4003.ws.domain.customer.CustomerRepository;
-import ca.ulaval.glo4003.ws.domain.customer.CustomerService;
+import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
+import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
+import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
+import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
+import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionHandler;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.domain.user.*;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
-import ca.ulaval.glo4003.ws.infrastructure.authnz.InMemoryLoginTokenRepository;
-import ca.ulaval.glo4003.ws.infrastructure.customer.InMemoryCustomerRepository;
+import ca.ulaval.glo4003.ws.infrastructure.authnz.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.transaction.TransactionRepositoryInMemory;
+import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validation;
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,23 +55,27 @@ public class EvulutionMain {
 
   public static void main(String[] args) throws Exception {
 
-    CustomerRepository customerRepository = new InMemoryCustomerRepository();
-    LoginTokenRepository loginTokenRepository = new InMemoryLoginTokenRepository();
-    LoginTokenAdministrator loginTokenAdministrator =
-        new LoginTokenAdministrator(
-            customerRepository, loginTokenRepository, new LoginTokenFactory());
+    UserRepository userRepository = new InMemoryUserRepository();
+    SessionRepository sessionRepository = new InMemorySessionRepository();
+    SessionAdministrator sessionAdministrator =
+        new SessionAdministrator(userRepository, sessionRepository, new SessionFactory());
+    TokenExtractor tokenExtractor = new TokenExtractor(AUTHENTICATION_HEADER_NAME);
 
     // Setup resources (API)
-    CustomerResource customerResource =
-        createCustomerResource(customerRepository, loginTokenRepository, loginTokenAdministrator);
-    TransactionResource transactionResource = createSalesResource();
+    RoleValidator roleValidator =
+        new RoleValidator(userRepository, sessionRepository, tokenExtractor);
+
+    UserResource userResource =
+        createUserResource(userRepository, sessionRepository, sessionAdministrator);
+
+    TransactionResource transactionResource = createSalesResource(roleValidator);
 
     final AbstractBinder binder =
         new AbstractBinder() {
           @Override
           protected void configure() {
+            bind(userResource).to(UserResource.class);
             bind(transactionResource).to(TransactionResource.class);
-            bind(customerResource).to(CustomerResource.class);
           }
         };
 
@@ -83,10 +86,17 @@ public class EvulutionMain {
     config.register(new CatchLoginFailedMapper());
     config.register(new CatchEmailAlreadyInUseExceptionMapper());
     config.register(new InvalidRequestExceptionMapper());
+    config.register(new CatchSessionDoesNotExistExceptionMapper());
+    config.register(new CatchUserNotFoundExceptionMapper());
+    config.register(new CatchUnallowedUserExceptionMapper());
+    config.register(new CatchEmptyTokenHeaderExceptionMapper());
 
     config.register(
         new AuthenticationFilter(
-            AUTHENTICATION_HEADER_NAME, new LoginTokenFactory(), loginTokenAdministrator));
+            AUTHENTICATION_HEADER_NAME,
+            new SessionFactory(),
+            sessionAdministrator,
+            tokenExtractor));
     config.packages("ca.ulaval.glo4003.ws.api");
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -121,7 +131,24 @@ public class EvulutionMain {
     }
   }
 
-  private static TransactionResource createSalesResource() {
+  private static UserResource createUserResource(
+      UserRepository userRepository,
+      SessionRepository sessionRepository,
+      SessionAdministrator sessionAdministrator) {
+    var userService = new UserService(userRepository, sessionAdministrator);
+    createCatherinesAccount(userService);
+    var dateParser = new DateParser(DateTimeFormatter.ofPattern(BIRTH_DATE_PATTERN));
+    var userAssembler = new UserAssembler(dateParser);
+    var dateFormatValidator = new DateFormatValidator(BIRTH_DATE_PATTERN);
+    var defaultValidator = Validation.buildDefaultValidatorFactory().getValidator();
+    var registerUserDtoValidator =
+        new RegisterUserDtoValidator(defaultValidator, dateFormatValidator);
+
+    return new UserResourceImpl(
+        userAssembler, new LoginResponseAssembler(), userService, registerUserDtoValidator);
+  }
+
+  private static TransactionResource createSalesResource(RoleValidator roleValidator) {
     // Setup resources' dependencies (DOMAIN + INFRASTRUCTURE)
     TransactionRepository transactionRepository = new TransactionRepositoryInMemory();
     VehicleRequestAssembler vehicleRequestAssembler = new VehicleRequestAssembler();
@@ -137,26 +164,8 @@ public class EvulutionMain {
         transactionService,
         createdTransactionResponseAssembler,
         vehicleRequestAssembler,
-        vehicleRequestValidator);
-  }
-
-  private static CustomerResource createCustomerResource(
-      CustomerRepository customerRepository,
-      LoginTokenRepository loginTokenRepository,
-      LoginTokenAdministrator loginTokenAdministrator) {
-    var customerService = new CustomerService(customerRepository, loginTokenAdministrator);
-    var dateParser = new DateParser(DateTimeFormatter.ofPattern(BIRTH_DATE_PATTERN));
-    var customerAssembler = new CustomerAssembler(dateParser);
-    var dateFormatValidator = new DateFormatValidator(BIRTH_DATE_PATTERN);
-    var defaultValidator = Validation.buildDefaultValidatorFactory().getValidator();
-    var registerCustomerDtoValidator =
-        new RegisterCustomerDtoValidator(defaultValidator, dateFormatValidator);
-
-    return new CustomerResourceImpl(
-        customerAssembler,
-        new LoginResponseAssembler(),
-        customerService,
-        registerCustomerDtoValidator);
+        vehicleRequestValidator,
+        roleValidator);
   }
 
   private static String getHttpPortFromArgs() {
@@ -166,5 +175,17 @@ public class EvulutionMain {
       httpPort = DEFAULT_PORT;
     }
     return httpPort;
+  }
+
+  private static void createCatherinesAccount(UserService userService) {
+    User adminUser =
+        new User(
+            "Catherine",
+            new BirthDate(LocalDate.of(1997, 7, 31)),
+            "F",
+            "catherineleuf@evul.ulaval.ca",
+            "RoulezVert2021!");
+    adminUser.addRole(Role.ADMIN);
+    userService.registerUser(adminUser);
   }
 }

@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.api.mappers;
 
 import ca.ulaval.glo4003.ws.api.ExceptionResponse;
-import ca.ulaval.glo4003.ws.api.customer.exception.InvalidFormatException;
+import ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
