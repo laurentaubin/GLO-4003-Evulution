@@ -11,9 +11,7 @@ public class CatchUnallowedUserExceptionMapper implements ExceptionMapper<Unallo
   @Override
   public Response toResponse(UnallowedUserException exception) {
     return Response.status(STATUS_CODE)
-        .entity(
-            new ExceptionResponse(
-                UnallowedUserException.getError(), UnallowedUserException.getDescription()))
+        .entity(new ExceptionResponse(exception.getError(), exception.getDescription()))
         .build();
   }
 }

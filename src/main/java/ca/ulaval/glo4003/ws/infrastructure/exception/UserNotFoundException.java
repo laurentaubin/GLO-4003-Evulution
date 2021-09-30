@@ -8,11 +8,11 @@ public class UserNotFoundException extends RuntimeException {
     super();
   }
 
-  public static String getDescription() {
+  public String getDescription() {
     return description;
   }
 
-  public static String getError() {
+  public String getError() {
     return error;
   }
 }
