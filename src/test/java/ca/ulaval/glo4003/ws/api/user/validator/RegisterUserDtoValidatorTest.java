@@ -32,7 +32,7 @@ class RegisterUserDtoValidatorTest {
 
   @Mock private Validator fieldValidator;
 
-  @Mock private DateFormatValidator dateFormatValidator;
+  @Mock private BirthDateValidator dateFormatValidator;
 
   @Mock private ConstraintViolation<RegisterUserDto> aConstraintViolation;
 
@@ -93,9 +93,7 @@ class RegisterUserDtoValidatorTest {
     // given
     RegisterUserDto aRegisterUserDto = new RegisterUserDtoBuilder().build();
     aRegisterUserDto.setBirthDate(A_BIRTH_DATE);
-    doThrow(new InvalidFormatException(A_MESSAGE))
-        .when(dateFormatValidator)
-        .validateFormat(A_BIRTH_DATE);
+    doThrow(new InvalidFormatException(A_MESSAGE)).when(dateFormatValidator).validate(A_BIRTH_DATE);
 
     // when
     Executable validatingDto = () -> userDtoValidator.validateDto(aRegisterUserDto);

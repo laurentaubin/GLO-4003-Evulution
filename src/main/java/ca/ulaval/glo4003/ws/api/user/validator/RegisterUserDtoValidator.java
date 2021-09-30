@@ -9,18 +9,17 @@ import java.util.Set;
 public class RegisterUserDtoValidator {
 
   private final Validator userDtoValidator;
-  private final DateFormatValidator dateFormatValidator;
+  private final BirthDateValidator birthDateValidator;
 
-  public RegisterUserDtoValidator(
-      Validator fieldValidator, DateFormatValidator dateFormatValidator) {
+  public RegisterUserDtoValidator(Validator fieldValidator, BirthDateValidator birthDateValidator) {
     this.userDtoValidator = fieldValidator;
-    this.dateFormatValidator = dateFormatValidator;
+    this.birthDateValidator = birthDateValidator;
   }
 
   public void validateDto(RegisterUserDto registerUserDto) {
     validateDtoIsNotNull(registerUserDto);
     validateFields(registerUserDto);
-    dateFormatValidator.validateFormat(registerUserDto.getBirthDate());
+    birthDateValidator.validate(registerUserDto.getBirthDate());
   }
 
   private void validateDtoIsNotNull(RegisterUserDto registerUserDto) {

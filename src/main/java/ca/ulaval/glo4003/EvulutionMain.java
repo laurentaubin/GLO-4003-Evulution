@@ -2,11 +2,7 @@ package ca.ulaval.glo4003;
 
 import ca.ulaval.glo4003.ws.api.filters.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.mappers.*;
-import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
-import ca.ulaval.glo4003.ws.api.transaction.PaymentRequestAssembler;
-import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
-import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
-import ca.ulaval.glo4003.ws.api.transaction.VehicleRequestAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.*;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
@@ -14,9 +10,10 @@ import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserResource;
 import ca.ulaval.glo4003.ws.api.user.UserResourceImpl;
-import ca.ulaval.glo4003.ws.api.user.validator.DateFormatValidator;
+import ca.ulaval.glo4003.ws.api.user.validator.BirthDateValidator;
 import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
 import ca.ulaval.glo4003.ws.api.util.DateParser;
+import ca.ulaval.glo4003.ws.api.util.LocalDateProvider;
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
 import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
@@ -106,6 +103,7 @@ public class EvulutionMain {
     config.register(new CatchUserNotFoundExceptionMapper());
     config.register(new CatchUnallowedUserExceptionMapper());
     config.register(new CatchEmptyTokenHeaderExceptionMapper());
+    config.register(new CatchBirthDateInTheFutureExceptionMapper());
 
     config.register(
         new AuthenticationFilter(
@@ -155,7 +153,7 @@ public class EvulutionMain {
     createCatherinesAccount(userService);
     var dateParser = new DateParser(DateTimeFormatter.ofPattern(BIRTH_DATE_PATTERN));
     var userAssembler = new UserAssembler(dateParser);
-    var dateFormatValidator = new DateFormatValidator(BIRTH_DATE_PATTERN);
+    var dateFormatValidator = new BirthDateValidator(BIRTH_DATE_PATTERN, new LocalDateProvider());
     var defaultValidator = Validation.buildDefaultValidatorFactory().getValidator();
     var registerUserDtoValidator =
         new RegisterUserDtoValidator(defaultValidator, dateFormatValidator);
