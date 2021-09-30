@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Vandry",
+        "style": "Compact",
+        "effeciency_equivalence_rate": 100,
+        "base_price": 27000,
+        "time_to_produce": "3"
+    },
+    {
+        "name": "Pouliot",
+        "style": "Luxury",
+        "effeciency_equivalence_rate": 82.5,
+        "base_price": 35000,
+        "time_to_produce": "5"
+    },
+    {
+        "name": "Desjardins",
+        "style": "Subcompact",
+        "effeciency_equivalence_rate": 127.6,
+        "base_price": 22000,
+        "time_to_produce": "3"
+    }
+]

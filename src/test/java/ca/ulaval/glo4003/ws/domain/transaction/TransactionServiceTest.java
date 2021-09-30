@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import ca.ulaval.glo4003.ws.domain.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,16 +23,19 @@ class TransactionServiceTest {
 
   @Mock private TransactionRepository transactionRepository;
   @Mock private TransactionHandler transactionHandler;
+  @Mock private BatteryRepository batteryRepository;
 
   private TransactionService transactionService;
   private Transaction transaction;
   private Vehicle vehicle;
+  @Mock private Battery battery;
 
   @BeforeEach
   void setUp() {
     transaction = createTransactionGivenId(AN_ID);
     vehicle = createVehicle();
-    transactionService = new TransactionService(transactionRepository, transactionHandler);
+    transactionService =
+        new TransactionService(transactionRepository, transactionHandler, batteryRepository);
   }
 
   @Test
@@ -92,6 +97,20 @@ class TransactionServiceTest {
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
+  }
+
+  @Test
+  void
+      givenBatteryAndTransactionId_whenAddBattery_thenRepositoryUpdateTransactionWithSpecifiedBattery() {
+    // given
+    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
+    when(transactionHandler.setBattery(transaction, battery)).thenReturn(transaction);
+    when(batteryRepository.findByType(battery.getType())).thenReturn(battery);
+    // when
+    transactionService.addBattery(AN_ID, battery.getType());
+
+    // then
+    verify(transactionRepository).update(transaction);
   }
 
   private Transaction createTransactionGivenId(TransactionId id) {

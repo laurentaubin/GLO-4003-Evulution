@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class DuplicateTransactionExceptionMapperTest {
+class CatchDuplicateTransactionExceptionMapperTest {
   private static final TransactionId AN_ID = new TransactionId("id");
 
   private DuplicateTransactionExceptionMapper exceptionMapper;

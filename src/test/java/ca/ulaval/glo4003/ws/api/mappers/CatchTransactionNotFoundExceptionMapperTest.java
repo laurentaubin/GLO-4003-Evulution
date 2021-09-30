@@ -3,23 +3,26 @@ package ca.ulaval.glo4003.ws.api.mappers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.domain.transaction.InvalidModelException;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionNotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class InvalidModelExceptionMapperTest {
-  private InvalidModelExceptionMapper exceptionMapper;
+class CatchTransactionNotFoundExceptionMapperTest {
+  private static final TransactionId AN_ID = new TransactionId("id");
+
+  private TransactionNotFoundExceptionMapper exceptionMapper;
 
   @BeforeEach
   void setUp() {
-    exceptionMapper = new InvalidModelExceptionMapper();
+    exceptionMapper = new TransactionNotFoundExceptionMapper();
   }
 
   @Test
-  void givenInvalidModelException_whenToResponse_thenResponseHasRightErrorAndDescription() {
+  void givenTransactionNotFoundException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
-    InvalidModelException exception = new InvalidModelException();
+    TransactionNotFoundException exception = new TransactionNotFoundException(AN_ID);
 
     // when
     Response response = exceptionMapper.toResponse(exception);

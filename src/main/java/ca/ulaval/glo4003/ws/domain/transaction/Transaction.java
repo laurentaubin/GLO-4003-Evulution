@@ -24,4 +24,8 @@ public class Transaction {
   public void setVehicle(Vehicle vehicle) {
     this.vehicle = vehicle;
   }
+
+  public Integer computeRange() {
+    return vehicle.computeRange();
+  }
 }

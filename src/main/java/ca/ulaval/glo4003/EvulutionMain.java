@@ -6,6 +6,7 @@ import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
 import ca.ulaval.glo4003.ws.api.transaction.VehicleRequestAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserAssembler;
@@ -19,20 +20,30 @@ import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
+import ca.ulaval.glo4003.ws.domain.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionHandler;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.user.*;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
+import ca.ulaval.glo4003.ws.infrastructure.BatteryDTO;
+import ca.ulaval.glo4003.ws.infrastructure.BatteryDTOAssembler;
+import ca.ulaval.glo4003.ws.infrastructure.BatteryRepositoryInMemory;
 import ca.ulaval.glo4003.ws.infrastructure.authnz.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.transaction.TransactionRepositoryInMemory;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validation;
+import java.io.File;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
@@ -50,6 +61,8 @@ public class EvulutionMain {
 
   private static final String BIRTH_DATE_PATTERN = "yyyy-MM-dd";
   private static final String AUTHENTICATION_HEADER_NAME = "Bearer";
+
+  private static final File BATTERY_INFO_FILE = new File("./src/main/resources/batteries.json");
 
   private static final Logger LOGGER = LogManager.getLogger();
 
@@ -155,17 +168,27 @@ public class EvulutionMain {
     CreatedTransactionResponseAssembler createdTransactionResponseAssembler =
         new CreatedTransactionResponseAssembler();
     TransactionHandler transactionHandler = new TransactionHandler();
+
+    BatteryRepository batteryRepository = new BatteryRepositoryInMemory();
+
     TransactionService transactionService =
-        new TransactionService(transactionRepository, transactionHandler);
+        new TransactionService(transactionRepository, transactionHandler, batteryRepository);
     VehicleRequestValidator vehicleRequestValidator =
         new VehicleRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
+
+    BatteryRequestValidator batteryRequestValidator =
+        new BatteryRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
+    BatteryDTOAssembler batteryDTOAssembler = new BatteryDTOAssembler();
+
+    setUpInventories(batteryRepository, batteryDTOAssembler);
 
     return new TransactionResourceImpl(
         transactionService,
         createdTransactionResponseAssembler,
         vehicleRequestAssembler,
         vehicleRequestValidator,
-        roleValidator);
+        roleValidator,
+        batteryRequestValidator);
   }
 
   private static String getHttpPortFromArgs() {
@@ -187,5 +210,25 @@ public class EvulutionMain {
             "RoulezVert2021!");
     adminUser.addRole(Role.ADMIN);
     userService.registerUser(adminUser);
+  }
+
+  // TODO WIP, rename and maybe move somewhere else this class is kinda packed + do the same for
+  // cars
+  private static void setUpInventories(
+      BatteryRepository batteryRepository, BatteryDTOAssembler batteryDTOAssembler) {
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      List<Battery> batteriesListFromContext =
+          batteryDTOAssembler.assembleBatteries(
+              objectMapper.readValue(BATTERY_INFO_FILE, new TypeReference<List<BatteryDTO>>() {}));
+      Map<String, Battery> batteriesInventory = new HashMap<>();
+      for (Battery battery : batteriesListFromContext) {
+        batteriesInventory.put(battery.getType(), battery);
+      }
+      batteryRepository.save(batteriesInventory);
+    } catch (Exception e) {
+      // TODO Map to the correct Error (500 error expected)
+      System.out.println(e);
+    }
   }
 }
