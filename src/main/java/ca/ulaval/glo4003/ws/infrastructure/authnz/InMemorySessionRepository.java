@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.ws.infrastructure.authnz;
 
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
+import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -15,16 +16,16 @@ public class InMemorySessionRepository implements SessionRepository {
 
   @Override
   public void save(Session session) {
-    sessions.put(session.getTokenValue(), session);
+    sessions.put(session.getToken().getTokenValue(), session);
   }
 
   @Override
-  public boolean doesSessionExist(Session session) {
-    return sessions.containsKey(session.getTokenValue());
+  public boolean doesSessionExist(SessionToken sessionToken) {
+    return sessions.containsKey(sessionToken.getTokenValue());
   }
 
   @Override
-  public Optional<Session> find(String token) {
-    return Optional.ofNullable(sessions.get(token));
+  public Optional<Session> find(SessionToken token) {
+    return Optional.ofNullable(sessions.get(token.getTokenValue()));
   }
 }

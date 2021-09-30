@@ -13,6 +13,7 @@ import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
 import ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
+import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.exception.LoginFailedException;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserService;
@@ -31,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class UserResourceImplTest {
   private static final String AN_EMAIL = "anEmail@mail.com";
-  private static final String A_TOKEN = "token123";
+  private static final SessionToken A_TOKEN = new SessionToken("token123");
 
   @Mock private UserAssembler userAssembler;
 

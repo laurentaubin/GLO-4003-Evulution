@@ -3,11 +3,12 @@ package ca.ulaval.glo4003.ws.infrastructure.authnz;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.domain.auth.Session;
+import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class InMemorySessionRepositoryTest {
-  private static final String A_TOKEN = "dsoadjas";
+  private static final SessionToken A_TOKEN = new SessionToken("dsoadjas");
   private static final String AN_EMAIL = "blabla@blabla.com";
 
   private InMemorySessionRepository loginTokenRepository;
@@ -23,7 +24,7 @@ class InMemorySessionRepositoryTest {
     Session aSession = new Session(A_TOKEN, AN_EMAIL);
 
     // when
-    boolean doesTokenExist = loginTokenRepository.doesSessionExist(aSession);
+    boolean doesTokenExist = loginTokenRepository.doesSessionExist(A_TOKEN);
 
     // then
     assertThat(doesTokenExist).isFalse();
@@ -36,7 +37,7 @@ class InMemorySessionRepositoryTest {
     loginTokenRepository.save(aSession);
 
     // when
-    boolean doesTokenExist = loginTokenRepository.doesSessionExist(aSession);
+    boolean doesTokenExist = loginTokenRepository.doesSessionExist(A_TOKEN);
 
     // then
     assertThat(doesTokenExist).isTrue();

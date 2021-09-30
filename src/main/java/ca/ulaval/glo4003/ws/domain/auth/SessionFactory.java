@@ -1,13 +1,13 @@
 package ca.ulaval.glo4003.ws.domain.auth;
 
-import java.util.UUID;
-
 public class SessionFactory {
-  public Session create(String email) {
-    return new Session(UUID.randomUUID().toString(), email);
+  private final SessionTokenGenerator tokenGenerator;
+
+  public SessionFactory(SessionTokenGenerator tokenGenerator) {
+    this.tokenGenerator = tokenGenerator;
   }
 
-  public Session create(String token, String email) {
-    return new Session(token, email);
+  public Session create(String email) {
+    return new Session(tokenGenerator.generate(), email);
   }
 }

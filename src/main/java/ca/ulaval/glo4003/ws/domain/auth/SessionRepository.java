@@ -5,7 +5,7 @@ import java.util.Optional;
 public interface SessionRepository {
   void save(Session session);
 
-  boolean doesSessionExist(Session session);
+  boolean doesSessionExist(SessionToken sessionToken);
 
-  Optional<Session> find(String token);
+  Optional<Session> find(SessionToken token);
 }

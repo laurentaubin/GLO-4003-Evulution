@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.api.filters.secured;
 
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
-import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
-import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
+import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
+import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -20,20 +20,20 @@ import java.io.IOException;
 public class AuthenticationFilter implements ContainerRequestFilter {
 
   private String authorizationHeaderName;
-  private SessionFactory sessionFactory;
   private SessionAdministrator sessionAdministrator;
+  private SessionTokenGenerator sessionTokenGenerator;
   private TokenExtractor tokenExtractor;
 
   private AuthenticationFilter() {}
 
   public AuthenticationFilter(
       String authorizationHeaderName,
-      SessionFactory sessionFactory,
       SessionAdministrator sessionAdministrator,
+      SessionTokenGenerator sessionTokenGenerator,
       TokenExtractor tokenExtractor) {
     this.authorizationHeaderName = authorizationHeaderName;
-    this.sessionFactory = sessionFactory;
     this.sessionAdministrator = sessionAdministrator;
+    this.sessionTokenGenerator = sessionTokenGenerator;
     this.tokenExtractor = tokenExtractor;
   }
 
@@ -55,9 +55,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
   private void validateToken(ContainerRequestContext requestContext, String authorizationHeader) {
     String tokenValue = tokenExtractor.extract(authorizationHeader);
-    Session session = sessionFactory.create(tokenValue);
+    SessionToken sessionToken = sessionTokenGenerator.generate(tokenValue);
 
-    if (!sessionAdministrator.isSessionValid(session)) {
+    if (!sessionAdministrator.isSessionValid(sessionToken)) {
       abortWithUnauthorized(requestContext);
     }
   }

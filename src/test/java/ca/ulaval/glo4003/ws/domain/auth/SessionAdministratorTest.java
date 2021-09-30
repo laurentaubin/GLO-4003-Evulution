@@ -30,6 +30,8 @@ class SessionAdministratorTest {
 
   @Mock private Session aSession;
 
+  @Mock private SessionToken sessionToken;
+
   private User aUser;
 
   private SessionAdministrator sessionAdministrator;
@@ -96,10 +98,10 @@ class SessionAdministratorTest {
   @Test
   public void givenDoesNotTokenExist_whenIsTokenValid_thenReturnFalse() {
     // given
-    given(sessionRepository.doesSessionExist(aSession)).willReturn(false);
+    given(sessionRepository.doesSessionExist(sessionToken)).willReturn(false);
 
     // when
-    boolean isTokenValid = sessionAdministrator.isSessionValid(aSession);
+    boolean isTokenValid = sessionAdministrator.isSessionValid(sessionToken);
 
     // then
     assertThat(isTokenValid).isFalse();
@@ -108,10 +110,10 @@ class SessionAdministratorTest {
   @Test
   public void givenTokenExists_whenIsTokenValid_thenReturnTrue() {
     // given
-    given(sessionRepository.doesSessionExist(aSession)).willReturn(true);
+    given(sessionRepository.doesSessionExist(sessionToken)).willReturn(true);
 
     // when
-    boolean isTokenValid = sessionAdministrator.isSessionValid(aSession);
+    boolean isTokenValid = sessionAdministrator.isSessionValid(sessionToken);
 
     // then
     assertThat(isTokenValid).isTrue();

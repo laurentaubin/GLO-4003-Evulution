@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
+import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.ws.domain.exception.LoginFailedException;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
@@ -24,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class UserServiceTest {
   private static final String AN_EMAIL = "an@email.com";
   private static final String A_PASSWORD = "pass123";
-  private static final String A_TOKEN = "token";
+  private static final SessionToken A_TOKEN = new SessionToken("token");
 
   @Mock private UserRepository userRepository;
 
@@ -86,6 +87,6 @@ class UserServiceTest {
     Session generatedSession = userService.login(AN_EMAIL, A_PASSWORD);
 
     // then
-    assertThat(generatedSession.getTokenValue()).matches(A_TOKEN);
+    assertThat(generatedSession.getToken()).isEqualTo(A_TOKEN);
   }
 }

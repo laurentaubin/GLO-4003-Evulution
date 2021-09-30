@@ -34,8 +34,8 @@ public class SessionAdministrator {
     return generateToken(email);
   }
 
-  public boolean isSessionValid(Session session) {
-    return sessionRepository.doesSessionExist(session);
+  public boolean isSessionValid(SessionToken token) {
+    return sessionRepository.doesSessionExist(token);
   }
 
   private Session generateToken(String email) {

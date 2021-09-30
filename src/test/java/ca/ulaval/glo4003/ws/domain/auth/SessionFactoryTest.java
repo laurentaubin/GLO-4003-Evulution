@@ -1,39 +1,39 @@
 package ca.ulaval.glo4003.ws.domain.auth;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class SessionFactoryTest {
 
   private static final String AN_EMAIL = "ANEMAIL@ASD.com";
+  private static final SessionToken A_TOKEN = new SessionToken("a token");
+
+  @Mock private SessionTokenGenerator tokenGenerator;
 
   private SessionFactory sessionFactory;
 
   @BeforeEach
   public void setUp() {
-    sessionFactory = new SessionFactory();
+    sessionFactory = new SessionFactory(tokenGenerator);
   }
 
   @Test
   public void whenCreate_thenCreateLoginToken() {
+    // given
+    given(tokenGenerator.generate()).willReturn(A_TOKEN);
+
     // when
     Session session = sessionFactory.create(AN_EMAIL);
 
     // then
-    assertThat(session.getTokenValue()).isNotEmpty();
-  }
-
-  @Test
-  public void givenTokenValue_whenCreate_thenCreateLoginToken() {
-    // given
-    String aTokenValue = "asdoaskd";
-
-    // when
-    Session session = sessionFactory.create(aTokenValue, AN_EMAIL);
-
-    // then
-    assertThat(session.getTokenValue()).matches(aTokenValue);
+    assertThat(session.getToken()).isEqualTo(A_TOKEN);
+    assertThat(session.getEmail()).matches(AN_EMAIL);
   }
 }

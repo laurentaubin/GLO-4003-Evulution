@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.ws.domain.auth.Session;
 public class LoginResponseAssembler {
   public LoginResponseDto assemble(Session session) {
     LoginResponseDto loginResponseDto = new LoginResponseDto();
-    loginResponseDto.setToken(session.getTokenValue());
+    loginResponseDto.setToken(session.getToken().getTokenValue());
 
     return loginResponseDto;
   }

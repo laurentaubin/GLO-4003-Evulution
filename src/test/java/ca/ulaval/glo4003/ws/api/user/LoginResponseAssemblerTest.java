@@ -4,12 +4,13 @@ import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.user.dto.LoginResponseDto;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
+import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LoginResponseAssemblerTest {
   private static final String AN_EMAIL = "anEmail@mail.com";
-  private static final String A_TOKEN = "token";
+  private static final SessionToken A_TOKEN = new SessionToken("token");
 
   private LoginResponseAssembler assembler;
 
@@ -27,6 +28,6 @@ class LoginResponseAssemblerTest {
     LoginResponseDto loginResponseDto = assembler.assemble(aSession);
 
     // then
-    assertThat(loginResponseDto.getToken()).matches(aSession.getTokenValue());
+    assertThat(loginResponseDto.getToken()).matches(aSession.getToken().getTokenValue());
   }
 }

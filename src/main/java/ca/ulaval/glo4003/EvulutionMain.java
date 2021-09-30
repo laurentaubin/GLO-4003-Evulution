@@ -19,6 +19,7 @@ import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
+import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
@@ -70,13 +71,15 @@ public class EvulutionMain {
 
     UserRepository userRepository = new InMemoryUserRepository();
     SessionRepository sessionRepository = new InMemorySessionRepository();
+    SessionTokenGenerator sessionTokenGenerator = new SessionTokenGenerator();
     SessionAdministrator sessionAdministrator =
-        new SessionAdministrator(userRepository, sessionRepository, new SessionFactory());
+        new SessionAdministrator(
+            userRepository, sessionRepository, new SessionFactory(sessionTokenGenerator));
     TokenExtractor tokenExtractor = new TokenExtractor(AUTHENTICATION_HEADER_NAME);
 
     // Setup resources (API)
     RoleValidator roleValidator =
-        new RoleValidator(userRepository, sessionRepository, tokenExtractor);
+        new RoleValidator(userRepository, sessionRepository, sessionTokenGenerator, tokenExtractor);
 
     UserResource userResource =
         createUserResource(userRepository, sessionRepository, sessionAdministrator);
@@ -108,8 +111,8 @@ public class EvulutionMain {
     config.register(
         new AuthenticationFilter(
             AUTHENTICATION_HEADER_NAME,
-            new SessionFactory(),
             sessionAdministrator,
+            sessionTokenGenerator,
             tokenExtractor));
     config.packages("ca.ulaval.glo4003.ws.api");
     ObjectMapper objectMapper = new ObjectMapper();

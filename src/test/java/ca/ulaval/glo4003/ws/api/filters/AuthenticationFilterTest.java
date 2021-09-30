@@ -8,9 +8,9 @@ import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.api.filters.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
-import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
-import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
+import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
+import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
@@ -25,17 +25,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationFilterTest {
-  private static final String AN_EMAIL = "anEmail@mail.com";
   private static final String A_AUTH_HEADER_NAME = "Bearer";
-  private static final String A_VALID_AUTH_TOKEN = "some_token_value";
-  private static final String A_VALID_AUTH_HEADER = A_AUTH_HEADER_NAME + " " + A_VALID_AUTH_TOKEN;
-  private static final Session A_SESSION = new Session(A_VALID_AUTH_TOKEN, AN_EMAIL);
+  private static final String A_VALID_AUTH_TOKEN_VALUE = "some_token_value";
+  private static final SessionToken A_VALID_AUTH_TOKEN = new SessionToken(A_VALID_AUTH_TOKEN_VALUE);
+  private static final String A_VALID_AUTH_HEADER =
+      A_AUTH_HEADER_NAME + " " + A_VALID_AUTH_TOKEN_VALUE;
 
   private TokenExtractor tokenExtractor = new TokenExtractor(A_AUTH_HEADER_NAME);
 
   @Mock ContainerRequestContext aContainerRequest;
 
-  @Mock private SessionFactory sessionFactory;
+  @Mock private SessionTokenGenerator sessionTokenGenerator;
 
   @Mock private SessionAdministrator sessionAdministrator;
 
@@ -45,7 +45,7 @@ class AuthenticationFilterTest {
   public void setUp() {
     authenticationFilter =
         new AuthenticationFilter(
-            A_AUTH_HEADER_NAME, sessionFactory, sessionAdministrator, tokenExtractor);
+            A_AUTH_HEADER_NAME, sessionAdministrator, sessionTokenGenerator, tokenExtractor);
   }
 
   @Test
@@ -82,8 +82,8 @@ class AuthenticationFilterTest {
     // given
     given(aContainerRequest.getHeaderString(HttpHeaders.AUTHORIZATION))
         .willReturn(A_VALID_AUTH_HEADER);
-    given(sessionFactory.create(A_VALID_AUTH_TOKEN)).willReturn(A_SESSION);
-    given(sessionAdministrator.isSessionValid(A_SESSION)).willReturn(false);
+    given(sessionTokenGenerator.generate(A_VALID_AUTH_TOKEN_VALUE)).willReturn(A_VALID_AUTH_TOKEN);
+    given(sessionAdministrator.isSessionValid(A_VALID_AUTH_TOKEN)).willReturn(false);
 
     // when
     authenticationFilter.filter(aContainerRequest);
@@ -99,8 +99,8 @@ class AuthenticationFilterTest {
     // given
     given(aContainerRequest.getHeaderString(HttpHeaders.AUTHORIZATION))
         .willReturn(A_VALID_AUTH_HEADER);
-    given(sessionFactory.create(A_VALID_AUTH_TOKEN)).willReturn(A_SESSION);
-    given(sessionAdministrator.isSessionValid(A_SESSION)).willReturn(true);
+    given(sessionTokenGenerator.generate(A_VALID_AUTH_TOKEN_VALUE)).willReturn(A_VALID_AUTH_TOKEN);
+    given(sessionAdministrator.isSessionValid(A_VALID_AUTH_TOKEN)).willReturn(true);
 
     // when
     authenticationFilter.filter(aContainerRequest);
