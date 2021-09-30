@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.api.shared;
 
+import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 

@@ -3,8 +3,8 @@ package ca.ulaval.glo4003.ws.domain.user;
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
-import ca.ulaval.glo4003.ws.domain.exception.InvalidCredentialsException;
-import ca.ulaval.glo4003.ws.domain.exception.LoginFailedException;
+import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
+import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
 
 public class UserService {
   private final UserRepository userRepository;

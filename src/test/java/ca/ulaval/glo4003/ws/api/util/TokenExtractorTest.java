@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.api.util;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ca.ulaval.glo4003.ws.domain.exception.EmptyTokenHeaderException;
+import ca.ulaval.glo4003.ws.api.util.exception.EmptyTokenHeaderException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 

@@ -10,7 +10,9 @@ import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidat
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
+import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.transaction.*;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -25,12 +27,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TransactionResourceImplTest {
   private static final TransactionId AN_ID = new TransactionId("id");
+  private static final DeliveryId A_DELIVERY_ID = new DeliveryId("id");
   private static final String A_MODEL = "Vandry";
   private static final String A_COLOR = "Color";
   private static final String A_FREQUENCY = "monthly";
   private static final int A_BANK_NUMBER = 100;
   private static final int AN_ACCOUNT_NUMBER = 9999999;
 
+  @Mock private DeliveryService deliveryService;
   private static final String A_BATTERY_TYPE = "AType";
   @Mock private Battery A_BATTERY;
 
@@ -42,19 +46,21 @@ class TransactionResourceImplTest {
   @Mock private RoleValidator roleValidator;
   @Mock private ContainerRequestContext containerRequestContext;
   @Mock private BatteryRequestValidator batteryRequestValidator;
-  @Mock private BatteryRepository batteryRepository;
   @Mock private PaymentRequestAssembler paymentRequestAssembler;
   @Mock private PaymentRequestValidator paymentRequestValidator;
 
   private Transaction transaction;
+  private Delivery delivery;
   private TransactionResource transactionResource;
 
   @BeforeEach
   void setUp() {
     transaction = createTransaction(AN_ID);
+    delivery = createDelivery(A_DELIVERY_ID);
     transactionResource =
         new TransactionResourceImpl(
             transactionService,
+            deliveryService,
             createdTransactionResponseAssembler,
             vehicleRequestAssembler,
             vehicleRequestValidator,
@@ -68,12 +74,13 @@ class TransactionResourceImplTest {
   void givenTransaction_whenCreateTransaction_thenCreateTransactionResponse() {
     // given
     when(transactionService.createTransaction()).thenReturn(transaction);
+    when(deliveryService.createDelivery()).thenReturn(delivery);
 
     // when
     transactionResource.createTransaction(containerRequestContext);
 
     // then
-    verify(createdTransactionResponseAssembler).create(transaction);
+    verify(createdTransactionResponseAssembler).assemble(transaction, delivery);
   }
 
   @Test
@@ -167,6 +174,10 @@ class TransactionResourceImplTest {
 
   private Transaction createTransaction(TransactionId id) {
     return new Transaction(id);
+  }
+
+  private Delivery createDelivery(DeliveryId id) {
+    return new Delivery(id);
   }
 
   private VehicleRequest createVehicleRequest() {

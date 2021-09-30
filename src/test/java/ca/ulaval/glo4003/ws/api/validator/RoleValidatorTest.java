@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
+import ca.ulaval.glo4003.ws.api.validator.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
-import ca.ulaval.glo4003.ws.domain.exception.UnallowedUserException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
@@ -79,7 +79,7 @@ class RoleValidatorTest {
         () -> roleValidator.validate(aContainerRequest, rolesThatTheUserDoesNotHave);
 
     // then
-    assertThrows(UnallowedUserException.class, validateRoles);
+    assertThrows(UnauthorizedUserException.class, validateRoles);
   }
 
   @Test

@@ -226,6 +226,18 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <compilerArgs>
+                        <arg>--add-exports</arg>
+                        <arg>jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                        <arg>--add-exports</arg>
+                        <arg>jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                        <arg>--add-exports</arg>
+                        <arg>jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                        <arg>--add-exports</arg>
+                        <arg>jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                        <arg>--add-exports</arg>
+                        <arg>jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                    </compilerArgs>
                     <source>13</source>
                     <target>13</target>
                 </configuration>
@@ -326,22 +338,35 @@
                                     <excludes>
                                         <exclude>ca.ulaval.glo4003.EvulutionMain</exclude>
                                         <exclude>ca.ulaval.glo4003.EvulutionMain.1</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.http.CorsResponseFilter
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.api.shared.ExceptionResponse
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.http.CORSResponseFilter</exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.api.mappers.CatchEmailAlreadyInUseExceptionMapper
+                                        <exclude>ca.ulaval.glo4003.EvulutionMain.2</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.http.CorsResponseFilter</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.context.*</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.auth.Session</exclude>
+
+                                        <!-- API -->
+                                        <exclude>ca.ulaval.glo4003.ws.api.shared.ExceptionResponse</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException
                                         </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.api.mock.MockResourceImpl</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.api.filters.allowed.*</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.domain.auth.Session</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.api.filter.allowed.*</exclude>
+
+                                        <!-- DOMAIN -->
+                                        <exclude>ca.ulaval.glo4003.ws.domain.delivery.DeliveryId</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.transaction.TransactionId</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.transaction.Transaction</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination</exclude>
+
+                                        <!-- INFRA -->
+                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.delivery.InMemoryDeliveryDto
+                                        </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException
                                         </exclude>
+
+                                        <!-- TODO TEST -->
+                                        <exclude>ca.ulaval.glo4003.ws.domain.transaction.TransactionService</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDtoAssembler
+                                        </exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.transaction.Vehicle</exclude>
                                     </excludes>
                                 </rule>
                             </rules>
@@ -363,6 +388,7 @@
                 <groupId>com.coveo</groupId>
                 <artifactId>fmt-maven-plugin</artifactId>
                 <version>${fmt-maven-plugin.version}</version>
+
                 <executions>
                     <execution>
                         <goals>
@@ -381,7 +407,6 @@
             </plugin>
         </plugins>
     </build>
-
     <reporting>
         <plugins>
             <plugin>

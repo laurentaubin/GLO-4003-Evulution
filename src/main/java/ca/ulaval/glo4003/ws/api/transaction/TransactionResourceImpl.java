@@ -1,19 +1,13 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
-import ca.ulaval.glo4003.ws.api.transaction.dto.AddedBatteryResponse;
-import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.CreatedTransactionResponse;
-import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.*;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
-import ca.ulaval.glo4003.ws.domain.transaction.Payment;
-import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.transaction.Vehicle;
+import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
+import ca.ulaval.glo4003.ws.domain.transaction.*;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -23,18 +17,20 @@ import java.util.List;
 
 public class TransactionResourceImpl implements TransactionResource {
 
-  private TransactionService transactionService;
-  private CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
-  private VehicleRequestAssembler vehicleRequestAssembler;
-  private VehicleRequestValidator vehicleRequestValidator;
-  private RoleValidator roleValidator;
+  private final TransactionService transactionService;
+  private final DeliveryService deliveryService;
+  private final CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
+  private final VehicleRequestAssembler vehicleRequestAssembler;
+  private final VehicleRequestValidator vehicleRequestValidator;
+  private final RoleValidator roleValidator;
   private static final List<Role> privilegedRoles = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
-  private BatteryRequestValidator batteryRequestValidator;
-  private PaymentRequestAssembler paymentRequestAssembler;
-  private PaymentRequestValidator paymentRequestValidator;
+  private final BatteryRequestValidator batteryRequestValidator;
+  private final PaymentRequestAssembler paymentRequestAssembler;
+  private final PaymentRequestValidator paymentRequestValidator;
 
   public TransactionResourceImpl(
       TransactionService transactionService,
+      DeliveryService deliveryService,
       CreatedTransactionResponseAssembler createdTransactionResponseAssembler,
       VehicleRequestAssembler vehicleRequestAssembler,
       VehicleRequestValidator vehicleRequestValidator,
@@ -43,6 +39,7 @@ public class TransactionResourceImpl implements TransactionResource {
       PaymentRequestAssembler paymentRequestAssembler,
       PaymentRequestValidator paymentRequestValidator) {
     this.transactionService = transactionService;
+    this.deliveryService = deliveryService;
     this.createdTransactionResponseAssembler = createdTransactionResponseAssembler;
     this.vehicleRequestAssembler = vehicleRequestAssembler;
     this.vehicleRequestValidator = vehicleRequestValidator;
@@ -56,8 +53,9 @@ public class TransactionResourceImpl implements TransactionResource {
   public Response createTransaction(ContainerRequestContext containerRequestContext) {
     roleValidator.validate(containerRequestContext, privilegedRoles);
     Transaction transaction = transactionService.createTransaction();
+    Delivery delivery = deliveryService.createDelivery();
     CreatedTransactionResponse createdTransactionResponse =
-        createdTransactionResponseAssembler.create(transaction);
+        createdTransactionResponseAssembler.assemble(transaction, delivery);
     URI transactionUri = URI.create(String.format("/sales/%s", transaction.getId()));
     return Response.created(transactionUri).entity(createdTransactionResponse).build();
   }

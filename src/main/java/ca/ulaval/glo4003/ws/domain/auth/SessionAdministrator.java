@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.auth;
 
-import ca.ulaval.glo4003.ws.domain.exception.InvalidCredentialsException;
+import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import java.util.Optional;

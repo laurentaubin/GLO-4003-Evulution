@@ -1,10 +1,10 @@
 package ca.ulaval.glo4003.ws.api.validator;
 
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
+import ca.ulaval.glo4003.ws.api.validator.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
-import ca.ulaval.glo4003.ws.domain.exception.UnallowedUserException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
@@ -50,7 +50,7 @@ public class RoleValidator {
     }
 
     if (!user.get().isAllowed(requestedRoles)) {
-      throw new UnallowedUserException();
+      throw new UnauthorizedUserException();
     }
   }
 }

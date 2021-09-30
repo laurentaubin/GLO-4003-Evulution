@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class TransactionServiceTest {
   private static final int AN_ACCOUNT_NUMBER = 9999999;
 
   @Mock private TransactionRepository transactionRepository;
-  @Mock private TransactionHandler transactionHandler;
+  @Mock private TransactionFactory transactionFactory;
   @Mock private BatteryRepository batteryRepository;
 
   private TransactionService transactionService;
@@ -39,14 +40,14 @@ class TransactionServiceTest {
     transaction = createTransactionGivenId(AN_ID);
     vehicle = createVehicle();
     transactionService =
-        new TransactionService(transactionRepository, transactionHandler, batteryRepository);
+        new TransactionService(transactionRepository, transactionFactory, batteryRepository);
     payment = createPayment();
   }
 
   @Test
   void givenTransaction_whenCreateTransaction_thenRepositorySaveTransaction() {
     // given
-    when(transactionHandler.createTransaction()).thenReturn(transaction);
+    when(transactionFactory.createTransaction()).thenReturn(transaction);
 
     // when
     transactionService.createTransaction();
@@ -58,7 +59,7 @@ class TransactionServiceTest {
   @Test
   void givenTransaction_whenCreateTransaction_thenReturnTransaction() {
     // given
-    when(transactionHandler.createTransaction()).thenReturn(transaction);
+    when(transactionFactory.createTransaction()).thenReturn(transaction);
 
     // when
     var actual = transactionService.createTransaction();
@@ -68,22 +69,9 @@ class TransactionServiceTest {
   }
 
   @Test
-  void givenVehicleAndTransactionId_whenAddVehicle_thenFactorySetVehicle() {
-    // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
-
-    // when
-    transactionService.addVehicle(AN_ID, vehicle);
-
-    // then
-    verify(transactionHandler).setVehicle(transaction, vehicle);
-  }
-
-  @Test
   void givenVehicleAndTransactionId_whenAddVehicle_thenRepositoryUpdateTransaction() {
     // given
     when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
-    when(transactionHandler.setVehicle(transaction, vehicle)).thenReturn(transaction);
 
     // when
     transactionService.addVehicle(AN_ID, vehicle);
@@ -105,33 +93,9 @@ class TransactionServiceTest {
   }
 
   @Test
-  void
-      givenBatteryAndTransactionId_whenAddBattery_thenRepositoryUpdateTransactionWithSpecifiedBattery() {
-    // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
-    when(transactionHandler.setBattery(transaction, battery)).thenReturn(transaction);
-    when(batteryRepository.findByType(battery.getType())).thenReturn(battery);
-    // when
-    transactionService.addBattery(AN_ID, battery.getType());
-  }
-
-  @Test
-  void givenPaymentAndTransactionId_whenAddPayment_thenFactorySetPayment() {
-    // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
-
-    // when
-    transactionService.addPayment(AN_ID, payment);
-
-    // then
-    verify(transactionHandler).setPayment(transaction, payment);
-  }
-
-  @Test
   void givenPaymentAndTransactionId_whenAddPayment_thenRepositoryUpdateTransaction() {
     // given
     when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
-    when(transactionHandler.setPayment(transaction, payment)).thenReturn(transaction);
 
     // when
     transactionService.addPayment(AN_ID, payment);

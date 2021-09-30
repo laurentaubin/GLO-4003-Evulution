@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
+import ca.ulaval.glo4003.ws.domain.battery.Battery;
+
 public class Transaction {
 
   private TransactionId transactionId;
@@ -30,11 +32,11 @@ public class Transaction {
     return vehicle.computeRange();
   }
 
-  public Payment getPayment() {
-    return payment;
-  }
-
   public void setPayment(Payment payment) {
     this.payment = payment;
+  }
+
+  public void setBattery(Battery battery) {
+    vehicle.setBattery(battery);
   }
 }

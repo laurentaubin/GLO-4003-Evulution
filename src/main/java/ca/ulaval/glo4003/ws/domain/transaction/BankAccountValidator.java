@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
+import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidBankAccountException;
+
 public class BankAccountValidator {
 
   public void validateBankAccountInformation(int bankNumber, int accountNumber) {

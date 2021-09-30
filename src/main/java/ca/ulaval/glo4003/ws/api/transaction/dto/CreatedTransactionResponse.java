@@ -6,4 +6,7 @@ public class CreatedTransactionResponse {
 
   @JsonProperty("transaction_id")
   public String transactionId;
+
+  @JsonProperty("delivery_id")
+  public String deliveryId;
 }

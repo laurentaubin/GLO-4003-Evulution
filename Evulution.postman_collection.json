@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "aa0dfc3b-7b36-4c89-a6c0-3f8ab8e2453e",
+		"_postman_id": "c633bd87-2ee5-44e9-980f-08781413dd05",
 		"name": "Evulution",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -638,6 +638,7 @@
 									"const res = pm.response.json()",
 									"",
 									"pm.environment.set(\"transaction_id\", res.transaction_id);",
+									"pm.environment.set(\"delivery_id\", res.delivery_id);",
 									"",
 									""
 								],
@@ -721,7 +722,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Vandry\",\n  \"color\": \"white\"\n}",
+							"raw": "{\n  \"name\": \"Vanry\",\n  \"color\": \"white\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1055,6 +1056,182 @@
 								"sales",
 								"{{transaction_id}}",
 								"complete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delivery",
+			"item": [
+				{
+					"name": "Add valid delivery location",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given valid request, status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mode\": \"At campus\",\n  \"location\": \"Vachon\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deliveries",
+								"{{delivery_id}}",
+								"location"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add delivery invalid mode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given invalid mode, status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mode\": \"Not at campus\",\n  \"location\": \"Vachon\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deliveries",
+								"{{delivery_id}}",
+								"location"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add delivery invalid location",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given invalid location, then code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"mode\": \"At campus\",\n  \"location\": \"Pyramide ste foy\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"deliveries",
+								"{{delivery_id}}",
+								"location"
 							]
 						}
 					},
