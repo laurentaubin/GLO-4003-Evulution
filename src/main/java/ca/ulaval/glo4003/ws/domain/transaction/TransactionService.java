@@ -43,4 +43,13 @@ public class TransactionService {
         .getTransaction(transactionId)
         .orElseThrow(() -> new TransactionNotFoundException(transactionId));
   }
+
+  public void addPayment(TransactionId transactionId, Payment payment) {
+    Transaction transaction =
+        transactionRepository
+            .getTransaction(transactionId)
+            .orElseThrow(() -> new TransactionNotFoundException(transactionId));
+    transactionHandler.setPayment(transaction, payment);
+    transactionRepository.update(transaction);
+  }
 }

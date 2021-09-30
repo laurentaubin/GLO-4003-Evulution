@@ -13,6 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransactionHandlerTest {
   private static final String A_MODEL = "Vandry";
   private static final String A_COLOR = "Color";
+  private static final String A_FREQUENCY = "monthly";
+  private static final int A_BANK_NUMBER = 100;
+  private static final int AN_ACCOUNT_NUMBER = 9999999;
 
   @Mock private Transaction transaction;
 
@@ -45,7 +48,25 @@ class TransactionHandlerTest {
     verify(transaction).setVehicle(vehicle);
   }
 
+  @Test
+  void givenPayment_whenSetPayment_thenSetPayment() {
+    // given
+    var payment = createPayment();
+
+    // when
+    transactionHandler.setPayment(transaction, payment);
+
+    // then
+    verify(transaction).setPayment(payment);
+  }
+
   private Vehicle createVehicle() {
     return new Vehicle(Model.fromString(A_MODEL), new Color(A_COLOR));
+  }
+
+  private Payment createPayment() {
+    BankAccount bankAccount = new BankAccount(A_BANK_NUMBER, AN_ACCOUNT_NUMBER);
+
+    return new Payment(bankAccount, Frequency.fromString(A_FREQUENCY));
   }
 }

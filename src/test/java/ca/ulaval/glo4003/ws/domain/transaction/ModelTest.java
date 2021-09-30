@@ -23,10 +23,10 @@ class ModelTest {
   @Test
   void givenInvalidModelString_whenFromString_thenThrowInvalidModel() {
     // given
-    var validModelString = "InvalidModel";
+    var invalidModelString = "InvalidModel";
 
     // when
-    Executable action = () -> Model.fromString(validModelString);
+    Executable action = () -> Model.fromString(invalidModelString);
 
     // then
     assertThrows(InvalidModelException.class, action);

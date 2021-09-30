@@ -172,7 +172,7 @@ Temporary Items
 .idea/*
 Evulution.iml
 target
-.mvn/.mvn.iml
+.mvn/*
 
 # Eclipse project files
 .classpath

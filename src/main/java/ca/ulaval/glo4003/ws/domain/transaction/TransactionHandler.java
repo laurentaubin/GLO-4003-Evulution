@@ -17,4 +17,9 @@ public class TransactionHandler {
     transaction.getVehicle().setBattery(battery);
     return transaction;
   }
+
+  public Transaction setPayment(Transaction transaction, Payment payment) {
+    transaction.setPayment(payment);
+    return transaction;
+  }
 }

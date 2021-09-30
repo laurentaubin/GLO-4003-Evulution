@@ -3,10 +3,13 @@ package ca.ulaval.glo4003.ws.api.transaction;
 import ca.ulaval.glo4003.ws.api.transaction.dto.AddedBatteryResponse;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.CreatedTransactionResponse;
+import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
+import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
+import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
@@ -27,6 +30,8 @@ public class TransactionResourceImpl implements TransactionResource {
   private RoleValidator roleValidator;
   private static final List<Role> privilegedRoles = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
   private BatteryRequestValidator batteryRequestValidator;
+  private PaymentRequestAssembler paymentRequestAssembler;
+  private PaymentRequestValidator paymentRequestValidator;
 
   public TransactionResourceImpl(
       TransactionService transactionService,
@@ -34,21 +39,18 @@ public class TransactionResourceImpl implements TransactionResource {
       VehicleRequestAssembler vehicleRequestAssembler,
       VehicleRequestValidator vehicleRequestValidator,
       RoleValidator roleValidator,
-      BatteryRequestValidator batteryRequestValidator) {
+      BatteryRequestValidator batteryRequestValidator,
+      PaymentRequestAssembler paymentRequestAssembler,
+      PaymentRequestValidator paymentRequestValidator) {
     this.transactionService = transactionService;
     this.createdTransactionResponseAssembler = createdTransactionResponseAssembler;
     this.vehicleRequestAssembler = vehicleRequestAssembler;
     this.vehicleRequestValidator = vehicleRequestValidator;
     this.roleValidator = roleValidator;
     this.batteryRequestValidator = batteryRequestValidator;
+    this.paymentRequestAssembler = paymentRequestAssembler;
+    this.paymentRequestValidator = paymentRequestValidator;
   }
-
-  public TransactionResourceImpl(
-      TransactionService transactionService,
-      CreatedTransactionResponseAssembler createdTransactionResponseAssembler,
-      VehicleRequestAssembler vehicleRequestAssembler,
-      VehicleRequestValidator vehicleRequestValidator,
-      RoleValidator roleValidator) {}
 
   @Override
   public Response createTransaction(ContainerRequestContext containerRequestContext) {
@@ -81,5 +83,13 @@ public class TransactionResourceImpl implements TransactionResource {
     Integer batteryEstimatedRange = transaction.computeRange();
     AddedBatteryResponse batteryResponse = new AddedBatteryResponse(batteryEstimatedRange);
     return Response.accepted().entity(batteryResponse).build();
+  }
+
+  @Override
+  public Response completeTransaction(String transactionId, PaymentRequest paymentRequest) {
+    paymentRequestValidator.validate(paymentRequest);
+    Payment payment = paymentRequestAssembler.create(paymentRequest);
+    transactionService.addPayment(TransactionId.fromString(transactionId), payment);
+    return Response.ok().build();
   }
 }

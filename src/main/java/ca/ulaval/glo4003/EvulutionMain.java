@@ -3,10 +3,12 @@ package ca.ulaval.glo4003;
 import ca.ulaval.glo4003.ws.api.filters.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.mappers.*;
 import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.PaymentRequestAssembler;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
 import ca.ulaval.glo4003.ws.api.transaction.VehicleRequestAssembler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
+import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserAssembler;
@@ -22,6 +24,7 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionHandler;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
@@ -165,6 +168,9 @@ public class EvulutionMain {
     // Setup resources' dependencies (DOMAIN + INFRASTRUCTURE)
     TransactionRepository transactionRepository = new TransactionRepositoryInMemory();
     VehicleRequestAssembler vehicleRequestAssembler = new VehicleRequestAssembler();
+    BankAccountFactory bankAccountFactory = new BankAccountFactory();
+    PaymentRequestAssembler paymentRequestAssembler =
+        new PaymentRequestAssembler(bankAccountFactory);
     CreatedTransactionResponseAssembler createdTransactionResponseAssembler =
         new CreatedTransactionResponseAssembler();
     TransactionHandler transactionHandler = new TransactionHandler();
@@ -175,6 +181,8 @@ public class EvulutionMain {
         new TransactionService(transactionRepository, transactionHandler, batteryRepository);
     VehicleRequestValidator vehicleRequestValidator =
         new VehicleRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
+    PaymentRequestValidator paymentRequestValidator =
+        new PaymentRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
 
     BatteryRequestValidator batteryRequestValidator =
         new BatteryRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
@@ -188,7 +196,9 @@ public class EvulutionMain {
         vehicleRequestAssembler,
         vehicleRequestValidator,
         roleValidator,
-        batteryRequestValidator);
+        batteryRequestValidator,
+        paymentRequestAssembler,
+        paymentRequestValidator);
   }
 
   private static String getHttpPortFromArgs() {

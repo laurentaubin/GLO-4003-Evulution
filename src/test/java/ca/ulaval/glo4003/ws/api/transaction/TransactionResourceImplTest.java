@@ -3,19 +3,15 @@ package ca.ulaval.glo4003.ws.api.transaction;
 import static org.mockito.Mockito.*;
 
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
+import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.*;
-import ca.ulaval.glo4003.ws.domain.transaction.Color;
-import ca.ulaval.glo4003.ws.domain.transaction.Model;
-import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.transaction.Vehicle;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import java.util.ArrayList;
@@ -31,6 +27,9 @@ class TransactionResourceImplTest {
   private static final TransactionId AN_ID = new TransactionId("id");
   private static final String A_MODEL = "Vandry";
   private static final String A_COLOR = "Color";
+  private static final String A_FREQUENCY = "monthly";
+  private static final int A_BANK_NUMBER = 100;
+  private static final int AN_ACCOUNT_NUMBER = 9999999;
 
   private static final String A_BATTERY_TYPE = "AType";
   @Mock private Battery A_BATTERY;
@@ -44,6 +43,8 @@ class TransactionResourceImplTest {
   @Mock private ContainerRequestContext containerRequestContext;
   @Mock private BatteryRequestValidator batteryRequestValidator;
   @Mock private BatteryRepository batteryRepository;
+  @Mock private PaymentRequestAssembler paymentRequestAssembler;
+  @Mock private PaymentRequestValidator paymentRequestValidator;
 
   private Transaction transaction;
   private TransactionResource transactionResource;
@@ -58,7 +59,9 @@ class TransactionResourceImplTest {
             vehicleRequestAssembler,
             vehicleRequestValidator,
             roleValidator,
-            batteryRequestValidator);
+            batteryRequestValidator,
+            paymentRequestAssembler,
+            paymentRequestValidator);
   }
 
   @Test
@@ -136,6 +139,32 @@ class TransactionResourceImplTest {
     verify(transactionService).addBattery(AN_ID, A_BATTERY.getType());
   }
 
+  @Test
+  void givenPaymentRequest_whenAddPayment_thenValidateRequest() {
+    // given
+    var paymentRequest = createPaymentRequest();
+
+    // when
+    transactionResource.completeTransaction(AN_ID.toString(), paymentRequest);
+
+    // then
+    verify(paymentRequestValidator).validate(paymentRequest);
+  }
+
+  @Test
+  void givenPaymentRequest_whenAddPayment_thenAddPayment() {
+    // given
+    var paymentRequest = createPaymentRequest();
+    var payment = createPayment();
+    when(paymentRequestAssembler.create(paymentRequest)).thenReturn(payment);
+
+    // when
+    transactionResource.completeTransaction(AN_ID.toString(), paymentRequest);
+
+    // then
+    verify(transactionService).addPayment(AN_ID, payment);
+  }
+
   private Transaction createTransaction(TransactionId id) {
     return new Transaction(id);
   }
@@ -158,5 +187,19 @@ class TransactionResourceImplTest {
 
   private Vehicle createVehicle() {
     return new Vehicle(Model.fromString(A_MODEL), new Color(A_COLOR));
+  }
+
+  private PaymentRequest createPaymentRequest() {
+    var paymentRequest = new PaymentRequest();
+    paymentRequest.setBankNumber(A_BANK_NUMBER);
+    paymentRequest.setAccountNumber(AN_ACCOUNT_NUMBER);
+    paymentRequest.setFrequency(A_FREQUENCY);
+
+    return paymentRequest;
+  }
+
+  private Payment createPayment() {
+    BankAccount bankAccount = new BankAccount(A_BANK_NUMBER, AN_ACCOUNT_NUMBER);
+    return new Payment(bankAccount, Frequency.fromString(A_FREQUENCY));
   }
 }
