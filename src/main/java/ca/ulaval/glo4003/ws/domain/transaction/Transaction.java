@@ -4,13 +4,9 @@ import ca.ulaval.glo4003.ws.domain.battery.Battery;
 
 public class Transaction {
 
-  private TransactionId transactionId;
+  private final TransactionId transactionId;
   private Vehicle vehicle;
   private Payment payment;
-
-  public Transaction() {
-    this.transactionId = new TransactionId();
-  }
 
   public Transaction(TransactionId transactionId) {
     this.transactionId = transactionId;

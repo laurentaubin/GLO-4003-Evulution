@@ -1,26 +1,34 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
-import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
+import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
+import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
+import ca.ulaval.glo4003.ws.domain.user.exception.WrongOwnerException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -43,11 +51,13 @@ class TransactionResourceImplTest {
   @Mock private CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
   @Mock private VehicleRequestAssembler vehicleRequestAssembler;
   @Mock private VehicleRequestValidator vehicleRequestValidator;
-  @Mock private RoleValidator roleValidator;
+  @Mock private RoleHandler roleHandler;
   @Mock private ContainerRequestContext containerRequestContext;
   @Mock private BatteryRequestValidator batteryRequestValidator;
   @Mock private PaymentRequestAssembler paymentRequestAssembler;
   @Mock private PaymentRequestValidator paymentRequestValidator;
+  @Mock private TransactionOwnershipHandler transactionOwnershipHandler;
+  @Mock private Session aSession;
 
   private Transaction transaction;
   private Delivery delivery;
@@ -61,17 +71,18 @@ class TransactionResourceImplTest {
         new TransactionResourceImpl(
             transactionService,
             deliveryService,
+            transactionOwnershipHandler,
             createdTransactionResponseAssembler,
             vehicleRequestAssembler,
             vehicleRequestValidator,
-            roleValidator,
+            roleHandler,
             batteryRequestValidator,
             paymentRequestAssembler,
             paymentRequestValidator);
   }
 
   @Test
-  void givenTransaction_whenCreateTransaction_thenCreateTransactionResponse() {
+  public void givenTransaction_whenCreateTransaction_thenCreateTransactionResponse() {
     // given
     when(transactionService.createTransaction()).thenReturn(transaction);
     when(deliveryService.createDelivery()).thenReturn(delivery);
@@ -84,7 +95,7 @@ class TransactionResourceImplTest {
   }
 
   @Test
-  void whenCreateTransaction_thenRolesAreValidated() {
+  public void whenCreateTransaction_thenRolesAreValidated() {
     // given
     var vehicleRequest = createVehicleRequest();
 
@@ -92,12 +103,43 @@ class TransactionResourceImplTest {
     transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
-    verify(roleValidator)
-        .validate(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
+    verify(roleHandler)
+        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
   }
 
   @Test
-  void whenVehicleRequest_thenRolesAreValidated() {
+  public void
+      givenTransactionCreatedSuccessfully_whenCreateTransaction_thenAddTransactionOwnershipToUser() {
+    // given
+    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
+    given(transactionService.createTransaction()).willReturn(transaction);
+
+    // when
+    transactionResource.createTransaction(containerRequestContext);
+
+    // then
+    verify(transactionOwnershipHandler).addTransactionOwnership(aSession, AN_ID);
+  }
+
+  @Test
+  public void
+      givenTransactionNotCreatedSuccessfully_whenCreateTransaction_thenDoNotAddTransactionOwnershipToUser() {
+    // given
+    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
+    given(transactionService.createTransaction())
+        .willThrow(new DuplicateTransactionException(AN_ID));
+
+    // when
+    Executable creatingTransaction =
+        () -> transactionResource.createTransaction(containerRequestContext);
+
+    // then
+    assertThrows(DuplicateTransactionException.class, creatingTransaction);
+    verify(transactionOwnershipHandler, times(0)).addTransactionOwnership(aSession, AN_ID);
+  }
+
+  @Test
+  public void whenAddVehicle_thenRolesAreValidated() {
     // given
     var vehicleRequest = createVehicleRequest();
 
@@ -105,12 +147,12 @@ class TransactionResourceImplTest {
     transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
-    verify(roleValidator)
-        .validate(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
+    verify(roleHandler)
+        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
   }
 
   @Test
-  void givenVehicleRequest_whenAddVehicle_thenValidateRequest() {
+  public void givenVehicleRequest_whenAddVehicle_thenValidateRequest() {
     // given
     var vehicleRequest = createVehicleRequest();
 
@@ -122,7 +164,7 @@ class TransactionResourceImplTest {
   }
 
   @Test
-  void givenVehicleRequest_whenAddVehicle_thenAddVehicle() {
+  public void givenTransactionIsOwnedByUser_whenAddVehicle_thenAddVehicle() {
     // given
     var vehicleRequest = createVehicleRequest();
     var vehicle = createVehicle();
@@ -136,40 +178,167 @@ class TransactionResourceImplTest {
   }
 
   @Test
-  void givenBatteryRequest_whenAddBattery_thenBatteryIsAdded() {
+  public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddVehicle() {
     // given
-    BatteryRequest batteryRequest = createBatteryRequest();
+    var vehicleRequest = createVehicleRequest();
+    doThrow(new WrongOwnerException())
+        .when(transactionOwnershipHandler)
+        .validateOwnership(any(), any());
+
     // when
-    transactionResource.addBattery(AN_ID.toString(), batteryRequest);
+    Executable addingBattery =
+        () ->
+            transactionResource.addVehicle(
+                containerRequestContext, AN_ID.toString(), vehicleRequest);
+
+    // then
+    assertThrows(WrongOwnerException.class, addingBattery);
+    verify(transactionService, times(0)).addVehicle(any(), any());
+  }
+
+  @Test
+  public void whenAddVehicle_thenValidateTransactionOwnership() {
+    // given
+    var vehicleRequest = createVehicleRequest();
+    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
+
+    // when
+    transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
+
+    // then
+    verify(transactionOwnershipHandler).validateOwnership(aSession, AN_ID);
+  }
+
+  @Test
+  public void givenTransactionIsOwnedByUser_whenAddBattery_thenBatteryIsAdded() {
+    // given
+    var batteryRequest = createBatteryRequest();
+
+    // when
+    transactionResource.addBattery(containerRequestContext, AN_ID.toString(), batteryRequest);
 
     // then
     verify(transactionService).addBattery(AN_ID, A_BATTERY.getType());
   }
 
   @Test
-  void givenPaymentRequest_whenAddPayment_thenValidateRequest() {
+  public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddBattery() {
+    // given
+    var batteryRequest = createBatteryRequest();
+    doThrow(new WrongOwnerException())
+        .when(transactionOwnershipHandler)
+        .validateOwnership(any(), any());
+
+    // when
+    Executable addingBattery =
+        () ->
+            transactionResource.addBattery(
+                containerRequestContext, AN_ID.toString(), batteryRequest);
+
+    // then
+    assertThrows(WrongOwnerException.class, addingBattery);
+    verify(transactionService, times(0)).addBattery(any(), any());
+  }
+
+  @Test
+  public void whenAddBattery_thenRolesAreValidated() {
+    // given
+    var batteryRequest = createBatteryRequest();
+
+    // when
+    transactionResource.addBattery(containerRequestContext, AN_ID.toString(), batteryRequest);
+
+    // then
+    verify(roleHandler)
+        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
+  }
+
+  @Test
+  public void whenAddBattery_thenValidateTransactionOwnership() {
+    // given
+    var batteryRequest = createBatteryRequest();
+    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
+
+    // when
+    transactionResource.addBattery(containerRequestContext, AN_ID.toString(), batteryRequest);
+
+    // then
+    verify(transactionOwnershipHandler).validateOwnership(aSession, AN_ID);
+  }
+
+  @Test
+  public void givenPaymentRequest_whenCompletePayment_thenValidateRequest() {
     // given
     var paymentRequest = createPaymentRequest();
 
     // when
-    transactionResource.completeTransaction(AN_ID.toString(), paymentRequest);
+    transactionResource.completeTransaction(
+        containerRequestContext, AN_ID.toString(), paymentRequest);
 
     // then
     verify(paymentRequestValidator).validate(paymentRequest);
   }
 
   @Test
-  void givenPaymentRequest_whenAddPayment_thenAddPayment() {
+  public void givenTransactionIsOwnedByUser_whenCompletePayment_thenAddPayment() {
     // given
     var paymentRequest = createPaymentRequest();
     var payment = createPayment();
     when(paymentRequestAssembler.create(paymentRequest)).thenReturn(payment);
 
     // when
-    transactionResource.completeTransaction(AN_ID.toString(), paymentRequest);
+    transactionResource.completeTransaction(
+        containerRequestContext, AN_ID.toString(), paymentRequest);
 
     // then
     verify(transactionService).addPayment(AN_ID, payment);
+  }
+
+  @Test
+  public void givenTransactionIsNotOwnedByUser_whenCompletePayment_thenDoNotAddPayment() {
+    // given
+    var paymentRequest = createPaymentRequest();
+    doThrow(new WrongOwnerException())
+        .when(transactionOwnershipHandler)
+        .validateOwnership(any(), any());
+
+    // when
+    Executable completingTransaction =
+        () ->
+            transactionResource.completeTransaction(
+                containerRequestContext, AN_ID.toString(), paymentRequest);
+
+    // then
+    assertThrows(WrongOwnerException.class, completingTransaction);
+    verify(transactionService, times(0)).addPayment(any(), any());
+  }
+
+  @Test
+  public void whenCompleteTransaction_thenRolesAreValidated() {
+    // given
+    var paymentRequest = createPaymentRequest();
+
+    // when
+    transactionResource.completeTransaction(
+        containerRequestContext, AN_ID.toString(), paymentRequest);
+
+    // then
+    verify(roleHandler)
+        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
+  }
+
+  @Test
+  public void whenCompleteTransaction_thenValidateTransactionOwnership() {
+    // given
+    var paymentRequest = createPaymentRequest();
+    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
+
+    // when
+    transactionResource.completeTransaction(
+        containerRequestContext, AN_ID.toString(), paymentRequest);
+
+    // then
+    verify(transactionOwnershipHandler).validateOwnership(aSession, AN_ID);
   }
 
   private Transaction createTransaction(TransactionId id) {

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class InMemoryUserRepositoryTest {
+  private static final String ANOTHER_NAME = "sdaidhsauidhasiuhda";
+
   private InMemoryUserRepository userRepository;
 
   @BeforeEach
@@ -36,5 +38,20 @@ class InMemoryUserRepositoryTest {
 
     // then
     assertThat(noUser.isEmpty()).isTrue();
+  }
+
+  @Test
+  public void givenUserExists_whenUpdate_thenUpdateUser() {
+    // given
+    User aUser = new UserBuilder().build();
+    userRepository.registerUser(aUser);
+    User anotherUser = new UserBuilder().withName(ANOTHER_NAME).build();
+
+    // when
+    userRepository.update(anotherUser);
+
+    // then
+    User updatedUser = userRepository.findUser(anotherUser.getEmail()).get();
+    assertThat(updatedUser.getName()).matches(ANOTHER_NAME);
   }
 }

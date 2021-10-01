@@ -1,7 +1,7 @@
-package ca.ulaval.glo4003.ws.api.validator;
+package ca.ulaval.glo4003.ws.api.handler;
 
+import ca.ulaval.glo4003.ws.api.handler.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
-import ca.ulaval.glo4003.ws.api.validator.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
@@ -15,13 +15,13 @@ import jakarta.ws.rs.core.HttpHeaders;
 import java.util.List;
 import java.util.Optional;
 
-public class RoleValidator {
+public class RoleHandler {
   private final UserRepository userRepository;
   private final SessionRepository sessionRepository;
   private final SessionTokenGenerator tokenGenerator;
   private final TokenExtractor tokenExtractor;
 
-  public RoleValidator(
+  public RoleHandler(
       UserRepository userRepository,
       SessionRepository sessionRepository,
       SessionTokenGenerator tokenGenerator,
@@ -32,7 +32,8 @@ public class RoleValidator {
     this.tokenExtractor = tokenExtractor;
   }
 
-  public void validate(ContainerRequestContext requestContext, List<Role> requestedRoles) {
+  public Session retrieveSession(
+      ContainerRequestContext requestContext, List<Role> requestedRoles) {
     String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
     String tokenValue = tokenExtractor.extract(authorizationHeader);
     Optional<Session> optionalSession = sessionRepository.find(tokenGenerator.generate(tokenValue));
@@ -52,5 +53,7 @@ public class RoleValidator {
     if (!user.get().isAllowed(requestedRoles)) {
       throw new UnauthorizedUserException();
     }
+
+    return session;
   }
 }

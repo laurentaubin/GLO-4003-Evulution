@@ -6,4 +6,6 @@ public interface UserRepository {
   void registerUser(User user);
 
   Optional<User> findUser(String email);
+
+  void update(User user);
 }

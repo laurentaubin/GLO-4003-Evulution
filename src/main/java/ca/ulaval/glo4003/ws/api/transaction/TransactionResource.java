@@ -4,7 +4,6 @@ import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import jakarta.annotation.Resource;
-import jakarta.ws.rs.*;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -37,12 +36,16 @@ public interface TransactionResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("/{transactionId}/battery")
   Response addBattery(
-      @PathParam("transactionId") String transactionId, BatteryRequest batteryRequest);
+      @Context ContainerRequestContext containerRequestContext,
+      @PathParam("transactionId") String transactionId,
+      BatteryRequest batteryRequest);
 
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("/{transactionId}/complete")
   Response completeTransaction(
-      @PathParam("transactionId") String transactionId, PaymentRequest paymentRequest);
+      @Context ContainerRequestContext containerRequestContext,
+      @PathParam("transactionId") String transactionId,
+      PaymentRequest paymentRequest);
 }

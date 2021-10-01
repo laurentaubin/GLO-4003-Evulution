@@ -1,10 +1,11 @@
-package ca.ulaval.glo4003.ws.api.validator;
+package ca.ulaval.glo4003.ws.api.handler;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+import ca.ulaval.glo4003.ws.api.handler.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
-import ca.ulaval.glo4003.ws.api.validator.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
@@ -27,7 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class RoleValidatorTest {
+class RoleHandlerTest {
   private static final String AN_EMAIL = "anEmail@mail.com";
   private static final String A_AUTH_HEADER_NAME = "Bearer";
   private static final String A_AUTH_TOKEN_VALUE = "some_token_value";
@@ -50,57 +51,60 @@ class RoleValidatorTest {
 
   @Mock private Session aSession;
 
-  private RoleValidator roleValidator;
+  private RoleHandler roleHandler;
 
   @BeforeEach
   public void setUpRoleValidator() {
-    roleValidator =
-        new RoleValidator(userRepository, sessionRepository, sessionTokenGenerator, tokenExtractor);
+    roleHandler =
+        new RoleHandler(userRepository, sessionRepository, sessionTokenGenerator, tokenExtractor);
     given(aContainerRequest.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_AUTH_HEADER);
   }
 
   @Test
-  public void givenAllowedUser_whenIsAllowed_thenAccessIsGranted() {
+  public void givenAllowedUser_whenRetrieveSession_thenReturnActiveSession() {
     // given
     givenRepositories();
 
+    // when
+    Session actualSession = roleHandler.retrieveSession(aContainerRequest, SOME_ROLES);
+
     // then
-    roleValidator.validate(aContainerRequest, SOME_ROLES);
+    assertThat(actualSession).isEqualTo(aSession);
   }
 
   @Test
-  public void givenANotAllowedUser_whenIsAllowed_thenAccessShouldNotBeGranted() {
+  public void givenANotAllowedUser_whenRetrieveSession_thenAccessShouldNotBeGranted() {
     // given
     givenRepositories();
     List<Role> rolesThatTheUserDoesNotHave = List.of(Role.ADMIN);
 
     // when
     Executable validateRoles =
-        () -> roleValidator.validate(aContainerRequest, rolesThatTheUserDoesNotHave);
+        () -> roleHandler.retrieveSession(aContainerRequest, rolesThatTheUserDoesNotHave);
 
     // then
     assertThrows(UnauthorizedUserException.class, validateRoles);
   }
 
   @Test
-  public void givenAnInvalidSession_whenIsAllowed_thenAccessShouldNotBeGranted() {
+  public void givenAnInvalidSession_whenRetrieveSession_thenAccessShouldNotBeGranted() {
     // given
     givenInvalidSessionRepositories();
 
     // when
-    Executable validateRoles = () -> roleValidator.validate(aContainerRequest, SOME_ROLES);
+    Executable validateRoles = () -> roleHandler.retrieveSession(aContainerRequest, SOME_ROLES);
 
     // then
     assertThrows(SessionDoesNotExistException.class, validateRoles);
   }
 
   @Test
-  public void givenAnInvalidUser_whenIsAllowed_thenAccessShouldNotBeGranted() {
+  public void givenAnInvalidUser_whenRetrieveSession_thenAccessShouldNotBeGranted() {
     // given
     givenInvalidUserRepositories();
 
     // when
-    Executable validateRoles = () -> roleValidator.validate(aContainerRequest, SOME_ROLES);
+    Executable validateRoles = () -> roleHandler.retrieveSession(aContainerRequest, SOME_ROLES);
 
     // then
     assertThrows(UserNotFoundException.class, validateRoles);

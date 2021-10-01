@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.api.validator.exception;
+package ca.ulaval.glo4003.ws.api.handler.exception;
 
 public class UnauthorizedUserException extends RuntimeException {
   private static final String error = "UNALLOWED_USER";

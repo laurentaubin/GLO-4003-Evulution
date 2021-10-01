@@ -5,20 +5,9 @@ import ca.ulaval.glo4003.ws.api.delivery.DeliveryResource;
 import ca.ulaval.glo4003.ws.api.delivery.DeliveryResourceImpl;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.filter.secured.AuthenticationFilter;
-import ca.ulaval.glo4003.ws.api.mapper.CatchBirthDateInTheFutureExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchEmailAlreadyInUseExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchEmptyTokenHeaderExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchInvalidLocationExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchInvalidRequestFormatMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchLoginFailedMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchSessionDoesNotExistExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchUnauthorizedUserExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchUserNotFoundExceptionMapper;
-import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
-import ca.ulaval.glo4003.ws.api.transaction.PaymentRequestAssembler;
-import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
-import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
-import ca.ulaval.glo4003.ws.api.transaction.VehicleRequestAssembler;
+import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
+import ca.ulaval.glo4003.ws.api.mapper.*;
+import ca.ulaval.glo4003.ws.api.transaction.*;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
@@ -31,7 +20,6 @@ import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
 import ca.ulaval.glo4003.ws.api.util.DateParser;
 import ca.ulaval.glo4003.ws.api.util.LocalDateProvider;
 import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
-import ca.ulaval.glo4003.ws.api.validator.RoleValidator;
 import ca.ulaval.glo4003.ws.context.ApiContext;
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
@@ -45,11 +33,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.user.BirthDate;
-import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.domain.user.UserRepository;
-import ca.ulaval.glo4003.ws.domain.user.UserService;
+import ca.ulaval.glo4003.ws.domain.user.*;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
 import ca.ulaval.glo4003.ws.infrastructure.authnz.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
@@ -103,10 +87,13 @@ public class EvulutionMain {
 
     // Setup resources (API)
     DeliveryResource deliveryResource = createDeliveryResource();
-    RoleValidator roleValidator =
-        new RoleValidator(userRepository, sessionRepository, sessionTokenGenerator, tokenExtractor);
+    RoleHandler roleHandler =
+        new RoleHandler(userRepository, sessionRepository, sessionTokenGenerator, tokenExtractor);
 
-    TransactionResource transactionResource = createSalesResource(roleValidator);
+    TransactionOwnershipHandler transactionOwnershipHandler =
+        new TransactionOwnershipHandler(sessionRepository, userRepository);
+    TransactionResource transactionResource =
+        createSalesResource(roleHandler, transactionOwnershipHandler);
 
     UserResource userResource =
         createUserResource(userRepository, sessionRepository, sessionAdministrator);
@@ -191,7 +178,8 @@ public class EvulutionMain {
         userAssembler, new LoginResponseAssembler(), userService, registerUserDtoValidator);
   }
 
-  private static TransactionResource createSalesResource(RoleValidator roleValidator) {
+  private static TransactionResource createSalesResource(
+      RoleHandler roleHandler, TransactionOwnershipHandler transactionOwnershipHandler) {
     // Setup resources' dependencies (DOMAIN + INFRASTRUCTURE)
     TransactionRepository transactionRepository = new InMemoryTransactionRepository();
     VehicleRequestAssembler vehicleRequestAssembler = new VehicleRequestAssembler();
@@ -220,10 +208,11 @@ public class EvulutionMain {
     return new TransactionResourceImpl(
         transactionService,
         ServiceLocator.getInstance().resolve(DeliveryService.class),
+        transactionOwnershipHandler,
         createdTransactionResponseAssembler,
         vehicleRequestAssembler,
         vehicleRequestValidator,
-        roleValidator,
+        roleHandler,
         batteryRequestValidator,
         paymentRequestAssembler,
         paymentRequestValidator);

@@ -22,4 +22,9 @@ public class InMemoryUserRepository implements UserRepository {
   public Optional<User> findUser(String email) {
     return Optional.ofNullable(users.get(email));
   }
+
+  @Override
+  public void update(User user) {
+    users.put(user.getEmail(), user);
+  }
 }

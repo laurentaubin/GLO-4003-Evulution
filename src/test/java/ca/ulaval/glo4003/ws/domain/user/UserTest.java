@@ -2,13 +2,20 @@ package ca.ulaval.glo4003.ws.domain.user;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class UserTest {
   private static final Role A_ROLE = Role.ADMIN;
+
+  @Mock private static TransactionId transactionId;
 
   private User user;
 
@@ -48,5 +55,27 @@ class UserTest {
     boolean isAllowed = userWithRequestedRoles.isAllowed(requestedRoles);
 
     assertThat(isAllowed).isFalse();
+  }
+
+  @Test
+  public void givenTransactionAddedToUser_whenDoesOwnTransaction_thenReturnTrue() {
+    // given
+    user.addTransaction(transactionId);
+
+    // when
+    boolean doesUserOwnTransaction = user.doesOwnTransaction(transactionId);
+
+    // then
+    assertThat(doesUserOwnTransaction).isTrue();
+  }
+
+  @Test
+  public void givenTransactionNotAddedToUser_whenDoesOwnTransaction_thenReturnFalse() {
+
+    // when
+    boolean doesUserOwnTransaction = user.doesOwnTransaction(transactionId);
+
+    // then
+    assertThat(doesUserOwnTransaction).isFalse();
   }
 }
