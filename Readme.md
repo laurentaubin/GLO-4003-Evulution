@@ -5,7 +5,7 @@
 - Benjamin: 0
 - Laurent: 0
 - Manef: 0
-- Max: 0
+- Max: 1
 - Mohammed: 0
 - Sean: 0
 - Toma: 0
