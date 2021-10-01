@@ -94,8 +94,8 @@ public class EvulutionMain {
   private static final String BIRTH_DATE_PATTERN = "yyyy-MM-dd";
   private static final String AUTHENTICATION_HEADER_NAME = "Bearer";
 
-  private static final File BATTERY_INFO_FILE = new File("./src/main/resources/batteries.json");
-  private static final File MODEL_INVENTORY = new File("./src/main/resources/models.json");
+  private static final File BATTERY_INFO_FILE = new File("./target/classes/batteries.json");
+  private static final File MODEL_INVENTORY = new File("./target/classes/models.json");
 
   private static final Logger LOGGER = LogManager.getLogger();
 
