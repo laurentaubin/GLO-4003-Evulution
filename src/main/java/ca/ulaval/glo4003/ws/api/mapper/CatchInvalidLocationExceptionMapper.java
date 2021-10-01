@@ -14,7 +14,7 @@ public class CatchInvalidLocationExceptionMapper
   @Override
   public Response toResponse(InvalidLocationException exception) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(exception.getError(), exception.getError()))
+        .entity(new ExceptionResponse(exception.getError(), exception.getDescription()))
         .build();
   }
 }

@@ -13,9 +13,9 @@ public class InMemoryBatteryRepository implements BatteryRepository {
   }
 
   public Battery findByType(String batteryType) {
-    if (!existingBatteries.containsKey(batteryType)) {
-      throw new InvalidBatteryException();
+    if (existingBatteries.containsKey(batteryType.toUpperCase())) {
+      return existingBatteries.get(batteryType.toUpperCase());
     }
-    return existingBatteries.get(batteryType);
+    throw new InvalidBatteryException();
   }
 }

@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class BatteryDtoAssemblerTest {
-  private static final String A_TYPE = "type";
+  private static final String A_TYPE = "TYPE";
   private static final String A_RANGE = "200";
   private static final Integer A_CAPACITY = 200;
   private static final Integer A_PRICE = 200;

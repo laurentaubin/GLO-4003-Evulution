@@ -37,7 +37,7 @@ class ModelDtoAssemblerTest {
 
     // then
     Model assembledModel = models.get(0);
-    assertThat(assembledModel.getName()).isEqualTo(A_NAME);
+    assertThat(assembledModel.getName()).isEqualTo(A_NAME.toUpperCase());
     assertThat(assembledModel.getEfficiency()).isEqualTo(AN_EFFICIENCY);
     assertThat(assembledModel.getBasePrice()).isEqualTo(A_PRICE);
     assertThat(assembledModel.getTimeToProduce()).isEqualTo(A_TIME_TO_PRODUCE);

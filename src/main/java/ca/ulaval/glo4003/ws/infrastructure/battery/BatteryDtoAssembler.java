@@ -15,7 +15,7 @@ public class BatteryDtoAssembler {
 
   private Battery assembleBattery(BatteryDto batteryDto) {
     return new Battery(
-        batteryDto.type,
+        batteryDto.type.toUpperCase(),
         Integer.valueOf(batteryDto.base_NRCAN_range),
         batteryDto.capacity,
         batteryDto.price,

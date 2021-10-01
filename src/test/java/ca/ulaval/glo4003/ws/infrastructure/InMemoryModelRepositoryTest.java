@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class InMemoryModelRepositoryTest {
-  private static final String A_MODEL_NAME = "a model name";
+  private static final String A_MODEL_NAME = "A MODEL NAME";
   private static final String INVALID_MODEL_NAME = "invalid model name";
 
   @Mock private Model aModel;

@@ -13,9 +13,9 @@ public class InMemoryModelRepository implements ModelRepository {
   }
 
   public Model findByModel(String modelName) {
-    if (!models.containsKey(modelName)) {
-      throw new ModelNotFoundException();
+    if (models.containsKey(modelName.toUpperCase())) {
+      return models.get(modelName.toUpperCase());
     }
-    return models.get(modelName);
+    throw new ModelNotFoundException();
   }
 }

@@ -11,7 +11,7 @@ public class ModelDtoAssembler {
 
   private Model assembleModel(ModelDto modelDto) {
     return new Model(
-        modelDto.name,
+        modelDto.name.toUpperCase(),
         modelDto.style,
         modelDto.efficiencyEquivalenceRate,
         modelDto.basePrice,
