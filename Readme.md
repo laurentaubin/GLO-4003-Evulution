@@ -8,7 +8,7 @@
 - Max: 1
 - Mohammed: 0
 - Sean: 0
-- Toma: 0
+- Toma: 1
 
 ## Run the app locally
 
