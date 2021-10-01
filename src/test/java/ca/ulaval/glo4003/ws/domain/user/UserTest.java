@@ -2,9 +2,11 @@ package ca.ulaval.glo4003.ws.domain.user;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,14 +33,38 @@ class UserTest {
   }
 
   @Test
-  public void givenARole_whenAddRole_thenUserHasNewRole() {
+  void givenDeliveryId_whenAddDelivery_thenDoesOwnDeliveryTrue() {
+    // given
+    DeliveryId deliveryId = new DeliveryId("1234");
+
+    // when
+    user.addDelivery(deliveryId);
+
+    // then
+    Assertions.assertTrue(user.doesOwnDelivery(deliveryId));
+  }
+
+  @Test
+  void givenInvalidDeliveryId_whenDoesOwnDelivery_thenReturnFalse() {
+    // given
+    DeliveryId invalidDeliveryId = new DeliveryId("1234");
+
+    // when
+    boolean result = user.doesOwnDelivery(invalidDeliveryId);
+
+    // then
+    Assertions.assertFalse(result);
+  }
+
+  @Test
+  void givenARole_whenAddRole_thenUserHasNewRole() {
     user.addRole(A_ROLE);
 
     assertThat(user.getRoles()).contains(A_ROLE);
   }
 
   @Test
-  public void givenUserPossessRequestedRole_whenIsAllowed_thenUserIsAllowed() {
+  void givenUserPossessRequestedRole_whenIsAllowed_thenUserIsAllowed() {
     User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
     List<Role> requestedRoles = List.of(Role.BASE, Role.ADMIN);
 
@@ -48,7 +74,7 @@ class UserTest {
   }
 
   @Test
-  public void givenUserWithoutRequestedRole_whenIsAllowed_thenUserIsNotAllowed() {
+  void givenUserWithoutRequestedRole_whenIsAllowed_thenUserIsNotAllowed() {
     User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
     List<Role> requestedRoles = List.of(Role.ADMIN);
 
@@ -58,7 +84,7 @@ class UserTest {
   }
 
   @Test
-  public void givenTransactionAddedToUser_whenDoesOwnTransaction_thenReturnTrue() {
+  void givenTransactionAddedToUser_whenDoesOwnTransaction_thenReturnTrue() {
     // given
     user.addTransaction(transactionId);
 
@@ -70,7 +96,7 @@ class UserTest {
   }
 
   @Test
-  public void givenTransactionNotAddedToUser_whenDoesOwnTransaction_thenReturnFalse() {
+  void givenTransactionNotAddedToUser_whenDoesOwnTransaction_thenReturnFalse() {
 
     // when
     boolean doesUserOwnTransaction = user.doesOwnTransaction(transactionId);
