@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidat
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
@@ -38,11 +39,13 @@ public class TransactionResourceImpl implements TransactionResource {
   private final BatteryRequestValidator batteryRequestValidator;
   private final PaymentRequestAssembler paymentRequestAssembler;
   private final PaymentRequestValidator paymentRequestValidator;
+  private final DeliveryOwnershipHandler deliveryOwnershipHandler;
 
   public TransactionResourceImpl(
       TransactionService transactionService,
       DeliveryService deliveryService,
       TransactionOwnershipHandler transactionOwnershipHandler,
+      DeliveryOwnershipHandler deliveryOwnershipHandler,
       CreatedTransactionResponseAssembler createdTransactionResponseAssembler,
       VehicleRequestValidator vehicleRequestValidator,
       RoleHandler roleHandler,
@@ -52,6 +55,7 @@ public class TransactionResourceImpl implements TransactionResource {
     this.transactionService = transactionService;
     this.deliveryService = deliveryService;
     this.transactionOwnershipHandler = transactionOwnershipHandler;
+    this.deliveryOwnershipHandler = deliveryOwnershipHandler;
     this.createdTransactionResponseAssembler = createdTransactionResponseAssembler;
     this.vehicleRequestValidator = vehicleRequestValidator;
     this.roleHandler = roleHandler;
@@ -63,11 +67,12 @@ public class TransactionResourceImpl implements TransactionResource {
   @Override
   public Response createTransaction(ContainerRequestContext containerRequestContext) {
     Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
-    Transaction createdTransaction = transactionService.createTransaction();
-    transactionOwnershipHandler.addTransactionOwnership(userSession, createdTransaction.getId());
-    Delivery delivery = deliveryService.createDelivery();
+    Transaction createdTransaction = createTransaction(userSession);
+    Delivery delivery = createDelivery(userSession);
+
     CreatedTransactionResponse createdTransactionResponse =
         createdTransactionResponseAssembler.assemble(createdTransaction, delivery);
+
     URI transactionUri = URI.create(String.format("/sales/%s", createdTransaction.getId()));
     return Response.created(transactionUri).entity(createdTransactionResponse).build();
   }
@@ -112,5 +117,17 @@ public class TransactionResourceImpl implements TransactionResource {
     Payment payment = paymentRequestAssembler.create(paymentRequest);
     transactionService.addPayment(TransactionId.fromString(transactionId), payment);
     return Response.ok().build();
+  }
+
+  private Delivery createDelivery(Session userSession) {
+    Delivery delivery = deliveryService.createDelivery();
+    deliveryOwnershipHandler.addDeliveryOwnership(userSession, delivery.getDeliveryId());
+    return delivery;
+  }
+
+  private Transaction createTransaction(Session userSession) {
+    Transaction createdTransaction = transactionService.createTransaction();
+    transactionOwnershipHandler.addTransactionOwnership(userSession, createdTransaction.getId());
+    return createdTransaction;
   }
 }

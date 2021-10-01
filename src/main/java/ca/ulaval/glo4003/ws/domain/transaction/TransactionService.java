@@ -7,10 +7,11 @@ import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundExce
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 
 public class TransactionService {
-  private TransactionRepository transactionRepository;
-  private TransactionFactory transactionFactory;
-  private BatteryRepository batteryRepository;
-  private ModelRepository modelRepository;
+
+  private final TransactionRepository transactionRepository;
+  private final TransactionFactory transactionFactory;
+  private final BatteryRepository batteryRepository;
+  private final ModelRepository modelRepository;
 
   public TransactionService(
       TransactionRepository transactionRepository,

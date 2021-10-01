@@ -2,20 +2,21 @@ package ca.ulaval.glo4003.ws.api.delivery;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
+import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryMode;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.delivery.Location;
+import ca.ulaval.glo4003.ws.domain.auth.Session;
+import ca.ulaval.glo4003.ws.domain.delivery.*;
+import ca.ulaval.glo4003.ws.domain.user.Role;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,10 @@ class DeliveryResourceImplTest {
   @Mock private DeliveryService deliveryService;
   @Mock private DeliveryDestinationAssembler deliveryDestinationAssembler;
   @Mock private DeliveryRequestValidator deliveryRequestValidator;
+  @Mock private DeliveryOwnershipHandler deliveryOwnershipHandler;
+  @Mock private RoleHandler roleHandler;
+  @Mock ContainerRequestContext containerRequestContext;
+  @Mock private Session aSession;
 
   private DeliveryResource deliveryResource;
 
@@ -41,7 +46,11 @@ class DeliveryResourceImplTest {
   void setUp() {
     deliveryResource =
         new DeliveryResourceImpl(
-            deliveryService, deliveryRequestValidator, deliveryDestinationAssembler);
+            deliveryService,
+            deliveryRequestValidator,
+            deliveryDestinationAssembler,
+            deliveryOwnershipHandler,
+            roleHandler);
   }
 
   @Test
@@ -50,7 +59,7 @@ class DeliveryResourceImplTest {
     DeliveryLocationRequest request = createDeliveryLocationRequest();
 
     // when
-    deliveryResource.addDeliveryLocation(AN_ID.toString(), request);
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
 
     // then
     verify(deliveryRequestValidator).validate(request);
@@ -64,7 +73,7 @@ class DeliveryResourceImplTest {
     when(deliveryDestinationAssembler.assemble(request)).thenReturn(deliveryDestination);
 
     // when
-    deliveryResource.addDeliveryLocation(AN_ID.toString(), request);
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
 
     // then
     verify(deliveryService).addDeliveryDestination(AN_ID, deliveryDestination);
@@ -79,7 +88,9 @@ class DeliveryResourceImplTest {
 
     // when
     Executable addingLocation =
-        () -> deliveryResource.addDeliveryLocation(AN_ID.toString(), invalidRequest);
+        () ->
+            deliveryResource.addDeliveryLocation(
+                containerRequestContext, AN_ID.toString(), invalidRequest);
 
     // then
     assertThrows(InvalidFormatException.class, addingLocation);
@@ -94,11 +105,38 @@ class DeliveryResourceImplTest {
     when(deliveryDestinationAssembler.assemble(request)).thenReturn(deliveryDestination);
 
     // when
-    Response response = deliveryResource.addDeliveryLocation(AN_ID.toString(), request);
+    Response response =
+        deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
 
     // then
     assertThat(response.getStatus()).isEqualTo(Status.OK.getStatusCode());
     assertThat(response.getEntity()).isEqualTo(EXPECTED_TRANSACTION_COMPLETED_MESSAGE);
+  }
+
+  @Test
+  public void whenAddDeliveryLocation_thenRolesAreValidated() {
+    // given
+    DeliveryLocationRequest request = createDeliveryLocationRequest();
+
+    // when
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
+
+    // then
+    verify(roleHandler)
+        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
+  }
+
+  @Test
+  public void whenAddDeliveryLocation_thenValidateTransactionOwnership() {
+    // given
+    DeliveryLocationRequest request = createDeliveryLocationRequest();
+    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
+
+    // when
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
+
+    // then
+    verify(deliveryOwnershipHandler).validateOwnership(aSession, AN_ID);
   }
 
   private DeliveryLocationRequest createDeliveryLocationRequest() {

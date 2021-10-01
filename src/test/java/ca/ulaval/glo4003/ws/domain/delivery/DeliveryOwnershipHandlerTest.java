@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.domain.user;
+package ca.ulaval.glo4003.ws.domain.delivery;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,7 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.domain.user.exception.WrongOwnerException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,69 +19,68 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class TransactionOwnershipHandlerTest {
+class DeliveryOwnershipHandlerTest {
   private static final String AN_EMAIL = "siaodjasod";
   private static final Session A_SESSION = new Session(new SessionToken("dosakda"), AN_EMAIL);
 
   @Mock private UserRepository userRepository;
   @Mock private User aUser;
-  @Mock private TransactionId aTransactionId;
+  @Mock private DeliveryId aDeliveryId;
 
-  private TransactionOwnershipHandler transactionOwnershipHandler;
+  private DeliveryOwnershipHandler deliveryOwnershipHandler;
 
   @BeforeEach
   public void setUp() {
-    transactionOwnershipHandler = new TransactionOwnershipHandler(userRepository);
+    deliveryOwnershipHandler = new DeliveryOwnershipHandler(userRepository);
   }
 
   @Test
-  public void givenUserExists_whenAddTransactionOwnership_thenAddTransactionToUser() {
+  public void givenUserExists_whenAddDeliveryOwnership_thenAddDeliveryToUser() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
 
     // when
-    transactionOwnershipHandler.addTransactionOwnership(A_SESSION, aTransactionId);
+    deliveryOwnershipHandler.addDeliveryOwnership(A_SESSION, aDeliveryId);
 
     // then
-    verify(aUser).addTransaction(aTransactionId);
+    verify(aUser).addDelivery(aDeliveryId);
   }
 
   @Test
-  public void givenTransactionAddedToUser_whenAddTransactionOwnership_thenSaveUser() {
+  public void givenDeliveryAddedToUser_whenAddDeliveryOwnership_thenSaveUser() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
 
     // when
-    transactionOwnershipHandler.addTransactionOwnership(A_SESSION, aTransactionId);
+    deliveryOwnershipHandler.addDeliveryOwnership(A_SESSION, aDeliveryId);
 
     // then
     verify(userRepository).update(aUser);
   }
 
   @Test
-  public void givenUserIsOwnerOfTransaction_whenValidateOwnership_thenDoNothing() {
+  public void givenUserIsOwnerOfDelivery_whenValidateOwnership_thenDoNothing() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
-    given(aUser.doesOwnTransaction(aTransactionId)).willReturn(true);
+    given(aUser.doesOwnDelivery(aDeliveryId)).willReturn(true);
 
     // when
     Executable validatingOwnership =
-        () -> transactionOwnershipHandler.validateOwnership(A_SESSION, aTransactionId);
+        () -> deliveryOwnershipHandler.validateOwnership(A_SESSION, aDeliveryId);
 
     // then
     assertDoesNotThrow(validatingOwnership);
   }
 
   @Test
-  public void
-      givenUserIsNotOwnerOfTransaction_whenValidateOwnership_thenThrowWrongOwnerException() {
+  public void givenUserIsNotOwnerOfDelivery_whenValidateOwnership_thenThrowWrongOwnerException() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
-    given(aUser.doesOwnTransaction(aTransactionId)).willReturn(false);
+    given(aUser.doesOwnDelivery(aDeliveryId)).willReturn(false);
 
     // when
     Executable validatingOwnership =
-        () -> transactionOwnershipHandler.validateOwnership(A_SESSION, aTransactionId);
+        () -> deliveryOwnershipHandler.validateOwnership(A_SESSION, aDeliveryId);
 
     // then
     assertThrows(WrongOwnerException.class, validatingOwnership);

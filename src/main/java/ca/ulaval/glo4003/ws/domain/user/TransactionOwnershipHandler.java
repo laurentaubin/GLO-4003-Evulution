@@ -1,17 +1,13 @@
 package ca.ulaval.glo4003.ws.domain.user;
 
 import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.user.exception.WrongOwnerException;
+import ca.ulaval.glo4003.ws.domain.user.exception.WrongTransactionOwnerException;
 
 public class TransactionOwnershipHandler {
-  private final SessionRepository sessionRepository;
   private final UserRepository userRepository;
 
-  public TransactionOwnershipHandler(
-      SessionRepository sessionRepository, UserRepository userRepository) {
-    this.sessionRepository = sessionRepository;
+  public TransactionOwnershipHandler(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
@@ -25,7 +21,7 @@ public class TransactionOwnershipHandler {
     User user = userRepository.findUser(session.getEmail()).get();
 
     if (!user.doesOwnTransaction(transactionId)) {
-      throw new WrongOwnerException();
+      throw new WrongTransactionOwnerException();
     }
   }
 }

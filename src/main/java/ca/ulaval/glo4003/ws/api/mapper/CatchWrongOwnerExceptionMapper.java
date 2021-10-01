@@ -10,10 +10,11 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchWrongOwnerExceptionMapper implements ExceptionMapper<WrongOwnerException> {
   private static final int STATUS_CODE = Response.Status.FORBIDDEN.getStatusCode();
   private static final String ERROR = "FORBIDDEN";
-  private static final String DESCRIPTION = "You are not the owner of this transaction";
 
   @Override
   public Response toResponse(WrongOwnerException exception) {
-    return Response.status(STATUS_CODE).entity(new ExceptionResponse(ERROR, DESCRIPTION)).build();
+    return Response.status(STATUS_CODE)
+        .entity(new ExceptionResponse(ERROR, exception.getMessage()))
+        .build();
   }
 }

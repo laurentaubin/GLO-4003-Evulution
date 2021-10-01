@@ -40,6 +40,7 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.Model;
@@ -110,14 +111,18 @@ public class EvulutionMain {
     TokenExtractor tokenExtractor = new TokenExtractor(AUTHENTICATION_HEADER_NAME);
 
     // Setup resources (API)
-    DeliveryResource deliveryResource = createDeliveryResource();
     RoleHandler roleHandler =
         new RoleHandler(userRepository, sessionRepository, sessionTokenGenerator, tokenExtractor);
 
+    DeliveryOwnershipHandler deliveryOwnershipHandler =
+        new DeliveryOwnershipHandler(userRepository);
+    DeliveryResource deliveryResource =
+        createDeliveryResource(roleHandler, deliveryOwnershipHandler);
+
     TransactionOwnershipHandler transactionOwnershipHandler =
-        new TransactionOwnershipHandler(sessionRepository, userRepository);
+        new TransactionOwnershipHandler(userRepository);
     TransactionResource transactionResource =
-        createSalesResource(roleHandler, transactionOwnershipHandler);
+        createSalesResource(roleHandler, transactionOwnershipHandler, deliveryOwnershipHandler);
 
     UserResource userResource =
         createUserResource(userRepository, sessionRepository, sessionAdministrator);
@@ -204,7 +209,9 @@ public class EvulutionMain {
   }
 
   private static TransactionResource createSalesResource(
-      RoleHandler roleHandler, TransactionOwnershipHandler transactionOwnershipHandler)
+      RoleHandler roleHandler,
+      TransactionOwnershipHandler transactionOwnershipHandler,
+      DeliveryOwnershipHandler deliveryOwnershipHandler)
       throws IOException {
     // Setup resources' dependencies (DOMAIN + INFRASTRUCTURE)
     TransactionRepository transactionRepository = new InMemoryTransactionRepository();
@@ -236,6 +243,7 @@ public class EvulutionMain {
         transactionService,
         ServiceLocator.getInstance().resolve(DeliveryService.class),
         transactionOwnershipHandler,
+        deliveryOwnershipHandler,
         createdTransactionResponseAssembler,
         vehicleRequestValidator,
         roleHandler,
@@ -244,7 +252,8 @@ public class EvulutionMain {
         paymentRequestValidator);
   }
 
-  private static DeliveryResource createDeliveryResource() {
+  private static DeliveryResource createDeliveryResource(
+      RoleHandler roleHandler, DeliveryOwnershipHandler deliveryOwnershipHandler) {
     // Setup resources' dependencies (DOMAIN + INFRASTRUCTURE)
 
     DeliveryDestinationAssembler deliveryDestinationAssembler = new DeliveryDestinationAssembler();
@@ -254,7 +263,11 @@ public class EvulutionMain {
         new DeliveryRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
 
     return new DeliveryResourceImpl(
-        deliveryService, deliveryRequestValidator, deliveryDestinationAssembler);
+        deliveryService,
+        deliveryRequestValidator,
+        deliveryDestinationAssembler,
+        deliveryOwnershipHandler,
+        roleHandler);
   }
 
   private static String getHttpPortFromArgs() {

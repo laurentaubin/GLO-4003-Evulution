@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "920470af-cfdc-481b-b91a-e2203789d574",
+		"_postman_id": "9c8dfbb5-02f8-404e-9507-006916882e4d",
 		"name": "Evulution",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -613,12 +613,7 @@
 							"response": []
 						}
 					]
-				}
-			]
-		},
-		{
-			"name": "Transaction",
-			"item": [
+				},
 				{
 					"name": "Permission",
 					"item": [
@@ -994,7 +989,7 @@
 							"response": []
 						},
 						{
-							"name": "bank payment",
+							"name": "bank payment using account #2",
 							"event": [
 								{
 									"listen": "test",
@@ -1050,8 +1045,221 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Add delivery location using account #1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given valid request, status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token_user_1}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"mode\": \"At campus\",\n  \"location\": \"Vachon\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"deliveries",
+										"{{delivery_id}}",
+										"location"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add delivery location using account #2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given invalid ownership, status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token_user_2}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"mode\": \"At campus\",\n  \"location\": \"Vachon\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"deliveries",
+										"{{delivery_id}}",
+										"location"
+									]
+								}
+							},
+							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Transaction",
+			"item": [
+				{
+					"name": "register account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given valid request, status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Cena\",\n  \"birthdate\": \"1222-06-12\",\n  \"password\": \"{{user_password}}\",\n  \"sex\": \"male\",\n  \"email\": \"fdfds@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/customers",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sucessful login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given valid request, status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Given valid request, response has token\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.token).to.be.a('string');",
+									"});",
+									"",
+									"",
+									"",
+									"const res = pm.response.json()",
+									"",
+									"pm.environment.set(\"token\", res.token);",
+									"",
+									"",
+									"console.log(pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"fdfds@gmail.com\",\n  \"password\": \"{{user_password}}\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
 				},
 				{
 					"name": "new transaction",
@@ -1430,6 +1638,21 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1472,6 +1695,21 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1514,6 +1752,21 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1545,6 +1798,167 @@
 		{
 			"name": "Delivery",
 			"item": [
+				{
+					"name": "register account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given valid request, status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Cena\",\n  \"birthdate\": \"1222-06-12\",\n  \"password\": \"{{user_password}}\",\n  \"sex\": \"male\",\n  \"email\": \"fdfdffs@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/customers",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sucessful login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given valid request, status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Given valid request, response has token\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.token).to.be.a('string');",
+									"});",
+									"",
+									"",
+									"",
+									"const res = pm.response.json()",
+									"",
+									"pm.environment.set(\"token\", res.token);",
+									"",
+									"",
+									"console.log(pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"fdfdffs@gmail.com\",\n  \"password\": \"{{user_password}}\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given valid request, status code is 200\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Given valid request, response has token\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.transaction_id).to.be.a('string');",
+									"});",
+									"",
+									"const res = pm.response.json()",
+									"",
+									"pm.environment.set(\"transaction_id\", res.transaction_id);",
+									"pm.environment.set(\"delivery_id\", res.delivery_id);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/sales",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"sales"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Add valid delivery location",
 					"event": [

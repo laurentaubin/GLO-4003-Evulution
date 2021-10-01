@@ -1,11 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.user;
 
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class User {
   private final String name;
@@ -14,7 +11,8 @@ public class User {
   private final String email;
   private final String password;
   private final Set<Role> roles;
-  private final List<TransactionId> transactions;
+  private final Collection<TransactionId> transactions;
+  private final Collection<DeliveryId> deliveries;
 
   public User(String name, BirthDate birthDate, String sex, String email, String password) {
     this.name = name;
@@ -24,6 +22,7 @@ public class User {
     this.password = password;
     this.roles = new HashSet<>(List.of(Role.BASE));
     this.transactions = new ArrayList<>();
+    this.deliveries = new ArrayList<>();
   }
 
   public String getName() {
@@ -62,8 +61,15 @@ public class User {
     transactions.add(transactionId);
   }
 
-  // todo find better name
+  public void addDelivery(DeliveryId deliveryId) {
+    deliveries.add(deliveryId);
+  }
+
   public boolean doesOwnTransaction(TransactionId transactionId) {
     return transactions.contains(transactionId);
+  }
+
+  public boolean doesOwnDelivery(DeliveryId deliveryId) {
+    return deliveries.contains(deliveryId);
   }
 }
