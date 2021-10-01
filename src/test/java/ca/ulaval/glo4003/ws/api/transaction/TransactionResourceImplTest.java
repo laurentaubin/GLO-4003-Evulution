@@ -3,7 +3,12 @@ package ca.ulaval.glo4003.ws.api.transaction;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
@@ -17,7 +22,10 @@ import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.Payment;
+import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
@@ -36,26 +44,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransactionResourceImplTest {
   private static final TransactionId AN_ID = new TransactionId("id");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("id");
-  private static final String A_MODEL = "Vandry";
-  private static final String A_COLOR = "Color";
-  private static final String A_FREQUENCY = "monthly";
-  private static final int A_BANK_NUMBER = 100;
-  private static final int AN_ACCOUNT_NUMBER = 9999999;
-
-  @Mock private DeliveryService deliveryService;
-  private static final String A_BATTERY_TYPE = "AType";
-  @Mock private Battery A_BATTERY;
 
   private final TransactionService transactionService =
       mock(TransactionService.class, RETURNS_DEEP_STUBS);
   @Mock private CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
-  @Mock private VehicleRequestAssembler vehicleRequestAssembler;
   @Mock private VehicleRequestValidator vehicleRequestValidator;
   @Mock private RoleHandler roleHandler;
   @Mock private ContainerRequestContext containerRequestContext;
   @Mock private BatteryRequestValidator batteryRequestValidator;
   @Mock private PaymentRequestAssembler paymentRequestAssembler;
   @Mock private PaymentRequestValidator paymentRequestValidator;
+  @Mock private VehicleRequest vehicleRequest;
+  @Mock private BatteryRequest batteryRequest;
+  @Mock private PaymentRequest paymentRequest;
+  @Mock private Payment payment;
+  @Mock private DeliveryService deliveryService;
+  @Mock private Battery A_BATTERY;
   @Mock private TransactionOwnershipHandler transactionOwnershipHandler;
   @Mock private Session aSession;
 
@@ -73,7 +77,6 @@ class TransactionResourceImplTest {
             deliveryService,
             transactionOwnershipHandler,
             createdTransactionResponseAssembler,
-            vehicleRequestAssembler,
             vehicleRequestValidator,
             roleHandler,
             batteryRequestValidator,
@@ -96,9 +99,6 @@ class TransactionResourceImplTest {
 
   @Test
   public void whenCreateTransaction_thenRolesAreValidated() {
-    // given
-    var vehicleRequest = createVehicleRequest();
-
     // when
     transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
@@ -140,9 +140,6 @@ class TransactionResourceImplTest {
 
   @Test
   public void whenAddVehicle_thenRolesAreValidated() {
-    // given
-    var vehicleRequest = createVehicleRequest();
-
     // when
     transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
@@ -153,9 +150,6 @@ class TransactionResourceImplTest {
 
   @Test
   public void givenVehicleRequest_whenAddVehicle_thenValidateRequest() {
-    // given
-    var vehicleRequest = createVehicleRequest();
-
     // when
     transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
@@ -165,22 +159,16 @@ class TransactionResourceImplTest {
 
   @Test
   public void givenTransactionIsOwnedByUser_whenAddVehicle_thenAddVehicle() {
-    // given
-    var vehicleRequest = createVehicleRequest();
-    var vehicle = createVehicle();
-    when(vehicleRequestAssembler.create(vehicleRequest)).thenReturn(vehicle);
-
     // when
     transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
-    verify(transactionService).addVehicle(AN_ID, vehicle);
+    verify(transactionService).addVehicle(AN_ID, vehicleRequest);
   }
 
   @Test
   public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddVehicle() {
     // given
-    var vehicleRequest = createVehicleRequest();
     doThrow(new WrongOwnerException())
         .when(transactionOwnershipHandler)
         .validateOwnership(any(), any());
@@ -199,7 +187,6 @@ class TransactionResourceImplTest {
   @Test
   public void whenAddVehicle_thenValidateTransactionOwnership() {
     // given
-    var vehicleRequest = createVehicleRequest();
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
 
     // when
@@ -211,20 +198,16 @@ class TransactionResourceImplTest {
 
   @Test
   public void givenTransactionIsOwnedByUser_whenAddBattery_thenBatteryIsAdded() {
-    // given
-    var batteryRequest = createBatteryRequest();
-
     // when
     transactionResource.addBattery(containerRequestContext, AN_ID.toString(), batteryRequest);
 
     // then
-    verify(transactionService).addBattery(AN_ID, A_BATTERY.getType());
+    verify(batteryRequestValidator).validate(batteryRequest);
   }
 
   @Test
   public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddBattery() {
     // given
-    var batteryRequest = createBatteryRequest();
     doThrow(new WrongOwnerException())
         .when(transactionOwnershipHandler)
         .validateOwnership(any(), any());
@@ -242,9 +225,6 @@ class TransactionResourceImplTest {
 
   @Test
   public void whenAddBattery_thenRolesAreValidated() {
-    // given
-    var batteryRequest = createBatteryRequest();
-
     // when
     transactionResource.addBattery(containerRequestContext, AN_ID.toString(), batteryRequest);
 
@@ -256,7 +236,6 @@ class TransactionResourceImplTest {
   @Test
   public void whenAddBattery_thenValidateTransactionOwnership() {
     // given
-    var batteryRequest = createBatteryRequest();
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
 
     // when
@@ -267,10 +246,7 @@ class TransactionResourceImplTest {
   }
 
   @Test
-  public void givenPaymentRequest_whenCompletePayment_thenValidateRequest() {
-    // given
-    var paymentRequest = createPaymentRequest();
-
+  void whenAddPayment_thenValidatePaymentRequest() {
     // when
     transactionResource.completeTransaction(
         containerRequestContext, AN_ID.toString(), paymentRequest);
@@ -282,8 +258,6 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransactionIsOwnedByUser_whenCompletePayment_thenAddPayment() {
     // given
-    var paymentRequest = createPaymentRequest();
-    var payment = createPayment();
     when(paymentRequestAssembler.create(paymentRequest)).thenReturn(payment);
 
     // when
@@ -297,7 +271,6 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransactionIsNotOwnedByUser_whenCompletePayment_thenDoNotAddPayment() {
     // given
-    var paymentRequest = createPaymentRequest();
     doThrow(new WrongOwnerException())
         .when(transactionOwnershipHandler)
         .validateOwnership(any(), any());
@@ -315,9 +288,6 @@ class TransactionResourceImplTest {
 
   @Test
   public void whenCompleteTransaction_thenRolesAreValidated() {
-    // given
-    var paymentRequest = createPaymentRequest();
-
     // when
     transactionResource.completeTransaction(
         containerRequestContext, AN_ID.toString(), paymentRequest);
@@ -330,7 +300,6 @@ class TransactionResourceImplTest {
   @Test
   public void whenCompleteTransaction_thenValidateTransactionOwnership() {
     // given
-    var paymentRequest = createPaymentRequest();
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
 
     // when
@@ -347,39 +316,5 @@ class TransactionResourceImplTest {
 
   private Delivery createDelivery(DeliveryId id) {
     return new Delivery(id);
-  }
-
-  private VehicleRequest createVehicleRequest() {
-    var vehicleRequest = new VehicleRequest();
-    vehicleRequest.setModel(A_MODEL);
-    vehicleRequest.setColor(A_COLOR);
-
-    return vehicleRequest;
-  }
-
-  private BatteryRequest createBatteryRequest() {
-    when(A_BATTERY.getType()).thenReturn(A_BATTERY_TYPE);
-    BatteryRequest batteryRequest = new BatteryRequest();
-    batteryRequest.setType(A_BATTERY.getType());
-
-    return batteryRequest;
-  }
-
-  private Vehicle createVehicle() {
-    return new Vehicle(Model.fromString(A_MODEL), new Color(A_COLOR));
-  }
-
-  private PaymentRequest createPaymentRequest() {
-    var paymentRequest = new PaymentRequest();
-    paymentRequest.setBankNumber(A_BANK_NUMBER);
-    paymentRequest.setAccountNumber(AN_ACCOUNT_NUMBER);
-    paymentRequest.setFrequency(A_FREQUENCY);
-
-    return paymentRequest;
-  }
-
-  private Payment createPayment() {
-    BankAccount bankAccount = new BankAccount(A_BANK_NUMBER, AN_ACCOUNT_NUMBER);
-    return new Payment(bankAccount, Frequency.fromString(A_FREQUENCY));
   }
 }

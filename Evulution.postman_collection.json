@@ -1213,7 +1213,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n}",
+							"raw": "{\n    \"name\": \"VANDz\",\n    \"color\": \"any\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1476,7 +1476,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"bank_no\": \"20s\",\n  \"account_no\": 1999999,\n  \"frequency\": \"daily\"\n}",
+							"raw": "{\n  \"bank_no\": 2000,\n  \"account_no\": 1999999,\n  \"frequency\": \"daily\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

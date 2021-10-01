@@ -3,30 +3,30 @@ package ca.ulaval.glo4003.ws.api.mapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidModelException;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.ModelNotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CatchInvalidModelExceptionMapperTest {
-  private InvalidModelExceptionMapper exceptionMapper;
+  private CatchModelNotFoundExceptionMapper exceptionMapper;
 
   @BeforeEach
   void setUp() {
-    exceptionMapper = new InvalidModelExceptionMapper();
+    exceptionMapper = new CatchModelNotFoundExceptionMapper();
   }
 
   @Test
   void givenInvalidModelException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
-    InvalidModelException exception = new InvalidModelException();
+    ModelNotFoundException exception = new ModelNotFoundException();
 
     // when
     Response response = exceptionMapper.toResponse(exception);
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then
-    assertEquals(exception.error, exceptionResponse.getError());
-    assertEquals(exception.description, exceptionResponse.getDescription());
+    assertEquals(ModelNotFoundException.error, exceptionResponse.getError());
+    assertEquals(ModelNotFoundException.description, exceptionResponse.getDescription());
   }
 }

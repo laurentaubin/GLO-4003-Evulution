@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.CannotAddBatteryBeforeVehicleException;
+import java.math.BigDecimal;
 
 public class Transaction {
 
@@ -16,23 +18,22 @@ public class Transaction {
     return transactionId;
   }
 
-  public Vehicle getVehicle() {
-    return vehicle;
+  public void addBattery(Battery battery) {
+    if (vehicle == null) {
+      throw new CannotAddBatteryBeforeVehicleException();
+    }
+    vehicle.addBattery(battery);
   }
 
-  public void setVehicle(Vehicle vehicle) {
+  public void addVehicle(Vehicle vehicle) {
     this.vehicle = vehicle;
   }
 
-  public Integer computeRange() {
+  public BigDecimal computeEstimatedVehicleRange() {
     return vehicle.computeRange();
   }
 
-  public void setPayment(Payment payment) {
+  public void addPayment(Payment payment) {
     this.payment = payment;
-  }
-
-  public void setBattery(Battery battery) {
-    vehicle.setBattery(battery);
   }
 }

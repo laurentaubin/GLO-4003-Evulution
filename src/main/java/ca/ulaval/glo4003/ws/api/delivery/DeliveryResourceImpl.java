@@ -9,7 +9,6 @@ import jakarta.ws.rs.core.Response;
 
 public class DeliveryResourceImpl implements DeliveryResource {
   public static final String ADD_DELIVERY_MESSAGE = "Transaction complete";
-
   private final DeliveryService deliveryService;
   private final DeliveryRequestValidator deliveryRequestValidator;
   private final DeliveryDestinationAssembler deliveryDestinationAssembler;

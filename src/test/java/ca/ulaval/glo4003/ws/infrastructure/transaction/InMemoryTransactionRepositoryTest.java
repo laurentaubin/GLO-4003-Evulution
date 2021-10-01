@@ -3,7 +3,10 @@ package ca.ulaval.glo4003.ws.infrastructure.transaction;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.Vehicle;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import java.util.Optional;
@@ -11,16 +14,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class InMemoryTransactionRepositoryTest {
   private static final TransactionId AN_ID = new TransactionId("id");
-  private static final Model A_MODEL = Model.VANDRY;
-  private static final Color A_COLOR = new Color("color");
 
   private Transaction transaction;
   private TransactionRepository transactionRepository;
+
+  @Mock private Vehicle aVehicle;
 
   @BeforeEach
   void setUp() {
@@ -65,7 +69,7 @@ class InMemoryTransactionRepositoryTest {
   void givenTransactionInRepository_whenUpdate_thenUpdateTransaction() {
     // given
     Transaction updatedTransaction = createTransactionGivenId(AN_ID);
-    updatedTransaction.setVehicle(createVehicle());
+    updatedTransaction.addVehicle(aVehicle);
     transactionRepository.save(transaction);
 
     // when
@@ -90,9 +94,5 @@ class InMemoryTransactionRepositoryTest {
 
   private Transaction createTransactionGivenId(TransactionId id) {
     return new Transaction(id);
-  }
-
-  private Vehicle createVehicle() {
-    return new Vehicle(A_MODEL, A_COLOR);
   }
 }

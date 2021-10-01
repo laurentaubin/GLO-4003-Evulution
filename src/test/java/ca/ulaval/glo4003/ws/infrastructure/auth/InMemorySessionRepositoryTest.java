@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.infrastructure.authnz;
+package ca.ulaval.glo4003.ws.infrastructure.auth;
 
 import static com.google.common.truth.Truth.assertThat;
 

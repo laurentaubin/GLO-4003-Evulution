@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 class CatchDuplicateTransactionExceptionMapperTest {
   private static final TransactionId AN_ID = new TransactionId("id");
 
-  private DuplicateTransactionExceptionMapper exceptionMapper;
+  private CatchDuplicateTransactionExceptionMapper exceptionMapper;
 
   @BeforeEach
   void setUp() {
-    exceptionMapper = new DuplicateTransactionExceptionMapper();
+    exceptionMapper = new CatchDuplicateTransactionExceptionMapper();
   }
 
   @Test

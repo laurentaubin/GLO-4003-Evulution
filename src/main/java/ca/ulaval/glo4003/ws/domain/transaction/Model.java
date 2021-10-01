@@ -1,27 +1,40 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
-import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidModelException;
+import java.math.BigDecimal;
 
-public enum Model {
-  VANDRY("Vandry"),
-  POULIOT("Pouliot"),
-  DESJARDINS("Desjardins");
+public class Model {
+  private String name;
+  private String style;
+  private BigDecimal efficiency;
+  private Integer basePrice;
+  private String timeToProduce;
 
-  private String model;
-
-  Model(String model) {
-    this.model = model;
+  public Model(
+      String name, String style, BigDecimal efficiency, Integer basePrice, String timeToProduce) {
+    this.name = name;
+    this.style = style;
+    this.efficiency = efficiency;
+    this.basePrice = basePrice;
+    this.timeToProduce = timeToProduce;
   }
 
-  public static Model fromString(String value) {
-    try {
-      return Model.valueOf(value.toUpperCase());
-    } catch (IllegalArgumentException e) {
-      throw new InvalidModelException();
-    }
+  public BigDecimal getEfficiency() {
+    return efficiency;
   }
 
-  public String getModel() {
-    return model;
+  public String getName() {
+    return name;
+  }
+
+  public Integer getBasePrice() {
+    return basePrice;
+  }
+
+  public String getStyle() {
+    return style;
+  }
+
+  public String getTimeToProduce() {
+    return timeToProduce;
   }
 }

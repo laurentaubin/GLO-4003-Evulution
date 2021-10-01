@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.ws.domain.battery.InvalidBatteryException;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 class InMemoryBatteryRepositoryTest {
   private static final String EXISTING_BATTERY_TYPE = "STANDARD";
@@ -40,26 +41,24 @@ class InMemoryBatteryRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    batteryRepository = new InMemoryBatteryRepository();
+    batteryRepository = new InMemoryBatteryRepository(EXISTING_BATTERIES);
   }
 
   @Test
   void givenExistingBattery_whenFindByType_thenValidationPassesSuccessfully() {
-    // given
-    batteryRepository.save(EXISTING_BATTERIES);
+    // when
+    Executable findingByType = () -> batteryRepository.findByType(EXISTING_BATTERY.getType());
 
-    // when/then
-    assertDoesNotThrow(() -> batteryRepository.findByType(EXISTING_BATTERY.getType()));
+    // then
+    assertDoesNotThrow(findingByType);
   }
 
   @Test
   void givenExistingBattery_whenSave_thenValidationFails() {
-    // given
-    batteryRepository.save(EXISTING_BATTERIES);
+    // when
+    Executable saving = () -> batteryRepository.findByType(NON_EXISTING_BATTERY.getType());
 
-    // when/then
-    assertThrows(
-        InvalidBatteryException.class,
-        () -> batteryRepository.findByType(NON_EXISTING_BATTERY.getType()));
+    // then
+    assertThrows(InvalidBatteryException.class, saving);
   }
 }

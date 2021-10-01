@@ -9,14 +9,14 @@ import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class CatchInvalidRequestExceptionMapperTest {
+class CatchInvalidFormatExceptionMapperTest {
   private static final String A_PROPERTY = "Property";
 
-  private InvalidRequestExceptionMapper exceptionMapper;
+  private CatchInvalidFormatExceptionMapper exceptionMapper;
 
   @BeforeEach
   void setUp() {
-    exceptionMapper = new InvalidRequestExceptionMapper();
+    exceptionMapper = new CatchInvalidFormatExceptionMapper();
   }
 
   @Test

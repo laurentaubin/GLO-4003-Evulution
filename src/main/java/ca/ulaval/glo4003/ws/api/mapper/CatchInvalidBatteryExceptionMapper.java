@@ -1,20 +1,20 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidLocationException;
+import ca.ulaval.glo4003.ws.domain.battery.InvalidBatteryException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 @Provider
-public class CatchInvalidLocationExceptionMapper
-    implements ExceptionMapper<InvalidLocationException> {
+public class CatchInvalidBatteryExceptionMapper
+    implements ExceptionMapper<InvalidBatteryException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
 
   @Override
-  public Response toResponse(InvalidLocationException exception) {
+  public Response toResponse(InvalidBatteryException e) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(exception.getError(), exception.getError()))
+        .entity(new ExceptionResponse(e.error, e.description))
         .build();
   }
 }

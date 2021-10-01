@@ -1,8 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.battery;
 
 public class Battery {
-
-  // TODO encapsulate some of these attributes in domain classes (price, time for ex.)
   public String type;
   public Integer baseNRCANRange;
   public Integer capacity;

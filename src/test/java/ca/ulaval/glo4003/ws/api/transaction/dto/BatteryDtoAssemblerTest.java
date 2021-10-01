@@ -5,6 +5,8 @@ import static com.google.common.truth.Truth.assertThat;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDtoAssembler;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,24 +28,25 @@ class BatteryDtoAssemblerTest {
   }
 
   @Test
-  void givenBatteryDTO_whenAssembleBattery_thenReturnBattery() {
+  void givenBatteryDtos_whenAssembleBatteries_thenReturnBatteries() {
     // given
-    BatteryDto batteryDTO = new BatteryDto();
-
-    batteryDTO.type = A_TYPE;
-    batteryDTO.base_NRCAN_range = A_RANGE;
-    batteryDTO.capacity = A_CAPACITY;
-    batteryDTO.price = A_PRICE;
-    batteryDTO.time_to_produce = A_TIME_TO_PRODUCE;
+    BatteryDto batteryDto = new BatteryDto();
+    batteryDto.type = A_TYPE;
+    batteryDto.base_NRCAN_range = A_RANGE;
+    batteryDto.capacity = A_CAPACITY;
+    batteryDto.price = A_PRICE;
+    batteryDto.time_to_produce = A_TIME_TO_PRODUCE;
 
     // when
-    Battery battery = batteryDTOAssembler.assembleBattery(batteryDTO);
+    List<Battery> batteries =
+        batteryDTOAssembler.assembleBatteries(new ArrayList<>(List.of(batteryDto)));
 
     // then
-    assertThat(battery.getType()).matches(A_TYPE);
-    assertThat(String.valueOf(battery.getCapacity())).matches(String.valueOf(A_CAPACITY));
-    assertThat(String.valueOf(battery.getBaseNRCANRange())).matches(A_RANGE);
-    assertThat(String.valueOf(battery.getPrice())).matches(String.valueOf(A_PRICE));
-    assertThat(String.valueOf(battery.getTimeToProduce())).matches(A_TIME_TO_PRODUCE);
+    Battery assembledBattery = batteries.get(0);
+    assertThat(assembledBattery.getType()).isEqualTo(A_TYPE);
+    assertThat(assembledBattery.getCapacity()).isEqualTo(A_CAPACITY);
+    assertThat(assembledBattery.getBaseNRCANRange()).isEqualTo(Integer.valueOf(A_RANGE));
+    assertThat(assembledBattery.getTimeToProduce()).isEqualTo(Integer.valueOf(A_TIME_TO_PRODUCE));
+    assertThat(assembledBattery.getPrice()).isEqualTo(A_PRICE);
   }
 }

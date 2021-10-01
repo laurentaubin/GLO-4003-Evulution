@@ -9,11 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CatchInvalidBatteryExceptionMapperTest {
-  private InvalidBatteryExceptionMapper exceptionMapper;
+  private CatchInvalidBatteryExceptionMapper exceptionMapper;
 
   @BeforeEach
   void setUp() {
-    exceptionMapper = new InvalidBatteryExceptionMapper();
+    exceptionMapper = new CatchInvalidBatteryExceptionMapper();
   }
 
   @Test

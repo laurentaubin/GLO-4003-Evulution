@@ -6,8 +6,20 @@ import ca.ulaval.glo4003.ws.api.delivery.DeliveryResourceImpl;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.filter.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.mapper.*;
-import ca.ulaval.glo4003.ws.api.transaction.*;
+import ca.ulaval.glo4003.ws.api.mapper.CatchBirthDateInTheFutureExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchCannotAddBatteryBeforeVehicleExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchEmailAlreadyInUseExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchEmptyTokenHeaderExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchInvalidLocationExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchInvalidRequestFormatMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchLoginFailedMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchSessionDoesNotExistExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchUnauthorizedUserExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.CatchUserNotFoundExceptionMapper;
+import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.PaymentRequestAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
+import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
@@ -30,12 +42,22 @@ import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.Model;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.user.*;
+import ca.ulaval.glo4003.ws.domain.user.BirthDate;
+import ca.ulaval.glo4003.ws.domain.user.Role;
+import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
+import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.UserService;
+import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
-import ca.ulaval.glo4003.ws.infrastructure.authnz.InMemorySessionRepository;
+import ca.ulaval.glo4003.ws.infrastructure.InMemoryModelRepository;
+import ca.ulaval.glo4003.ws.infrastructure.ModelDto;
+import ca.ulaval.glo4003.ws.infrastructure.ModelDtoAssembler;
+import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDtoAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.battery.InMemoryBatteryRepository;
@@ -46,6 +68,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validation;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -71,6 +94,7 @@ public class EvulutionMain {
   private static final String AUTHENTICATION_HEADER_NAME = "Bearer";
 
   private static final File BATTERY_INFO_FILE = new File("./src/main/resources/batteries.json");
+  private static final File MODEL_INVENTORY = new File("./src/main/resources/models.json");
 
   private static final Logger LOGGER = LogManager.getLogger();
 
@@ -120,6 +144,7 @@ public class EvulutionMain {
     config.register(new CatchEmptyTokenHeaderExceptionMapper());
     config.register(new CatchInvalidLocationExceptionMapper());
     config.register(new CatchBirthDateInTheFutureExceptionMapper());
+    config.register(new CatchCannotAddBatteryBeforeVehicleExceptionMapper());
 
     config.register(
         new AuthenticationFilter(
@@ -179,20 +204,16 @@ public class EvulutionMain {
   }
 
   private static TransactionResource createSalesResource(
-      RoleHandler roleHandler, TransactionOwnershipHandler transactionOwnershipHandler) {
+      RoleHandler roleHandler, TransactionOwnershipHandler transactionOwnershipHandler)
+      throws IOException {
     // Setup resources' dependencies (DOMAIN + INFRASTRUCTURE)
     TransactionRepository transactionRepository = new InMemoryTransactionRepository();
-    VehicleRequestAssembler vehicleRequestAssembler = new VehicleRequestAssembler();
     BankAccountFactory bankAccountFactory = new BankAccountFactory();
     PaymentRequestAssembler paymentRequestAssembler =
         new PaymentRequestAssembler(bankAccountFactory);
     CreatedTransactionResponseAssembler createdTransactionResponseAssembler =
         new CreatedTransactionResponseAssembler();
     TransactionFactory transactionFactory = new TransactionFactory();
-    BatteryRepository batteryRepository = new InMemoryBatteryRepository();
-
-    TransactionService transactionService =
-        new TransactionService(transactionRepository, transactionFactory, batteryRepository);
 
     VehicleRequestValidator vehicleRequestValidator =
         new VehicleRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
@@ -202,15 +223,20 @@ public class EvulutionMain {
     BatteryRequestValidator batteryRequestValidator =
         new BatteryRequestValidator(Validation.buildDefaultValidatorFactory().getValidator());
     BatteryDtoAssembler batteryDTOAssembler = new BatteryDtoAssembler();
+    ModelDtoAssembler modelDTOAssembler = new ModelDtoAssembler();
 
-    setUpInventories(batteryRepository, batteryDTOAssembler);
+    BatteryRepository batteryRepository = setupBatteryInventory(batteryDTOAssembler);
+    ModelRepository modelRepository = setUpModelInventory(modelDTOAssembler);
+
+    TransactionService transactionService =
+        new TransactionService(
+            transactionRepository, transactionFactory, batteryRepository, modelRepository);
 
     return new TransactionResourceImpl(
         transactionService,
         ServiceLocator.getInstance().resolve(DeliveryService.class),
         transactionOwnershipHandler,
         createdTransactionResponseAssembler,
-        vehicleRequestAssembler,
         vehicleRequestValidator,
         roleHandler,
         batteryRequestValidator,
@@ -240,6 +266,7 @@ public class EvulutionMain {
     return httpPort;
   }
 
+  // todo PUT in a .properties file ?
   private static void createCatherinesAccount(UserService userService) {
     User adminUser =
         new User(
@@ -252,23 +279,31 @@ public class EvulutionMain {
     userService.registerUser(adminUser);
   }
 
-  // TODO WIP, rename and maybe move somewhere else this class is kinda packed + do the same for
-  // cars
-  private static void setUpInventories(
-      BatteryRepository batteryRepository, BatteryDtoAssembler batteryDTOAssembler) {
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      List<Battery> batteriesListFromContext =
-          batteryDTOAssembler.assembleBatteries(
-              objectMapper.readValue(BATTERY_INFO_FILE, new TypeReference<List<BatteryDto>>() {}));
-      Map<String, Battery> batteriesInventory = new HashMap<>();
-      for (Battery battery : batteriesListFromContext) {
-        batteriesInventory.put(battery.getType(), battery);
-      }
-      batteryRepository.save(batteriesInventory);
-    } catch (Exception e) {
-      // TODO Map to the correct Error (500 error expected)
-      System.out.println(e);
+  private static BatteryRepository setupBatteryInventory(BatteryDtoAssembler batteryDTOAssembler)
+      throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    List<Battery> batteriesListFromContext =
+        batteryDTOAssembler.assembleBatteries(
+            objectMapper.readValue(BATTERY_INFO_FILE, new TypeReference<List<BatteryDto>>() {}));
+    Map<String, Battery> batteriesInventory = new HashMap<>();
+    for (Battery battery : batteriesListFromContext) {
+      batteriesInventory.put(battery.getType(), battery);
     }
+    return new InMemoryBatteryRepository(batteriesInventory);
+  }
+
+  private static ModelRepository setUpModelInventory(ModelDtoAssembler modelDtoAssembler)
+      throws IOException {
+    ModelRepository modelRepository;
+    ObjectMapper objectMapper = new ObjectMapper();
+    List<Model> modelListFromContext =
+        modelDtoAssembler.assembleModels(
+            objectMapper.readValue(MODEL_INVENTORY, new TypeReference<List<ModelDto>>() {}));
+    Map<String, Model> modelInventory = new HashMap<>();
+    for (Model model : modelListFromContext) {
+      modelInventory.put(model.getName(), model);
+    }
+    modelRepository = new InMemoryModelRepository(modelInventory);
+    return modelRepository;
   }
 }

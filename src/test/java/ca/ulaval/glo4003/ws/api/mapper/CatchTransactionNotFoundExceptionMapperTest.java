@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 class CatchTransactionNotFoundExceptionMapperTest {
   private static final TransactionId AN_ID = new TransactionId("id");
 
-  private TransactionNotFoundExceptionMapper exceptionMapper;
+  private CatchTransactionNotFoundExceptionMapper exceptionMapper;
 
   @BeforeEach
   void setUp() {
-    exceptionMapper = new TransactionNotFoundExceptionMapper();
+    exceptionMapper = new CatchTransactionNotFoundExceptionMapper();
   }
 
   @Test
