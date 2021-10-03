@@ -2,4 +2,4 @@
 
 heroku git:remote -a ev-ul-tion
 
-git push heroku main
+git push -f heroku main

@@ -6,16 +6,7 @@ import ca.ulaval.glo4003.ws.api.delivery.DeliveryResourceImpl;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.filter.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.mapper.CatchBirthDateInTheFutureExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchCannotAddBatteryBeforeVehicleExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchEmailAlreadyInUseExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchEmptyTokenHeaderExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchInvalidLocationExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchInvalidRequestFormatMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchLoginFailedMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchSessionDoesNotExistExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchUnauthorizedUserExceptionMapper;
-import ca.ulaval.glo4003.ws.api.mapper.CatchUserNotFoundExceptionMapper;
+import ca.ulaval.glo4003.ws.api.mapper.*;
 import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
 import ca.ulaval.glo4003.ws.api.transaction.PaymentRequestAssembler;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
@@ -42,17 +33,8 @@ import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
-import ca.ulaval.glo4003.ws.domain.transaction.Model;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.user.BirthDate;
-import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.domain.user.UserRepository;
-import ca.ulaval.glo4003.ws.domain.user.UserService;
+import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.user.*;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
 import ca.ulaval.glo4003.ws.infrastructure.InMemoryModelRepository;
@@ -87,7 +69,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 @SuppressWarnings("all")
 public class EvulutionMain {
   public static boolean isDev = true; // Would be a JVM argument or in a .property file
-  public static final String BASE_URI = "http://localhost:8080/";
+  public static final String BASE_URI = "http://localhost";
   private static final String DEFAULT_PORT = "8080";
   private static final String PORT_JAVA_OPTION = "port";
 
