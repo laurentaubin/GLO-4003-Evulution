@@ -1,14 +1,21 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
-public class Color {
+import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidVehicleColorException;
 
-  private String color;
+public enum Color {
+  WHITE("white");
 
-  public Color(String color) {
+  private final String color;
+
+  Color(String color) {
     this.color = color;
   }
 
-  public String getColor() {
-    return color;
+  public static Color fromString(String value) {
+    try {
+      return Color.valueOf(value.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new InvalidVehicleColorException();
+    }
   }
 }

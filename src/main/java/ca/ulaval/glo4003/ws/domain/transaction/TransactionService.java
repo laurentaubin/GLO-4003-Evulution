@@ -33,7 +33,7 @@ public class TransactionService {
   public void addVehicle(TransactionId transactionId, VehicleRequest vehicleRequest) {
     Transaction transaction = getTransaction(transactionId);
     Model model = modelRepository.findByModel(vehicleRequest.getModel());
-    Vehicle vehicle = new Vehicle(model, new Color(vehicleRequest.getColor()));
+    Vehicle vehicle = new Vehicle(model, Color.fromString(vehicleRequest.getColor()));
     transaction.addVehicle(vehicle);
     transactionRepository.update(transaction);
   }

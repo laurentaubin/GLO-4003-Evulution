@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransactionServiceTest {
   private static final TransactionId AN_ID = new TransactionId("id");
   private static final String A_BATTERY_TYPE = "STANDARD";
+  private static final String A_VEHICLE_COLOR = Color.WHITE.toString();
 
   @Mock private TransactionRepository transactionRepository;
   @Mock private TransactionFactory transactionFactory;
@@ -71,6 +72,7 @@ class TransactionServiceTest {
   void givenVehicleAndTransactionId_whenAddVehicle_thenRepositoryUpdateTransaction() {
     // given
     when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
+    when(vehicleRequest.getColor()).thenReturn(A_VEHICLE_COLOR);
 
     // when
     transactionService.addVehicle(AN_ID, vehicleRequest);

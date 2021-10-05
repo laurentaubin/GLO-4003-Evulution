@@ -16,16 +16,16 @@ class VehicleTest {
   private static final Integer A_BATTERY_RANGE = 100;
   private static final int FIFTY_PERCENT = 50;
   private static final int HUNDRED_PERCENT = 100;
+  private static final Color A_COLOR = Color.WHITE;
 
   @Mock private Model aModel;
-  @Mock private Color aColor;
   @Mock private Battery aBattery;
 
   private Vehicle vehicle;
 
   @BeforeEach
   public void setUp() {
-    vehicle = new Vehicle(aModel, aColor);
+    vehicle = new Vehicle(aModel, A_COLOR);
   }
 
   @Test
@@ -58,9 +58,9 @@ class VehicleTest {
   }
 
   @Test
-  public void givenANewVehiculeWithNoBattery_whenHasBattery_thenReturnFalse() {
+  public void givenANewVehicleWithNoBattery_whenHasBattery_thenReturnFalse() {
     // given
-    Vehicle vehicle = new Vehicle(aModel, aColor);
+    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
 
     // when
     boolean hasBattery = vehicle.hasBattery();
@@ -70,9 +70,9 @@ class VehicleTest {
   }
 
   @Test
-  public void givenAVehiculeWithBattery_whenHasBattery_thenReturnTrue() {
+  public void givenAVehicleWithBattery_whenHasBattery_thenReturnTrue() {
     // given
-    Vehicle vehicle = new Vehicle(aModel, aColor);
+    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
     vehicle.addBattery(aBattery);
 
     // when
