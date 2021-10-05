@@ -29,6 +29,7 @@ class TransactionServiceTest {
   @Mock private VehicleRequest vehicleRequest;
   @Mock private Vehicle vehicle;
   @Mock private Payment payment;
+  @Mock private Transaction aTransaction;
 
   private TransactionService transactionService;
   private Transaction transaction;
@@ -117,13 +118,13 @@ class TransactionServiceTest {
   @Test
   void givenPaymentAndTransactionId_whenAddPayment_thenRepositoryUpdateTransaction() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
+    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(aTransaction));
 
     // when
     transactionService.addPayment(AN_ID, payment);
 
     // then
-    verify(transactionRepository).update(transaction);
+    verify(transactionRepository).update(aTransaction);
   }
 
   @Test

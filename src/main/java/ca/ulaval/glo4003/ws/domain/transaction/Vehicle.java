@@ -22,4 +22,8 @@ public class Vehicle {
     BigDecimal baseBatteryRange = BigDecimal.valueOf(battery.getBaseNRCANRange());
     return (baseBatteryRange.multiply(model.getEfficiency())).divide(BigDecimal.valueOf(100));
   }
+
+  public boolean hasBattery() {
+    return battery != null;
+  }
 }

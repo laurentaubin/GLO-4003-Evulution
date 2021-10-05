@@ -44,6 +44,7 @@ class VehicleTest {
 
   @Test
   public void givenHundredPercentEfficiency_whenComputeRange_thenReturnFullBatteryRange() {
+    // given
     when(aModel.getEfficiency()).thenReturn(BigDecimal.valueOf(HUNDRED_PERCENT));
     when(aBattery.getBaseNRCANRange()).thenReturn(A_BATTERY_RANGE);
     vehicle.addBattery(aBattery);
@@ -54,5 +55,30 @@ class VehicleTest {
 
     // then
     assertThat(batteryRange).isEqualTo(expected);
+  }
+
+  @Test
+  public void givenANewVehiculeWithNoBattery_whenHasBattery_thenReturnFalse() {
+    // given
+    Vehicle vehicle = new Vehicle(aModel, aColor);
+
+    // when
+    boolean hasBattery = vehicle.hasBattery();
+
+    // then
+    assertThat(hasBattery).isFalse();
+  }
+
+  @Test
+  public void givenAVehiculeWithBattery_whenHasBattery_thenReturnTrue() {
+    // given
+    Vehicle vehicle = new Vehicle(aModel, aColor);
+    vehicle.addBattery(aBattery);
+
+    // when
+    boolean hasBattery = vehicle.hasBattery();
+
+    // then
+    assertThat(hasBattery).isTrue();
   }
 }

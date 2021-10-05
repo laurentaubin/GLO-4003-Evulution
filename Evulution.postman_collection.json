@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9c8dfbb5-02f8-404e-9507-006916882e4d",
+		"_postman_id": "52ff1923-2529-4516-9045-017755466931",
 		"name": "Evulution",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1168,6 +1168,458 @@
 			"name": "Transaction",
 			"item": [
 				{
+					"name": "Invalid cases",
+					"item": [
+						{
+							"name": "register account",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given valid request, status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"John Cena\",\n  \"birthdate\": \"1222-06-12\",\n  \"password\": \"{{user_password}}\",\n  \"sex\": \"male\",\n  \"email\": \"aaaaaa@gmail.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/customers",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"customers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sucessful login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given valid request, status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Given valid request, response has token\", function () {",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson.token).to.be.a('string');",
+											"});",
+											"",
+											"",
+											"",
+											"const res = pm.response.json()",
+											"",
+											"pm.environment.set(\"token\", res.token);",
+											"",
+											"",
+											"console.log(pm.environment.get(\"token\"));"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"aaaaaa@gmail.com\",\n  \"password\": \"{{user_password}}\"\n  }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/login",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "new transaction",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given valid request, status code is 200\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Given valid request, response has token\", function () {",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson.transaction_id).to.be.a('string');",
+											"});",
+											"",
+											"const res = pm.response.json()",
+											"",
+											"pm.environment.set(\"transaction_id\", res.transaction_id);",
+											"pm.environment.set(\"delivery_id\", res.delivery_id);",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/sales",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"sales"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add battery before vehicle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given adding battery before vehicle , status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type\": \"SHORT_RANGE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/sales/{{transaction_id}}/battery",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"sales",
+										"{{transaction_id}}",
+										"battery"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add bank payment before vehicle and battery",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given adding payment option before vehicle and battery , status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"bank_no\": \"200\",\n  \"account_no\": \"1999999\",\n  \"frequency\": \"monthly\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"sales",
+										"{{transaction_id}}",
+										"complete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add vehicle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given valid request, status code is 202\", function () {",
+											"    pm.response.to.have.status(202);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Vandry\",\n  \"color\": \"white\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"sales",
+										"{{transaction_id}}",
+										"vehicle"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add bank payment with missing battery",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Given missing battery , status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"bank_no\": \"200\",\n  \"account_no\": \"1999999\",\n  \"frequency\": \"monthly\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"sales",
+										"{{transaction_id}}",
+										"complete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Add vehicle bad input",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given invalid request body, status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"VANDz\",\n    \"color\": \"any\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"sales",
+								"{{transaction_id}}",
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "register account",
 					"event": [
 						{
@@ -1365,63 +1817,6 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Vandry\",\n  \"color\": \"white\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"sales",
-								"{{transaction_id}}",
-								"vehicle"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add vehicle bad input",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Given invalid request body, status code is 400\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"VANDz\",\n    \"color\": \"any\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
