@@ -3,14 +3,22 @@ package ca.ulaval.glo4003.ws.api.delivery;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.delivery.*;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryMode;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
+import ca.ulaval.glo4003.ws.domain.delivery.Location;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -30,7 +38,8 @@ class DeliveryResourceImplTest {
   private static final String A_MODE = "At campus";
   private static final String A_LOCATION = "Vachon";
   private static final String INVALID_MODE = "invalid mode";
-  private static final String EXPECTED_TRANSACTION_COMPLETED_MESSAGE = "Transaction complete";
+  private static final String EXPECTED_DELIVERY_LOCATION_ADDED_MESSAGE =
+      "Delivery location successfully added";
 
   @Mock private DeliveryService deliveryService;
   @Mock private DeliveryDestinationAssembler deliveryDestinationAssembler;
@@ -98,7 +107,7 @@ class DeliveryResourceImplTest {
 
   @Test
   public void
-      givenValidDeliveryLocationRequest_whenAddLocation_thenReturn200OkWithTransactionCompletedMessage() {
+      givenValidDeliveryLocationRequest_whenAddLocation_thenReturn202AcceptedWithDeliveryAddedMessage() {
     // given
     DeliveryLocationRequest request = createDeliveryLocationRequest();
     DeliveryDestination deliveryDestination = createDeliveryLocation();
@@ -109,8 +118,8 @@ class DeliveryResourceImplTest {
         deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
 
     // then
-    assertThat(response.getStatus()).isEqualTo(Status.OK.getStatusCode());
-    assertThat(response.getEntity()).isEqualTo(EXPECTED_TRANSACTION_COMPLETED_MESSAGE);
+    assertThat(response.getStatus()).isEqualTo(Status.ACCEPTED.getStatusCode());
+    assertThat(response.getEntity()).isEqualTo(EXPECTED_DELIVERY_LOCATION_ADDED_MESSAGE);
   }
 
   @Test

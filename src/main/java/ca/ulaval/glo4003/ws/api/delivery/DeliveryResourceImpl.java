@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeliveryResourceImpl implements DeliveryResource {
-  public static final String ADD_DELIVERY_MESSAGE = "Transaction complete";
+  public static final String ADD_DELIVERY_MESSAGE = "Delivery location successfully added";
   private static final List<Role> privilegedRoles = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
 
   private final DeliveryService deliveryService;
@@ -50,6 +50,6 @@ public class DeliveryResourceImpl implements DeliveryResource {
     DeliveryDestination deliveryDestination =
         deliveryDestinationAssembler.assemble(deliveryLocationRequest);
     deliveryService.addDeliveryDestination(new DeliveryId(deliveryId), deliveryDestination);
-    return Response.ok().entity(ADD_DELIVERY_MESSAGE).build();
+    return Response.accepted().entity(ADD_DELIVERY_MESSAGE).build();
   }
 }
