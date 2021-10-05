@@ -5,10 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
-import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,13 +20,12 @@ class TransactionServiceTest {
   private static final TransactionId AN_ID = new TransactionId("id");
   private static final String A_BATTERY_TYPE = "STANDARD";
   private static final String A_VEHICLE_COLOR = Color.WHITE.toString();
+  private static final String A_VEHICLE_MODEL = "a model";
 
   @Mock private TransactionRepository transactionRepository;
   @Mock private TransactionFactory transactionFactory;
   @Mock private BatteryRepository batteryRepository;
-  @Mock private ModelRepository modelRepository;
-  @Mock private VehicleRequest vehicleRequest;
-  @Mock private Vehicle vehicle;
+  @Mock private Vehicle aVehicle;
   @Mock private Payment payment;
   @Mock private Transaction aTransaction;
 
@@ -38,10 +35,9 @@ class TransactionServiceTest {
   @BeforeEach
   void setUp() {
     transaction = createTransactionGivenId(AN_ID);
-    transaction.addVehicle(vehicle);
+    transaction.addVehicle(aVehicle);
     transactionService =
-        new TransactionService(
-            transactionRepository, transactionFactory, batteryRepository, modelRepository);
+        new TransactionService(transactionRepository, transactionFactory, batteryRepository);
   }
 
   @Test
@@ -69,13 +65,24 @@ class TransactionServiceTest {
   }
 
   @Test
-  void givenVehicleAndTransactionId_whenAddVehicle_thenRepositoryUpdateTransaction() {
+  public void whenAddVehicle_thenAddVehicleToTransaction() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
-    when(vehicleRequest.getColor()).thenReturn(A_VEHICLE_COLOR);
+    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(aTransaction));
 
     // when
-    transactionService.addVehicle(AN_ID, vehicleRequest);
+    transactionService.addVehicle(AN_ID, aVehicle);
+
+    // then
+    verify(aTransaction).addVehicle(aVehicle);
+  }
+
+  @Test
+  void givenVehicleAndTransactionId_whenAddVehicle_thenRepositoryUpdatesTransaction() {
+    // given
+    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
+
+    // when
+    transactionService.addVehicle(AN_ID, aVehicle);
 
     // then
     verify(transactionRepository).update(transaction);
@@ -87,7 +94,7 @@ class TransactionServiceTest {
     when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.empty());
 
     // when
-    Executable action = () -> transactionService.addVehicle(AN_ID, vehicleRequest);
+    Executable action = () -> transactionService.addVehicle(AN_ID, aVehicle);
 
     // then
     assertThrows(TransactionNotFoundException.class, action);

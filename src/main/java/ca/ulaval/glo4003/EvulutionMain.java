@@ -32,8 +32,18 @@ import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
-import ca.ulaval.glo4003.ws.domain.user.*;
+import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.Model;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.domain.transaction.VehicleFactory;
+import ca.ulaval.glo4003.ws.domain.user.BirthDate;
+import ca.ulaval.glo4003.ws.domain.user.Role;
+import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
+import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.UserService;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
 import ca.ulaval.glo4003.ws.infrastructure.InMemoryModelRepository;
@@ -207,8 +217,7 @@ public class EvulutionMain {
     ModelRepository modelRepository = setUpModelInventory(modelDTOAssembler);
 
     TransactionService transactionService =
-        new TransactionService(
-            transactionRepository, transactionFactory, batteryRepository, modelRepository);
+        new TransactionService(transactionRepository, transactionFactory, batteryRepository);
 
     return new TransactionResourceImpl(
         transactionService,
@@ -220,7 +229,8 @@ public class EvulutionMain {
         roleHandler,
         batteryRequestValidator,
         paymentRequestAssembler,
-        paymentRequestValidator);
+        paymentRequestValidator,
+        new VehicleFactory(modelRepository));
   }
 
   private static DeliveryResource createDeliveryResource(

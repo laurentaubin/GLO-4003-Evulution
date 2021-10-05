@@ -1,27 +1,22 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
-import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
-import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 
 public class TransactionService {
 
   private final TransactionRepository transactionRepository;
   private final TransactionFactory transactionFactory;
   private final BatteryRepository batteryRepository;
-  private final ModelRepository modelRepository;
 
   public TransactionService(
       TransactionRepository transactionRepository,
       TransactionFactory transactionFactory,
-      BatteryRepository batteryRepository,
-      ModelRepository modelRepository) {
+      BatteryRepository batteryRepository) {
     this.transactionRepository = transactionRepository;
     this.transactionFactory = transactionFactory;
     this.batteryRepository = batteryRepository;
-    this.modelRepository = modelRepository;
   }
 
   public Transaction createTransaction() {
@@ -30,10 +25,8 @@ public class TransactionService {
     return transaction;
   }
 
-  public void addVehicle(TransactionId transactionId, VehicleRequest vehicleRequest) {
+  public void addVehicle(TransactionId transactionId, Vehicle vehicle) {
     Transaction transaction = getTransaction(transactionId);
-    Model model = modelRepository.findByModel(vehicleRequest.getModel());
-    Vehicle vehicle = new Vehicle(model, Color.fromString(vehicleRequest.getColor()));
     transaction.addVehicle(vehicle);
     transactionRepository.update(transaction);
   }

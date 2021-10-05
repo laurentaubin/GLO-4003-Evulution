@@ -18,7 +18,6 @@ import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidat
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
@@ -29,6 +28,8 @@ import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.domain.transaction.Vehicle;
+import ca.ulaval.glo4003.ws.domain.transaction.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
@@ -61,10 +62,11 @@ class TransactionResourceImplTest {
   @Mock private PaymentRequest paymentRequest;
   @Mock private Payment payment;
   @Mock private DeliveryService deliveryService;
-  @Mock private Battery A_BATTERY;
   @Mock private TransactionOwnershipHandler transactionOwnershipHandler;
   @Mock private Session aSession;
   @Mock private DeliveryOwnershipHandler deliveryOwnershipHandler;
+  @Mock private VehicleFactory vehicleFactory;
+  @Mock private Vehicle aVehicle;
 
   private Transaction transaction;
   private Delivery delivery;
@@ -85,7 +87,8 @@ class TransactionResourceImplTest {
             roleHandler,
             batteryRequestValidator,
             paymentRequestAssembler,
-            paymentRequestValidator);
+            paymentRequestValidator,
+            vehicleFactory);
   }
 
   @Test
@@ -195,11 +198,15 @@ class TransactionResourceImplTest {
 
   @Test
   public void givenTransactionIsOwnedByUser_whenAddVehicle_thenAddVehicle() {
+    // given
+    given(vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()))
+        .willReturn(aVehicle);
+
     // when
     transactionResource.addVehicle(containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
-    verify(transactionService).addVehicle(AN_ID, vehicleRequest);
+    verify(transactionService).addVehicle(AN_ID, aVehicle);
   }
 
   @Test

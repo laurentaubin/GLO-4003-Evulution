@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.domain.transaction.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -40,6 +41,7 @@ public class TransactionResourceImpl implements TransactionResource {
   private final PaymentRequestAssembler paymentRequestAssembler;
   private final PaymentRequestValidator paymentRequestValidator;
   private final DeliveryOwnershipHandler deliveryOwnershipHandler;
+  private final VehicleFactory vehicleFactory;
 
   public TransactionResourceImpl(
       TransactionService transactionService,
@@ -51,7 +53,8 @@ public class TransactionResourceImpl implements TransactionResource {
       RoleHandler roleHandler,
       BatteryRequestValidator batteryRequestValidator,
       PaymentRequestAssembler paymentRequestAssembler,
-      PaymentRequestValidator paymentRequestValidator) {
+      PaymentRequestValidator paymentRequestValidator,
+      VehicleFactory vehicleFactory) {
     this.transactionService = transactionService;
     this.deliveryService = deliveryService;
     this.transactionOwnershipHandler = transactionOwnershipHandler;
@@ -62,6 +65,7 @@ public class TransactionResourceImpl implements TransactionResource {
     this.batteryRequestValidator = batteryRequestValidator;
     this.paymentRequestAssembler = paymentRequestAssembler;
     this.paymentRequestValidator = paymentRequestValidator;
+    this.vehicleFactory = vehicleFactory;
   }
 
   @Override
@@ -85,7 +89,9 @@ public class TransactionResourceImpl implements TransactionResource {
     vehicleRequestValidator.validate(vehicleRequest);
     Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
     transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
-    transactionService.addVehicle(TransactionId.fromString(transactionId), vehicleRequest);
+    transactionService.addVehicle(
+        TransactionId.fromString(transactionId),
+        vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()));
     return Response.accepted().build();
   }
 
@@ -97,9 +103,9 @@ public class TransactionResourceImpl implements TransactionResource {
     batteryRequestValidator.validate(batteryRequest);
     Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
     transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
-    String batteryRequestType = batteryRequest.getType();
     Transaction transaction =
-        transactionService.addBattery(TransactionId.fromString(transactionId), batteryRequestType);
+        transactionService.addBattery(
+            TransactionId.fromString(transactionId), batteryRequest.getType());
     BigDecimal batteryEstimatedRange =
         transaction.computeEstimatedVehicleRange().setScale(2, RoundingMode.HALF_UP);
     AddedBatteryResponse batteryResponse = new AddedBatteryResponse(batteryEstimatedRange);

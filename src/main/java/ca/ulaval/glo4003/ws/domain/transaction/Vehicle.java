@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 
 public class Vehicle {
 
-  private Model model;
-  private Color color;
+  private final Model model;
+  private final Color color;
   private Battery battery;
 
   public Vehicle(Model model, Color color) {
@@ -25,5 +25,13 @@ public class Vehicle {
 
   public boolean hasBattery() {
     return battery != null;
+  }
+
+  public Model getModel() {
+    return model;
+  }
+
+  public Color getColor() {
+    return color;
   }
 }
