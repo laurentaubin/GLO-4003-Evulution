@@ -5,6 +5,8 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    env:
+      CI_PORT: 8080
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -14,6 +16,14 @@ jobs:
           java-version: 13
       - name: check style
         run: mvn com.coveo:fmt-maven-plugin:check
-      - name: Tests
-        run: mvn test
-
+      - name: install
+        run: mvn clean install
+      - name: run Evulution
+        run: nohup java -Dport=$CI_PORT -jar target/jersey-jetty.jar &
+      - name: Run API Tests
+        id: run-newman
+        uses: anthonyvscode/newman-action@v1
+        with:
+          collection: Evulution.postman_collection.json
+          environment: Evulution_dev.postman_environment.json
+          reporters: cli

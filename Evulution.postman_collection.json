@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "780b4564-a804-44b2-b099-2e0f34885d64",
+		"_postman_id": "0cd0afce-2e87-4f6e-b922-e681bbe597a9",
 		"name": "Evulution",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -39,11 +39,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -79,11 +78,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -119,11 +117,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -159,11 +156,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -199,11 +195,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -239,11 +234,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -279,11 +273,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -319,11 +312,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -359,11 +351,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -404,49 +395,6 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Given valid request, status code is 201\", function () {",
-											"    pm.response.to.have.status(201);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"John Cena\",\n  \"birthdate\": \"1222-06-12\",\n  \"password\": \"{{user_password}}\",\n  \"sex\": \"male\",\n  \"email\": \"{{user_email}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "localhost:8080/customers",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"customers"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "register same account",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Given customer already exists, status code is 409\", function () {",
-											"    pm.response.to.have.status(409);",
-											"});",
 											""
 										],
 										"type": "text/javascript"
@@ -466,11 +414,47 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
+									"path": [
+										"customers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "register same account",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"John Cena\",\n  \"birthdate\": \"1222-06-12\",\n  \"password\": \"{{user_password}}\",\n  \"sex\": \"male\",\n  \"email\": \"{{user_email}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/customers",
+									"host": [
+										"{{base_url}}"
+									],
 									"path": [
 										"customers"
 									]
@@ -506,11 +490,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/login",
+									"raw": "{{base_url}}/login",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"login"
 									]
@@ -546,11 +529,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/login",
+									"raw": "{{base_url}}/login",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"login"
 									]
@@ -600,11 +582,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/login",
+									"raw": "{{base_url}}/login",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"login"
 									]
@@ -624,9 +605,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Given valid request, status code is 201\", function () {",
-											"    pm.response.to.have.status(201);",
-											"});"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -645,11 +624,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -699,11 +677,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/login",
+									"raw": "{{base_url}}/login",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"login"
 									]
@@ -718,9 +695,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Given valid request, status code is 201\", function () {",
-											"    pm.response.to.have.status(201);",
-											"});"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -739,11 +714,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -793,11 +767,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/login",
+									"raw": "{{base_url}}/login",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"login"
 									]
@@ -860,11 +833,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales",
+									"raw": "{{base_url}}/sales",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales"
 									]
@@ -916,11 +888,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
+									"raw": "{{base_url}}/sales/{{transaction_id}}/vehicle",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales",
 										"{{transaction_id}}",
@@ -974,11 +945,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales/{{transaction_id}}/battery",
+									"raw": "{{base_url}}/sales/{{transaction_id}}/battery",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales",
 										"{{transaction_id}}",
@@ -1032,11 +1002,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+									"raw": "{{base_url}}/sales/{{transaction_id}}/complete",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales",
 										"{{transaction_id}}",
@@ -1053,8 +1022,8 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Given valid request, status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
+											"pm.test(\"Given valid request, status code is 202\", function () {",
+											"    pm.response.to.have.status(202);",
 											"});"
 										],
 										"type": "text/javascript"
@@ -1089,11 +1058,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+									"raw": "{{base_url}}/deliveries/{{delivery_id}}/location",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"deliveries",
 										"{{delivery_id}}",
@@ -1146,11 +1114,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+									"raw": "{{base_url}}/deliveries/{{delivery_id}}/location",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"deliveries",
 										"{{delivery_id}}",
@@ -1198,11 +1165,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/customers",
+									"raw": "{{base_url}}/customers",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"customers"
 									]
@@ -1252,11 +1218,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/login",
+									"raw": "{{base_url}}/login",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"login"
 									]
@@ -1319,11 +1284,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales",
+									"raw": "{{base_url}}/sales",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales"
 									]
@@ -1374,11 +1338,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales/{{transaction_id}}/battery",
+									"raw": "{{base_url}}/sales/{{transaction_id}}/battery",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales",
 										"{{transaction_id}}",
@@ -1431,11 +1394,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+									"raw": "{{base_url}}/sales/{{transaction_id}}/complete",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales",
 										"{{transaction_id}}",
@@ -1489,11 +1451,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
+									"raw": "{{base_url}}/sales/{{transaction_id}}/vehicle",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales",
 										"{{transaction_id}}",
@@ -1546,11 +1507,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+									"raw": "{{base_url}}/sales/{{transaction_id}}/complete",
 									"host": [
-										"localhost"
+										"{{base_url}}"
 									],
-									"port": "8080",
 									"path": [
 										"sales",
 										"{{transaction_id}}",
@@ -1569,9 +1529,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Given valid request, status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -1590,11 +1548,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/customers",
+							"raw": "{{base_url}}/customers",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"customers"
 							]
@@ -1644,11 +1601,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/login",
+							"raw": "{{base_url}}/login",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"login"
 							]
@@ -1711,11 +1667,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales",
+							"raw": "{{base_url}}/sales",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales"
 							]
@@ -1767,68 +1722,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/vehicle",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
-							"path": [
-								"sales",
-								"{{transaction_id}}",
-								"vehicle"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add vehicle bad input",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Given invalid request body, status code is 400\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								},
-								{
-									"key": "password",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"VANDz\",\n    \"color\": \"any\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -1882,11 +1779,66 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/vehicle",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/vehicle",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
+							"path": [
+								"sales",
+								"{{transaction_id}}",
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add vehicle bad input",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Given invalid request body, status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"VANDz\",\n    \"color\": \"any\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/sales/{{transaction_id}}/vehicle",
+							"host": [
+								"{{base_url}}"
+							],
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -1947,11 +1899,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/battery",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/battery",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -2004,11 +1955,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/battery",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/battery",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -2061,11 +2011,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/complete",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -2118,11 +2067,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/complete",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -2175,11 +2123,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/complete",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -2232,11 +2179,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales/{{transaction_id}}/complete",
+							"raw": "{{base_url}}/sales/{{transaction_id}}/complete",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales",
 								"{{transaction_id}}",
@@ -2258,9 +2204,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Given valid request, status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -2279,11 +2223,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/customers",
+							"raw": "{{base_url}}/customers",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"customers"
 							]
@@ -2333,11 +2276,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/login",
+							"raw": "{{base_url}}/login",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"login"
 							]
@@ -2400,11 +2342,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/sales",
+							"raw": "{{base_url}}/sales",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"sales"
 							]
@@ -2419,8 +2360,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Given valid request, status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Given valid request, status code is 202\", function () {",
+									"    pm.response.to.have.status(202);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2455,11 +2396,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+							"raw": "{{base_url}}/deliveries/{{delivery_id}}/location",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"deliveries",
 								"{{delivery_id}}",
@@ -2512,11 +2452,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+							"raw": "{{base_url}}/deliveries/{{delivery_id}}/location",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"deliveries",
 								"{{delivery_id}}",
@@ -2569,11 +2508,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/deliveries/{{delivery_id}}/location",
+							"raw": "{{base_url}}/deliveries/{{delivery_id}}/location",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"deliveries",
 								"{{delivery_id}}",
