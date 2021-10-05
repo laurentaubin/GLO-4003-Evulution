@@ -5,31 +5,33 @@ import static com.google.common.truth.Truth.assertThat;
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CatchLoginFailedMapperTest {
-  private CatchLoginFailedMapper exceptionMapper;
+  private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String EXPECTED_ERROR = "LOGIN_FAILED";
+  private static final String EXPECTED_DESCRIPTION = "The email or password entered was invalid.";
+
+  private CatchLoginFailedMapper mapper;
 
   @BeforeEach
-  void setUp() {
-    exceptionMapper = new CatchLoginFailedMapper();
+  public void setUp() {
+    mapper = new CatchLoginFailedMapper();
   }
 
   @Test
-  void givenLoginFailedException_whenToResponse_thenResponseHasRightErrorAndDescription() {
+  public void givenLoginFailedException_whenToResponse_thenReturnRightResponse() {
     // given
     LoginFailedException exception = new LoginFailedException();
 
     // when
-    Response response = exceptionMapper.toResponse(exception);
+    Response response = mapper.toResponse(exception);
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then
-    assertThat(response.getStatus()).isEqualTo(Status.BAD_REQUEST.getStatusCode());
-    assertThat(exceptionResponse.getError()).isEqualTo("LOGIN_FAILED");
-    assertThat(exceptionResponse.getDescription())
-        .isEqualTo("The email or password entered was invalid");
+    assertThat(response.getStatus()).isEqualTo(EXPECTED_STATUS_CODE);
+    assertThat(exceptionResponse.getError()).isEqualTo(EXPECTED_ERROR);
+    assertThat(exceptionResponse.getDescription()).isEqualTo(EXPECTED_DESCRIPTION);
   }
 }

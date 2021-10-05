@@ -11,7 +11,7 @@ public class CatchBirthDateInTheFutureExceptionMapper
     implements ExceptionMapper<BirthDateInTheFutureException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String ERROR_MESSAGE = "INVALID_FORMAT";
-  private static final String ERROR_DESCRIPTION = "The birth date entered is in the future";
+  private static final String ERROR_DESCRIPTION = "The birth date entered is in the future.";
 
   @Override
   public Response toResponse(BirthDateInTheFutureException exception) {

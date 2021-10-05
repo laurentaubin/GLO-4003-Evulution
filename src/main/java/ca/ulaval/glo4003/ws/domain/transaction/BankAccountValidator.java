@@ -11,13 +11,13 @@ public class BankAccountValidator {
 
   private void validateBankNumber(int bankNumber) {
     if (String.valueOf(bankNumber).length() != 3) {
-      throw new InvalidBankAccountException("Bank number must contain three digits.");
+      throw new InvalidBankAccountException();
     }
   }
 
   private void validateAccountNumber(int accountNumber) {
     if (String.valueOf(accountNumber).length() != 7) {
-      throw new InvalidBankAccountException("Account number must contain seven digits.");
+      throw new InvalidBankAccountException();
     }
   }
 }

@@ -9,13 +9,14 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 public class CatchDuplicateTransactionExceptionMapper
     implements ExceptionMapper<DuplicateTransactionException> {
-
-  private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final int STATUS_CODE = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+  private static final String ERROR = "DUPLICATE_TRANSACTION";
+  private static final String DESCRIPTION = "Transaction with id %s already in repository.";
 
   @Override
   public Response toResponse(DuplicateTransactionException e) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(e.error, e.description))
+        .entity(new ExceptionResponse(ERROR, String.format(DESCRIPTION, e.getTransactionId())))
         .build();
   }
 }

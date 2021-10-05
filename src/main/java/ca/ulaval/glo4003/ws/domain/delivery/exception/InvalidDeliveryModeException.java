@@ -1,11 +1,15 @@
 package ca.ulaval.glo4003.ws.domain.delivery.exception;
 
-public class InvalidDeliveryModeException extends RuntimeException {
-  public static String error;
-  public static String description;
+import java.util.Set;
 
-  public InvalidDeliveryModeException() {
-    this.error = "INVALID_DELIVERY_MODE";
-    this.description = "The selected delivery mode is invalid.";
+public class InvalidDeliveryModeException extends RuntimeException {
+  private final Set<String> deliveryModes;
+
+  public InvalidDeliveryModeException(Set<String> deliveryModes) {
+    this.deliveryModes = deliveryModes;
+  }
+
+  public Set<String> getDeliveryModes() {
+    return deliveryModes;
   }
 }

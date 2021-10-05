@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
 import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.delivery.exception.WrongDeliveryOwnerException;
+import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 
@@ -22,7 +22,7 @@ public class DeliveryOwnershipHandler {
     User user = userRepository.findUser(session.getEmail()).get();
 
     if (!user.doesOwnDelivery(deliveryId)) {
-      throw new WrongDeliveryOwnerException();
+      throw new WrongOwnerException();
     }
   }
 }

@@ -10,11 +10,14 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchInvalidDeliveryModeExceptionMapper
     implements ExceptionMapper<InvalidDeliveryModeException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String ERROR = "INVALID_DELIVERY_MODE";
+  private static final String DESCRIPTION =
+      "Delivery mode must be one of the following mode: {%s}.";
 
   @Override
   public Response toResponse(InvalidDeliveryModeException e) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(e.error, e.description))
+        .entity(new ExceptionResponse(ERROR, String.format(DESCRIPTION, e.getDeliveryModes())))
         .build();
   }
 }

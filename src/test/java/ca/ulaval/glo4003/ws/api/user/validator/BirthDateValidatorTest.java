@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.exception.BirthDateInTheFutureException;
-import ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.util.LocalDateProvider;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;

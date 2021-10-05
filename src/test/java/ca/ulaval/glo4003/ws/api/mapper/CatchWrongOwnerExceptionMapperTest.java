@@ -3,27 +3,27 @@ package ca.ulaval.glo4003.ws.api.mapper;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
+import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CatchSessionDoesNotExistExceptionMapperTest {
-  private static final int EXPECTED_STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
-  private static final String EXPECTED_ERROR = "INVALID_TOKEN";
-  private static final String EXPECTED_DESCRIPTION = "Invalid authorization token.";
+class CatchWrongOwnerExceptionMapperTest {
+  private static final int EXPECTED_STATUS_CODE = Response.Status.FORBIDDEN.getStatusCode();
+  private static final String EXPECTED_ERROR = "FORBIDDEN";
+  private static final String EXPECTED_DESCRIPTION = "You are not the owner of this transaction.";
 
-  private CatchSessionDoesNotExistExceptionMapper mapper;
+  private CatchWrongOwnerExceptionMapper mapper;
 
   @BeforeEach
-  void setUp() {
-    mapper = new CatchSessionDoesNotExistExceptionMapper();
+  public void setUp() {
+    mapper = new CatchWrongOwnerExceptionMapper();
   }
 
   @Test
-  public void givenSessionDoesNotExistException_whenToResponse_thenReturnRightResponse() {
+  public void givenWrongOwnerException_whenToResponse_thenReturnRightResponse() {
     // given
-    SessionDoesNotExistException exception = new SessionDoesNotExistException();
+    WrongOwnerException exception = new WrongOwnerException();
 
     // when
     Response response = mapper.toResponse(exception);

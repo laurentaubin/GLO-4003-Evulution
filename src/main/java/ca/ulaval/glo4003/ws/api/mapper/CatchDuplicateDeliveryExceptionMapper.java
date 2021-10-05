@@ -9,12 +9,14 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 public class CatchDuplicateDeliveryExceptionMapper
     implements ExceptionMapper<DuplicateDeliveryException> {
-  private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final int STATUS_CODE = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+  private static final String ERROR = "DUPLICATE_DELIVERY";
+  private static final String DESCRIPTION = "Delivery with id %s already exists.";
 
   @Override
   public Response toResponse(DuplicateDeliveryException e) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(e.error, e.description))
+        .entity(new ExceptionResponse(ERROR, String.format(DESCRIPTION, e.getDeliveryId())))
         .build();
   }
 }

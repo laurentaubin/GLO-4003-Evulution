@@ -11,7 +11,7 @@ public class CatchSessionDoesNotExistExceptionMapper
     implements ExceptionMapper<SessionDoesNotExistException> {
   private static final int STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
   private static final String ERROR = "INVALID_TOKEN";
-  private static final String DESCRIPTION = "Invalid token";
+  private static final String DESCRIPTION = "Invalid authorization token.";
 
   @Override
   public Response toResponse(SessionDoesNotExistException e) {

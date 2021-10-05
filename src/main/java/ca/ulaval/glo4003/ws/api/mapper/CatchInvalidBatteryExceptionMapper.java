@@ -10,11 +10,13 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchInvalidBatteryExceptionMapper
     implements ExceptionMapper<InvalidBatteryException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String ERROR = "INVALID_BATTERY_TYPE";
+  private static final String DESCRIPTION = "Battery must be one of the following type: {%s}.";
 
   @Override
   public Response toResponse(InvalidBatteryException e) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(e.error, e.description))
+        .entity(new ExceptionResponse(ERROR, String.format(DESCRIPTION, e.getBatteryTypes())))
         .build();
   }
 }

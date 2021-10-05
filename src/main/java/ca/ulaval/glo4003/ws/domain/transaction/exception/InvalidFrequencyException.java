@@ -1,11 +1,15 @@
 package ca.ulaval.glo4003.ws.domain.transaction.exception;
 
-public class InvalidFrequencyException extends RuntimeException {
-  public static String error;
-  public static String description;
+import java.util.Set;
 
-  public InvalidFrequencyException() {
-    this.error = "INVALID_FREQUENCY";
-    this.description = "Frequency must be of type monthly, biweekly or weekly.";
+public class InvalidFrequencyException extends RuntimeException {
+  private final Set<String> frequencies;
+
+  public InvalidFrequencyException(Set<String> frequencies) {
+    this.frequencies = frequencies;
+  }
+
+  public Set<String> getFrequencies() {
+    return frequencies;
   }
 }

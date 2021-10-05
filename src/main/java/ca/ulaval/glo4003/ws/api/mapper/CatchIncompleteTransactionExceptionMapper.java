@@ -12,7 +12,7 @@ public class CatchIncompleteTransactionExceptionMapper
     implements ExceptionMapper<IncompleteTransactionException> {
   private static final int STATUS_CODE = Status.BAD_REQUEST.getStatusCode();
   private static final String ERROR = "TRANSACTION_INCOMPLETE";
-  private static final String DESCRIPTION = "Transaction is missing a vehicle and/or battery";
+  private static final String DESCRIPTION = "Transaction is missing a vehicle and/or battery.";
 
   @Override
   public Response toResponse(IncompleteTransactionException exception) {

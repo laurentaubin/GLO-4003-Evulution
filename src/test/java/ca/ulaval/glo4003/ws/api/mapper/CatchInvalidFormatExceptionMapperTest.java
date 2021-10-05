@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
@@ -11,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 class CatchInvalidFormatExceptionMapperTest {
   private static final String A_PROPERTY = "Property";
+  private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String EXPECTED_ERROR = "INVALID_FORMAT";
 
   private CatchInvalidFormatExceptionMapper exceptionMapper;
 
@@ -20,7 +21,7 @@ class CatchInvalidFormatExceptionMapperTest {
   }
 
   @Test
-  void givenInvalidFormatException_whenToResponse_thenResponseHasRightErrorAndDescription() {
+  void givenInvalidFormatException_whenToResponse_thenReturnRightResponse() {
     // given
     InvalidFormatException exception = new InvalidFormatException(A_PROPERTY);
 
@@ -29,8 +30,8 @@ class CatchInvalidFormatExceptionMapperTest {
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then
-    assertEquals(exception.error, exceptionResponse.getError());
-    assertEquals(exception.description, exceptionResponse.getDescription());
-    assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
+    assertThat(response.getStatus()).isEqualTo(EXPECTED_STATUS_CODE);
+    assertThat(exceptionResponse.getError()).isEqualTo(EXPECTED_ERROR);
+    assertThat(exceptionResponse.getDescription()).isEqualTo(exception.getDescription());
   }
 }

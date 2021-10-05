@@ -9,11 +9,11 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 public class CatchUserNotFoundExceptionMapper implements ExceptionMapper<UserNotFoundException> {
   private static final int STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
+  private static final String ERROR = "USER_NOT_FOUND";
+  private static final String DESCRIPTION = "This user does not exist.";
 
   @Override
   public Response toResponse(UserNotFoundException exception) {
-    return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(exception.getError(), exception.getDescription()))
-        .build();
+    return Response.status(STATUS_CODE).entity(new ExceptionResponse(ERROR, DESCRIPTION)).build();
   }
 }

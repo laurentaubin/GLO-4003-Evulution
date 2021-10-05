@@ -1,16 +1,21 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotFoundException;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CatchDeliveryNotFoundExceptionMapperTest {
   private static final DeliveryId AN_ID = new DeliveryId("id");
+  private static final int EXPECTED_STATUS_CODE = Status.BAD_REQUEST.getStatusCode();
+  private static final String EXPECTED_ERROR = "DELIVERY_NOT_FOUND";
+  private static final String EXPECTED_DESCRIPTION =
+      String.format("Could not find delivery with id %s.", AN_ID);
 
   private CatchDeliveryNotFoundExceptionMapper exceptionMapper;
 
@@ -29,7 +34,8 @@ class CatchDeliveryNotFoundExceptionMapperTest {
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then
-    assertEquals(exception.error, exceptionResponse.getError());
-    assertEquals(exception.description, exceptionResponse.getDescription());
+    assertEquals(EXPECTED_STATUS_CODE, response.getStatus());
+    assertEquals(EXPECTED_ERROR, exceptionResponse.getError());
+    assertEquals(EXPECTED_DESCRIPTION, exceptionResponse.getDescription());
   }
 }

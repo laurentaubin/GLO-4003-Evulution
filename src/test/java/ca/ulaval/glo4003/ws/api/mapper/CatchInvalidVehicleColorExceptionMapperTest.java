@@ -3,27 +3,27 @@ package ca.ulaval.glo4003.ws.api.mapper;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidVehicleColorException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CatchSessionDoesNotExistExceptionMapperTest {
-  private static final int EXPECTED_STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
-  private static final String EXPECTED_ERROR = "INVALID_TOKEN";
-  private static final String EXPECTED_DESCRIPTION = "Invalid authorization token.";
+class CatchInvalidVehicleColorExceptionMapperTest {
+  private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String EXPECTED_ERROR = "INVALID_VEHICLE_COLOR";
+  private static final String EXPECTED_DESCRIPTION = "Vehicle must be white";
 
-  private CatchSessionDoesNotExistExceptionMapper mapper;
+  private CatchInvalidVehicleColorExceptionMapper mapper;
 
   @BeforeEach
-  void setUp() {
-    mapper = new CatchSessionDoesNotExistExceptionMapper();
+  public void setUp() {
+    mapper = new CatchInvalidVehicleColorExceptionMapper();
   }
 
   @Test
-  public void givenSessionDoesNotExistException_whenToResponse_thenReturnRightResponse() {
+  public void givenInvalidVehicleColorException_whenToResponse_thenReturnRightResponse() {
     // given
-    SessionDoesNotExistException exception = new SessionDoesNotExistException();
+    InvalidVehicleColorException exception = new InvalidVehicleColorException();
 
     // when
     Response response = mapper.toResponse(exception);

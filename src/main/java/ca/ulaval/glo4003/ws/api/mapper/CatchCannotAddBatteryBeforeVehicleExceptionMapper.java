@@ -10,11 +10,12 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchCannotAddBatteryBeforeVehicleExceptionMapper
     implements ExceptionMapper<CannotAddBatteryBeforeVehicleException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String ERROR = "CANNOT_ADD_BATTERY_BEFORE_VEHICLE";
+  private static final String DESCRIPTION =
+      "A vehicle must be added to the transaction before adding a battery.";
 
   @Override
   public Response toResponse(CannotAddBatteryBeforeVehicleException exception) {
-    return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(exception.getError(), exception.getDescription()))
-        .build();
+    return Response.status(STATUS_CODE).entity(new ExceptionResponse(ERROR, DESCRIPTION)).build();
   }
 }

@@ -10,11 +10,13 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchDeliveryNotFoundExceptionMapper
     implements ExceptionMapper<DeliveryNotFoundException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String ERROR = "DELIVERY_NOT_FOUND";
+  private static final String DESCRIPTION = "Could not find delivery with id %s.";
 
   @Override
   public Response toResponse(DeliveryNotFoundException e) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(e.error, e.description))
+        .entity(new ExceptionResponse(ERROR, String.format(DESCRIPTION, e.getDeliveryId())))
         .build();
   }
 }

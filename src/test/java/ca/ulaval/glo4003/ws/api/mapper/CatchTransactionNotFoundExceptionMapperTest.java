@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
@@ -11,25 +11,30 @@ import org.junit.jupiter.api.Test;
 
 class CatchTransactionNotFoundExceptionMapperTest {
   private static final TransactionId AN_ID = new TransactionId("id");
+  private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String EXPECTED_ERROR = "TRANSACTION_NOT_FOUND";
+  private static final String EXPECTED_DESCRIPTION = "Could not find transaction id %s.";
 
-  private CatchTransactionNotFoundExceptionMapper exceptionMapper;
+  private CatchTransactionNotFoundExceptionMapper mapper;
 
   @BeforeEach
   void setUp() {
-    exceptionMapper = new CatchTransactionNotFoundExceptionMapper();
+    mapper = new CatchTransactionNotFoundExceptionMapper();
   }
 
   @Test
-  void givenTransactionNotFoundException_whenToResponse_thenResponseHasRightErrorAndDescription() {
+  public void givenTransactionNotFoundException_whenToResponse_thenReturnRightResponse() {
     // given
     TransactionNotFoundException exception = new TransactionNotFoundException(AN_ID);
 
     // when
-    Response response = exceptionMapper.toResponse(exception);
+    Response response = mapper.toResponse(exception);
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then
-    assertEquals(exception.error, exceptionResponse.getError());
-    assertEquals(exception.description, exceptionResponse.getDescription());
+    assertThat(response.getStatus()).isEqualTo(EXPECTED_STATUS_CODE);
+    assertThat(exceptionResponse.getError()).isEqualTo(EXPECTED_ERROR);
+    assertThat(exceptionResponse.getDescription())
+        .isEqualTo(String.format(EXPECTED_DESCRIPTION, AN_ID));
   }
 }

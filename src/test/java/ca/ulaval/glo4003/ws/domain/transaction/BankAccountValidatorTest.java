@@ -1,6 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -46,41 +45,5 @@ class BankAccountValidatorTest {
 
     // then
     assertDoesNotThrow(action);
-  }
-
-  @Test
-  void
-      givenInvalidBankNumber_whenValidateBankAccountInformation_thenExceptionHasRightDescription() {
-    // given
-    String expectedMessage = "Bank number must contain three digits.";
-
-    // when
-    Executable action =
-        () ->
-            bankAccountValidator.validateBankAccountInformation(
-                AN_INVALID_BANK_NUMBER, A_VALID_ACCOUNT_NUMBER);
-
-    InvalidBankAccountException invalidBankAccountException =
-        assertThrows(InvalidBankAccountException.class, action);
-    // then
-    assertThat(invalidBankAccountException.description).matches(expectedMessage);
-  }
-
-  @Test
-  void
-      givenInvalidAccountNumber_whenValidateBankAccountInformation_thenExceptionHasRightDescription() {
-    // given
-    String expectedMessage = "Account number must contain seven digits.";
-
-    // when
-    Executable action =
-        () ->
-            bankAccountValidator.validateBankAccountInformation(
-                A_VALID_BANK_NUMBER, AN_INVALID_ACCOUNT_NUMBER);
-
-    InvalidBankAccountException invalidBankAccountException =
-        assertThrows(InvalidBankAccountException.class, action);
-    // then
-    assertThat(invalidBankAccountException.description).matches(expectedMessage);
   }
 }

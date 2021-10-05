@@ -8,13 +8,13 @@ import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class CatchInvalidFormatExceptionMapper implements ExceptionMapper<InvalidFormatException> {
-
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String ERROR = "INVALID_FORMAT";
 
   @Override
   public Response toResponse(InvalidFormatException exception) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(exception.error, exception.description))
+        .entity(new ExceptionResponse(ERROR, exception.getDescription()))
         .build();
   }
 }

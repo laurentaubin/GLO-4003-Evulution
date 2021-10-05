@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 
+import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.dto.RegisterUserDto;
-import ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.testUtil.RegisterUserDtoBuilder;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;

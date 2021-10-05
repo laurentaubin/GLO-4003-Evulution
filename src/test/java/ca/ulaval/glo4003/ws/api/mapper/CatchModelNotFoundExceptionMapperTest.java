@@ -3,33 +3,33 @@ package ca.ulaval.glo4003.ws.api.mapper;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidLocationException;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.ModelNotFoundException;
 import jakarta.ws.rs.core.Response;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class CatchInvalidLocationExceptionMapperTest {
-  private static final Set<String> LOCATIONS = Set.of("Vachon", "Desjardins");
+class CatchModelNotFoundExceptionMapperTest {
+  private static final Set<String> MODELS = Set.of("Vandry", "Pouliot");
   private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
-  private static final String EXPECTED_ERROR = "INVALID_CAMPUS_LOCATION";
+  private static final String EXPECTED_ERROR = "INVALID_MODEL";
   private static final String EXPECTED_DESCRIPTION =
-      String.format("Location must be one of the following building: {%s}.", LOCATIONS);
+      String.format("Model must be one of the following type: {%s}.", MODELS);
 
-  private CatchInvalidLocationExceptionMapper exceptionMapper;
+  private CatchModelNotFoundExceptionMapper mapper;
 
   @BeforeEach
-  void setUp() {
-    exceptionMapper = new CatchInvalidLocationExceptionMapper();
+  public void setUp() {
+    mapper = new CatchModelNotFoundExceptionMapper();
   }
 
   @Test
-  void givenEmptyTokenHeaderException_whenToResponse_thenResponseHasRightErrorAndDescription() {
+  public void givenModelNotFoundException_whenToResponse_thenReturnRightResponse() {
     // given
-    InvalidLocationException exception = new InvalidLocationException(LOCATIONS);
+    ModelNotFoundException exception = new ModelNotFoundException(MODELS);
 
     // when
-    Response response = exceptionMapper.toResponse(exception);
+    Response response = mapper.toResponse(exception);
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then

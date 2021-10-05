@@ -24,7 +24,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DuplicateDeliveryException;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
@@ -32,7 +32,6 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.exception.WrongTransactionOwnerException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import java.util.ArrayList;
 import java.util.List;
@@ -206,7 +205,7 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddVehicle() {
     // given
-    doThrow(new WrongTransactionOwnerException())
+    doThrow(new WrongOwnerException())
         .when(transactionOwnershipHandler)
         .validateOwnership(any(), any());
 
@@ -217,7 +216,7 @@ class TransactionResourceImplTest {
                 containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
-    assertThrows(WrongTransactionOwnerException.class, addingBattery);
+    assertThrows(WrongOwnerException.class, addingBattery);
     verify(transactionService, times(0)).addVehicle(any(), any());
   }
 
@@ -245,7 +244,7 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddBattery() {
     // given
-    doThrow(new WrongTransactionOwnerException())
+    doThrow(new WrongOwnerException())
         .when(transactionOwnershipHandler)
         .validateOwnership(any(), any());
 
@@ -256,7 +255,7 @@ class TransactionResourceImplTest {
                 containerRequestContext, AN_ID.toString(), batteryRequest);
 
     // then
-    assertThrows(WrongTransactionOwnerException.class, addingBattery);
+    assertThrows(WrongOwnerException.class, addingBattery);
     verify(transactionService, times(0)).addBattery(any(), any());
   }
 
@@ -308,7 +307,7 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransactionIsNotOwnedByUser_whenCompletePayment_thenDoNotAddPayment() {
     // given
-    doThrow(new WrongTransactionOwnerException())
+    doThrow(new WrongOwnerException())
         .when(transactionOwnershipHandler)
         .validateOwnership(any(), any());
 
@@ -319,7 +318,7 @@ class TransactionResourceImplTest {
                 containerRequestContext, AN_ID.toString(), paymentRequest);
 
     // then
-    assertThrows(WrongTransactionOwnerException.class, completingTransaction);
+    assertThrows(WrongOwnerException.class, completingTransaction);
     verify(transactionService, times(0)).addPayment(any(), any());
   }
 

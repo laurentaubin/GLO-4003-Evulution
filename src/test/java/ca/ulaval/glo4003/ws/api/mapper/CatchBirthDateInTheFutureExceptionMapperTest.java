@@ -3,27 +3,27 @@ package ca.ulaval.glo4003.ws.api.mapper;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
+import ca.ulaval.glo4003.ws.api.user.exception.BirthDateInTheFutureException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CatchSessionDoesNotExistExceptionMapperTest {
-  private static final int EXPECTED_STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
-  private static final String EXPECTED_ERROR = "INVALID_TOKEN";
-  private static final String EXPECTED_DESCRIPTION = "Invalid authorization token.";
+class CatchBirthDateInTheFutureExceptionMapperTest {
+  private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String EXPECTED_ERROR = "INVALID_FORMAT";
+  private static final String EXPECTED_DESCRIPTION = "The birth date entered is in the future.";
 
-  private CatchSessionDoesNotExistExceptionMapper mapper;
+  private CatchBirthDateInTheFutureExceptionMapper mapper;
 
   @BeforeEach
-  void setUp() {
-    mapper = new CatchSessionDoesNotExistExceptionMapper();
+  public void setUp() {
+    mapper = new CatchBirthDateInTheFutureExceptionMapper();
   }
 
   @Test
-  public void givenSessionDoesNotExistException_whenToResponse_thenReturnRightResponse() {
+  public void givenBirthDateInTheFutureException_whenToResponse_thenReturnRightResponse() {
     // given
-    SessionDoesNotExistException exception = new SessionDoesNotExistException();
+    BirthDateInTheFutureException exception = new BirthDateInTheFutureException();
 
     // when
     Response response = mapper.toResponse(exception);

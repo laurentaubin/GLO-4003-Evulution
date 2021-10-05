@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.api.user.validator;
 
+import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.exception.BirthDateInTheFutureException;
-import ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.util.LocalDateProvider;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

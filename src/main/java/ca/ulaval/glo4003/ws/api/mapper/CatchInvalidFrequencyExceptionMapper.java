@@ -10,11 +10,13 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchInvalidFrequencyExceptionMapper
     implements ExceptionMapper<InvalidFrequencyException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final String ERROR = "INVALID_FREQUENCY";
+  private static final String DESCRIPTION = "Frequency must be one of the following type: {%s}.";
 
   @Override
   public Response toResponse(InvalidFrequencyException e) {
     return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(e.error, e.description))
+        .entity(new ExceptionResponse(ERROR, String.format(DESCRIPTION, e.getFrequencies())))
         .build();
   }
 }

@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
 import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidFrequencyException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public enum Frequency {
   MONTHLY("monthly"),
@@ -17,7 +19,10 @@ public enum Frequency {
     try {
       return Frequency.valueOf(value.toUpperCase());
     } catch (IllegalArgumentException e) {
-      throw new InvalidFrequencyException();
+      throw new InvalidFrequencyException(
+          Arrays.stream(Frequency.values())
+              .map(Frequency::getFrequency)
+              .collect(Collectors.toSet()));
     }
   }
 

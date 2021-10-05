@@ -1,12 +1,16 @@
 package ca.ulaval.glo4003.ws.domain.transaction.exception;
 
+import java.util.Set;
+
 public class ModelNotFoundException extends RuntimeException {
+  private final Set<String> models;
 
-  public static String error;
-  public static String description;
+  public ModelNotFoundException(Set<String> models) {
+    super();
+    this.models = models;
+  }
 
-  public ModelNotFoundException() {
-    this.error = "INVALID_MODEL";
-    this.description = "model must be of type Vandry, Pouliot or Desjardins";
+  public Set<String> getModels() {
+    return models;
   }
 }

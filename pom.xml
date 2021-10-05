@@ -358,9 +358,6 @@
                                         <exclude>ca.ulaval.glo4003.ws.api.shared.exception.InvalidRequestException
                                         </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.api.mapper.CatchInvalidRequestExceptionMapper
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.api.mapper.*</exclude>
                                         <exclude>ca.ulaval.glo4003.ws.api.shared.RequestValidator</exclude>
 
                                         <!-- DOMAIN -->

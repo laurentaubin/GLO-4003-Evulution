@@ -3,12 +3,13 @@ package ca.ulaval.glo4003.ws.domain.transaction.exception;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 
 public class DuplicateTransactionException extends RuntimeException {
-
-  public static String error;
-  public static String description;
+  private final TransactionId transactionId;
 
   public DuplicateTransactionException(TransactionId transactionId) {
-    this.error = "DUPLICATE_TRANSACTION";
-    this.description = String.format("transaction with id %s already in repository", transactionId);
+    this.transactionId = transactionId;
+  }
+
+  public TransactionId getTransactionId() {
+    return transactionId;
   }
 }

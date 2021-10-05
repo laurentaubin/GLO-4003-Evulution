@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
 import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidLocationException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public enum Location {
   VACHON("Vachon"),
@@ -18,7 +20,10 @@ public enum Location {
     try {
       return Location.valueOf(value.toUpperCase());
     } catch (IllegalArgumentException e) {
-      throw new InvalidLocationException();
+      throw new InvalidLocationException(
+          Arrays.stream(Location.values())
+              .map(Location::getCampusLocation)
+              .collect(Collectors.toSet()));
     }
   }
 

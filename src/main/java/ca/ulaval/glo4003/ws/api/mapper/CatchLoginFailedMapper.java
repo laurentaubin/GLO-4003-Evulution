@@ -10,7 +10,7 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchLoginFailedMapper implements ExceptionMapper<LoginFailedException> {
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String ERROR_MESSAGE = "LOGIN_FAILED";
-  private static final String ERROR_DESCRIPTION = "The email or password entered was invalid";
+  private static final String ERROR_DESCRIPTION = "The email or password entered was invalid.";
 
   @Override
   public Response toResponse(LoginFailedException exception) {

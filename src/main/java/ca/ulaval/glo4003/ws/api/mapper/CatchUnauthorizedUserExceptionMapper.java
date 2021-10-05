@@ -10,11 +10,12 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchUnauthorizedUserExceptionMapper
     implements ExceptionMapper<UnauthorizedUserException> {
   private static final int STATUS_CODE = Response.Status.FORBIDDEN.getStatusCode();
+  private static final String ERROR = "UNAUTHORIZED_USER";
+  private static final String DESCRIPTION =
+      "This user does not have the permissions to perform this action.";
 
   @Override
   public Response toResponse(UnauthorizedUserException exception) {
-    return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(exception.getError(), exception.getDescription()))
-        .build();
+    return Response.status(STATUS_CODE).entity(new ExceptionResponse(ERROR, DESCRIPTION)).build();
   }
 }

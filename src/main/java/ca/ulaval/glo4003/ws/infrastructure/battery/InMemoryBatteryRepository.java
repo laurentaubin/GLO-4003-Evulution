@@ -16,6 +16,6 @@ public class InMemoryBatteryRepository implements BatteryRepository {
     if (existingBatteries.containsKey(batteryType.toUpperCase())) {
       return existingBatteries.get(batteryType.toUpperCase());
     }
-    throw new InvalidBatteryException();
+    throw new InvalidBatteryException(existingBatteries.keySet());
   }
 }

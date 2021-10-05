@@ -34,10 +34,9 @@ public class InMemoryDeliveryRepository implements DeliveryRepository {
   public void update(Delivery delivery) {
     Optional<InMemoryDeliveryDto> foundDeliveryDto =
         Optional.ofNullable(deliveries.get(delivery.getDeliveryId()));
-    if (foundDeliveryDto.isPresent()) {
-      deliveries.put(delivery.getDeliveryId(), assembler.assemble(delivery));
-    } else {
+    if (foundDeliveryDto.isEmpty()) {
       throw new DeliveryNotFoundException(delivery.getDeliveryId());
     }
+    deliveries.put(delivery.getDeliveryId(), assembler.assemble(delivery));
   }
 }

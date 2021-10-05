@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 
 class CatchEmailAlreadyInUseExceptionMapperTest {
   private CatchEmailAlreadyInUseExceptionMapper exceptionMapper;
+  private static final int EXPECTED_STATUS_CODE = Response.Status.CONFLICT.getStatusCode();
+  private static final String EXPECTED_ERROR = "REGISTER_FAILED";
+  private static final String EXPECTED_DESCRIPTION = "The email address is already is use.";
 
   @BeforeEach
   void setUp() {
@@ -26,8 +29,8 @@ class CatchEmailAlreadyInUseExceptionMapperTest {
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then
-    assertThat(response.getStatus()).isEqualTo(Response.Status.CONFLICT.getStatusCode());
-    assertThat(exceptionResponse.getError()).isEqualTo("REGISTER_FAILED");
-    assertThat(exceptionResponse.getDescription()).isEqualTo("The email address is already is use");
+    assertThat(response.getStatus()).isEqualTo(EXPECTED_STATUS_CODE);
+    assertThat(exceptionResponse.getError()).isEqualTo(EXPECTED_ERROR);
+    assertThat(exceptionResponse.getDescription()).isEqualTo(EXPECTED_DESCRIPTION);
   }
 }

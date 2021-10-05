@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
@@ -11,6 +11,11 @@ import org.junit.jupiter.api.Test;
 
 class CatchDuplicateTransactionExceptionMapperTest {
   private static final TransactionId AN_ID = new TransactionId("id");
+  private static final int EXPECTED_STATUS_CODE =
+      Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+  private static final String EXPECTED_ERROR = "DUPLICATE_TRANSACTION";
+  private static final String EXPECTED_DESCRIPTION =
+      String.format("Transaction with id %s already in repository.", AN_ID);
 
   private CatchDuplicateTransactionExceptionMapper exceptionMapper;
 
@@ -29,7 +34,8 @@ class CatchDuplicateTransactionExceptionMapperTest {
     ExceptionResponse exceptionResponse = (ExceptionResponse) response.getEntity();
 
     // then
-    assertEquals(exception.error, exceptionResponse.getError());
-    assertEquals(exception.description, exceptionResponse.getDescription());
+    assertThat(response.getStatus()).isEqualTo(EXPECTED_STATUS_CODE);
+    assertThat(exceptionResponse.getError()).isEqualTo(EXPECTED_ERROR);
+    assertThat(exceptionResponse.getDescription()).isEqualTo(EXPECTED_DESCRIPTION);
   }
 }

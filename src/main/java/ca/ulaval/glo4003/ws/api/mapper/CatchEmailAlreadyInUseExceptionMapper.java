@@ -10,13 +10,11 @@ import jakarta.ws.rs.ext.Provider;
 public class CatchEmailAlreadyInUseExceptionMapper
     implements ExceptionMapper<EmailAlreadyInUseException> {
   private static final int STATUS_CODE = Response.Status.CONFLICT.getStatusCode();
-  private static final String ERROR_MESSAGE = "REGISTER_FAILED";
-  private static final String ERROR_DESCRIPTION = "The email address is already is use";
+  private static final String ERROR = "REGISTER_FAILED";
+  private static final String DESCRIPTION = "The email address is already is use.";
 
   @Override
   public Response toResponse(EmailAlreadyInUseException exception) {
-    return Response.status(STATUS_CODE)
-        .entity(new ExceptionResponse(ERROR_MESSAGE, ERROR_DESCRIPTION))
-        .build();
+    return Response.status(STATUS_CODE).entity(new ExceptionResponse(ERROR, DESCRIPTION)).build();
   }
 }

@@ -1,20 +1,16 @@
 package ca.ulaval.glo4003.ws.domain.delivery.exception;
 
+import java.util.Set;
+
 public class InvalidLocationException extends RuntimeException {
+  private final Set<String> locations;
 
-  private final String error;
-  private final String description;
-
-  public InvalidLocationException() {
-    this.error = "INVALID_CAMPUS_LOCATION";
-    this.description = "Location must be inside a valid building.";
+  public InvalidLocationException(Set<String> locations) {
+    super();
+    this.locations = locations;
   }
 
-  public String getDescription() {
-    return description;
-  }
-
-  public String getError() {
-    return error;
+  public Set<String> getLocations() {
+    return locations;
   }
 }
