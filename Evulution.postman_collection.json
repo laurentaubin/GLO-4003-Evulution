@@ -1,6 +1,7 @@
 {
 	"info": {
-		"_postman_id": "a01924be-c0a2-4c15-882c-06d164a7cecd",
+		"_postman_id": "849436e3-7591-4f1f-864f-9d69a7c47208",
+		"name": "Evulution",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -2559,11 +2560,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/customers",
+							"raw": "{{base_url}}/customers",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"customers"
 							]
@@ -2605,11 +2605,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/customers",
+							"raw": "{{base_url}}/customers",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "8080",
 							"path": [
 								"customers"
 							]
