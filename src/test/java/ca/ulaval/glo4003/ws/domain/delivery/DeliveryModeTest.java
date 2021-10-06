@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidDeliveryModeException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -17,7 +17,7 @@ class DeliveryModeTest {
     DeliveryMode deliveryMode = DeliveryMode.fromString(validMode);
 
     // then
-    Assertions.assertEquals(deliveryMode.getDeliveryMode(), validMode);
+    assertThat(deliveryMode.getDeliveryMode()).isEqualTo(validMode);
   }
 
   @Test

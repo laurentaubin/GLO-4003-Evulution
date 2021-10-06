@@ -3,8 +3,8 @@ package ca.ulaval.glo4003.ws.domain.transaction;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.CannotAddBatteryBeforeVehicleException;
@@ -67,9 +67,9 @@ class TransactionTest {
   public void
       givenAVehicleWithBattery_whenComputedEstimateVehicleRange_thenReturnVehicleEstimatedRange() {
     // given
-    when(aVehicle.hasBattery()).thenReturn(true);
     transaction.addVehicle(aVehicle);
-    when(aVehicle.computeRange()).thenReturn(A_RANGE);
+    given(aVehicle.hasBattery()).willReturn(true);
+    given(aVehicle.computeRange()).willReturn(A_RANGE);
 
     // when
     BigDecimal estimatedRange = transaction.computeEstimatedVehicleRange();
@@ -82,9 +82,9 @@ class TransactionTest {
   public void
       givenAVehicleWithoutBattery_whenComputeEstimatedVehicleRange_thenThrowIncompleteTransactionException() {
     // given
-    transaction.addVehicle(aVehicle);
     aVehicle.addBattery(aBattery);
-    when(aVehicle.hasBattery()).thenReturn(false);
+    transaction.addVehicle(aVehicle);
+    given(aVehicle.hasBattery()).willReturn(false);
 
     // when
     Executable computingEstimatedRange = () -> transaction.computeEstimatedVehicleRange();
@@ -106,7 +106,7 @@ class TransactionTest {
   public void givenAVehicleWithoutBattery_whenAddPayment_thenThrowIncompleteTransactionException() {
     // given
     transaction.addVehicle(aVehicle);
-    when(aVehicle.hasBattery()).thenReturn(false);
+    given(aVehicle.hasBattery()).willReturn(false);
 
     // when
     Executable addingPayment = () -> transaction.addPayment(aPayment);
@@ -120,7 +120,7 @@ class TransactionTest {
       givenAVehicleWithBattery_whenAddPayment_thenDoNotThrowIncompleteTransactionException() {
     // given
     transaction.addVehicle(aVehicle);
-    when(aVehicle.hasBattery()).thenReturn(true);
+    given(aVehicle.hasBattery()).willReturn(true);
 
     // when
     Executable addingPayment = () -> transaction.addPayment(aPayment);
@@ -133,7 +133,7 @@ class TransactionTest {
   public void givenValidTransaction_whenAddPayment_thenPaymentIsAddedToTransaction() {
     // given
     transaction.addVehicle(aVehicle);
-    when(aVehicle.hasBattery()).thenReturn(true);
+    given(aVehicle.hasBattery()).willReturn(true);
 
     // when
     transaction.addPayment(aPayment);

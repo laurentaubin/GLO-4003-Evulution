@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidLocationException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -18,7 +18,7 @@ class LocationTest {
     Location location = Location.fromString(validLocation);
 
     // then
-    Assertions.assertEquals(location.getCampusLocation(), validLocation);
+    assertThat(location.getCampusLocation()).isEqualTo(validLocation);
   }
 
   @Test
@@ -27,9 +27,9 @@ class LocationTest {
     String invalidLocation = "invalid location";
 
     // when
-    Executable exception = () -> Location.fromString(invalidLocation);
+    Executable convertingFromString = () -> Location.fromString(invalidLocation);
 
     // then
-    assertThrows(InvalidLocationException.class, exception);
+    assertThrows(InvalidLocationException.class, convertingFromString);
   }
 }

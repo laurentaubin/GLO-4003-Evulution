@@ -8,7 +8,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
@@ -94,8 +93,8 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransaction_whenCreateTransaction_thenCreateTransactionResponse() {
     // given
-    when(transactionService.createTransaction()).thenReturn(transaction);
-    when(deliveryService.createDelivery()).thenReturn(delivery);
+    given(transactionService.createTransaction()).willReturn(transaction);
+    given(deliveryService.createDelivery()).willReturn(delivery);
 
     // when
     transactionResource.createTransaction(containerRequestContext);
@@ -120,7 +119,7 @@ class TransactionResourceImplTest {
     // given
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
     given(transactionService.createTransaction()).willReturn(transaction);
-    when(deliveryService.createDelivery()).thenReturn(delivery);
+    given(deliveryService.createDelivery()).willReturn(delivery);
 
     // when
     transactionResource.createTransaction(containerRequestContext);
@@ -301,7 +300,7 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransactionIsOwnedByUser_whenCompletePayment_thenAddPayment() {
     // given
-    when(paymentRequestAssembler.create(paymentRequest)).thenReturn(payment);
+    given(paymentRequestAssembler.create(paymentRequest)).willReturn(payment);
 
     // when
     transactionResource.completeTransaction(

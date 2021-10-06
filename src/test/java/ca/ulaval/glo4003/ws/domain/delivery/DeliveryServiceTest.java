@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class DeliveryServiceTest {
   public void givenADeliveryId_whenCreateDelivery_thenRepoSavesDelivery() {
     // given
     Delivery delivery = createDeliveryWithId();
-    when(deliveryFactory.createDelivery()).thenReturn(delivery);
+    given(deliveryFactory.createDelivery()).willReturn(delivery);
 
     // when
     deliveryService.createDelivery();
@@ -48,7 +48,7 @@ class DeliveryServiceTest {
       givenDeliveryDestinationAndDeliveryId_whenAddDeliveryDestination_thenRepositoryUpdateDelivery() {
     // given
     deliveryDestination = givenADeliveryDestination();
-    when(deliveryRepository.find(A_DELIVERY_ID)).thenReturn(delivery);
+    given(deliveryRepository.find(A_DELIVERY_ID)).willReturn(delivery);
 
     // when
     deliveryService.addDeliveryDestination(A_DELIVERY_ID, deliveryDestination);
@@ -61,7 +61,7 @@ class DeliveryServiceTest {
   public void whenCreateDelivery_thenReturnDelivery() {
     // given
     Delivery delivery = createDeliveryWithId();
-    when(deliveryFactory.createDelivery()).thenReturn(delivery);
+    given(deliveryFactory.createDelivery()).willReturn(delivery);
 
     // when
     Delivery actualDelivery = deliveryService.createDelivery();
@@ -73,7 +73,7 @@ class DeliveryServiceTest {
   @Test
   public void whenAddDeliveryDestination_thenLocationIsSetInDelivery() {
     // given
-    when(deliveryRepository.find(A_DELIVERY_ID)).thenReturn(aDelivery);
+    given(deliveryRepository.find(A_DELIVERY_ID)).willReturn(aDelivery);
 
     // when
     deliveryService.addDeliveryDestination(A_DELIVERY_ID, deliveryDestination);

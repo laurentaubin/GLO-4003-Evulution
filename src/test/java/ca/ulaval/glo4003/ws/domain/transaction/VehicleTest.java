@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import java.math.BigDecimal;
@@ -31,8 +31,8 @@ class VehicleTest {
   @Test
   public void givenModelWithFiftyPercentEfficiency_whenComputeRange_thenReturnHalfBatteryRange() {
     // given
-    when(aModel.getEfficiency()).thenReturn(BigDecimal.valueOf(FIFTY_PERCENT));
-    when(aBattery.getBaseNRCANRange()).thenReturn(A_BATTERY_RANGE);
+    given(aModel.getEfficiency()).willReturn(BigDecimal.valueOf(FIFTY_PERCENT));
+    given(aBattery.getBaseNRCANRange()).willReturn(A_BATTERY_RANGE);
     vehicle.addBattery(aBattery);
     BigDecimal expectedComputedRange = BigDecimal.valueOf(50);
 
@@ -45,8 +45,8 @@ class VehicleTest {
   @Test
   public void givenHundredPercentEfficiency_whenComputeRange_thenReturnFullBatteryRange() {
     // given
-    when(aModel.getEfficiency()).thenReturn(BigDecimal.valueOf(HUNDRED_PERCENT));
-    when(aBattery.getBaseNRCANRange()).thenReturn(A_BATTERY_RANGE);
+    given(aModel.getEfficiency()).willReturn(BigDecimal.valueOf(HUNDRED_PERCENT));
+    given(aBattery.getBaseNRCANRange()).willReturn(A_BATTERY_RANGE);
     vehicle.addBattery(aBattery);
     BigDecimal expected = BigDecimal.valueOf(A_BATTERY_RANGE);
 

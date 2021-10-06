@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
@@ -79,7 +78,7 @@ class DeliveryResourceImplTest {
     // given
     DeliveryLocationRequest request = createDeliveryLocationRequest();
     DeliveryDestination deliveryDestination = createDeliveryLocation();
-    when(deliveryDestinationAssembler.assemble(request)).thenReturn(deliveryDestination);
+    given(deliveryDestinationAssembler.assemble(request)).willReturn(deliveryDestination);
 
     // when
     deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
@@ -111,7 +110,7 @@ class DeliveryResourceImplTest {
     // given
     DeliveryLocationRequest request = createDeliveryLocationRequest();
     DeliveryDestination deliveryDestination = createDeliveryLocation();
-    when(deliveryDestinationAssembler.assemble(request)).thenReturn(deliveryDestination);
+    given(deliveryDestinationAssembler.assemble(request)).willReturn(deliveryDestination);
 
     // when
     Response response =

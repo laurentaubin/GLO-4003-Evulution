@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.ws.domain.transaction;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
@@ -43,7 +43,7 @@ class TransactionServiceTest {
   @Test
   void givenTransaction_whenCreateTransaction_thenRepositorySaveTransaction() {
     // given
-    when(transactionFactory.createTransaction()).thenReturn(transaction);
+    given(transactionFactory.createTransaction()).willReturn(transaction);
 
     // when
     transactionService.createTransaction();
@@ -55,7 +55,7 @@ class TransactionServiceTest {
   @Test
   void givenTransaction_whenCreateTransaction_thenReturnTransaction() {
     // given
-    when(transactionFactory.createTransaction()).thenReturn(transaction);
+    given(transactionFactory.createTransaction()).willReturn(transaction);
 
     // when
     var actual = transactionService.createTransaction();
@@ -67,7 +67,7 @@ class TransactionServiceTest {
   @Test
   public void whenAddVehicle_thenAddVehicleToTransaction() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(aTransaction));
+    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(aTransaction));
 
     // when
     transactionService.addVehicle(AN_ID, aVehicle);
@@ -79,7 +79,7 @@ class TransactionServiceTest {
   @Test
   void givenVehicleAndTransactionId_whenAddVehicle_thenRepositoryUpdatesTransaction() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
+    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(transaction));
 
     // when
     transactionService.addVehicle(AN_ID, aVehicle);
@@ -91,7 +91,7 @@ class TransactionServiceTest {
   @Test
   void givenNotExistingTransactionId_whenAddVehicle_thenThrowTransactionNotFound() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.empty());
+    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.empty());
 
     // when
     Executable action = () -> transactionService.addVehicle(AN_ID, aVehicle);
@@ -103,7 +103,7 @@ class TransactionServiceTest {
   @Test
   void givenBatteryAndTransactionId_whenAddBattery_thenRepositoryUpdateTransaction() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(transaction));
+    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(transaction));
 
     // when
     transactionService.addBattery(AN_ID, A_BATTERY_TYPE);
@@ -115,7 +115,7 @@ class TransactionServiceTest {
   @Test
   void givenNotExistingTransactionId_whenAddBattery_thenThrowTransactionNotFound() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.empty());
+    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.empty());
 
     // when
     Executable action = () -> transactionService.addBattery(AN_ID, A_BATTERY_TYPE);
@@ -127,7 +127,7 @@ class TransactionServiceTest {
   @Test
   void givenPaymentAndTransactionId_whenAddPayment_thenRepositoryUpdateTransaction() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.of(aTransaction));
+    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(aTransaction));
 
     // when
     transactionService.addPayment(AN_ID, payment);
@@ -139,7 +139,7 @@ class TransactionServiceTest {
   @Test
   void givenNotExistingTransactionId_whenAddPayment_thenThrowTransactionNotFound() {
     // given
-    when(transactionRepository.getTransaction(AN_ID)).thenReturn(Optional.empty());
+    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.empty());
 
     // when
     Executable action = () -> transactionService.addPayment(AN_ID, payment);
