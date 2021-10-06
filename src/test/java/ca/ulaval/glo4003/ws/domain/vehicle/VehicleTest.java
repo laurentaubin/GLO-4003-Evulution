@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.domain.transaction;
+package ca.ulaval.glo4003.ws.domain.vehicle;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;

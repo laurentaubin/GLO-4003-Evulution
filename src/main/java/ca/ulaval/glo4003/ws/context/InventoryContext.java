@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
-import ca.ulaval.glo4003.ws.domain.transaction.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.InMemoryModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.ModelDto;

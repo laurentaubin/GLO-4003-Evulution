@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.CannotAddBatteryBeforeVehicleException;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.IncompleteTransactionException;
+import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
+import ca.ulaval.glo4003.ws.domain.vehicle.Color;
+import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

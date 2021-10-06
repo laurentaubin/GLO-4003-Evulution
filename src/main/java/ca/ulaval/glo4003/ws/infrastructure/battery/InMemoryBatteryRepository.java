@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.infrastructure.battery;
 
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
-import ca.ulaval.glo4003.ws.domain.battery.InvalidBatteryException;
+import ca.ulaval.glo4003.ws.domain.battery.exception.InvalidBatteryException;
 import java.util.Map;
 
 public class InMemoryBatteryRepository implements BatteryRepository {

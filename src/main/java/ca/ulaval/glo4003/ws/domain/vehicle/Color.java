@@ -1,6 +1,6 @@
-package ca.ulaval.glo4003.ws.domain.transaction;
+package ca.ulaval.glo4003.ws.domain.vehicle;
 
-import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidVehicleColorException;
+import ca.ulaval.glo4003.ws.domain.vehicle.exception.InvalidVehicleColorException;
 
 public enum Color {
   WHITE("white");

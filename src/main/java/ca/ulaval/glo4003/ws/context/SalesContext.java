@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.transaction.*;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
+import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.infrastructure.transaction.InMemoryTransactionRepository;
 import jakarta.validation.Validation;
 

@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.api.mapper;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.domain.transaction.exception.ModelNotFoundException;
+import ca.ulaval.glo4003.ws.domain.vehicle.exception.ModelNotFoundException;
 import jakarta.ws.rs.core.Response;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;

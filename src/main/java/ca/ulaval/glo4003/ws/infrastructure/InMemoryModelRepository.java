@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.ws.infrastructure;
 
-import ca.ulaval.glo4003.ws.domain.transaction.Model;
-import ca.ulaval.glo4003.ws.domain.transaction.exception.ModelNotFoundException;
+import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
+import ca.ulaval.glo4003.ws.domain.vehicle.exception.ModelNotFoundException;
 import java.util.Map;
 
 public class InMemoryModelRepository implements ModelRepository {

@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.infrastructure;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import ca.ulaval.glo4003.ws.domain.transaction.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

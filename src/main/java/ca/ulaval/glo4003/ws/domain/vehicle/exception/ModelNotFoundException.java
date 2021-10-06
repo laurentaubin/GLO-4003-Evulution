@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.domain.transaction.exception;
+package ca.ulaval.glo4003.ws.domain.vehicle.exception;
 
 import java.util.Set;
 

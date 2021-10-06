@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.domain.transaction;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
+import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 
 public class TransactionService {
 

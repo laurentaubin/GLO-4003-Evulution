@@ -371,8 +371,8 @@
                                         <exclude>
                                             ca.ulaval.glo4003.ws.domain.transaction.exception.CannotAddBatteryBeforeVehicleException:
                                         </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.domain.transaction.Color</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.domain.transaction.Model</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.vehicle.Color</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.vehicle.Model</exclude>
 
                                         <!-- INFRA -->
                                         <exclude>ca.ulaval.glo4003.ws.infrastructure.delivery.InMemoryDeliveryDto
