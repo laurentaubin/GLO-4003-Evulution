@@ -13,7 +13,6 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +27,8 @@ class UserServiceTest {
   private static final SessionToken A_TOKEN = new SessionToken("token");
 
   @Mock private UserRepository userRepository;
-
   @Mock private SessionAdministrator sessionAdministrator;
+  @Mock private User aUser;
 
   private UserService userService;
 
@@ -41,8 +40,8 @@ class UserServiceTest {
   @Test
   public void givenUserAlreadyExists_whenRegisterUser_thenThrowEmailAlreadyInUseException() {
     // given
-    User aUser = new UserBuilder().build();
-    given(userRepository.findUser(aUser.getEmail())).willReturn(Optional.of(aUser));
+    given(aUser.getEmail()).willReturn(AN_EMAIL);
+    given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
 
     // when
     Executable registeringUser = () -> userService.registerUser(aUser);

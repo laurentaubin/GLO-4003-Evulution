@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.ws.domain.transaction;
 
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
-import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 
 public class TransactionService {
@@ -47,8 +46,6 @@ public class TransactionService {
   }
 
   private Transaction getTransaction(TransactionId transactionId) {
-    return transactionRepository
-        .getTransaction(transactionId)
-        .orElseThrow(() -> new TransactionNotFoundException(transactionId));
+    return transactionRepository.find(transactionId);
   }
 }

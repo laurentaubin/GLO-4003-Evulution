@@ -1,9 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.auth;
 
 import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
-import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
-import java.util.Optional;
 
 public class SessionAdministrator {
 
@@ -21,16 +19,9 @@ public class SessionAdministrator {
   }
 
   public Session login(String email, String password) {
-    Optional<User> user = userRepository.findUser(email);
-
-    if (user.isEmpty()) {
+    if (!userRepository.doesUserExist(email) || !doesPasswordMatch(email, password)) {
       throw new InvalidCredentialsException();
     }
-
-    if (!user.get().getPassword().equals(password)) {
-      throw new InvalidCredentialsException();
-    }
-
     return generateToken(email);
   }
 
@@ -44,5 +35,9 @@ public class SessionAdministrator {
     sessionRepository.save(session);
 
     return session;
+  }
+
+  private boolean doesPasswordMatch(String email, String password) {
+    return userRepository.findUser(email).getPassword().equals(password);
   }
 }

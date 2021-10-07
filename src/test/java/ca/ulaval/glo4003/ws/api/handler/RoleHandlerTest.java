@@ -19,7 +19,6 @@ import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,22 +34,16 @@ class RoleHandlerTest {
   private static final SessionToken A_AUTH_TOKEN = new SessionToken(A_AUTH_TOKEN_VALUE);
   private static final String A_AUTH_HEADER =
       A_AUTH_HEADER_NAME + " " + A_AUTH_TOKEN.getTokenValue();
-  private static final Optional<User> A_USER = Optional.of(new UserBuilder().build());
-  private static final Optional<User> AN_INVALID_USER = Optional.empty();
+  private static final User A_USER = new UserBuilder().build();
   private static final List<Role> SOME_ROLES = List.of(Role.BASE);
 
-  private final TokenExtractor tokenExtractor = new TokenExtractor(A_AUTH_HEADER_NAME);
-
   @Mock private UserRepository userRepository;
-
   @Mock private SessionRepository sessionRepository;
-
   @Mock private SessionTokenGenerator sessionTokenGenerator;
-
   @Mock private ContainerRequestContext aContainerRequest;
-
   @Mock private Session aSession;
 
+  private final TokenExtractor tokenExtractor = new TokenExtractor(A_AUTH_HEADER_NAME);
   private RoleHandler roleHandler;
 
   @BeforeEach
@@ -111,21 +104,22 @@ class RoleHandlerTest {
   }
 
   private void givenRepositories() {
-    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(Optional.of(aSession));
     given(sessionTokenGenerator.generate(A_AUTH_TOKEN_VALUE)).willReturn(A_AUTH_TOKEN);
+    given(sessionRepository.doesSessionExist(A_AUTH_TOKEN)).willReturn(true);
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(userRepository.findUser(AN_EMAIL)).willReturn(A_USER);
+    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(aSession);
   }
 
   private void givenInvalidSessionRepositories() {
     given(sessionTokenGenerator.generate(A_AUTH_TOKEN_VALUE)).willReturn(A_AUTH_TOKEN);
-    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(Optional.empty());
   }
 
   private void givenInvalidUserRepositories() {
-    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(Optional.of(aSession));
+    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(aSession);
     given(sessionTokenGenerator.generate(A_AUTH_TOKEN_VALUE)).willReturn(A_AUTH_TOKEN);
     given(aSession.getEmail()).willReturn(AN_EMAIL);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(AN_INVALID_USER);
+    given(sessionRepository.doesSessionExist(A_AUTH_TOKEN)).willReturn(true);
+    given(userRepository.findUser(AN_EMAIL)).willThrow(UserNotFoundException.class);
   }
 }

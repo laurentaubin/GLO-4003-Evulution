@@ -17,10 +17,9 @@ public class UserService {
   }
 
   public void registerUser(User user) {
-    if (userRepository.findUser(user.getEmail()).isPresent()) {
+    if (userRepository.doesUserExist(user.getEmail())) {
       throw new EmailAlreadyInUseException();
     }
-
     userRepository.registerUser(user);
   }
 

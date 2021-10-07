@@ -12,13 +12,13 @@ public class TransactionOwnershipHandler {
   }
 
   public void addTransactionOwnership(Session session, TransactionId transactionId) {
-    User user = userRepository.findUser(session.getEmail()).get();
+    User user = userRepository.findUser(session.getEmail());
     user.addTransaction(transactionId);
     userRepository.update(user);
   }
 
   public void validateOwnership(Session session, TransactionId transactionId) {
-    User user = userRepository.findUser(session.getEmail()).get();
+    User user = userRepository.findUser(session.getEmail());
 
     if (!user.doesOwnTransaction(transactionId)) {
       throw new WrongOwnerException();

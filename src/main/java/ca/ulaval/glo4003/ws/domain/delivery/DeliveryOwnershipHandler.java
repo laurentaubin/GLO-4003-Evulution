@@ -13,13 +13,13 @@ public class DeliveryOwnershipHandler {
   }
 
   public void addDeliveryOwnership(Session session, DeliveryId deliveryId) {
-    User user = userRepository.findUser(session.getEmail()).get();
+    User user = userRepository.findUser(session.getEmail());
     user.addDelivery(deliveryId);
     userRepository.update(user);
   }
 
   public void validateOwnership(Session session, DeliveryId deliveryId) {
-    User user = userRepository.findUser(session.getEmail()).get();
+    User user = userRepository.findUser(session.getEmail());
 
     if (!user.doesOwnDelivery(deliveryId)) {
       throw new WrongOwnerException();

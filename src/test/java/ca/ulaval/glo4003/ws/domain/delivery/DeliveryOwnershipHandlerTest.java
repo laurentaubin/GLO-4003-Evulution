@@ -10,7 +10,6 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +36,7 @@ class DeliveryOwnershipHandlerTest {
   @Test
   public void givenUserExists_whenAddDeliveryOwnership_thenAddDeliveryToUser() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
 
     // when
     deliveryOwnershipHandler.addDeliveryOwnership(A_SESSION, aDeliveryId);
@@ -49,7 +48,7 @@ class DeliveryOwnershipHandlerTest {
   @Test
   public void givenDeliveryAddedToUser_whenAddDeliveryOwnership_thenSaveUser() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
 
     // when
     deliveryOwnershipHandler.addDeliveryOwnership(A_SESSION, aDeliveryId);
@@ -61,7 +60,7 @@ class DeliveryOwnershipHandlerTest {
   @Test
   public void givenUserIsOwnerOfDelivery_whenValidateOwnership_thenDoNothing() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
     given(aUser.doesOwnDelivery(aDeliveryId)).willReturn(true);
 
     // when
@@ -75,7 +74,7 @@ class DeliveryOwnershipHandlerTest {
   @Test
   public void givenUserIsNotOwnerOfDelivery_whenValidateOwnership_thenThrowWrongOwnerException() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
     given(aUser.doesOwnDelivery(aDeliveryId)).willReturn(false);
 
     // when

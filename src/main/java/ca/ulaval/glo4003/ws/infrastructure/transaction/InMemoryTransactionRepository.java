@@ -7,15 +7,17 @@ import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionExc
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class InMemoryTransactionRepository implements TransactionRepository {
 
   private final Map<TransactionId, Transaction> transactions = new HashMap<>();
 
   @Override
-  public Optional<Transaction> getTransaction(TransactionId transactionId) {
-    return Optional.ofNullable(transactions.get(transactionId));
+  public Transaction find(TransactionId transactionId) {
+    if (transactions.containsKey(transactionId)) {
+      return transactions.get(transactionId);
+    }
+    throw new TransactionNotFoundException(transactionId);
   }
 
   @Override

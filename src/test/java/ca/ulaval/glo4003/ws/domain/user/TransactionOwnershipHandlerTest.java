@@ -9,7 +9,6 @@ import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +35,7 @@ class TransactionOwnershipHandlerTest {
   @Test
   public void givenUserExists_whenAddTransactionOwnership_thenAddTransactionToUser() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
 
     // when
     transactionOwnershipHandler.addTransactionOwnership(A_SESSION, aTransactionId);
@@ -48,7 +47,7 @@ class TransactionOwnershipHandlerTest {
   @Test
   public void givenTransactionAddedToUser_whenAddTransactionOwnership_thenSaveUser() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
 
     // when
     transactionOwnershipHandler.addTransactionOwnership(A_SESSION, aTransactionId);
@@ -60,7 +59,7 @@ class TransactionOwnershipHandlerTest {
   @Test
   public void givenUserIsOwnerOfTransaction_whenValidateOwnership_thenDoNothing() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
     given(aUser.doesOwnTransaction(aTransactionId)).willReturn(true);
 
     // when
@@ -75,7 +74,7 @@ class TransactionOwnershipHandlerTest {
   public void
       givenUserIsNotOwnerOfTransaction_whenValidateOwnership_thenThrowWrongOwnerException() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
     given(aUser.doesOwnTransaction(aTransactionId)).willReturn(false);
 
     // when
