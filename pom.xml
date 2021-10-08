@@ -383,6 +383,8 @@
 
                                         <exclude>ca.ulaval.glo4003.EvulutionMain</exclude>
 
+                                        <!-- EXTERNAL API -->
+                                        <exclude>ca.ulaval.glo4003.evulution.car_manufacture.*</exclude>
 
                                     </excludes>
                                 </rule>
