@@ -9,7 +9,6 @@ import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,13 +22,9 @@ class SessionAdministratorTest {
   private static final String A_PASSWORD = "pass123";
 
   @Mock private UserRepository userRepository;
-
   @Mock private SessionRepository sessionRepository;
-
   @Mock private SessionFactory sessionFactory;
-
   @Mock private Session aSession;
-
   @Mock private SessionToken sessionToken;
 
   private User aUser;
@@ -47,7 +42,7 @@ class SessionAdministratorTest {
   @Test
   public void givenUserDoesNotExist_whenLogin_thenThrowLoginFailedException() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.empty());
+    given(userRepository.doesUserExist(AN_EMAIL)).willReturn(false);
 
     // when
     Executable checkingCredentials = () -> sessionAdministrator.login(AN_EMAIL, A_PASSWORD);
@@ -59,7 +54,8 @@ class SessionAdministratorTest {
   @Test
   public void givenUserExistsButPasswordDoesNotMatch_whenLogin_thenThrowLoginFailedException() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
 
     // when
     Executable checkingCredentials =
@@ -72,7 +68,8 @@ class SessionAdministratorTest {
   @Test
   public void givenTokenCreatedByFactory_whenLogin_thenAddTokenToPool() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
     given(sessionFactory.create(AN_EMAIL)).willReturn(aSession);
 
     // when
@@ -85,7 +82,8 @@ class SessionAdministratorTest {
   @Test
   public void givenTokenCreatedByFactory_whenLogin_thenReturnToken() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(Optional.of(aUser));
+    given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
     given(sessionFactory.create(AN_EMAIL)).willReturn(aSession);
 
     // when

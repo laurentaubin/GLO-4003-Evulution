@@ -50,7 +50,7 @@ class InMemorySessionRepositoryTest {
     loginTokenRepository.save(aSession);
 
     // when
-    Session retrievedSession = loginTokenRepository.find(A_TOKEN).get();
+    Session retrievedSession = loginTokenRepository.find(A_TOKEN);
 
     // then
     assertThat(aSession).isEqualTo(retrievedSession);

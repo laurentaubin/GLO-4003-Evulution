@@ -9,7 +9,6 @@ import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.vehicle.Color;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +68,7 @@ class TransactionServiceTest {
   @Test
   public void whenAddVehicle_thenAddVehicleToTransaction() {
     // given
-    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(aTransaction));
+    given(transactionRepository.find(AN_ID)).willReturn(aTransaction);
 
     // when
     transactionService.addVehicle(AN_ID, aVehicle);
@@ -81,7 +80,7 @@ class TransactionServiceTest {
   @Test
   void givenVehicleAndTransactionId_whenAddVehicle_thenRepositoryUpdatesTransaction() {
     // given
-    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(transaction));
+    given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
     transactionService.addVehicle(AN_ID, aVehicle);
@@ -91,9 +90,9 @@ class TransactionServiceTest {
   }
 
   @Test
-  void givenNotExistingTransactionId_whenAddVehicle_thenThrowTransactionNotFound() {
+  void givenNotExistingTransactionId_whenAddVehicle_thenThrowTransactionNotFoundException() {
     // given
-    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.empty());
+    given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
     Executable action = () -> transactionService.addVehicle(AN_ID, aVehicle);
@@ -105,7 +104,7 @@ class TransactionServiceTest {
   @Test
   void givenBatteryAndTransactionId_whenAddBattery_thenRepositoryUpdateTransaction() {
     // given
-    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(transaction));
+    given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
     transactionService.addBattery(AN_ID, A_BATTERY_TYPE);
@@ -115,9 +114,9 @@ class TransactionServiceTest {
   }
 
   @Test
-  void givenNotExistingTransactionId_whenAddBattery_thenThrowTransactionNotFound() {
+  void givenNotExistingTransactionId_whenAddBattery_thenThrowTransactionNotFoundException() {
     // given
-    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.empty());
+    given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
     Executable action = () -> transactionService.addBattery(AN_ID, A_BATTERY_TYPE);
@@ -129,7 +128,7 @@ class TransactionServiceTest {
   @Test
   void givenPaymentAndTransactionId_whenAddPayment_thenRepositoryUpdateTransaction() {
     // given
-    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.of(aTransaction));
+    given(transactionRepository.find(AN_ID)).willReturn(aTransaction);
 
     // when
     transactionService.addPayment(AN_ID, payment);
@@ -139,9 +138,9 @@ class TransactionServiceTest {
   }
 
   @Test
-  void givenNotExistingTransactionId_whenAddPayment_thenThrowTransactionNotFound() {
+  void givenNotExistingTransactionId_whenAddPayment_thenThrowTransactionNotFoundException() {
     // given
-    given(transactionRepository.getTransaction(AN_ID)).willReturn(Optional.empty());
+    given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
     Executable action = () -> transactionService.addPayment(AN_ID, payment);

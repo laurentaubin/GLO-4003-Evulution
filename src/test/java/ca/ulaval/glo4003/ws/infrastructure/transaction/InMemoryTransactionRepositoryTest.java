@@ -9,7 +9,6 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,19 +37,19 @@ class InMemoryTransactionRepositoryTest {
     transactionRepository.save(transaction);
 
     // when
-    Transaction actualTransaction = transactionRepository.getTransaction(transaction.getId()).get();
+    Transaction actualTransaction = transactionRepository.find(transaction.getId());
 
     // then
     assertThat(actualTransaction).isEqualTo(transaction);
   }
 
   @Test
-  void givenNonExistentTransaction_whenGetTransaction_thenReturnEmpty() {
+  void givenNonExistentTransaction_whenGetTransaction_thenThrowTransactionNotFoundException() {
     // when
-    Optional<Transaction> transaction = transactionRepository.getTransaction(AN_ID);
+    Executable findingTransaction = () -> transactionRepository.find(AN_ID);
 
     // then
-    assertThat(transaction.isEmpty()).isTrue();
+    assertThrows(TransactionNotFoundException.class, findingTransaction);
   }
 
   @Test
@@ -76,7 +75,7 @@ class InMemoryTransactionRepositoryTest {
     transactionRepository.update(updatedTransaction);
 
     // then
-    Transaction actualTransaction = transactionRepository.getTransaction(AN_ID).get();
+    Transaction actualTransaction = transactionRepository.find(AN_ID);
     assertThat(actualTransaction).isEqualTo(updatedTransaction);
   }
 

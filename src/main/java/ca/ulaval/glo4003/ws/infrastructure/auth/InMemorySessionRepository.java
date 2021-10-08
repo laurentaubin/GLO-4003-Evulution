@@ -3,9 +3,9 @@ package ca.ulaval.glo4003.ws.infrastructure.auth;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
+import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class InMemorySessionRepository implements SessionRepository {
   private final Map<String, Session> sessions;
@@ -25,7 +25,10 @@ public class InMemorySessionRepository implements SessionRepository {
   }
 
   @Override
-  public Optional<Session> find(SessionToken token) {
-    return Optional.ofNullable(sessions.get(token.getTokenValue()));
+  public Session find(SessionToken token) {
+    if (sessions.containsKey(token.getTokenValue())) {
+      return sessions.get(token.getTokenValue());
+    }
+    throw new SessionDoesNotExistException();
   }
 }
