@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
+import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
@@ -34,6 +35,9 @@ public class SalesContext implements Context {
 
   private void registerServices() {
     var validator = Validation.buildDefaultValidatorFactory().getValidator();
+    TransactionCompletedObservable transactionCompletedObservable =
+        new TransactionCompletedObservable();
+    transactionCompletedObservable.register(serviceLocator.resolve(AssemblyLine.class));
 
     serviceLocator.register(BankAccountFactory.class, new BankAccountFactory());
     serviceLocator.register(
@@ -53,7 +57,8 @@ public class SalesContext implements Context {
         new TransactionService(
             serviceLocator.resolve(TransactionRepository.class),
             serviceLocator.resolve(TransactionFactory.class),
-            serviceLocator.resolve(BatteryRepository.class)));
+            serviceLocator.resolve(BatteryRepository.class),
+            transactionCompletedObservable));
   }
 
   private void registerResources() {

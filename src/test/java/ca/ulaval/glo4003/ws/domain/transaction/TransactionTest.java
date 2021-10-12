@@ -68,9 +68,8 @@ class TransactionTest {
   public void
       givenAVehicleWithBattery_whenComputedEstimateVehicleRange_thenReturnVehicleEstimatedRange() {
     // given
-    transaction.addVehicle(aVehicle);
-    given(aVehicle.hasBattery()).willReturn(true);
     given(aVehicle.computeRange()).willReturn(A_RANGE);
+    givenATransactionReadyToBeCompleted();
 
     // when
     BigDecimal estimatedRange = transaction.computeEstimatedVehicleRange();
@@ -120,8 +119,7 @@ class TransactionTest {
   public void
       givenAVehicleWithBattery_whenAddPayment_thenDoNotThrowIncompleteTransactionException() {
     // given
-    transaction.addVehicle(aVehicle);
-    given(aVehicle.hasBattery()).willReturn(true);
+    givenATransactionReadyToBeCompleted();
 
     // when
     Executable addingPayment = () -> transaction.addPayment(aPayment);
@@ -133,13 +131,17 @@ class TransactionTest {
   @Test
   public void givenValidTransaction_whenAddPayment_thenPaymentIsAddedToTransaction() {
     // given
-    transaction.addVehicle(aVehicle);
-    given(aVehicle.hasBattery()).willReturn(true);
+    givenATransactionReadyToBeCompleted();
 
     // when
     transaction.addPayment(aPayment);
 
     // then
     assertThat(transaction.getPayment()).isEqualTo(aPayment);
+  }
+
+  private void givenATransactionReadyToBeCompleted() {
+    given(aVehicle.hasBattery()).willReturn(true);
+    transaction.addVehicle(aVehicle);
   }
 }

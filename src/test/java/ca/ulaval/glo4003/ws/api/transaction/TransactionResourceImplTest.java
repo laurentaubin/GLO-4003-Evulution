@@ -3,11 +3,7 @@ package ca.ulaval.glo4003.ws.api.transaction;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
@@ -23,10 +19,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DuplicateDeliveryException;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
-import ca.ulaval.glo4003.ws.domain.transaction.Payment;
-import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.domain.transaction.*;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
@@ -66,6 +59,7 @@ class TransactionResourceImplTest {
   @Mock private DeliveryOwnershipHandler deliveryOwnershipHandler;
   @Mock private VehicleFactory vehicleFactory;
   @Mock private Vehicle aVehicle;
+  @Mock private TransactionCompletedObservable transactionCompletedObservable;
 
   private Transaction transaction;
   private Delivery delivery;
