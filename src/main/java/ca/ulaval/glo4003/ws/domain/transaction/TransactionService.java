@@ -9,14 +9,17 @@ public class TransactionService {
   private final TransactionRepository transactionRepository;
   private final TransactionFactory transactionFactory;
   private final BatteryRepository batteryRepository;
+  private final TransactionCompletedObservable transactionCompletedObservable;
 
   public TransactionService(
       TransactionRepository transactionRepository,
       TransactionFactory transactionFactory,
-      BatteryRepository batteryRepository) {
+      BatteryRepository batteryRepository,
+      TransactionCompletedObservable transactionCompletedObservable) {
     this.transactionRepository = transactionRepository;
     this.transactionFactory = transactionFactory;
     this.batteryRepository = batteryRepository;
+    this.transactionCompletedObservable = transactionCompletedObservable;
   }
 
   public Transaction createTransaction() {
@@ -43,6 +46,7 @@ public class TransactionService {
     Transaction transaction = getTransaction(transactionId);
     transaction.addPayment(payment);
     transactionRepository.update(transaction);
+    transactionCompletedObservable.notifyTransactionCompleted(transaction);
   }
 
   private Transaction getTransaction(TransactionId transactionId) {

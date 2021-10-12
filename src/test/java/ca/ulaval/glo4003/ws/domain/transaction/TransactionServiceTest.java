@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
-import ca.ulaval.glo4003.ws.domain.vehicle.Color;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransactionServiceTest {
   private static final TransactionId AN_ID = new TransactionId("id");
   private static final String A_BATTERY_TYPE = "STANDARD";
-  private static final String A_VEHICLE_COLOR = Color.WHITE.toString();
-  private static final String A_VEHICLE_MODEL = "a model";
 
   @Mock private TransactionRepository transactionRepository;
   @Mock private TransactionFactory transactionFactory;
@@ -29,6 +26,7 @@ class TransactionServiceTest {
   @Mock private Vehicle aVehicle;
   @Mock private Payment payment;
   @Mock private Transaction aTransaction;
+  @Mock private TransactionCompletedObservable transactionCompletedObservable;
 
   private TransactionService transactionService;
   private Transaction transaction;
@@ -38,7 +36,11 @@ class TransactionServiceTest {
     transaction = createTransactionGivenId(AN_ID);
     transaction.addVehicle(aVehicle);
     transactionService =
-        new TransactionService(transactionRepository, transactionFactory, batteryRepository);
+        new TransactionService(
+            transactionRepository,
+            transactionFactory,
+            batteryRepository,
+            transactionCompletedObservable);
   }
 
   @Test
@@ -147,6 +149,24 @@ class TransactionServiceTest {
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
+  }
+
+  @Test
+  public void whenAddPayment_thenNotifyTransactionCompletedObservers() {
+    // given
+    givenATransactionReadyToBeCompleted();
+
+    // when
+    transactionService.addPayment(AN_ID, payment);
+
+    // then
+    verify(transactionCompletedObservable).notifyTransactionCompleted(transaction);
+  }
+
+  private void givenATransactionReadyToBeCompleted() {
+    given(aVehicle.hasBattery()).willReturn(true);
+    transaction.addVehicle(aVehicle);
+    given(transactionRepository.find(AN_ID)).willReturn(transaction);
   }
 
   private Transaction createTransactionGivenId(TransactionId id) {

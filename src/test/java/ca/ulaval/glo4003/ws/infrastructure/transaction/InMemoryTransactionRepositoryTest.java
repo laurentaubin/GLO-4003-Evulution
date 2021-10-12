@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
@@ -24,6 +25,7 @@ class InMemoryTransactionRepositoryTest {
   private TransactionRepository transactionRepository;
 
   @Mock private Vehicle aVehicle;
+  @Mock private TransactionCompletedObservable transactionCompletedObservable;
 
   @BeforeEach
   void setUp() {

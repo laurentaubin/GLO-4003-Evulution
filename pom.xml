@@ -416,6 +416,11 @@
                                         <exclude>ca.ulaval.glo4003.ws.infrastructure.ModelDto
                                         </exclude>
                                         <exclude>
+                                            ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException
+                                        </exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.ModelDto
+                                        </exclude>
+                                        <exclude>
                                             ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.TransportWrapper
                                         </exclude>
 
@@ -425,6 +430,29 @@
                                         <exclude>ca.ulaval.glo4003.evulution.car_manufacture.*
                                         </exclude>
 
+                                        <!--       TODO TO BE TESTED         -->
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory
+                                        </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.assembly.order.OrderId
+                                        </exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.assembly.order.Order
+                                        </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.assembly.model.LinearModelAssemblyLine
+                                        </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy
+                                        </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory
+                                        </exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine
+                                        </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.assembly.battery.LinearBatteryAssemblyLine
+                                        </exclude>
                                     </excludes>
                                 </rule>
                             </rules>
