@@ -53,6 +53,15 @@
     </properties>
 
     <dependencies>
+        <!-- Internal libraries -->
+        <dependency>
+            <groupId>ca.ulaval.glo4003.evulution</groupId>
+            <artifactId>car-manufacture</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/car-manufacture-1.0.0.jar</systemPath>
+        </dependency>
+
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-jetty-http</artifactId>
@@ -299,7 +308,7 @@
                         <configuration>
                             <failOnWarning>true</failOnWarning>
                             <ignoredUnusedDeclaredDependencies>
-                                org.apache.logging.log4j:log4j-api,org.apache.logging.log4j:log4j-core,org.apache.logging.log4j:log4j-slf4j-impl,org.junit.jupiter:junit-jupiter,org.apache.logging.log4j:log4j-jul,com.sun.xml.bind:jaxb-impl,org.junit.jupiter:junit-jupiter-engine,org.hibernate.validator:hibernate-validator,io.rest-assured:json-path,io.rest-assured:rest-assured,jakarta.servlet:jakarta.servlet-api,org.glassfish.jersey.inject:jersey-hk2,org.glassfish:jakarta.el,org.hibernate.validator:hibernate-validator-cdi,org.glassfish.jersey.media:jersey-media-json-jackson,com.coveo:fmt-maven-plugin,jakarta.activation:jakarta.activation-api
+                                org.apache.logging.log4j:log4j-api,org.apache.logging.log4j:log4j-core,org.apache.logging.log4j:log4j-slf4j-impl,org.junit.jupiter:junit-jupiter,org.apache.logging.log4j:log4j-jul,com.sun.xml.bind:jaxb-impl,org.junit.jupiter:junit-jupiter-engine,org.hibernate.validator:hibernate-validator,io.rest-assured:json-path,io.rest-assured:rest-assured,jakarta.servlet:jakarta.servlet-api,org.glassfish.jersey.inject:jersey-hk2,org.glassfish:jakarta.el,org.hibernate.validator:hibernate-validator-cdi,org.glassfish.jersey.media:jersey-media-json-jackson,com.coveo:fmt-maven-plugin,jakarta.activation:jakarta.activation-api,ca.ulaval.glo4003.evulution:car-manufacture:jar:1.0.0
                             </ignoredUnusedDeclaredDependencies>
                             <ignoredUsedUndeclaredDependencies>
                                 org.junit.jupiter:junit-jupiter-api,org.eclipse.jetty:jetty-server
