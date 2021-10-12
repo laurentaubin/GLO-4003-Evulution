@@ -25,7 +25,12 @@ public class EvulutionMain {
 
   public static void main(String[] args) throws Exception {
     new ApiContext().applyContext();
-    var serviceLocator = ServiceLocator.getInstance();
+
+    // TODO delete this after implementing email notification flow
+    //    NotificationIssuer notificationIssuer =
+    //        ServiceLocator.getInstance().resolve(NotificationIssuer.class);
+    //    notificationIssuer.issueDelayNotification(
+    //        new User("", new BirthDate(LocalDate.now()), "", "laurentaubin_32@hotmail.com", ""));
 
     final ResourceConfig config = new ResourceConfig();
     config.register(new ApplicationBinder());
