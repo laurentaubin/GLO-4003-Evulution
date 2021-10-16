@@ -73,22 +73,10 @@ For example:
 
 All code is written using [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html).
 
-The project is configured to be formatted after each push with [fmt-maven-plugin](https://github.com/coveooss/fmt-maven-plugin).
-
 It is recommended to install the `Save Actions` plugin, to format your file on save. If you use the plugin, enable:
 - Activate save actions on save
 - Optimize imports
 - Reformat file
-
-Take note that your pipeline will fail if your code is not formatted correctly.
-
-Manual code formatting
-
-    mvn com.coveo:fmt-maven-plugin:format
-
-Manual code format validation
-
-    mvn com.coveo:fmt-maven-plugin:check
 
 ### Documentation Styleguide
 - Use [Markdown](https://www.markdownguide.org/basic-syntax/)
