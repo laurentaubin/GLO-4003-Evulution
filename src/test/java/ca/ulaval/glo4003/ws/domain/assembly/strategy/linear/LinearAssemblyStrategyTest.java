@@ -45,6 +45,6 @@ class LinearAssemblyStrategyTest {
     linearAssemblyStrategy.listenToModelAssembled(anOrder);
 
     // then
-    verify(batteryAssemblyLineStrategy).assembleBattery(anOrder);
+    verify(batteryAssemblyLineStrategy).addOrder(anOrder);
   }
 }

@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.assembly;
 
+import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
+
 public interface BatteryAssembledObserver {
-  void listenToBatteryAssembled();
+  void listenToBatteryAssembled(Order order);
 }

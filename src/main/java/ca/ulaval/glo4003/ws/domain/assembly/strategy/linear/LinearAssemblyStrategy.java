@@ -32,10 +32,10 @@ public class LinearAssemblyStrategy
   }
 
   @Override
-  public void listenToBatteryAssembled() {}
+  public void listenToModelAssembled(Order order) {
+    batteryAssemblyLineStrategy.addOrder(order);
+  }
 
   @Override
-  public void listenToModelAssembled(Order order) {
-    batteryAssemblyLineStrategy.assembleBattery(order);
-  }
+  public void listenToBatteryAssembled(Order order) {}
 }
