@@ -435,7 +435,6 @@
                                         </exclude>
 
                                         <!-- TODO to be tested-->
-                                        <exclude>ca.ulaval.glo4003.ws.domain.assembly.battery.LinearBatteryAssemblyLine</exclude>
                                         <exclude>ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory</exclude>
                                         <exclude>ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy</exclude>
                                     </excludes>
