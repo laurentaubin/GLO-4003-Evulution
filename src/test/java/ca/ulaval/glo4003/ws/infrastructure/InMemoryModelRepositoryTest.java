@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.ModelNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,5 +48,18 @@ class InMemoryModelRepositoryTest {
 
     // then
     assertThrows(ModelNotFoundException.class, findingModel);
+  }
+
+  @Test
+  public void givenModels_whenFindAllModels_thenReturnAllModels() {
+    // given
+    Collection<Model> expectedModels = new ArrayList<>();
+    expectedModels.add(aModel);
+
+    // when
+    Collection<Model> models = repository.findAllModels();
+
+    // then
+    assertThat(models).containsExactlyElementsIn(expectedModels);
   }
 }
