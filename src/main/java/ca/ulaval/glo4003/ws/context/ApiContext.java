@@ -9,5 +9,6 @@ public class ApiContext {
     new DeliveryContext().registerContext();
     new SalesContext().registerContext();
     new NotificationContext().registerContext();
+    new TimeContext().registerContext();
   }
 }

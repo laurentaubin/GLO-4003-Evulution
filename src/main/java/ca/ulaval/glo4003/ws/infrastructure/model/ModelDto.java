@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.infrastructure;
+package ca.ulaval.glo4003.ws.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
