@@ -43,4 +43,13 @@ class AssemblyLineTest {
     // then
     verify(assemblyStrategy).addOrder(anOrder);
   }
+
+  @Test
+  public void whenAdvance_thenCallAdvanceOnAssemblyStrategy() {
+    // when
+    assemblyLine.advance();
+
+    // then
+    verify(assemblyStrategy).advance();
+  }
 }

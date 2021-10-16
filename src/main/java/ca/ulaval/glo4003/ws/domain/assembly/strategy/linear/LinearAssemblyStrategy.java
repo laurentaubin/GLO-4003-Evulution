@@ -22,7 +22,7 @@ public class LinearAssemblyStrategy
 
   @Override
   public void addOrder(Order order) {
-    // depend de sa stratégie, mais Linear add l'order à ModelAssemblyLine
+    modelAssemblyLineStrategy.addOrder(order);
   }
 
   @Override
@@ -35,5 +35,7 @@ public class LinearAssemblyStrategy
   public void listenToBatteryAssembled() {}
 
   @Override
-  public void listenToModelAssembled() {}
+  public void listenToModelAssembled(Order order) {
+    batteryAssemblyLineStrategy.assembleBattery(order);
+  }
 }

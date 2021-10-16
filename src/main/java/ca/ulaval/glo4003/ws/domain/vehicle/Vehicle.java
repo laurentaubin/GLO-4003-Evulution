@@ -34,4 +34,8 @@ public class Vehicle {
   public Color getColor() {
     return color;
   }
+
+  public Battery getBattery() {
+    return battery;
+  }
 }
