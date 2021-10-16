@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.ModelNotFoundException;
+import ca.ulaval.glo4003.ws.infrastructure.model.InMemoryModelRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

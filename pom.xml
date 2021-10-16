@@ -422,12 +422,12 @@
                                         <exclude>
                                             ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException
                                         </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.ModelDto
+                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.model.ModelDto
                                         </exclude>
                                         <exclude>
                                             ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException
                                         </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.ModelDto
+                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.model.ModelDto
                                         </exclude>
                                         <exclude>
                                             ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.TransportWrapper
