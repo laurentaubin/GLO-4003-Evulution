@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.ws.infrastructure.model.ModelDto;
 import ca.ulaval.glo4003.ws.infrastructure.model.ModelDtoAssembler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

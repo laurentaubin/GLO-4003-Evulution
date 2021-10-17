@@ -16,9 +16,15 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.*;
+import ca.ulaval.glo4003.ws.domain.user.BirthDate;
+import ca.ulaval.glo4003.ws.domain.user.Role;
+import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
+import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.UserService;
 import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
+import ca.ulaval.glo4003.ws.infrastructure.user.UserDtoAssembler;
 import jakarta.validation.Validation;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +45,10 @@ public class UserContext implements Context {
   }
 
   private void registerRepositories() {
-    serviceLocator.register(UserRepository.class, new InMemoryUserRepository());
+    serviceLocator.register(UserDtoAssembler.class, new UserDtoAssembler());
+    serviceLocator.register(
+        UserRepository.class,
+        new InMemoryUserRepository(serviceLocator.resolve(UserDtoAssembler.class)));
     serviceLocator.register(SessionRepository.class, new InMemorySessionRepository());
   }
 

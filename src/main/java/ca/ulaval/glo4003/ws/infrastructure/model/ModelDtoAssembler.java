@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.model;
 
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

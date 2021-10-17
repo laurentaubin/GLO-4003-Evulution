@@ -4,9 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
@@ -21,20 +19,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class InMemoryTransactionRepositoryTest {
   private static final TransactionId AN_ID = new TransactionId("id");
 
+  private final TransactionAssembler transactionAssembler = new TransactionAssembler();
   private Transaction transaction;
-  private TransactionRepository transactionRepository;
 
   @Mock private Vehicle aVehicle;
-  @Mock private TransactionCompletedObservable transactionCompletedObservable;
+
+  private InMemoryTransactionRepository transactionRepository;
 
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     transaction = createTransactionGivenId(AN_ID);
-    transactionRepository = new InMemoryTransactionRepository();
+    transactionRepository = new InMemoryTransactionRepository(transactionAssembler);
   }
 
   @Test
-  void givenSavedTransactionInRepository_whenGetTransaction_thenReturnTransaction() {
+  public void givenSavedTransactionInRepository_whenGetTransaction_thenReturnTransaction() {
     // given
     transactionRepository.save(transaction);
 
@@ -42,11 +41,12 @@ class InMemoryTransactionRepositoryTest {
     Transaction actualTransaction = transactionRepository.find(transaction.getId());
 
     // then
-    assertThat(actualTransaction).isEqualTo(transaction);
+    assertThat(actualTransaction.getId()).isEqualTo(transaction.getId());
   }
 
   @Test
-  void givenNonExistentTransaction_whenGetTransaction_thenThrowTransactionNotFoundException() {
+  public void
+      givenNonExistentTransaction_whenGetTransaction_thenThrowTransactionNotFoundException() {
     // when
     Executable findingTransaction = () -> transactionRepository.find(AN_ID);
 
@@ -55,7 +55,7 @@ class InMemoryTransactionRepositoryTest {
   }
 
   @Test
-  void givenTransactionAlreadyInRepository_whenSave_thenThrowDuplicateTransaction() {
+  public void givenTransactionAlreadyInRepository_whenSave_thenThrowDuplicateTransaction() {
     // given
     transactionRepository.save(transaction);
 
@@ -67,7 +67,7 @@ class InMemoryTransactionRepositoryTest {
   }
 
   @Test
-  void givenTransactionInRepository_whenUpdate_thenUpdateTransaction() {
+  public void givenTransactionInRepository_whenUpdate_thenUpdateTransaction() {
     // given
     Transaction updatedTransaction = createTransactionGivenId(AN_ID);
     updatedTransaction.addVehicle(aVehicle);
@@ -78,11 +78,11 @@ class InMemoryTransactionRepositoryTest {
 
     // then
     Transaction actualTransaction = transactionRepository.find(AN_ID);
-    assertThat(actualTransaction).isEqualTo(updatedTransaction);
+    assertThat(actualTransaction.getVehicle()).isEqualTo(aVehicle);
   }
 
   @Test
-  void givenTransactionNotInRepository_whenUpdate_thenThrowTransactionNotFound() {
+  public void givenTransactionNotInRepository_whenUpdate_thenThrowTransactionNotFound() {
     // given
     Transaction transaction = createTransactionGivenId(AN_ID);
 
@@ -91,6 +91,21 @@ class InMemoryTransactionRepositoryTest {
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
+  }
+
+  @Test
+  public void
+      givenTransactionSaved_whenAddVehicleToOriginalTransaction_thenSavedTransactionIsNotAffected() {
+    // given
+    Transaction transaction = createTransactionGivenId(AN_ID);
+    transactionRepository.save(transaction);
+
+    // when
+    transaction.addVehicle(aVehicle);
+    Transaction originalTransaction = transactionRepository.find(AN_ID);
+
+    // then
+    assertThat(originalTransaction.getVehicle()).isNotEqualTo(aVehicle);
   }
 
   private Transaction createTransactionGivenId(TransactionId id) {

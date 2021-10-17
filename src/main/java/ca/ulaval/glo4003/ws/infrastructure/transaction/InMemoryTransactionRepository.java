@@ -10,12 +10,19 @@ import java.util.Map;
 
 public class InMemoryTransactionRepository implements TransactionRepository {
 
-  private final Map<TransactionId, Transaction> transactions = new HashMap<>();
+  private final Map<TransactionId, TransactionDto> transactions;
+  private final TransactionAssembler transactionAssembler;
+
+  public InMemoryTransactionRepository(TransactionAssembler transactionAssembler) {
+    transactions = new HashMap<>();
+    this.transactionAssembler = transactionAssembler;
+  }
 
   @Override
   public Transaction find(TransactionId transactionId) {
     if (transactions.containsKey(transactionId)) {
-      return transactions.get(transactionId);
+      TransactionDto transactionDto = transactions.get(transactionId);
+      return transactionAssembler.assemble(transactionDto);
     }
     throw new TransactionNotFoundException(transactionId);
   }
@@ -25,14 +32,16 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     if (transactions.containsKey(transaction.getId())) {
       throw new DuplicateTransactionException(transaction.getId());
     }
-    transactions.put(transaction.getId(), transaction);
+    TransactionDto transactionDto = transactionAssembler.assemble(transaction);
+    transactions.put(transaction.getId(), transactionDto);
   }
 
   @Override
   public void update(Transaction transaction) {
-    Transaction foundTransaction = transactions.get(transaction.getId());
+    TransactionDto foundTransaction = transactions.get(transaction.getId());
     if (foundTransaction != null) {
-      transactions.put(transaction.getId(), transaction);
+      TransactionDto transactionDto = transactionAssembler.assemble(transaction);
+      transactions.put(transaction.getId(), transactionDto);
     } else {
       throw new TransactionNotFoundException(transaction.getId());
     }

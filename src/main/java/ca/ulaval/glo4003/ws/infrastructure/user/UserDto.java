@@ -1,15 +1,13 @@
-package ca.ulaval.glo4003.ws.domain.user;
+package ca.ulaval.glo4003.ws.infrastructure.user;
 
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import java.util.ArrayList;
+import ca.ulaval.glo4003.ws.domain.user.BirthDate;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-public class User {
+public class UserDto {
   private final String name;
   private final BirthDate birthDate;
   private final String sex;
@@ -19,15 +17,23 @@ public class User {
   private final Collection<TransactionId> transactions;
   private final Collection<DeliveryId> deliveries;
 
-  public User(String name, BirthDate birthDate, String sex, String email, String password) {
+  public UserDto(
+      String name,
+      BirthDate birthDate,
+      String sex,
+      String email,
+      String password,
+      Set<Role> roles,
+      Collection<TransactionId> transactions,
+      Collection<DeliveryId> deliveries) {
     this.name = name;
     this.birthDate = birthDate;
     this.sex = sex;
     this.email = email;
     this.password = password;
-    this.roles = new HashSet<>(List.of(Role.BASE));
-    this.transactions = new ArrayList<>();
-    this.deliveries = new ArrayList<>();
+    this.roles = roles;
+    this.transactions = transactions;
+    this.deliveries = deliveries;
   }
 
   public String getName() {
@@ -50,32 +56,8 @@ public class User {
     return password;
   }
 
-  public void addRole(Role role) {
-    this.roles.add(role);
-  }
-
   public Set<Role> getRoles() {
-    return this.roles;
-  }
-
-  public boolean isAllowed(List<Role> requestedRoles) {
-    return !Collections.disjoint(roles, requestedRoles);
-  }
-
-  public void addTransaction(TransactionId transactionId) {
-    transactions.add(transactionId);
-  }
-
-  public void addDelivery(DeliveryId deliveryId) {
-    deliveries.add(deliveryId);
-  }
-
-  public boolean doesOwnTransaction(TransactionId transactionId) {
-    return transactions.contains(transactionId);
-  }
-
-  public boolean doesOwnDelivery(DeliveryId deliveryId) {
-    return deliveries.contains(deliveryId);
+    return roles;
   }
 
   public Collection<TransactionId> getTransactions() {

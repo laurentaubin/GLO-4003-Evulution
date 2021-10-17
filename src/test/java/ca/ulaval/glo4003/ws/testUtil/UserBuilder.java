@@ -46,6 +46,12 @@ public class UserBuilder {
   }
 
   public User build() {
-    return new User(name, birthDate, sex, email, password);
+    User user = new User(name, birthDate, sex, email, password);
+
+    for (Role role : roles) {
+      user.addRole(role);
+    }
+
+    return user;
   }
 }

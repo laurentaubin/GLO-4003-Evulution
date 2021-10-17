@@ -12,11 +12,16 @@ import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.infrastructure.transaction.InMemoryTransactionRepository;
+import ca.ulaval.glo4003.ws.infrastructure.transaction.TransactionAssembler;
 import jakarta.validation.Validation;
 
 public class SalesContext implements Context {
@@ -30,7 +35,10 @@ public class SalesContext implements Context {
   }
 
   private void registerRepositories() {
-    serviceLocator.register(TransactionRepository.class, new InMemoryTransactionRepository());
+    serviceLocator.register(TransactionAssembler.class, new TransactionAssembler());
+    serviceLocator.register(
+        TransactionRepository.class,
+        new InMemoryTransactionRepository(serviceLocator.resolve(TransactionAssembler.class)));
   }
 
   private void registerServices() {
