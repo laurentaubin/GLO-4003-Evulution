@@ -2,17 +2,26 @@ package ca.ulaval.glo4003.ws.infrastructure.user;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class InMemoryUserRepositoryTest {
+  private static final TransactionId A_TRANSACTION_ID = TransactionId.fromString("id");
   private static final String AN_EMAIL = "remw@mfs.com";
   private static final String ANOTHER_NAME = "sdaidhsauidhasiuhda";
+
+  @Mock private User user;
 
   private InMemoryUserRepository userRepository;
 
@@ -78,5 +87,18 @@ class InMemoryUserRepositoryTest {
 
     // then
     assertThat(doesUserExist).isFalse();
+  }
+
+  @Test
+  public void givenTransactionId_whenFindByTransaction_thenReturnUser() {
+    // given
+    when(user.doesOwnTransaction(A_TRANSACTION_ID)).thenReturn(true);
+    userRepository.registerUser(user);
+
+    // when
+    User foundUser = userRepository.findUserByTransactionId(A_TRANSACTION_ID);
+
+    // then
+    assertThat(foundUser).isEqualTo(user);
   }
 }
