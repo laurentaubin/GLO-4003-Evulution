@@ -3,12 +3,11 @@ package ca.ulaval.glo4003.ws.domain.assembly.order;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 
-// TODO remove from exclude and write tests
 public class Order {
   private OrderId id;
-
   private Model model;
   private Battery battery;
+  private int remainingProductionTime;
 
   public Order(OrderId orderId, Model model, Battery battery) {
     this.id = orderId;
@@ -26,5 +25,17 @@ public class Order {
 
   public Battery getBattery() {
     return battery;
+  }
+
+  public void advance() {
+    remainingProductionTime = remainingProductionTime - 1;
+  }
+
+  public int getRemainingProductionTime() {
+    return remainingProductionTime;
+  }
+
+  public void setRemainingProductionTime(int remainingProductionTime) {
+    this.remainingProductionTime = remainingProductionTime;
   }
 }

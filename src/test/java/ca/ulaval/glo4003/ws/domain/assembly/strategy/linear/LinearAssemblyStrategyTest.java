@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
@@ -18,6 +19,7 @@ class LinearAssemblyStrategyTest {
 
   @Mock ModelAssemblyLineStrategy modelAssemblyLineStrategy;
   @Mock BatteryAssemblyLineStrategy batteryAssemblyLineStrategy;
+  @Mock VehicleAssemblyLineStrategy vehicleAssemblyLineStrategy;
   @Mock Order anOrder;
   @Mock Model aModel;
   @Mock Battery aBattery;
@@ -27,7 +29,8 @@ class LinearAssemblyStrategyTest {
   @BeforeEach
   public void setUp() {
     linearAssemblyStrategy =
-        new LinearAssemblyStrategy(modelAssemblyLineStrategy, batteryAssemblyLineStrategy);
+        new LinearAssemblyStrategy(
+            modelAssemblyLineStrategy, batteryAssemblyLineStrategy, vehicleAssemblyLineStrategy);
   }
 
   @Test

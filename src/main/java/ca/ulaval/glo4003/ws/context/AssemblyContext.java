@@ -7,9 +7,12 @@ import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderQueue;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory;
+import ca.ulaval.glo4003.ws.domain.assembly.vehicle.DefaultVehicleAssemblyLine;
+import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
@@ -17,6 +20,7 @@ import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.LinearBatteryAssembl
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.LinearModelAssemblyLineStrategy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class AssemblyContext implements Context {
   public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -39,8 +43,11 @@ public class AssemblyContext implements Context {
         new LinearBatteryAssemblyLineStrategy(
             basicBatteryAssemblyLine, new CommandIdFactory(), new OrderQueue());
 
+    VehicleAssemblyLineStrategy defaultVehicleAssemblyLine =
+        new DefaultVehicleAssemblyLine(new VehicleAssemblyPlanner(new Random()));
     AssemblyStrategyFactory assemblyStrategyFactory =
-        new AssemblyStrategyFactory(modelAssemblyLine, batteryAssemblyLine);
+        new AssemblyStrategyFactory(
+            modelAssemblyLine, batteryAssemblyLine, defaultVehicleAssemblyLine);
     serviceLocator.register(
         AssemblyLine.class, new AssemblyLine(assemblyStrategyFactory, new OrderFactory()));
   }

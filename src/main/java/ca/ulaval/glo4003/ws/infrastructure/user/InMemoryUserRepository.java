@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.infrastructure.user;
 
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
@@ -34,5 +35,13 @@ public class InMemoryUserRepository implements UserRepository {
   @Override
   public boolean doesUserExist(String email) {
     return users.containsKey(email);
+  }
+
+  @Override
+  public User findUserByTransactionId(TransactionId transactionId) {
+    return users.values().stream()
+        .filter(user -> user.doesOwnTransaction(transactionId))
+        .findFirst()
+        .get();
   }
 }
