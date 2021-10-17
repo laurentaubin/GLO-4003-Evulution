@@ -1,10 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.user;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
@@ -15,19 +12,26 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+
 @ExtendWith(MockitoExtension.class)
 class InMemoryUserRepositoryTest {
   private static final TransactionId A_TRANSACTION_ID = TransactionId.fromString("id");
   private static final String AN_EMAIL = "remw@mfs.com";
   private static final String ANOTHER_NAME = "sdaidhsauidhasiuhda";
 
+  private final UserDtoAssembler userDtoAssembler = new UserDtoAssembler();
   @Mock private User user;
 
   private InMemoryUserRepository userRepository;
 
   @BeforeEach
   void setUp() {
-    userRepository = new InMemoryUserRepository();
+    userRepository = new InMemoryUserRepository(userDtoAssembler);
   }
 
   @Test
@@ -40,7 +44,8 @@ class InMemoryUserRepositoryTest {
     User actualUser = userRepository.findUser(aUser.getEmail());
 
     // then
-    assertThat(actualUser).isEqualTo(aUser);
+    assertThat(actualUser.getEmail()).isEqualTo(aUser.getEmail());
+    assertThat(actualUser.getPassword()).isEqualTo(aUser.getPassword());
   }
 
   @Test
@@ -90,15 +95,30 @@ class InMemoryUserRepositoryTest {
   }
 
   @Test
+  public void givenUserSaved_whenAddRoleToOriginalUser_thenSavedUserIsNotUpdated() {
+    // given
+    User user = new UserBuilder().withRoles(List.of(Role.BASE)).build();
+    userRepository.registerUser(user);
+
+    // when
+    user.addRole(Role.ADMIN);
+    User originalUser = userRepository.findUser(user.getEmail());
+
+    // then
+    assertThat(originalUser.getRoles()).isNotEqualTo(user.getRoles());
+  }
+
+  @Test
   public void givenTransactionId_whenFindByTransaction_thenReturnUser() {
     // given
-    when(user.doesOwnTransaction(A_TRANSACTION_ID)).thenReturn(true);
+    given(user.getEmail()).willReturn(AN_EMAIL);
+    given(user.getTransactions()).willReturn(List.of(A_TRANSACTION_ID));
     userRepository.registerUser(user);
 
     // when
     User foundUser = userRepository.findUserByTransactionId(A_TRANSACTION_ID);
 
     // then
-    assertThat(foundUser).isEqualTo(user);
+    assertThat(foundUser.getEmail()).isEqualTo(AN_EMAIL);
   }
 }

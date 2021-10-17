@@ -1,14 +1,15 @@
-package ca.ulaval.glo4003.ws.infrastructure;
-
-import static com.google.common.truth.Truth.assertThat;
+package ca.ulaval.glo4003.ws.infrastructure.model;
 
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.infrastructure.model.ModelDto;
 import ca.ulaval.glo4003.ws.infrastructure.model.ModelDtoAssembler;
-import java.math.BigDecimal;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class ModelDtoAssemblerTest {
   private static final String A_NAME = "a name";
