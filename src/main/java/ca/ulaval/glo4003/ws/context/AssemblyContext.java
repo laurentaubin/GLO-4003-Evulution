@@ -9,7 +9,6 @@ import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderQueue;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
@@ -35,13 +34,11 @@ public class AssemblyContext implements Context {
     Map<String, Integer> vehicleAssemblyConfiguration = createVehicleAssemblyConfiguration();
     vehicleAssemblyLine.configureAssemblyLine(vehicleAssemblyConfiguration);
     ModelAssemblyLineStrategy modelAssemblyLine =
-        new LinearModelAssemblyLineStrategy(
-            vehicleAssemblyLine, new CommandIdFactory(), new OrderQueue());
+        new LinearModelAssemblyLineStrategy(vehicleAssemblyLine, new CommandIdFactory());
 
     BatteryAssemblyLine basicBatteryAssemblyLine = new BasicBatteryAssemblyLine();
     BatteryAssemblyLineStrategy batteryAssemblyLine =
-        new LinearBatteryAssemblyLineStrategy(
-            basicBatteryAssemblyLine, new CommandIdFactory(), new OrderQueue());
+        new LinearBatteryAssemblyLineStrategy(basicBatteryAssemblyLine, new CommandIdFactory());
 
     VehicleAssemblyLineStrategy defaultVehicleAssemblyLine =
         new DefaultVehicleAssemblyLine(new VehicleAssemblyPlanner(new Random()));

@@ -3,14 +3,14 @@ package ca.ulaval.glo4003.ws.domain.vehicle;
 import java.math.BigDecimal;
 
 public class Model {
-  private String name;
-  private String style;
-  private BigDecimal efficiency;
-  private Integer basePrice;
-  private String timeToProduce;
+  private final String name;
+  private final String style;
+  private final BigDecimal efficiency;
+  private final Integer basePrice;
+  private final Integer timeToProduce;
 
   public Model(
-      String name, String style, BigDecimal efficiency, Integer basePrice, String timeToProduce) {
+      String name, String style, BigDecimal efficiency, Integer basePrice, Integer timeToProduce) {
     this.name = name;
     this.style = style;
     this.efficiency = efficiency;
@@ -34,7 +34,7 @@ public class Model {
     return style;
   }
 
-  public String getTimeToProduce() {
+  public Integer getTimeToProduce() {
     return timeToProduce;
   }
 }

@@ -7,25 +7,24 @@ import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderQueue;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class LinearModelAssemblyLineStrategy extends ModelAssembledObservable
     implements ModelAssemblyLineStrategy {
 
   private VehicleAssemblyLine vehicleAssemblyLine;
   private CommandIdFactory commandIdFactory;
-  private OrderQueue orderQueue;
+  private Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
+  private int currentOrderRemainingTimeToProduce;
 
   public LinearModelAssemblyLineStrategy(
-      VehicleAssemblyLine vehicleAssemblyLine,
-      CommandIdFactory commandIdFactory,
-      OrderQueue orderQueue) {
+      VehicleAssemblyLine vehicleAssemblyLine, CommandIdFactory commandIdFactory) {
     this.vehicleAssemblyLine = vehicleAssemblyLine;
     this.commandIdFactory = commandIdFactory;
-    this.orderQueue = orderQueue;
   }
 
   @Override
@@ -44,14 +43,16 @@ public class LinearModelAssemblyLineStrategy extends ModelAssembledObservable
     if (orderQueue.isEmpty() && isAssemblyLineFree()) {
       sendOrderToBeAssembled(order);
     } else {
-      orderQueue.addOrder(order);
+      orderQueue.add(order);
     }
   }
 
   @Override
   public int computeRemainingTimeToProduce(OrderId orderId) {
-    // TODO To be implemented
-    return 0;
+    if (orderId == currentOrder.getId()) {
+      return currentOrderRemainingTimeToProduce;
+    }
+    return computeRemainingTimeToProduceBasedOnPositionInQueue(orderId);
   }
 
   private boolean isAssemblyLineFree() {
@@ -66,6 +67,7 @@ public class LinearModelAssemblyLineStrategy extends ModelAssembledObservable
   private void sendOrderToBeAssembled(Order order) {
     CommandID commandId = commandIdFactory.createFromOrderId(order.getId());
     currentOrder = order;
+    currentOrderRemainingTimeToProduce = order.getModel().getTimeToProduce();
     vehicleAssemblyLine.newCarCommand(commandId, order.getModel().getName());
   }
 
@@ -78,16 +80,28 @@ public class LinearModelAssemblyLineStrategy extends ModelAssembledObservable
   }
 
   private void sendNextOrderToBeAssembled() {
-    Order nextOrder = orderQueue.getNextInLine();
-    CommandID nextInLineCommandId = commandIdFactory.createFromOrderId(nextOrder.getId());
-    vehicleAssemblyLine.newCarCommand(nextInLineCommandId, nextOrder.getModel().getName());
+    currentOrder = orderQueue.remove();
+    currentOrderRemainingTimeToProduce = currentOrder.getModel().getTimeToProduce();
+    CommandID nextInLineCommandId = commandIdFactory.createFromOrderId(currentOrder.getId());
+    vehicleAssemblyLine.newCarCommand(nextInLineCommandId, currentOrder.getModel().getName());
   }
 
   private void processCurrentOrder() {
     CommandID commandId = commandIdFactory.createFromOrderId(currentOrder.getId());
     if (vehicleAssemblyLine.getBuildStatus(commandId) == BuildStatus.ASSEMBLED) {
       notifyModelAssembled(currentOrder);
-      this.currentOrder = null;
+      currentOrder = null;
+    } else {
+      currentOrderRemainingTimeToProduce = currentOrderRemainingTimeToProduce - 1;
     }
+  }
+
+  private int computeRemainingTimeToProduceBasedOnPositionInQueue(OrderId orderId) {
+    int remainingTimeToProduce = 0;
+    for (Order order : orderQueue) {
+      remainingTimeToProduce += order.getModel().getTimeToProduce();
+      if (order.getId().equals(orderId)) break;
+    }
+    return remainingTimeToProduce + currentOrderRemainingTimeToProduce;
   }
 }

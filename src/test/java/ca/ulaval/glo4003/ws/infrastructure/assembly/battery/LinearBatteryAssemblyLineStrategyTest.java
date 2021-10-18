@@ -2,8 +2,10 @@ package ca.ulaval.glo4003.ws.infrastructure.assembly.battery;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
@@ -11,7 +13,6 @@ import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderQueue;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,19 +25,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class LinearBatteryAssemblyLineStrategyTest {
   private static final String AN_ID = "fdsnj9203";
   private static final String ANOTHER_ID = "213dmsao4";
+  private static final String OTHER_ID = "fdsiom234";
   private static final OrderId AN_ORDER_ID = new OrderId(AN_ID);
   private static final OrderId ANOTHER_ORDER_ID = new OrderId(ANOTHER_ID);
+  private static final OrderId OTHER_ORDER_ID = new OrderId(OTHER_ID);
   private static final String A_BATTERY_TYPE = "LONG_DISTANCE";
+  private static final int A_REMAINING_TIME_TO_PRODUCE = 43;
+  private static final int ANOTHER_REMAINING_TIME_TO_PRODUCE = 763;
+  private static final int OTHER_REMAINING_TIME_TO_PRODUCE = 43212;
 
   @Mock private Order anOrder;
   @Mock private Order anotherOrder;
+  @Mock private Order otherOrder;
   @Mock private Battery aBattery;
   @Mock private Battery anotherBattery;
+  @Mock private Battery otherBattery;
   @Mock private BatteryAssemblyLine batteryAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
   @Mock private CommandID aCommandId;
   @Mock private CommandID anotherCommandId;
-  @Mock private OrderQueue orderQueue;
   @Mock private BatteryAssembledObserver batteryAssembledObserver;
   @Mock private BatteryAssembledObserver anotherBatteryAssemblyObserver;
 
@@ -45,23 +52,13 @@ class LinearBatteryAssemblyLineStrategyTest {
   @BeforeEach
   public void setUp() {
     linearBatteryAssemblyLineStrategy =
-        new LinearBatteryAssemblyLineStrategy(batteryAssemblyLine, commandIdFactory, orderQueue);
-  }
-
-  @Test
-  public void givenAnOrder_whenAddOrder_thenOrderIsAddedToQueue() {
-    // when
-    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
-
-    // then
-    verify(orderQueue).addOrder(anOrder);
+        new LinearBatteryAssemblyLineStrategy(batteryAssemblyLine, commandIdFactory);
   }
 
   @Test
   public void
       givenAnEmptyQueueAndNoOrderBeingAssembled_whenAddOrder_thenOrderIsSentToBeAssembled() {
     // given
-    given(orderQueue.isEmpty()).willReturn(true);
     setUpAnOrder();
     given(commandIdFactory.createFromOrderId(AN_ORDER_ID)).willReturn(aCommandId);
 
@@ -73,24 +70,10 @@ class LinearBatteryAssemblyLineStrategyTest {
   }
 
   @Test
-  public void givenAnEmptyQueueAndNoOrderBeingAssembled_whenAddOrder_thenOrderIsNotAddedToQueue() {
-    given(orderQueue.isEmpty()).willReturn(true);
-    setUpAnOrder();
-    given(commandIdFactory.createFromOrderId(AN_ORDER_ID)).willReturn(aCommandId);
-
-    // when
-    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
-
-    // then
-    verify(orderQueue, never()).addOrder(anOrder);
-  }
-
-  @Test
   public void
       givenAnEmptyQueueAndAnOrderDoneBeingAssembled_whenAddOrder_thenNewOrderIsSentToBeAssembled() {
     setUpAnOrder();
     setUpAnotherOrder();
-    given(orderQueue.isEmpty()).willReturn(true);
     given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
 
@@ -102,39 +85,7 @@ class LinearBatteryAssemblyLineStrategyTest {
   }
 
   @Test
-  public void
-      givenAnEmptyQueueAndAnOrderDoneBeingAssembled_whenAddOrder_thenNewOrderIsNotAddedToQueue() {
-    // given
-    setUpAnOrder();
-    setUpAnotherOrder();
-    given(orderQueue.isEmpty()).willReturn(true);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
-    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
-
-    // when
-    linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
-
-    // then
-    verify(orderQueue, never()).addOrder(anotherOrder);
-  }
-
-  @Test
-  public void givenQueueNotEmpty_whenAddOrder_thenNewOrderIsAddedToQueue() {
-    // given
-    given(orderQueue.isEmpty()).willReturn(false);
-
-    // when
-    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
-
-    // then
-    verify(orderQueue).addOrder(anOrder);
-  }
-
-  @Test
   public void whenAdvance_thenCallAdvanceOnBatteryAssemblyLine() {
-    // given
-    given(orderQueue.isEmpty()).willReturn(true);
-
     // when
     linearBatteryAssemblyLineStrategy.advance();
 
@@ -147,11 +98,11 @@ class LinearBatteryAssemblyLineStrategyTest {
       givenAnOrderDoneBeingAssembledAndAnotherOrderInQueue_whenAdvance_thenOrderInQueueIsSentToBeAssembled() {
     // given
     setUpAnOrder();
-    when(orderQueue.isEmpty()).thenReturn(true, false);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
+    when(batteryAssemblyLine.getBuildStatus(aCommandId))
+        .thenReturn(BuildStatus.IN_PROGRESS, BuildStatus.ASSEMBLED);
     setUpAnotherOrder();
-    given(orderQueue.getNextInLine()).willReturn(anotherOrder);
+    linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
 
     // when
     linearBatteryAssemblyLineStrategy.advance();
@@ -165,7 +116,6 @@ class LinearBatteryAssemblyLineStrategyTest {
       givenAnOrderBeingAssembledAndAnotherOrderInQueue_whenAdvance_thenOrderInQueueIsNotSentToBeAssembled() {
     // given
     setUpAnOrder();
-    when(orderQueue.isEmpty()).thenReturn(true, false);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
     given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
 
@@ -179,7 +129,6 @@ class LinearBatteryAssemblyLineStrategyTest {
   @Test
   public void givenAnOrderDoneBeingAssembled_whenAdvance_thenNotifyAllModelAssembledObservers() {
     // given
-    given(orderQueue.isEmpty()).willReturn(true);
     setUpAnOrder();
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
     given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
@@ -195,12 +144,71 @@ class LinearBatteryAssemblyLineStrategyTest {
   }
 
   @Test
-  public void whenComputeEstimatedTime_thenReturnSomething() {
+  public void
+      givenAnOrderSentToBeAssembled_whenComputeEstimatedTime_thenReturnTheBatteryRemainingTimeToProduce() {
+    // given
+    int batteryTimeToProduce = 2;
+    given(aBattery.getTimeToProduce()).willReturn(batteryTimeToProduce);
+    setUpAnOrder();
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+
     // when
     linearBatteryAssemblyLineStrategy.computeRemainingTimeToProduce(AN_ORDER_ID);
 
     // then
-    assertThat(true).isTrue();
+    assertThat(linearBatteryAssemblyLineStrategy.computeRemainingTimeToProduce(AN_ORDER_ID))
+        .isEqualTo(batteryTimeToProduce);
+  }
+
+  @Test
+  public void
+      givenAnOrderANumberOfWeeksElapsedIntoBeingAssembled_whenComputeRemainingTimeToProduce_thenReturnTheOrderBatteryRemainingTimeToProduceMinusTheNumberOfWeeksElapsed() {
+    // given
+    int batteryTimeToProduce = 4;
+    int expectedRemainingTimeToProduce = 2;
+    given(aBattery.getTimeToProduce()).willReturn(batteryTimeToProduce);
+    setUpAnOrder();
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    linearBatteryAssemblyLineStrategy.advance();
+    linearBatteryAssemblyLineStrategy.advance();
+
+    // when
+    linearBatteryAssemblyLineStrategy.computeRemainingTimeToProduce(AN_ORDER_ID);
+
+    // then
+    assertThat(linearBatteryAssemblyLineStrategy.computeRemainingTimeToProduce(AN_ORDER_ID))
+        .isEqualTo(expectedRemainingTimeToProduce);
+  }
+
+  @Test
+  public void
+      givenAQueuedOrder_whenComputeRemainingTimeToProduce_thenTimeIsComputedBasedOnTheQueuedOrderPosition() {
+    // given
+    setUpAnOrder();
+    given(anOrder.getBattery().getTimeToProduce()).willReturn(A_REMAINING_TIME_TO_PRODUCE);
+    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.RECEIVED);
+    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
+    given(anotherOrder.getBattery()).willReturn(anotherBattery);
+    given(anotherOrder.getBattery().getTimeToProduce())
+        .willReturn(ANOTHER_REMAINING_TIME_TO_PRODUCE);
+    given(otherOrder.getId()).willReturn(OTHER_ORDER_ID);
+    given(otherOrder.getBattery()).willReturn(otherBattery);
+    given(otherOrder.getBattery().getTimeToProduce()).willReturn(OTHER_REMAINING_TIME_TO_PRODUCE);
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+    linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
+    linearBatteryAssemblyLineStrategy.addOrder(otherOrder);
+    int expectedRemainingTimeToProduce =
+        A_REMAINING_TIME_TO_PRODUCE
+            + ANOTHER_REMAINING_TIME_TO_PRODUCE
+            + OTHER_REMAINING_TIME_TO_PRODUCE;
+
+    // when
+    int remainingTimeToProduce =
+        linearBatteryAssemblyLineStrategy.computeRemainingTimeToProduce(OTHER_ORDER_ID);
+
+    // then
+    assertThat(remainingTimeToProduce).isEqualTo(expectedRemainingTimeToProduce);
   }
 
   private void setUpAnOrder() {
