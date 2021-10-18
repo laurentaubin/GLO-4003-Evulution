@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.domain.assembly.battery;
+package ca.ulaval.glo4003.ws.domain.assembly;
 
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;

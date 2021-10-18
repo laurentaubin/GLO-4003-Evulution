@@ -4,7 +4,7 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssembledObservable;
+import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderQueue;

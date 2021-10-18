@@ -58,8 +58,6 @@
             <groupId>ca.ulaval.glo4003.evulution</groupId>
             <artifactId>car-manufacture</artifactId>
             <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/car-manufacture-1.0.0.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -435,12 +433,8 @@
                                         </exclude>
 
                                         <!-- TODO to be tested-->
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy
-                                        </exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy</exclude>
                                     </excludes>
                                 </rule>
                             </rules>
@@ -483,4 +477,11 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <repositories>
+        <repository>
+            <id>local-maven-repository</id>
+            <url>file://${project.basedir}/maven-repository</url>
+        </repository>
+    </repositories>
 </project>
