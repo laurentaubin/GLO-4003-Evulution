@@ -1,22 +1,19 @@
 package ca.ulaval.glo4003.ws.infrastructure.model;
 
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
-import ca.ulaval.glo4003.ws.infrastructure.model.ModelDto;
-import ca.ulaval.glo4003.ws.infrastructure.model.ModelDtoAssembler;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static com.google.common.truth.Truth.assertThat;
 
+import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import java.math.BigDecimal;
 import java.util.List;
-
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class ModelDtoAssemblerTest {
   private static final String A_NAME = "a name";
   private static final String A_STYLE = "a style";
   private static final BigDecimal AN_EFFICIENCY = BigDecimal.valueOf(432546);
   private static final int A_PRICE = 43;
-  private static final String A_TIME_TO_PRODUCE = "645";
+  private static final int A_TIME_TO_PRODUCE = 645;
 
   private ModelDtoAssembler assembler;
 

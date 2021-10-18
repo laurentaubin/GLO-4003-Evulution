@@ -7,7 +7,7 @@ public class Order {
   private OrderId id;
   private Model model;
   private Battery battery;
-  private int remainingProductionTime;
+  private Integer remainingProductionTime;
 
   public Order(OrderId orderId, Model model, Battery battery) {
     this.id = orderId;
