@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.assembly.battery;
 
+import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import org.junit.jupiter.api.Test;
