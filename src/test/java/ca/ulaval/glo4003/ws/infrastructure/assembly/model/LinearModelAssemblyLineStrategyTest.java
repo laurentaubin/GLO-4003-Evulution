@@ -1,18 +1,12 @@
 package ca.ulaval.glo4003.ws.infrastructure.assembly.model;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.notification.ModelAssemblyDelayObserver;
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LinearModelAssemblyLineStrategyTest {
@@ -46,6 +48,7 @@ class LinearModelAssemblyLineStrategyTest {
   @Mock private CommandID anotherCommandId;
   @Mock private ModelAssembledObserver modelAssembledObserver;
   @Mock private ModelAssembledObserver anotherModelAssembledObserver;
+  @Mock private ModelAssemblyDelayObserver modelAssemblyDelayObserver;
 
   private LinearModelAssemblyLineStrategy linearModelAssemblyLineStrategy;
 
@@ -53,6 +56,8 @@ class LinearModelAssemblyLineStrategyTest {
   public void setUp() {
     linearModelAssemblyLineStrategy =
         new LinearModelAssemblyLineStrategy(vehicleAssemblyLine, commandIdFactory);
+
+    linearModelAssemblyLineStrategy.register(modelAssemblyDelayObserver);
   }
 
   @Test
@@ -208,6 +213,36 @@ class LinearModelAssemblyLineStrategyTest {
 
     // then
     assertThat(remainingTimeToProduce).isEqualTo(expectedRemainingTimeToProduce);
+  }
+
+  @Test
+  public void givenNoCurrentOrder_whenAddOrder_thenDoNotNotifyAssemblyDelay() {
+    // given
+    setUpAnOrder();
+
+    // when
+    linearModelAssemblyLineStrategy.addOrder(anOrder);
+
+    // then
+    verify(modelAssemblyDelayObserver, never()).listenModelAssemblyDelay(any());
+  }
+
+  @Test
+  public void givenCurrentOrderInQueue_whenAddOrder_thenNotifyAssemblyDelay() {
+    // given
+    setUpAnOrder();
+    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
+    given(anotherOrder.getModel()).willReturn(anotherModel);
+    given(anOrder.getModel().getTimeToProduce()).willReturn(A_REMAINING_TIME_TO_PRODUCE);
+    given(anotherOrder.getModel().getTimeToProduce()).willReturn(ANOTHER_REMAINING_TIME_TO_PRODUCE);
+    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    linearModelAssemblyLineStrategy.addOrder(anOrder);
+
+    // when
+    linearModelAssemblyLineStrategy.addOrder(anotherOrder);
+
+    // then
+    verify(modelAssemblyDelayObserver).listenModelAssemblyDelay(anotherOrder);
   }
 
   private void setUpAnOrder() {

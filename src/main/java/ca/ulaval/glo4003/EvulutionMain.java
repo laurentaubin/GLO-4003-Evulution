@@ -7,12 +7,13 @@ import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+
+import java.net.URI;
 
 /** RESTApi setup without using DI or spring */
 @SuppressWarnings("all")
@@ -25,12 +26,6 @@ public class EvulutionMain {
 
   public static void main(String[] args) throws Exception {
     new ApiContext().applyContext();
-
-    // TODO delete this after implementing email notification flow
-    //    NotificationIssuer notificationIssuer =
-    //        ServiceLocator.getInstance().resolve(NotificationIssuer.class);
-    //    notificationIssuer.issueDelayNotification(
-    //        new User("", new BirthDate(LocalDate.now()), "", "laurentaubin_32@hotmail.com", ""));
 
     final ResourceConfig config = new ResourceConfig();
     config.register(new ApplicationBinder());

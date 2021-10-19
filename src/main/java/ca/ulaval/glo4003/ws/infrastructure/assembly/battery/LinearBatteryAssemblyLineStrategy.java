@@ -4,19 +4,20 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObservable;
+import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class LinearBatteryAssemblyLineStrategy extends BatteryAssembledObservable
+public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
     implements BatteryAssemblyLineStrategy {
 
-  private BatteryAssemblyLine batteryAssemblyLine;
-  private CommandIdFactory commandIdFactory;
-  private Queue<Order> orderQueue = new LinkedList<>();
+  private final BatteryAssemblyLine batteryAssemblyLine;
+  private final CommandIdFactory commandIdFactory;
+  private final Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
   private int currentOrderRemainingTimeToProduce;
@@ -42,8 +43,12 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssembledObservabl
   public void addOrder(Order order) {
     if (orderQueue.isEmpty() && isAssemblyLineFree()) {
       sendOrderToBeAssembled(order);
-    } else {
-      orderQueue.add(order);
+      return;
+    }
+    orderQueue.add(order);
+
+    if (computeRemainingTimeToProduce(order.getId()) > order.getBattery().getTimeToProduce()) {
+      notifyBatteryAssemblyDelay(order);
     }
   }
 

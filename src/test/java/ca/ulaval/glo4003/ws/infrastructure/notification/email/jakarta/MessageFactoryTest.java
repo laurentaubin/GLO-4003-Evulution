@@ -1,21 +1,22 @@
 package ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContentDto;
-import java.io.IOException;
-import java.util.Arrays;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
+import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import java.io.IOException;
+import java.util.Arrays;
+
+import static com.google.common.truth.Truth.assertThat;
+
 class MessageFactoryTest {
   private static final String A_SENDER_EMAIL = "sender@email.com";
   private static final String A_RECIPIENT_EMAIL = "recipient@email.com";
-  private static final EmailContentDto EMAIL_CONTENT_DTO = new EmailContentDto("subject", "body");
+  private static final EmailContent EMAIL_CONTENT_DTO = new EmailContent("subject", "body");
 
   @Mock private Session session;
 

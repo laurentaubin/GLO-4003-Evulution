@@ -1,10 +1,13 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import ca.ulaval.glo4003.ws.domain.assembly.*;
+import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
+import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObserver;
+import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategy;
 
-// TODO remove from exclude and write tests
 public class LinearAssemblyStrategy
     implements AssemblyStrategy, ModelAssembledObserver, BatteryAssembledObserver {
   private final ModelAssemblyLineStrategy modelAssemblyLineStrategy;

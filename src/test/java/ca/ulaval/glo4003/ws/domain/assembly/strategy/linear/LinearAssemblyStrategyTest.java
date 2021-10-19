@@ -1,28 +1,23 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class LinearAssemblyStrategyTest {
-
-  @Mock ModelAssemblyLineStrategy modelAssemblyLineStrategy;
-  @Mock BatteryAssemblyLineStrategy batteryAssemblyLineStrategy;
-  @Mock VehicleAssemblyLineStrategy vehicleAssemblyLineStrategy;
-  @Mock Order anOrder;
-  @Mock Model aModel;
-  @Mock Battery aBattery;
+  @Mock private ModelAssemblyLineStrategy modelAssemblyLineStrategy;
+  @Mock private BatteryAssemblyLineStrategy batteryAssemblyLineStrategy;
+  @Mock private VehicleAssemblyLineStrategy vehicleAssemblyLineStrategy;
+  @Mock private Order anOrder;
 
   private LinearAssemblyStrategy linearAssemblyStrategy;
 
@@ -49,5 +44,34 @@ class LinearAssemblyStrategyTest {
 
     // then
     verify(batteryAssemblyLineStrategy).addOrder(anOrder);
+  }
+
+  @Test
+  public void whenAdvance_thenAdvanceAllAssemblyLines() {
+    // when
+    linearAssemblyStrategy.advance();
+
+    // then
+    verify(modelAssemblyLineStrategy).advance();
+    verify(batteryAssemblyLineStrategy).advance();
+    verify(vehicleAssemblyLineStrategy).advance();
+  }
+
+  @Test
+  public void givenOrder_whenListenToModelAssembled_thenAssembleBatteryForOrder() {
+    // when
+    linearAssemblyStrategy.listenToModelAssembled(anOrder);
+
+    // then
+    verify(batteryAssemblyLineStrategy).addOrder(anOrder);
+  }
+
+  @Test
+  public void givenOrder_whenListenToBatteryAssembled_thenAssembleVehicleForOrder() {
+    // when
+    linearAssemblyStrategy.listenToBatteryAssembled(anOrder);
+
+    // then
+    verify(vehicleAssemblyLineStrategy).assembleVehicle(anOrder);
   }
 }

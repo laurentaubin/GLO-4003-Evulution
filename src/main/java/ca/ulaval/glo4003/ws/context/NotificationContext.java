@@ -2,30 +2,28 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.context.exception.CouldNotLoadPropertiesFileException;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationIssuer;
+import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContentDto;
+import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContent;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailNotificationIssuer;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailServer;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.NotificationEmailFactory;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.JakartaEmailServer;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.MessageFactory;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.TransportWrapper;
+
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 
 public class NotificationContext implements Context {
   public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
-
-  private static final String HOST = "smtp.gmail.com";
-  private static final int PORT = 587;
-  private static final String USER = "equipe4archi@gmail.com";
-  private static final String PASSWORD = "Equipe4arch1!";
   private static final String NOTIFICATION_EMAIL_ADDRESS = "equipe4archi@gmail.com";
 
   @Override
@@ -46,7 +44,7 @@ public class NotificationContext implements Context {
   }
 
   private void registerEmailNotificationSystem() {
-    Map<NotificationType, EmailContentDto> emailContents = createEmailContents();
+    Map<NotificationType, EmailContent> emailContents = createEmailContents();
     serviceLocator.register(
         NotificationEmailFactory.class,
         new NotificationEmailFactory(serviceLocator.resolve(EmailServer.class), emailContents));
@@ -54,6 +52,11 @@ public class NotificationContext implements Context {
         NotificationIssuer.class,
         new EmailNotificationIssuer(
             NOTIFICATION_EMAIL_ADDRESS, serviceLocator.resolve(NotificationEmailFactory.class)));
+    serviceLocator.register(
+        NotificationService.class,
+        new NotificationService(
+            serviceLocator.resolve(NotificationIssuer.class),
+            serviceLocator.resolve(UserRepository.class)));
   }
 
   private Session createEmailNotificationSession() {
@@ -83,14 +86,26 @@ public class NotificationContext implements Context {
     }
   }
 
-  private Map<NotificationType, EmailContentDto> createEmailContents() {
+  private Map<NotificationType, EmailContent> createEmailContents() {
+    String delaySubject = "Your Evulution order #%s was delayed";
+
     return new HashMap<>() {
       {
         put(
-            NotificationType.ASSEMBLY_LINE_DELAY,
-            new EmailContentDto(
-                "There was a delay in your vehicle assembly",
-                "TODO, a voir comment on veut formatter le message (surement avec des %s qu'on remplace par des valeurs passées par l'assembler)"));
+            NotificationType.MODEL_ASSEMBLY_DELAY,
+            new EmailContent(
+                delaySubject,
+                "Hello %s, \n\r We encountered a delay while assembling the model included in your order. The new expected delivery date is {TODO ADD DATE}. \r\n We're sorry for the inconvenience. \r\n Thanks for shopping with us. \r\n The Evulution team"));
+        put(
+            NotificationType.BATTERY_ASSEMBLY_DELAY,
+            new EmailContent(
+                delaySubject,
+                "Hello %s, \n\r We encountered a delay while assembling the battery included in your order. The new expected delivery date is {TODO ADD DATE}. \r\n We're sorry for the inconvenience. \r\n Thanks for shopping with us. \r\n The Evulution team"));
+        put(
+            NotificationType.VEHICLE_ASSEMBLY_DELAY,
+            new EmailContent(
+                delaySubject,
+                "Hello %s, \n\r We encountered a delay while assembling the vehicle included in your order. The new expected delivery date is {TODO ADD DATE}. \r\n We're sorry for the inconvenience. \r\n Thanks for shopping with us. \r\n The Evulution team"));
       }
     };
   }

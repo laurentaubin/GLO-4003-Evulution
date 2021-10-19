@@ -12,11 +12,13 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
+import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
 import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.LinearBatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.LinearModelAssemblyLineStrategy;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -30,21 +32,39 @@ public class AssemblyContext implements Context {
   }
 
   private void registerServices() {
+    registerModelAssemblyLine();
+    registerBatteryAssemblyLine();
+    registerVehicleAssemblyLine();
+  }
+
+  private void registerModelAssemblyLine() {
     VehicleAssemblyLine vehicleAssemblyLine = new BasicVehicleAssemblyLine();
     Map<String, Integer> vehicleAssemblyConfiguration = createVehicleAssemblyConfiguration();
     vehicleAssemblyLine.configureAssemblyLine(vehicleAssemblyConfiguration);
-    ModelAssemblyLineStrategy modelAssemblyLine =
+    LinearModelAssemblyLineStrategy linearModelAssemblyLineStrategy =
         new LinearModelAssemblyLineStrategy(vehicleAssemblyLine, new CommandIdFactory());
+    linearModelAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
+    serviceLocator.register(ModelAssemblyLineStrategy.class, linearModelAssemblyLineStrategy);
+  }
 
+  private void registerBatteryAssemblyLine() {
     BatteryAssemblyLine basicBatteryAssemblyLine = new BasicBatteryAssemblyLine();
-    BatteryAssemblyLineStrategy batteryAssemblyLine =
+    LinearBatteryAssemblyLineStrategy linearBatteryAssemblyLineStrategy =
         new LinearBatteryAssemblyLineStrategy(basicBatteryAssemblyLine, new CommandIdFactory());
+    linearBatteryAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
+    serviceLocator.register(BatteryAssemblyLineStrategy.class, linearBatteryAssemblyLineStrategy);
+  }
 
+  private void registerVehicleAssemblyLine() {
+    VehicleAssemblyPlanner vehicleAssemblyPlanner = new VehicleAssemblyPlanner(new Random());
+    vehicleAssemblyPlanner.register(serviceLocator.resolve(NotificationService.class));
     VehicleAssemblyLineStrategy defaultVehicleAssemblyLine =
-        new DefaultVehicleAssemblyLine(new VehicleAssemblyPlanner(new Random()));
+        new DefaultVehicleAssemblyLine(vehicleAssemblyPlanner);
     AssemblyStrategyFactory assemblyStrategyFactory =
         new AssemblyStrategyFactory(
-            modelAssemblyLine, batteryAssemblyLine, defaultVehicleAssemblyLine);
+            serviceLocator.resolve(ModelAssemblyLineStrategy.class),
+            serviceLocator.resolve(BatteryAssemblyLineStrategy.class),
+            defaultVehicleAssemblyLine);
     serviceLocator.register(
         AssemblyLine.class, new AssemblyLine(assemblyStrategyFactory, new OrderFactory()));
   }
@@ -53,7 +73,7 @@ public class AssemblyContext implements Context {
     ModelRepository modelRepository = serviceLocator.resolve(ModelRepository.class);
     Map<String, Integer> vehicleAssemblyConfiguration = new HashMap<>();
     for (Model model : modelRepository.findAllModels()) {
-      vehicleAssemblyConfiguration.put(model.getName(), Integer.valueOf(model.getTimeToProduce()));
+      vehicleAssemblyConfiguration.put(model.getName(), model.getTimeToProduce());
     }
     return vehicleAssemblyConfiguration;
   }

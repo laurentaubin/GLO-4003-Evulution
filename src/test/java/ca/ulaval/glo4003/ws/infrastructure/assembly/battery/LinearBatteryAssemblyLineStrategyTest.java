@@ -1,12 +1,5 @@
 package ca.ulaval.glo4003.ws.infrastructure.assembly.battery;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
@@ -14,12 +7,21 @@ import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.notification.BatteryAssemblyDelayObserver;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LinearBatteryAssemblyLineStrategyTest {
@@ -46,6 +48,7 @@ class LinearBatteryAssemblyLineStrategyTest {
   @Mock private CommandID anotherCommandId;
   @Mock private BatteryAssembledObserver batteryAssembledObserver;
   @Mock private BatteryAssembledObserver anotherBatteryAssemblyObserver;
+  @Mock private BatteryAssemblyDelayObserver batteryAssemblyDelayObserver;
 
   private LinearBatteryAssemblyLineStrategy linearBatteryAssemblyLineStrategy;
 
@@ -209,6 +212,38 @@ class LinearBatteryAssemblyLineStrategyTest {
 
     // then
     assertThat(remainingTimeToProduce).isEqualTo(expectedRemainingTimeToProduce);
+  }
+
+  @Test
+  public void givenNoCurrentOrder_whenAddOrder_thenDoNotNotifyAssemblyDelay() {
+    // given
+    setUpAnOrder();
+
+    // when
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+
+    // then
+    verify(batteryAssemblyDelayObserver, never()).listenBatteryAssemblyDelay(any());
+  }
+
+  @Test
+  public void givenCurrentOrderInQueue_whenAddOrder_thenNotifyAssemblyDelay() {
+    // given
+    setUpAnOrder();
+    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
+    given(anotherOrder.getBattery()).willReturn(anotherBattery);
+    given(anOrder.getBattery().getTimeToProduce()).willReturn(A_REMAINING_TIME_TO_PRODUCE);
+    given(anotherOrder.getBattery().getTimeToProduce())
+        .willReturn(ANOTHER_REMAINING_TIME_TO_PRODUCE);
+    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+    linearBatteryAssemblyLineStrategy.register(batteryAssemblyDelayObserver);
+
+    // when
+    linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
+
+    // then
+    verify(batteryAssemblyDelayObserver).listenBatteryAssemblyDelay(anotherOrder);
   }
 
   private void setUpAnOrder() {

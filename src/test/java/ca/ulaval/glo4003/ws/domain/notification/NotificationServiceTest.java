@@ -1,8 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.notification;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import ca.ulaval.glo4003.ws.domain.assembly.DelayType;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
@@ -13,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
@@ -30,28 +31,45 @@ class NotificationServiceTest {
   void setUp() {
     notificationService = new NotificationService(notificationIssuer, userRepository);
 
-    when(order.getId()).thenReturn(ORDER_ID);
-  }
-
-  @Test
-  void whenSendDelayNotification_thenShouldFindUserFromRepository() {
-    // when
-    notificationService.listenVehicleAssemblyDelay(order);
-
-    // then
-    verify(userRepository).findUserByTransactionId(AN_ID);
+    given(order.getId()).willReturn(ORDER_ID);
   }
 
   @Test
   void
-      givenTransactionIdAndFoundUser_whenSendDelayNotification_thenShouldIssueNotificationToUser() {
+      givenTransactionIdAndFoundUser_whenListenVehicleAssemblyDelay_thenShouldIssueVehicleAssemblyNotification() {
     // given
-    when(userRepository.findUserByTransactionId(AN_ID)).thenReturn(user);
+    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
     notificationService.listenVehicleAssemblyDelay(order);
 
     // then
-    verify(notificationIssuer).issueDelayNotification(user);
+    verify(notificationIssuer).issueDelayNotification(user, order, DelayType.VEHICLE_ASSEMBLY);
+  }
+
+  @Test
+  void
+      givenTransactionIdAndFoundUser_whenListenModelAssemblyDelay_thenShouldIssueModelAssemblyDelayNotification() {
+    // given
+    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
+
+    // when
+    notificationService.listenModelAssemblyDelay(order);
+
+    // then
+    verify(notificationIssuer).issueDelayNotification(user, order, DelayType.MODEL_ASSEMBLY);
+  }
+
+  @Test
+  void
+      givenTransactionIdAndFoundUser_whenListenBatteryAssemblyDelay_thenShouldIssueBatteryAssemblyDelayNotification() {
+    // given
+    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
+
+    // when
+    notificationService.listenBatteryAssemblyDelay(order);
+
+    // then
+    verify(notificationIssuer).issueDelayNotification(user, order, DelayType.BATTERY_ASSEMBLY);
   }
 }

@@ -3,20 +3,21 @@ package ca.ulaval.glo4003.ws.infrastructure.assembly.model;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
-import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class LinearModelAssemblyLineStrategy extends ModelAssembledObservable
+public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
     implements ModelAssemblyLineStrategy {
 
-  private VehicleAssemblyLine vehicleAssemblyLine;
-  private CommandIdFactory commandIdFactory;
-  private Queue<Order> orderQueue = new LinkedList<>();
+  private final VehicleAssemblyLine vehicleAssemblyLine;
+  private final CommandIdFactory commandIdFactory;
+  private final Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
   private int currentOrderRemainingTimeToProduce;
@@ -42,8 +43,12 @@ public class LinearModelAssemblyLineStrategy extends ModelAssembledObservable
   public void addOrder(Order order) {
     if (orderQueue.isEmpty() && isAssemblyLineFree()) {
       sendOrderToBeAssembled(order);
-    } else {
-      orderQueue.add(order);
+      return;
+    }
+    orderQueue.add(order);
+
+    if (computeRemainingTimeToProduce(order.getId()) > order.getModel().getTimeToProduce()) {
+      notifyModelAssemblyDelay(order);
     }
   }
 
