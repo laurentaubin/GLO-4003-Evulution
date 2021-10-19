@@ -4,25 +4,21 @@ public class Email {
   private final EmailServer emailServer;
   private final String senderAddress;
   private final String recipientAddress;
-  private final EmailContentDto emailContentDto;
+  private final EmailContent emailContent;
 
   public Email(
       EmailServer emailServer,
       String senderAddress,
       String recipientAddress,
-      EmailContentDto emailContentDto) {
+      EmailContent emailContent) {
     this.emailServer = emailServer;
     this.senderAddress = senderAddress;
     this.recipientAddress = recipientAddress;
-    this.emailContentDto = emailContentDto;
+    this.emailContent = emailContent;
   }
 
   public void send() {
-    emailServer.send(senderAddress, recipientAddress, emailContentDto);
-  }
-
-  public EmailServer getEmailServer() {
-    return emailServer;
+    emailServer.send(senderAddress, recipientAddress, emailContent);
   }
 
   public String getSenderAddress() {
@@ -31,9 +27,5 @@ public class Email {
 
   public String getRecipientAddress() {
     return recipientAddress;
-  }
-
-  public EmailContentDto getEmailContentDto() {
-    return emailContentDto;
   }
 }

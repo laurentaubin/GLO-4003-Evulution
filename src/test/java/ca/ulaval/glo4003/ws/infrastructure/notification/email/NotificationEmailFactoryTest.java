@@ -1,12 +1,10 @@
 package ca.ulaval.glo4003.ws.infrastructure.notification.email;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
+import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.notification.exception.NotificationContentNotRegisteredException;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,43 +12,46 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class NotificationEmailFactoryTest {
   private static final String A_SENDER_EMAIL = "sender@email.com";
   private static final String A_RECIPIENT_EMAIL = "recipient@email.com";
-  private static final EmailContentDto ASSEMBLY_LINE_DELAY_CONTENT =
-      new EmailContentDto("a subject", "a message");
-  private static final Map<NotificationType, EmailContentDto> emailContents = new HashMap<>();
+  private static final String A_NAME = "Benjamin Girard <3";
+  private static final OrderId AN_ORDER_ID = new OrderId("osadoasd");
+  private static final Map<NotificationType, EmailContent> emailContents = new HashMap<>();
 
   @Mock private EmailServer emailServer;
+  @Mock private Order order;
+  @Mock private User recipientUser;
+  @Mock private EmailContent vehicleAssemblyDelayEmailContent;
 
   private NotificationEmailFactory notificationEmailFactory;
 
   @BeforeEach
   public void setUp() {
-    emailContents.put(NotificationType.ASSEMBLY_LINE_DELAY, ASSEMBLY_LINE_DELAY_CONTENT);
+    emailContents.put(NotificationType.VEHICLE_ASSEMBLY_DELAY, vehicleAssemblyDelayEmailContent);
 
     notificationEmailFactory = new NotificationEmailFactory(emailServer, emailContents);
   }
 
   @Test
-  public void whenCreateAssemblyLineDelayNotificationEmail_thenReturnEmailWithEmailServer() {
-    // when
-    Email actualEmail =
-        notificationEmailFactory.createAssemblyLineDelayNotificationEmail(
-            A_SENDER_EMAIL, A_RECIPIENT_EMAIL);
-
-    // then
-    assertThat(actualEmail.getEmailServer()).isEqualTo(emailServer);
-  }
-
-  @Test
   public void
-      whenCreateAssemblyLineDelayNotificationEmail_thenReturnEmailWithRightSenderAndRecipient() {
+      givenVehicleAssemblyDelayNotification_whenCreateDelayNotificationEmail_thenReturnEmailWithRightSenderAndRecipient() {
+    // given
+    given(recipientUser.getEmail()).willReturn(A_RECIPIENT_EMAIL);
+
     // when
     Email actualEmail =
-        notificationEmailFactory.createAssemblyLineDelayNotificationEmail(
-            A_SENDER_EMAIL, A_RECIPIENT_EMAIL);
+        notificationEmailFactory.createDelayNotificationEmail(
+            NotificationType.VEHICLE_ASSEMBLY_DELAY, order, A_SENDER_EMAIL, recipientUser);
 
     // then
     assertThat(actualEmail.getRecipientAddress()).matches(A_RECIPIENT_EMAIL);
@@ -59,30 +60,43 @@ class NotificationEmailFactoryTest {
 
   @Test
   public void
-      givenEmailContentDtoPresent_whenCreateAssemblyLineDelayNotificationEmail_thenReturnEmailWithRightSubjectAndBody() {
+      givenVehicleAssemblyDelayNotification_whenCreateDelayNotificationEmail_thenEmailSubjectIsFormattedWithOrderId() {
+    // given
+    given(order.getId()).willReturn(AN_ORDER_ID);
+
     // when
-    Email actualEmail =
-        notificationEmailFactory.createAssemblyLineDelayNotificationEmail(
-            A_SENDER_EMAIL, A_RECIPIENT_EMAIL);
+    notificationEmailFactory.createDelayNotificationEmail(
+        NotificationType.VEHICLE_ASSEMBLY_DELAY, order, A_SENDER_EMAIL, recipientUser);
 
     // then
-    assertThat(actualEmail.getEmailContentDto().getSubject())
-        .matches(ASSEMBLY_LINE_DELAY_CONTENT.getSubject());
-    assertThat(actualEmail.getEmailContentDto().getBodyMessage())
-        .matches(ASSEMBLY_LINE_DELAY_CONTENT.getBodyMessage());
+    verify(vehicleAssemblyDelayEmailContent).formatSubject(AN_ORDER_ID);
   }
 
   @Test
   public void
-      givenEmailContentDtoNotPresent_whenCreateAssemblyLineDelayNotificationEmail_thenThrowNotificationContentNotRegisteredException() {
+      givenVehicleAssemblyDelayNotification_whenCreateDelayNotificationEmail_thenEmailBodyIsFormattedWithUserName() {
+    // given
+    given(recipientUser.getName()).willReturn(A_NAME);
+
+    // when
+    notificationEmailFactory.createDelayNotificationEmail(
+        NotificationType.VEHICLE_ASSEMBLY_DELAY, order, A_SENDER_EMAIL, recipientUser);
+
+    // then
+    verify(vehicleAssemblyDelayEmailContent).formatBodyMessage(A_NAME);
+  }
+
+  @Test
+  public void
+      givenEmailContentDtoNotPresent_whenCreateDelayNotificationEmail_thenThrowNotificationContentNotRegisteredException() {
     // given
     emailContents.clear();
 
     // when
     Executable creatingNotificationEmail =
         () ->
-            notificationEmailFactory.createAssemblyLineDelayNotificationEmail(
-                A_SENDER_EMAIL, A_RECIPIENT_EMAIL);
+            notificationEmailFactory.createDelayNotificationEmail(
+                NotificationType.VEHICLE_ASSEMBLY_DELAY, order, A_SENDER_EMAIL, recipientUser);
 
     // then
     assertThrows(NotificationContentNotRegisteredException.class, creatingNotificationEmail);

@@ -1,11 +1,15 @@
 package ca.ulaval.glo4003.ws.domain.notification;
 
+import ca.ulaval.glo4003.ws.domain.assembly.DelayType;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 
-public class NotificationService implements VehicleAssemblyDelayObserver {
+public class NotificationService
+    implements ModelAssemblyDelayObserver,
+        BatteryAssemblyDelayObserver,
+        VehicleAssemblyDelayObserver {
   private final NotificationIssuer notificationIssuer;
   private final UserRepository userRepository;
 
@@ -14,14 +18,26 @@ public class NotificationService implements VehicleAssemblyDelayObserver {
     this.userRepository = userRepository;
   }
 
-  public void sendDelayNotification(Order order) {
-    TransactionId transactionId = TransactionId.fromString(order.getId().toString());
-    User user = userRepository.findUserByTransactionId(transactionId);
-    notificationIssuer.issueDelayNotification(user);
+  @Override
+  public void listenVehicleAssemblyDelay(Order order) {
+    User user = findOrderOwner(order);
+    notificationIssuer.issueDelayNotification(user, order, DelayType.VEHICLE_ASSEMBLY);
   }
 
   @Override
-  public void listenVehicleAssemblyDelay(Order order) {
-    sendDelayNotification(order);
+  public void listenModelAssemblyDelay(Order order) {
+    User user = findOrderOwner(order);
+    notificationIssuer.issueDelayNotification(user, order, DelayType.MODEL_ASSEMBLY);
+  }
+
+  @Override
+  public void listenBatteryAssemblyDelay(Order order) {
+    User user = findOrderOwner(order);
+    notificationIssuer.issueDelayNotification(user, order, DelayType.BATTERY_ASSEMBLY);
+  }
+
+  private User findOrderOwner(Order order) {
+    TransactionId transactionId = TransactionId.fromString(order.getId().toString());
+    return userRepository.findUserByTransactionId(transactionId);
   }
 }
