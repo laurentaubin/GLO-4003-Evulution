@@ -1,16 +1,18 @@
 package ca.ulaval.glo4003.ws.api.transaction.dto;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDtoAssembler;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class BatteryDtoAssemblerTest {
@@ -46,7 +48,8 @@ class BatteryDtoAssemblerTest {
     assertThat(assembledBattery.getType()).isEqualTo(A_TYPE);
     assertThat(assembledBattery.getCapacity()).isEqualTo(A_CAPACITY);
     assertThat(assembledBattery.getBaseNRCANRange()).isEqualTo(Integer.valueOf(A_RANGE));
-    assertThat(assembledBattery.getTimeToProduce()).isEqualTo(Integer.valueOf(A_TIME_TO_PRODUCE));
+    assertThat(assembledBattery.getProductionTime())
+        .isEqualTo(new ProductionTime(Integer.parseInt(A_TIME_TO_PRODUCE)));
     assertThat(assembledBattery.getPrice()).isEqualTo(A_PRICE);
   }
 }

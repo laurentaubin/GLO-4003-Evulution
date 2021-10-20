@@ -1,14 +1,14 @@
 package ca.ulaval.glo4003.ws.domain.assembly.order;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class OrderTest {

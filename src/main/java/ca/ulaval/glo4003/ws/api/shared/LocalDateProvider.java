@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.api.util;
+package ca.ulaval.glo4003.ws.api.shared;
 
 import java.time.LocalDate;
 

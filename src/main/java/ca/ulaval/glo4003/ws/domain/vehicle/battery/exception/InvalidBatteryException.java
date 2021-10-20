@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.domain.battery.exception;
+package ca.ulaval.glo4003.ws.domain.vehicle.battery.exception;
 
 import java.util.Set;
 

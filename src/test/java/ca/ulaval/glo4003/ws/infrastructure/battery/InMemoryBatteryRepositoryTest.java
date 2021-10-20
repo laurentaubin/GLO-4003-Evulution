@@ -1,22 +1,24 @@
 package ca.ulaval.glo4003.ws.infrastructure.battery;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
-import ca.ulaval.glo4003.ws.domain.battery.exception.InvalidBatteryException;
-import java.util.Map;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.exception.InvalidBatteryException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InMemoryBatteryRepositoryTest {
   private static final String EXISTING_BATTERY_TYPE = "STANDARD";
   private static final Integer ANY_NRCAN_BATTERY_RANGE = Integer.valueOf(400);
   private static final Integer ANY_CAPACITY = Integer.valueOf(60);
   private static final Integer ANY_PRICE = Integer.valueOf(15000);
-  private static final Integer ANY_TIME_TO_PRODUCE = Integer.valueOf(3);
+  private static final ProductionTime ANY_TIME_TO_PRODUCE = new ProductionTime(3);
 
   private static final Battery NON_EXISTING_BATTERY =
       new Battery(

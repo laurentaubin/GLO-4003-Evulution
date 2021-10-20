@@ -11,12 +11,14 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DeliveryResourceImpl implements DeliveryResource {
   public static final String ADD_DELIVERY_MESSAGE = "Delivery location successfully added";
-  private static final List<Role> privilegedRoles = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
+  private static final List<Role> PRIVILEGED_ROLES =
+      new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
 
   private final DeliveryService deliveryService;
   private final DeliveryRequestValidator deliveryRequestValidator;
@@ -44,7 +46,7 @@ public class DeliveryResourceImpl implements DeliveryResource {
       DeliveryLocationRequest deliveryLocationRequest) {
 
     deliveryRequestValidator.validate(deliveryLocationRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
+    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
     deliveryOwnershipHandler.validateOwnership(userSession, new DeliveryId(deliveryId));
 
     DeliveryDestination deliveryDestination =

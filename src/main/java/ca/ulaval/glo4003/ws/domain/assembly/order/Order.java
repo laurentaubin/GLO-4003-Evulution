@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.assembly.order;
 
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 
 public class Order {
   private OrderId id;

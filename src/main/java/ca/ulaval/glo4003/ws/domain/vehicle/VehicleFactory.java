@@ -1,5 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
+
 public class VehicleFactory {
   private final ModelRepository modelRepository;
 

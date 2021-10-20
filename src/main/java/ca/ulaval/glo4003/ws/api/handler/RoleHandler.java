@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.api.handler;
 
 import ca.ulaval.glo4003.ws.api.handler.exception.UnauthorizedUserException;
-import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
+import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;
+
 import java.util.List;
 
 public class RoleHandler {

@@ -1,11 +1,7 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.transaction.dto.AddedBatteryResponse;
-import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.CreatedTransactionResponse;
-import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.*;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
@@ -22,6 +18,7 @@ import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
@@ -29,14 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionResourceImpl implements TransactionResource {
+  private static final List<Role> PRIVILEGED_ROLES =
+      new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
 
   private final TransactionService transactionService;
   private final DeliveryService deliveryService;
+  private final RoleHandler roleHandler;
   private final TransactionOwnershipHandler transactionOwnershipHandler;
   private final CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
   private final VehicleRequestValidator vehicleRequestValidator;
-  private final RoleHandler roleHandler;
-  private static final List<Role> privilegedRoles = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
   private final BatteryRequestValidator batteryRequestValidator;
   private final PaymentRequestAssembler paymentRequestAssembler;
   private final PaymentRequestValidator paymentRequestValidator;
@@ -70,7 +68,7 @@ public class TransactionResourceImpl implements TransactionResource {
 
   @Override
   public Response createTransaction(ContainerRequestContext containerRequestContext) {
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
+    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
     Transaction createdTransaction = createTransaction(userSession);
     Delivery delivery = createDelivery(userSession);
 
@@ -87,7 +85,7 @@ public class TransactionResourceImpl implements TransactionResource {
       String transactionId,
       VehicleRequest vehicleRequest) {
     vehicleRequestValidator.validate(vehicleRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
+    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
     transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
     transactionService.addVehicle(
         TransactionId.fromString(transactionId),
@@ -101,7 +99,7 @@ public class TransactionResourceImpl implements TransactionResource {
       String transactionId,
       BatteryRequest batteryRequest) {
     batteryRequestValidator.validate(batteryRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
+    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
     transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
     Transaction transaction =
         transactionService.addBattery(
@@ -118,7 +116,7 @@ public class TransactionResourceImpl implements TransactionResource {
       String transactionId,
       PaymentRequest paymentRequest) {
     paymentRequestValidator.validate(paymentRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, privilegedRoles);
+    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
     transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
     Payment payment = paymentRequestAssembler.create(paymentRequest);
     transactionService.addPayment(TransactionId.fromString(transactionId), payment);

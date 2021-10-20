@@ -1,8 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.model;
 
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.ModelNotFoundException;
-import ca.ulaval.glo4003.ws.infrastructure.model.InMemoryModelRepository;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

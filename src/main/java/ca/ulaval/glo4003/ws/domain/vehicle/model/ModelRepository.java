@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.domain.vehicle;
+package ca.ulaval.glo4003.ws.domain.vehicle.model;
 
 import java.util.Collection;
 
