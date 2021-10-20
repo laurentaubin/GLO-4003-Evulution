@@ -1,17 +1,18 @@
 package ca.ulaval.glo4003.ws.domain.assembly.vehicle;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.notification.VehicleAssemblyDelayObserver;
-import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Random;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class VehicleAssemblyPlannerTest {
@@ -38,8 +39,7 @@ class VehicleAssemblyPlannerTest {
     when(random.nextBoolean()).thenReturn(true);
 
     // when
-    var productionTime =
-        vehicleAssemblyPlanner.getProductionTime(delayedOrder).getProductionTime();
+    var productionTime = vehicleAssemblyPlanner.getProductionTime(delayedOrder);
 
     // then
     assertThat(productionTime).isEqualTo(DELAYED.getProductionTime());
@@ -51,7 +51,7 @@ class VehicleAssemblyPlannerTest {
     when(random.nextBoolean()).thenReturn(true);
 
     // when
-    vehicleAssemblyPlanner.getProductionTime(delayedOrder).getProductionTime();
+    vehicleAssemblyPlanner.getProductionTime(delayedOrder);
 
     // then
     verify(observer).listenVehicleAssemblyDelay(delayedOrder);
@@ -63,7 +63,7 @@ class VehicleAssemblyPlannerTest {
     when(random.nextBoolean()).thenReturn(false);
 
     // when
-    var productionTime = vehicleAssemblyPlanner.getProductionTime(order).getProductionTime();
+    var productionTime = vehicleAssemblyPlanner.getProductionTime(order);
 
     // then
     assertThat(productionTime).isEqualTo(NORMAL.getProductionTime());
