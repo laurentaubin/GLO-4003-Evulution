@@ -99,7 +99,7 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
       notifyBatteryCompleted(currentOrder);
       this.currentOrder = null;
     } else {
-      currentOrderRemainingTimeToProduce.subtractWeeks(1);
+      currentOrderRemainingTimeToProduce = currentOrderRemainingTimeToProduce.subtractWeeks(1);
     }
   }
 

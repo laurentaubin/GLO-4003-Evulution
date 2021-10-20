@@ -3,6 +3,8 @@ package ca.ulaval.glo4003.ws.domain.assembly.vehicle;
 import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,21 +25,18 @@ public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
   }
 
   private void clearAssembledVehicles() {
-    orders =
-        orders.stream()
-            .filter(order -> order.getRemainingProductionTime() > 0)
-            .collect(Collectors.toList());
+    orders = orders.stream().filter(order -> !order.isOver()).collect(Collectors.toList());
   }
 
   @Override
   public void assembleVehicle(Order order) {
-    VehicleAssemblyProductionTime productionTime = vehicleAssemblyPlanner.getProductionTime(order);
-    order.setRemainingProductionTime(productionTime.getProductionTime());
+    ProductionTime productionTime = vehicleAssemblyPlanner.getProductionTime(order);
+    order.setRemainingProductionTime(productionTime);
     orders.add(order);
   }
 
   @Override
-  public int computeRemainingTimeToProduce(OrderId orderId) {
+  public ProductionTime computeRemainingTimeToProduce(OrderId orderId) {
     return orders.stream()
         .filter(order -> order.getId().equals(orderId))
         .findFirst()

@@ -1,16 +1,18 @@
 package ca.ulaval.glo4003.ws.domain.assembly.vehicle;
 
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+
 public enum VehicleAssemblyProductionTime {
-  NORMAL(7),
-  DELAYED(14);
+  NORMAL(new ProductionTime(1)),
+  DELAYED(new ProductionTime(2));
 
-  private int productionTime;
+  private final ProductionTime productionTime;
 
-  VehicleAssemblyProductionTime(int productionTime) {
+  VehicleAssemblyProductionTime(ProductionTime productionTime) {
     this.productionTime = productionTime;
   }
 
-  public int getProductionTime() {
+  public ProductionTime getProductionTime() {
     return productionTime;
   }
 }

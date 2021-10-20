@@ -99,7 +99,7 @@ public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
       notifyModelAssembled(currentOrder);
       currentOrder = null;
     } else {
-      currentOrderRemainingTimeToProduce.subtractWeeks(1);
+      currentOrderRemainingTimeToProduce = currentOrderRemainingTimeToProduce.subtractWeeks(1);
     }
   }
 

@@ -1,13 +1,14 @@
 package ca.ulaval.glo4003.ws.domain.assembly.order;
 
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 
 public class Order {
-  private OrderId id;
-  private Model model;
-  private Battery battery;
-  private Integer remainingProductionTime;
+  private final OrderId id;
+  private final Model model;
+  private final Battery battery;
+  private ProductionTime remainingProductionTime;
 
   public Order(OrderId orderId, Model model, Battery battery) {
     this.id = orderId;
@@ -28,14 +29,18 @@ public class Order {
   }
 
   public void advance() {
-    remainingProductionTime = remainingProductionTime - 1;
+    remainingProductionTime = remainingProductionTime.subtractWeeks(1);
   }
 
-  public int getRemainingProductionTime() {
+  public ProductionTime getRemainingProductionTime() {
     return remainingProductionTime;
   }
 
-  public void setRemainingProductionTime(int remainingProductionTime) {
+  public void setRemainingProductionTime(ProductionTime remainingProductionTime) {
     this.remainingProductionTime = remainingProductionTime;
+  }
+
+  public boolean isOver() {
+    return remainingProductionTime.isOver();
   }
 }

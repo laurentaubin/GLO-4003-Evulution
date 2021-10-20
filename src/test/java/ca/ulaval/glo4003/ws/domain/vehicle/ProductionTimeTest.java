@@ -30,10 +30,10 @@ class ProductionTimeTest {
     ProductionTime productionTime = new ProductionTime(expectedAmountOfWeeks);
 
     // when
-    productionTime.subtractWeeks(amountOfWeeksToSubtract);
+    ProductionTime subtractedProductionTime = productionTime.subtractWeeks(amountOfWeeksToSubtract);
 
     // then
-    assertThat(expectedAmountOfWeeksAfterSubtraction).isEqualTo(productionTime);
+    assertThat(expectedAmountOfWeeksAfterSubtraction).isEqualTo(subtractedProductionTime);
   }
 
   @Test
@@ -47,5 +47,29 @@ class ProductionTimeTest {
 
     // then
     assertThrows(IllegalArgumentException.class, subtractingWeeks);
+  }
+
+  @Test
+  public void givenProductionTimeOfZero_whenIsOver_thenReturnTrue() {
+    // given
+    ProductionTime productionTime = new ProductionTime(0);
+
+    // when
+    boolean isOver = productionTime.isOver();
+
+    // then
+    assertThat(isOver).isTrue();
+  }
+
+  @Test
+  public void givenProductionTimeOfMoreThanZero_whenIsOver_thenReturnFalse() {
+    // given
+    ProductionTime productionTime = new ProductionTime(12);
+
+    // when
+    boolean isOver = productionTime.isOver();
+
+    // then
+    assertThat(isOver).isFalse();
   }
 }

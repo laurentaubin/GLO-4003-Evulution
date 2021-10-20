@@ -13,12 +13,16 @@ public class ProductionTime {
     return productionTime.getDays() / 7;
   }
 
-  public void subtractWeeks(int weeks) {
+  public ProductionTime subtractWeeks(int weeks) {
     int newProductionTime = (productionTime.getDays() / 7) - weeks;
     if (newProductionTime < 0) {
       throw new IllegalArgumentException("Production time cannot be negative.");
     }
-    this.productionTime = Period.ofWeeks(newProductionTime);
+    return new ProductionTime(newProductionTime);
+  }
+
+  public boolean isOver() {
+    return productionTime.isZero();
   }
 
   @Override

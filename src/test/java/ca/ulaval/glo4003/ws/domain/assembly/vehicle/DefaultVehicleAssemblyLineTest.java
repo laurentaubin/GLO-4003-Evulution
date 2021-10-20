@@ -1,24 +1,26 @@
 package ca.ulaval.glo4003.ws.domain.assembly.vehicle;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class DefaultVehicleAssemblyLineTest {
   private static final OrderId AN_ID = new OrderId("id");
 
-  private static final VehicleAssemblyProductionTime NORMAL = VehicleAssemblyProductionTime.NORMAL;
-  private static final VehicleAssemblyProductionTime DELAYED =
-      VehicleAssemblyProductionTime.DELAYED;
+  private static final ProductionTime NORMAL =
+      VehicleAssemblyProductionTime.NORMAL.getProductionTime();
+  private static final ProductionTime DELAYED =
+      VehicleAssemblyProductionTime.DELAYED.getProductionTime();
 
   @Mock private Order anOrder;
   @Mock private Order anotherOrder;
@@ -34,13 +36,13 @@ class DefaultVehicleAssemblyLineTest {
   @Test
   public void givenOrder_whenAssemblingVehicle_thenShouldSetRemainingTimeToOrder() {
     // given
-    when(vehicleAssemblyPlanner.getProductionTime(anOrder)).thenReturn(DELAYED);
+    given(vehicleAssemblyPlanner.getProductionTime(anOrder)).willReturn(DELAYED);
 
     // when
     vehicleAssemblyLine.assembleVehicle(anOrder);
 
     // then
-    verify(anOrder).setRemainingProductionTime(DELAYED.getProductionTime());
+    verify(anOrder).setRemainingProductionTime(DELAYED);
   }
 
   @Test
@@ -59,9 +61,9 @@ class DefaultVehicleAssemblyLineTest {
   @Test
   public void givenOrderFinishedAssembling_whenAdvance_thenShouldRemoveOrder() {
     // given
-    when(vehicleAssemblyPlanner.getProductionTime(anOrder)).thenReturn(DELAYED);
+    given(vehicleAssemblyPlanner.getProductionTime(anOrder)).willReturn(DELAYED);
     vehicleAssemblyLine.assembleVehicle(anOrder);
-    when(anOrder.getRemainingProductionTime()).thenReturn(0);
+    given(anOrder.isOver()).willReturn(true);
 
     // when
     vehicleAssemblyLine.advance();
@@ -73,22 +75,22 @@ class DefaultVehicleAssemblyLineTest {
   @Test
   public void givenOrder_whenComputeRemainingTimeToProduce_thenReturnRemainingTime() {
     // given
-    when(vehicleAssemblyPlanner.getProductionTime(anOrder)).thenReturn(DELAYED);
-    when(anOrder.getRemainingProductionTime()).thenReturn(DELAYED.getProductionTime());
-    when(anOrder.getId()).thenReturn(AN_ID);
+    given(vehicleAssemblyPlanner.getProductionTime(anOrder)).willReturn(DELAYED);
+    given(anOrder.getRemainingProductionTime()).willReturn(DELAYED);
+    given(anOrder.getId()).willReturn(AN_ID);
 
     vehicleAssemblyLine.assembleVehicle(anOrder);
 
     // when
-    var productionTime = vehicleAssemblyLine.computeRemainingTimeToProduce(AN_ID);
+    ProductionTime actualProductionTime = vehicleAssemblyLine.computeRemainingTimeToProduce(AN_ID);
 
     // then
-    assertThat(productionTime).isEqualTo(DELAYED.getProductionTime());
+    assertThat(actualProductionTime).isEqualTo(DELAYED);
   }
 
   private void setUpOrders() {
-    when(vehicleAssemblyPlanner.getProductionTime(anOrder)).thenReturn(DELAYED);
-    when(vehicleAssemblyPlanner.getProductionTime(anotherOrder)).thenReturn(NORMAL);
+    given(vehicleAssemblyPlanner.getProductionTime(anOrder)).willReturn(DELAYED);
+    given(vehicleAssemblyPlanner.getProductionTime(anotherOrder)).willReturn(NORMAL);
 
     vehicleAssemblyLine.assembleVehicle(anOrder);
     vehicleAssemblyLine.assembleVehicle(anotherOrder);
