@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.ws.infrastructure.battery;
 
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,6 @@ public class BatteryDtoAssembler {
         Integer.valueOf(batteryDto.base_NRCAN_range),
         batteryDto.capacity,
         batteryDto.price,
-        Integer.valueOf(batteryDto.time_to_produce));
+        new ProductionTime(Integer.parseInt(batteryDto.time_to_produce)));
   }
 }

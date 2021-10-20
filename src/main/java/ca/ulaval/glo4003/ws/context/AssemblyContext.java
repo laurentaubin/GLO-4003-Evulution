@@ -13,8 +13,8 @@ import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
-import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.LinearBatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.LinearModelAssemblyLineStrategy;
@@ -73,7 +73,7 @@ public class AssemblyContext implements Context {
     ModelRepository modelRepository = serviceLocator.resolve(ModelRepository.class);
     Map<String, Integer> vehicleAssemblyConfiguration = new HashMap<>();
     for (Model model : modelRepository.findAllModels()) {
-      vehicleAssemblyConfiguration.put(model.getName(), model.getTimeToProduce());
+      vehicleAssemblyConfiguration.put(model.getName(), model.getProductionTime().inWeeks());
     }
     return vehicleAssemblyConfiguration;
   }

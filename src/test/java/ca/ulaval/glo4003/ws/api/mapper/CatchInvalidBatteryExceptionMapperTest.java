@@ -1,13 +1,14 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
-import ca.ulaval.glo4003.ws.domain.battery.exception.InvalidBatteryException;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.exception.InvalidBatteryException;
 import jakarta.ws.rs.core.Response;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class CatchInvalidBatteryExceptionMapperTest {
   private static final Set<String> BATTERY_TYPES = Set.of("SHORT_RANGE", "LONG_RANGE");

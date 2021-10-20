@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+
 import java.math.BigDecimal;
 
 public class Vehicle {

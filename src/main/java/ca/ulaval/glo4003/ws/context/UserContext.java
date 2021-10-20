@@ -2,30 +2,26 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.api.filter.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
+import ca.ulaval.glo4003.ws.api.shared.DateParser;
+import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
+import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserResource;
 import ca.ulaval.glo4003.ws.api.user.UserResourceImpl;
 import ca.ulaval.glo4003.ws.api.user.validator.BirthDateValidator;
 import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
-import ca.ulaval.glo4003.ws.api.util.DateParser;
-import ca.ulaval.glo4003.ws.api.util.LocalDateProvider;
-import ca.ulaval.glo4003.ws.api.util.TokenExtractor;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.BirthDate;
-import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.domain.user.UserRepository;
-import ca.ulaval.glo4003.ws.domain.user.UserService;
+import ca.ulaval.glo4003.ws.domain.user.*;
 import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.UserDtoAssembler;
 import jakarta.validation.Validation;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 

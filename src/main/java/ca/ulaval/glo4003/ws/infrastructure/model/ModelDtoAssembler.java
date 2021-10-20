@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.ws.infrastructure.model;
 
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,6 @@ public class ModelDtoAssembler {
         modelDto.style,
         modelDto.efficiencyEquivalenceRate,
         modelDto.basePrice,
-        modelDto.timeToProduce);
+        new ProductionTime(modelDto.productionTime));
   }
 }

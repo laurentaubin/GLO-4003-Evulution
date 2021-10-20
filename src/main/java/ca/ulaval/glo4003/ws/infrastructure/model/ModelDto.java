@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 public class ModelDto {
@@ -14,5 +15,5 @@ public class ModelDto {
   public Integer basePrice;
 
   @JsonProperty(value = "time_to_produce")
-  public Integer timeToProduce;
+  public int productionTime;
 }

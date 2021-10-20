@@ -1,11 +1,11 @@
-package ca.ulaval.glo4003.ws.api.util;
+package ca.ulaval.glo4003.ws.api.shared;
+
+import ca.ulaval.glo4003.ws.api.shared.exception.EmptyTokenHeaderException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import ca.ulaval.glo4003.ws.api.util.exception.EmptyTokenHeaderException;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 class TokenExtractorTest {
   private static final String A_AUTH_HEADER_NAME = "Bearer";

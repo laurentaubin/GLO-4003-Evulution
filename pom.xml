@@ -393,7 +393,7 @@
                                             ca.ulaval.glo4003.ws.domain.transaction.exception.CannotAddBatteryBeforeVehicleException:
                                         </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.domain.vehicle.Color</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.domain.vehicle.Model</exclude>
+                                        <exclude>ca.ulaval.glo4003.ws.domain.vehicle.model.Model</exclude>
                                         <exclude>
                                             ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory
                                         </exclude>

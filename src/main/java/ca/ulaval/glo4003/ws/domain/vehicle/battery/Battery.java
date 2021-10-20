@@ -1,19 +1,25 @@
-package ca.ulaval.glo4003.ws.domain.battery;
+package ca.ulaval.glo4003.ws.domain.vehicle.battery;
+
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 
 public class Battery {
   public String type;
   public Integer baseNRCANRange;
   public Integer capacity;
   public Integer price;
-  public Integer timeToProduce;
+  public ProductionTime productionTime;
 
   public Battery(
-      String type, Integer baseNRCANRange, Integer capacity, Integer price, Integer timeToProduce) {
+      String type,
+      Integer baseNRCANRange,
+      Integer capacity,
+      Integer price,
+      ProductionTime productionTime) {
     this.type = type;
     this.baseNRCANRange = baseNRCANRange;
     this.capacity = capacity;
     this.price = price;
-    this.timeToProduce = timeToProduce;
+    this.productionTime = productionTime;
   }
 
   public String getType() {
@@ -32,7 +38,7 @@ public class Battery {
     return price;
   }
 
-  public Integer getTimeToProduce() {
-    return timeToProduce;
+  public ProductionTime getProductionTime() {
+    return productionTime;
   }
 }

@@ -1,9 +1,10 @@
-package ca.ulaval.glo4003.ws.api.util;
+package ca.ulaval.glo4003.ws.api.shared;
 
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class LocalDateProviderTest {
 

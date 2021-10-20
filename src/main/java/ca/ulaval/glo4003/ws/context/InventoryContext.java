@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.context;
 
-import ca.ulaval.glo4003.ws.domain.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.battery.BatteryRepository;
-import ca.ulaval.glo4003.ws.domain.vehicle.Model;
-import ca.ulaval.glo4003.ws.domain.vehicle.ModelRepository;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDtoAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.battery.InMemoryBatteryRepository;
@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.ws.infrastructure.model.ModelDto;
 import ca.ulaval.glo4003.ws.infrastructure.model.ModelDtoAssembler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

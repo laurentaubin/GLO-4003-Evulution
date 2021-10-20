@@ -1,6 +1,6 @@
-package ca.ulaval.glo4003.ws.api.util;
+package ca.ulaval.glo4003.ws.api.shared;
 
-import ca.ulaval.glo4003.ws.api.util.exception.EmptyTokenHeaderException;
+import ca.ulaval.glo4003.ws.api.shared.exception.EmptyTokenHeaderException;
 
 public class TokenExtractor {
 
