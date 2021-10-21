@@ -18,7 +18,7 @@ public class TimeContext implements Context {
     AssemblyLine assemblyLine = serviceLocator.resolve(AssemblyLine.class);
     TimeSimulator timeSimulator = new TimeSimulator(assemblyLine, new Timer());
     timeSimulator.schedule(getSecondsPerWeekFromArgs());
-    serviceLocator.register(TimeSimulator.class, timeSimulator); // TODO: on s'en fou?
+    serviceLocator.register(TimeSimulator.class, timeSimulator);
   }
 
   private static int getSecondsPerWeekFromArgs() {

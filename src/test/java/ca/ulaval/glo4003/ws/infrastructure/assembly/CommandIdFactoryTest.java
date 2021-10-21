@@ -12,14 +12,29 @@ class CommandIdFactoryTest {
   private static final OrderId AN_ORDER_ID = new OrderId(AN_ID);
 
   @Test
-  public void givenAnOrderId_whenCreate_thenCreateACommandIdWithSameIdValueAsOrderId() {
+  public void
+      givenAnOrderId_whenGetOrCreateFromOrderId_thenCreateACommandIdWithSameIdValueAsOrderId() {
     // given
     CommandIdFactory commandIdFactory = new CommandIdFactory();
 
     // when
-    CommandID commandId = commandIdFactory.createFromOrderId(AN_ORDER_ID);
+    CommandID commandId = commandIdFactory.getOrCreateFromOrderId(AN_ORDER_ID);
 
     // then
     assertThat(commandId.getValue()).isEqualTo(AN_ID);
+  }
+
+  @Test
+  public void
+      givenACommandIdAlreadyCreatedForAnOrderId_whenGetOrCreateFromOrderId_thenReturnTheSameCommandId() {
+    // given
+    CommandIdFactory commandIdFactory = new CommandIdFactory();
+    CommandID firstCommandId = commandIdFactory.getOrCreateFromOrderId(AN_ORDER_ID);
+
+    // when
+    CommandID commandId = commandIdFactory.getOrCreateFromOrderId(AN_ORDER_ID);
+
+    // then
+    assertThat(commandId).isEqualTo(firstCommandId);
   }
 }

@@ -1,66 +1,72 @@
 package ca.ulaval.glo4003.ws.infrastructure.battery;
 
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.exception.InvalidBatteryException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+@ExtendWith(MockitoExtension.class)
 class InMemoryBatteryRepositoryTest {
-  private static final String EXISTING_BATTERY_TYPE = "STANDARD";
-  private static final Integer ANY_NRCAN_BATTERY_RANGE = Integer.valueOf(400);
-  private static final Integer ANY_CAPACITY = Integer.valueOf(60);
-  private static final Integer ANY_PRICE = Integer.valueOf(15000);
-  private static final ProductionTime ANY_TIME_TO_PRODUCE = new ProductionTime(3);
+  private static final String A_BATTERY_NAME = "A BATTERY NAME";
+  private static final String INVALID_BATTERY_NAME = "invalid battery name";
 
-  private static final Battery NON_EXISTING_BATTERY =
-      new Battery(
-          "non existing type",
-          ANY_NRCAN_BATTERY_RANGE,
-          ANY_CAPACITY,
-          ANY_PRICE,
-          ANY_TIME_TO_PRODUCE);
+  @Mock private BatteryDto aBatteryDto;
+  @Mock private Battery aBattery;
+  @Mock private BatteryAssembler batteryAssembler;
 
-  private static final Battery EXISTING_BATTERY =
-      new Battery(
-          EXISTING_BATTERY_TYPE,
-          ANY_NRCAN_BATTERY_RANGE,
-          ANY_CAPACITY,
-          ANY_PRICE,
-          ANY_TIME_TO_PRODUCE);
-
-  private static final Map<String, Battery> EXISTING_BATTERIES =
-      Map.of(EXISTING_BATTERY.getType(), EXISTING_BATTERY);
-
-  private BatteryRepository batteryRepository;
+  private InMemoryBatteryRepository repository;
 
   @BeforeEach
-  void setUp() {
-    batteryRepository = new InMemoryBatteryRepository(EXISTING_BATTERIES);
+  public void setUpRepository() {
+    Map<String, BatteryDto> batteries = new HashMap<>();
+    batteries.put(A_BATTERY_NAME, aBatteryDto);
+    repository = new InMemoryBatteryRepository(batteries, batteryAssembler);
   }
 
   @Test
-  void givenExistingBattery_whenFindByType_thenValidationPassesSuccessfully() {
+  public void whenFindByBatteryName_thenReturnBattery() {
+    // given
+    given(batteryAssembler.assembleBattery(aBatteryDto)).willReturn(aBattery);
+
     // when
-    Executable findingByType = () -> batteryRepository.findByType(EXISTING_BATTERY.getType());
+    Battery battery = repository.findByType(A_BATTERY_NAME);
 
     // then
-    assertDoesNotThrow(findingByType);
+    assertThat(battery).isEqualTo(aBattery);
   }
 
   @Test
-  void givenExistingBattery_whenSave_thenValidationFails() {
+  public void givenANonExistingBattery_whenFindBatteryByName_thenThrowBatteryNotFoundException() {
     // when
-    Executable saving = () -> batteryRepository.findByType(NON_EXISTING_BATTERY.getType());
+    Executable findingBattery = () -> repository.findByType(INVALID_BATTERY_NAME);
 
     // then
-    assertThrows(InvalidBatteryException.class, saving);
+    assertThrows(InvalidBatteryException.class, findingBattery);
+  }
+
+  @Test
+  public void givenBatteries_whenFindAllBatteries_thenReturnAllBatteries() {
+    // given
+    Collection<Battery> expectedBatteries = new ArrayList<>();
+    expectedBatteries.add(aBattery);
+    given(batteryAssembler.assembleBattery(aBatteryDto)).willReturn(aBattery);
+
+    // when
+    Collection<Battery> batteries = repository.findAllBatteries();
+
+    // then
+    assertThat(batteries).containsExactlyElementsIn(expectedBatteries);
   }
 }

@@ -1,25 +1,26 @@
-package ca.ulaval.glo4003.ws.infrastructure.assembly.model;
+package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
-import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
-import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.notification.ModelAssemblyDelayObserver;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LinearModelAssemblyLineStrategyTest {
@@ -29,7 +30,6 @@ class LinearModelAssemblyLineStrategyTest {
   private static final OrderId AN_ORDER_ID = new OrderId(AN_ID);
   private static final OrderId ANOTHER_ORDER_ID = new OrderId(ANOTHER_ID);
   private static final OrderId OTHER_ORDER_ID = new OrderId(OTHER_ID);
-  private static final String A_MODEL_NAME = "Vandry";
   private static final ProductionTime A_REMAINING_PRODUCTION_TIME = new ProductionTime(43);
   private static final ProductionTime ANOTHER_REMAINING_PRODUCTION_TIME = new ProductionTime(763);
   private static final ProductionTime OTHER_REMAINING_PRODUCTION_TIME = new ProductionTime(4322);
@@ -40,10 +40,7 @@ class LinearModelAssemblyLineStrategyTest {
   @Mock private Model aModel;
   @Mock private Model anotherModel;
   @Mock private Model otherModel;
-  @Mock private VehicleAssemblyLine vehicleAssemblyLine;
-  @Mock private CommandIdFactory commandIdFactory;
-  @Mock private CommandID aCommandId;
-  @Mock private CommandID anotherCommandId;
+  @Mock private AssemblyLineAdapter modelAssemblyLineAdapter;
   @Mock private ModelAssembledObserver modelAssembledObserver;
   @Mock private ModelAssembledObserver anotherModelAssembledObserver;
   @Mock private ModelAssemblyDelayObserver modelAssemblyDelayObserver;
@@ -52,8 +49,7 @@ class LinearModelAssemblyLineStrategyTest {
 
   @BeforeEach
   public void setUp() {
-    linearModelAssemblyLineStrategy =
-        new LinearModelAssemblyLineStrategy(vehicleAssemblyLine, commandIdFactory);
+    linearModelAssemblyLineStrategy = new LinearModelAssemblyLineStrategy(modelAssemblyLineAdapter);
 
     linearModelAssemblyLineStrategy.register(modelAssemblyDelayObserver);
   }
@@ -62,29 +58,26 @@ class LinearModelAssemblyLineStrategyTest {
   public void
       givenAnEmptyQueueAndNoOrderBeingAssembled_whenAddOrder_thenOrderIsSentToBeAssembled() {
     // given
-    setUpAnOrder();
-    given(commandIdFactory.createFromOrderId(AN_ORDER_ID)).willReturn(aCommandId);
+    given(anOrder.getModel()).willReturn(aModel);
 
     // when
     linearModelAssemblyLineStrategy.addOrder(anOrder);
 
     // then
-    verify(vehicleAssemblyLine).newCarCommand(aCommandId, A_MODEL_NAME);
+    verify(modelAssemblyLineAdapter).addOrder(anOrder);
   }
 
   @Test
   public void
       givenAnEmptyQueueAndAnOrderDoneBeingAssembled_whenAddOrder_thenNewOrderIsSentToBeAssembled() {
-    setUpAnOrder();
-    setUpAnotherOrder();
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
-    linearModelAssemblyLineStrategy.addOrder(anOrder);
+    givenAnOrderDoneBeingAssembled();
+    given(anotherOrder.getModel()).willReturn(anotherModel);
 
     // when
     linearModelAssemblyLineStrategy.addOrder(anotherOrder);
 
     // then
-    verify(vehicleAssemblyLine).newCarCommand(anotherCommandId, A_MODEL_NAME);
+    verify(modelAssemblyLineAdapter).addOrder(anotherOrder);
   }
 
   @Test
@@ -93,7 +86,7 @@ class LinearModelAssemblyLineStrategyTest {
     linearModelAssemblyLineStrategy.advance();
 
     // then
-    verify(vehicleAssemblyLine).advance();
+    verify(modelAssemblyLineAdapter).advance();
   }
 
   @Test
@@ -103,8 +96,8 @@ class LinearModelAssemblyLineStrategyTest {
     setUpAnOrder();
     given(anOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
     linearModelAssemblyLineStrategy.addOrder(anOrder);
-    when(vehicleAssemblyLine.getBuildStatus(aCommandId))
-        .thenReturn(BuildStatus.IN_PROGRESS, BuildStatus.ASSEMBLED);
+    when(modelAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+        .thenReturn(AssemblyStatus.IN_PROGRESS, AssemblyStatus.ASSEMBLED);
     setUpAnotherOrder();
     given(anotherOrder.getModel().getProductionTime())
         .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
@@ -114,31 +107,30 @@ class LinearModelAssemblyLineStrategyTest {
     linearModelAssemblyLineStrategy.advance();
 
     // then
-    verify(vehicleAssemblyLine, times(1)).newCarCommand(anotherCommandId, A_MODEL_NAME);
+    verify(modelAssemblyLineAdapter, times(1)).addOrder(anotherOrder);
   }
 
   @Test
   public void
       givenAnOrderBeingAssembledAndAnotherOrderInQueue_whenAdvance_thenOrderInQueueIsNotSentToBeAssembled() {
     // given
-    setUpAnOrder();
-    given(anOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
-    linearModelAssemblyLineStrategy.addOrder(anOrder);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    given(aModel.getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    givenAnOrderBeingAssembled();
+    setUpAnotherOrder();
+    given(anotherModel.getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    linearModelAssemblyLineStrategy.addOrder(anotherOrder);
 
     // when
     linearModelAssemblyLineStrategy.advance();
 
     // then
-    verify(vehicleAssemblyLine, never()).newCarCommand(anotherCommandId, A_MODEL_NAME);
+    verify(modelAssemblyLineAdapter, never()).addOrder(anotherOrder);
   }
 
   @Test
   public void givenAnOrderDoneBeingAssembled_whenAdvance_thenNotifyAllModelAssembledObservers() {
     // given
-    setUpAnOrder();
-    linearModelAssemblyLineStrategy.addOrder(anOrder);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
+    givenAnOrderDoneBeingAssembled();
     linearModelAssemblyLineStrategy.register(modelAssembledObserver);
     linearModelAssemblyLineStrategy.register(anotherModelAssembledObserver);
 
@@ -174,9 +166,7 @@ class LinearModelAssemblyLineStrategyTest {
     ProductionTime modelTimeToProduce = new ProductionTime(4);
     ProductionTime expectedRemainingTimeToProduce = new ProductionTime(2);
     given(aModel.getProductionTime()).willReturn(modelTimeToProduce);
-    setUpAnOrder();
-    linearModelAssemblyLineStrategy.addOrder(anOrder);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    givenAnOrderBeingAssembled();
     linearModelAssemblyLineStrategy.advance();
     linearModelAssemblyLineStrategy.advance();
 
@@ -194,16 +184,15 @@ class LinearModelAssemblyLineStrategyTest {
     // given
     setUpAnOrder();
     given(anOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.RECEIVED);
-    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
-    given(anotherOrder.getModel()).willReturn(anotherModel);
+    linearModelAssemblyLineStrategy.addOrder(anOrder);
+    given(modelAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+        .willReturn(AssemblyStatus.RECEIVED);
+    setUpAnotherOrder();
     given(anotherOrder.getModel().getProductionTime())
         .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
-    given(otherOrder.getId()).willReturn(OTHER_ORDER_ID);
-    given(otherOrder.getModel()).willReturn(otherModel);
-    given(otherOrder.getModel().getProductionTime()).willReturn(OTHER_REMAINING_PRODUCTION_TIME);
-    linearModelAssemblyLineStrategy.addOrder(anOrder);
     linearModelAssemblyLineStrategy.addOrder(anotherOrder);
+    setUpOtherOrder();
+    given(otherOrder.getModel().getProductionTime()).willReturn(OTHER_REMAINING_PRODUCTION_TIME);
     linearModelAssemblyLineStrategy.addOrder(otherOrder);
     ProductionTime expectedRemainingTimeToProduce =
         new ProductionTime(
@@ -222,7 +211,7 @@ class LinearModelAssemblyLineStrategyTest {
   @Test
   public void givenNoCurrentOrder_whenAddOrder_thenDoNotNotifyAssemblyDelay() {
     // given
-    setUpAnOrder();
+    given(anOrder.getModel()).willReturn(aModel);
 
     // when
     linearModelAssemblyLineStrategy.addOrder(anOrder);
@@ -235,11 +224,11 @@ class LinearModelAssemblyLineStrategyTest {
   public void givenCurrentOrderInQueue_whenAddOrder_thenNotifyAssemblyDelay() {
     // given
     setUpAnOrder();
-    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
-    given(anotherOrder.getModel()).willReturn(anotherModel);
+    setUpAnotherOrder();
     given(anOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
     given(anotherOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    given(modelAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+        .willReturn(AssemblyStatus.IN_PROGRESS);
     linearModelAssemblyLineStrategy.addOrder(anOrder);
 
     // when
@@ -251,15 +240,30 @@ class LinearModelAssemblyLineStrategyTest {
 
   private void setUpAnOrder() {
     given(anOrder.getId()).willReturn(AN_ORDER_ID);
-    given(commandIdFactory.createFromOrderId(AN_ORDER_ID)).willReturn(aCommandId);
-    given(aModel.getName()).willReturn(A_MODEL_NAME);
     given(anOrder.getModel()).willReturn(aModel);
   }
 
   private void setUpAnotherOrder() {
     given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
-    given(commandIdFactory.createFromOrderId(ANOTHER_ORDER_ID)).willReturn(anotherCommandId);
-    given(anotherModel.getName()).willReturn(A_MODEL_NAME);
     given(anotherOrder.getModel()).willReturn(anotherModel);
+  }
+
+  private void setUpOtherOrder() {
+    given(otherOrder.getId()).willReturn(OTHER_ORDER_ID);
+    given(otherOrder.getModel()).willReturn(otherModel);
+  }
+
+  private void givenAnOrderBeingAssembled() {
+    setUpAnOrder();
+    linearModelAssemblyLineStrategy.addOrder(anOrder);
+    given(modelAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+        .willReturn(AssemblyStatus.IN_PROGRESS);
+  }
+
+  private void givenAnOrderDoneBeingAssembled() {
+    setUpAnOrder();
+    linearModelAssemblyLineStrategy.addOrder(anOrder);
+    given(modelAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+        .willReturn(AssemblyStatus.ASSEMBLED);
   }
 }

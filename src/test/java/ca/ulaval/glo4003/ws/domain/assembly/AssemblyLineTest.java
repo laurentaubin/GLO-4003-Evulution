@@ -7,7 +7,6 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyType;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,8 +27,7 @@ class AssemblyLineTest {
 
   @BeforeEach
   public void setUp() {
-    given(assemblyStrategyFactory.create(AssemblyStrategyType.LINEAR)).willReturn(assemblyStrategy);
-    assemblyLine = new AssemblyLine(assemblyStrategyFactory, orderFactory);
+    assemblyLine = new AssemblyLine(assemblyStrategyFactory, orderFactory, assemblyStrategy);
   }
 
   @Test
