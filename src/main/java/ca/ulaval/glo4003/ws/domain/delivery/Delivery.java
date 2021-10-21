@@ -3,8 +3,8 @@ package ca.ulaval.glo4003.ws.domain.delivery;
 import java.util.Objects;
 
 public class Delivery {
-  DeliveryId deliveryId;
-  DeliveryDestination deliveryDestination;
+  private DeliveryId deliveryId;
+  private DeliveryDestination deliveryDestination;
 
   public Delivery() {
     this.deliveryId = new DeliveryId();
