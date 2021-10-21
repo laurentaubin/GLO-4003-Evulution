@@ -1,37 +1,34 @@
-package ca.ulaval.glo4003.ws.infrastructure.assembly.battery;
+package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
-import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
-import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
+import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
-
 import java.util.LinkedList;
 import java.util.Queue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
     implements BatteryAssemblyLineStrategy {
 
-  private final BatteryAssemblyLine batteryAssemblyLine;
-  private final CommandIdFactory commandIdFactory;
+  private final AssemblyLineAdapter batteryAssemblyLineAdapter;
   private final Queue<Order> orderQueue = new LinkedList<>();
+  private static final Logger LOGGER = LogManager.getLogger();
 
   private Order currentOrder;
   private ProductionTime currentOrderRemainingTimeToProduce;
 
-  public LinearBatteryAssemblyLineStrategy(
-      BatteryAssemblyLine batteryAssemblyLine, CommandIdFactory commandIdFactory) {
-    this.batteryAssemblyLine = batteryAssemblyLine;
-    this.commandIdFactory = commandIdFactory;
+  public LinearBatteryAssemblyLineStrategy(AssemblyLineAdapter batteryAssemblyLineAdapter) {
+    this.batteryAssemblyLineAdapter = batteryAssemblyLineAdapter;
   }
 
   @Override
   public void advance() {
-    batteryAssemblyLine.advance();
+    batteryAssemblyLineAdapter.advance();
     if (isAnOrderBeingAssembled()) {
       processCurrentOrder();
     }
@@ -42,6 +39,7 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
 
   @Override
   public void addOrder(Order order) {
+    LOGGER.info("Battery order received");
     if (orderQueue.isEmpty() && isAssemblyLineFree()) {
       sendOrderToBeAssembled(order);
       return;
@@ -66,9 +64,9 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
     if (currentOrder == null) {
       return true;
     }
-    CommandID commandId = commandIdFactory.createFromOrderId(currentOrder.getId());
-    BuildStatus currentOrderBuildStatus = batteryAssemblyLine.getBuildStatus(commandId);
-    return currentOrderBuildStatus == null || currentOrderBuildStatus == BuildStatus.ASSEMBLED;
+    return batteryAssemblyLineAdapter
+        .getAssemblyStatus(currentOrder.getId())
+        .equals(AssemblyStatus.ASSEMBLED);
   }
 
   private boolean isAnOrderBeingAssembled() {
@@ -80,22 +78,22 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
   }
 
   private void sendOrderToBeAssembled(Order order) {
-    CommandID commandId = commandIdFactory.createFromOrderId(order.getId());
+    batteryAssemblyLineAdapter.addOrder(order);
     currentOrder = order;
     currentOrderRemainingTimeToProduce = order.getBattery().getProductionTime();
-    batteryAssemblyLine.newBatteryCommand(commandId, order.getBattery().getType());
   }
 
   private void sendNextOrderToBeAssembled() {
     currentOrder = orderQueue.remove();
     currentOrderRemainingTimeToProduce = currentOrder.getBattery().getProductionTime();
-    CommandID nextInLineCommandId = commandIdFactory.createFromOrderId(currentOrder.getId());
-    batteryAssemblyLine.newBatteryCommand(nextInLineCommandId, currentOrder.getBattery().getType());
+    batteryAssemblyLineAdapter.addOrder(currentOrder);
   }
 
   private void processCurrentOrder() {
-    CommandID commandId = commandIdFactory.createFromOrderId(currentOrder.getId());
-    if (batteryAssemblyLine.getBuildStatus(commandId) == BuildStatus.ASSEMBLED) {
+    if (batteryAssemblyLineAdapter
+        .getAssemblyStatus(currentOrder.getId())
+        .equals(AssemblyStatus.ASSEMBLED)) {
+      LOGGER.info("Battery order assembled: " + currentOrder.getId().toString());
       notifyBatteryCompleted(currentOrder);
       this.currentOrder = null;
     } else {

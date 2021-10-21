@@ -1,37 +1,35 @@
-package ca.ulaval.glo4003.ws.infrastructure.assembly.model;
+package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
-import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
-import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
+import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
-
 import java.util.LinkedList;
 import java.util.Queue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
     implements ModelAssemblyLineStrategy {
 
-  private final VehicleAssemblyLine vehicleAssemblyLine;
-  private final CommandIdFactory commandIdFactory;
+  private final AssemblyLineAdapter modelAssemblyLineAdapter;
   private final Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
   private ProductionTime currentOrderRemainingTimeToProduce;
 
-  public LinearModelAssemblyLineStrategy(
-      VehicleAssemblyLine vehicleAssemblyLine, CommandIdFactory commandIdFactory) {
-    this.vehicleAssemblyLine = vehicleAssemblyLine;
-    this.commandIdFactory = commandIdFactory;
+  private static final Logger LOGGER = LogManager.getLogger();
+
+  public LinearModelAssemblyLineStrategy(AssemblyLineAdapter modelAssemblyLineAdapter) {
+    this.modelAssemblyLineAdapter = modelAssemblyLineAdapter;
   }
 
   @Override
   public void advance() {
-    vehicleAssemblyLine.advance();
+    modelAssemblyLineAdapter.advance();
     if (isAnOrderBeingAssembled()) {
       processCurrentOrder();
     }
@@ -42,6 +40,7 @@ public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   @Override
   public void addOrder(Order order) {
+    LOGGER.info("Model order received");
     if (orderQueue.isEmpty() && isAssemblyLineFree()) {
       sendOrderToBeAssembled(order);
       return;
@@ -66,16 +65,13 @@ public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
     if (currentOrder == null) {
       return true;
     }
-    CommandID commandId = commandIdFactory.createFromOrderId(currentOrder.getId());
-    BuildStatus currentOrderBuildStatus = vehicleAssemblyLine.getBuildStatus(commandId);
-    return currentOrderBuildStatus == null || currentOrderBuildStatus == BuildStatus.ASSEMBLED;
+    return isCurrentOrderAssembled();
   }
 
   private void sendOrderToBeAssembled(Order order) {
-    CommandID commandId = commandIdFactory.createFromOrderId(order.getId());
     currentOrder = order;
     currentOrderRemainingTimeToProduce = order.getModel().getProductionTime();
-    vehicleAssemblyLine.newCarCommand(commandId, order.getModel().getName());
+    modelAssemblyLineAdapter.addOrder(currentOrder);
   }
 
   private boolean isAnOrderBeingAssembled() {
@@ -89,13 +85,12 @@ public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
   private void sendNextOrderToBeAssembled() {
     currentOrder = orderQueue.remove();
     currentOrderRemainingTimeToProduce = currentOrder.getModel().getProductionTime();
-    CommandID nextInLineCommandId = commandIdFactory.createFromOrderId(currentOrder.getId());
-    vehicleAssemblyLine.newCarCommand(nextInLineCommandId, currentOrder.getModel().getName());
+    modelAssemblyLineAdapter.addOrder(currentOrder);
   }
 
   private void processCurrentOrder() {
-    CommandID commandId = commandIdFactory.createFromOrderId(currentOrder.getId());
-    if (vehicleAssemblyLine.getBuildStatus(commandId) == BuildStatus.ASSEMBLED) {
+    if (isCurrentOrderAssembled()) {
+      LOGGER.info("Model order assembled: " + currentOrder.getId().toString());
       notifyModelAssembled(currentOrder);
       currentOrder = null;
     } else {
@@ -111,5 +106,11 @@ public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
     }
     return new ProductionTime(
         remainingTimeToProduce + currentOrderRemainingTimeToProduce.inWeeks());
+  }
+
+  private boolean isCurrentOrderAssembled() {
+    return modelAssemblyLineAdapter
+        .getAssemblyStatus(currentOrder.getId())
+        .equals(AssemblyStatus.ASSEMBLED);
   }
 }

@@ -1,18 +1,15 @@
 package ca.ulaval.glo4003.ws.context;
 
-import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
-import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
+import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
-import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDtoAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.battery.InMemoryBatteryRepository;
 import ca.ulaval.glo4003.ws.infrastructure.model.InMemoryModelRepository;
+import ca.ulaval.glo4003.ws.infrastructure.model.ModelAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.model.ModelDto;
-import ca.ulaval.glo4003.ws.infrastructure.model.ModelDtoAssembler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,30 +29,26 @@ public class InventoryContext implements Context {
   }
 
   private void registerBatteryInventory() {
-    serviceLocator.register(BatteryDtoAssembler.class, new BatteryDtoAssembler());
-
-    var batteryInventory = setupBatteryInventory(serviceLocator.resolve(BatteryDtoAssembler.class));
+    var batteryInventory = setupBatteryInventory();
     serviceLocator.register(
-        BatteryRepository.class, new InMemoryBatteryRepository(batteryInventory));
+        BatteryRepository.class,
+        new InMemoryBatteryRepository(batteryInventory, new BatteryAssembler()));
   }
 
   private void registerModelInventory() {
-    serviceLocator.register(ModelDtoAssembler.class, new ModelDtoAssembler());
-
-    var modelsInventory = setUpModelInventory(serviceLocator.resolve(ModelDtoAssembler.class));
-    serviceLocator.register(ModelRepository.class, new InMemoryModelRepository(modelsInventory));
+    var modelsInventory = setUpModelInventory();
+    serviceLocator.register(
+        ModelRepository.class, new InMemoryModelRepository(modelsInventory, new ModelAssembler()));
   }
 
-  private static Map<String, Battery> setupBatteryInventory(
-      BatteryDtoAssembler batteryDTOAssembler) {
-    Map<String, Battery> batteriesInventory = new HashMap<>();
+  private static Map<String, BatteryDto> setupBatteryInventory() {
+    Map<String, BatteryDto> batteriesInventory = new HashMap<>();
     try {
       ObjectMapper objectMapper = new ObjectMapper();
-      List<Battery> batteriesListFromContext =
-          batteryDTOAssembler.assembleBatteries(
-              objectMapper.readValue(BATTERY_INFO_FILE, new TypeReference<List<BatteryDto>>() {}));
-      for (Battery battery : batteriesListFromContext) {
-        batteriesInventory.put(battery.getType(), battery);
+      List<BatteryDto> batteriesListFromContext =
+          objectMapper.readValue(BATTERY_INFO_FILE, new TypeReference<>() {});
+      for (BatteryDto battery : batteriesListFromContext) {
+        batteriesInventory.put(battery.type.toUpperCase(), battery);
       }
       return batteriesInventory;
     } catch (IOException e) {
@@ -64,15 +57,13 @@ public class InventoryContext implements Context {
     return batteriesInventory;
   }
 
-  private static Map<String, Model> setUpModelInventory(ModelDtoAssembler modelDtoAssembler) {
-    Map<String, Model> modelInventory = new HashMap<>();
+  private static Map<String, ModelDto> setUpModelInventory() {
+    Map<String, ModelDto> modelInventory = new HashMap<>();
     try {
       ObjectMapper objectMapper = new ObjectMapper();
-      List<Model> modelListFromContext =
-          modelDtoAssembler.assembleModels(
-              objectMapper.readValue(MODEL_INVENTORY, new TypeReference<List<ModelDto>>() {}));
-      for (Model model : modelListFromContext) {
-        modelInventory.put(model.getName(), model);
+      List<ModelDto> modelDtos = objectMapper.readValue(MODEL_INVENTORY, new TypeReference<>() {});
+      for (ModelDto model : modelDtos) {
+        modelInventory.put(model.name.toUpperCase(), model);
       }
     } catch (IOException e) {
       e.printStackTrace();
