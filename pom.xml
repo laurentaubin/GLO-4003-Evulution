@@ -401,6 +401,9 @@
                                         <exclude>
                                             ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy
                                         </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.shared.RandomProvider
+                                        </exclude>
 
                                         <!-- INFRA -->
                                         <exclude>

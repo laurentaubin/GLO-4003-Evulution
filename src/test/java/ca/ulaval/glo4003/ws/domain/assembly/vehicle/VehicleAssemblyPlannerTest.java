@@ -1,18 +1,17 @@
 package ca.ulaval.glo4003.ws.domain.assembly.vehicle;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.notification.VehicleAssemblyDelayObserver;
+import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Random;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class VehicleAssemblyPlannerTest {
@@ -23,20 +22,20 @@ class VehicleAssemblyPlannerTest {
   @Mock private VehicleAssemblyDelayObserver observer;
   @Mock private Order order;
   @Mock private Order delayedOrder;
-  @Mock private Random random;
+  @Mock private RandomProvider randomProvider;
 
   private VehicleAssemblyPlanner vehicleAssemblyPlanner;
 
   @BeforeEach
   void setUp() {
-    vehicleAssemblyPlanner = new VehicleAssemblyPlanner(random);
+    vehicleAssemblyPlanner = new VehicleAssemblyPlanner(randomProvider);
     vehicleAssemblyPlanner.register(observer);
   }
 
   @Test
   public void givenDelayInProduction_whenGetProductionTime_shouldReturnDelayed() {
     // given
-    when(random.nextBoolean()).thenReturn(true);
+    when(randomProvider.nextBoolean()).thenReturn(true);
 
     // when
     var productionTime = vehicleAssemblyPlanner.getProductionTime(delayedOrder);
@@ -48,7 +47,7 @@ class VehicleAssemblyPlannerTest {
   @Test
   public void givenDelayInProduction_whenGetProductionTime_shouldListenToDelay() {
     // given
-    when(random.nextBoolean()).thenReturn(true);
+    when(randomProvider.nextBoolean()).thenReturn(true);
 
     // when
     vehicleAssemblyPlanner.getProductionTime(delayedOrder);
@@ -60,7 +59,7 @@ class VehicleAssemblyPlannerTest {
   @Test
   public void givenNoDelayInProduction_whenGetProductionTime_shouldReturnNormalProductionTime() {
     // given
-    when(random.nextBoolean()).thenReturn(false);
+    when(randomProvider.nextBoolean()).thenReturn(false);
 
     // when
     var productionTime = vehicleAssemblyPlanner.getProductionTime(order);

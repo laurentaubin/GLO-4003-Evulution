@@ -15,6 +15,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearModelAssemblyL
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
+import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
@@ -69,7 +70,8 @@ public class AssemblyContext implements Context {
   }
 
   private void registerVehicleAssemblyLine() {
-    VehicleAssemblyPlanner vehicleAssemblyPlanner = new VehicleAssemblyPlanner(new Random());
+    VehicleAssemblyPlanner vehicleAssemblyPlanner =
+        new VehicleAssemblyPlanner(new RandomProvider(new Random()));
     vehicleAssemblyPlanner.register(serviceLocator.resolve(NotificationService.class));
     VehicleAssemblyLineStrategy defaultVehicleAssemblyLineStrategy =
         new DefaultVehicleAssemblyLine(vehicleAssemblyPlanner);
