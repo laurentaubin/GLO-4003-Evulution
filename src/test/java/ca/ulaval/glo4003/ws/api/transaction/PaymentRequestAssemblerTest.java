@@ -11,9 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentRequestAssemblerTest {
-  private static final String A_FREQUENCY = "monthly";
-  private static final int A_BANK_NUMBER = 100;
-  private static final int AN_ACCOUNT_NUMBER = 9999999;
+  private static final String A_VALID_FREQUENCY = "monthly";
+  private static final String A_VALID_BANK_NUMBER = "003";
+  private static final String A_VALID_ACCOUNT_NUMBER = "0099999";
 
   private PaymentRequestAssembler paymentRequestAssembler;
   private BankAccountFactory bankAccountFactory;
@@ -28,16 +28,16 @@ class PaymentRequestAssemblerTest {
   void givenPaymentRequest_whenCreate_thenReturnPaymentWithSameFields() {
     // given
     var paymentRequest = new PaymentRequest();
-    paymentRequest.setBankNumber(A_BANK_NUMBER);
-    paymentRequest.setAccountNumber(AN_ACCOUNT_NUMBER);
-    paymentRequest.setFrequency(A_FREQUENCY);
+    paymentRequest.setBankNumber(A_VALID_BANK_NUMBER);
+    paymentRequest.setAccountNumber(A_VALID_ACCOUNT_NUMBER);
+    paymentRequest.setFrequency(A_VALID_FREQUENCY);
 
     // when
     var actual = paymentRequestAssembler.create(paymentRequest);
 
     // then
-    assertThat(actual.getBankAccount().getBankNumber()).isEqualTo(A_BANK_NUMBER);
-    assertThat(actual.getBankAccount().getAccountNumber()).isEqualTo(AN_ACCOUNT_NUMBER);
-    assertThat(actual.getFrequency().getFrequency()).matches(A_FREQUENCY);
+    assertThat(actual.getBankAccount().getBankNumber()).isEqualTo(A_VALID_BANK_NUMBER);
+    assertThat(actual.getBankAccount().getAccountNumber()).isEqualTo(A_VALID_ACCOUNT_NUMBER);
+    assertThat(actual.getFrequency().getFrequency()).matches(A_VALID_FREQUENCY);
   }
 }

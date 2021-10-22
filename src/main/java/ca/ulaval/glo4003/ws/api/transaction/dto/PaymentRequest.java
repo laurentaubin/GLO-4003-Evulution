@@ -8,29 +8,29 @@ import jakarta.validation.constraints.NotNull;
 public class PaymentRequest {
   @NotNull
   @JsonProperty(value = "bank_no", required = true)
-  private int bankNumber;
+  private String bankNumber;
 
   @NotNull
   @JsonProperty(value = "account_no", required = true)
-  private int accountNumber;
+  private String accountNumber;
 
   @NotNull
   @JsonProperty(value = "frequency", required = true)
   private String frequency;
 
-  public int getBankNumber() {
+  public String getBankNumber() {
     return bankNumber;
   }
 
-  public void setBankNumber(int bankNumber) {
+  public void setBankNumber(String bankNumber) {
     this.bankNumber = bankNumber;
   }
 
-  public int getAccountNumber() {
+  public String getAccountNumber() {
     return accountNumber;
   }
 
-  public void setAccountNumber(int accountNumber) {
+  public void setAccountNumber(String accountNumber) {
     this.accountNumber = accountNumber;
   }
 

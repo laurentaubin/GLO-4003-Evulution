@@ -994,7 +994,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"bank_no\": 200,\n  \"account_no\": 1999999,\n  \"frequency\": \"monthly\"\n}",
+									"raw": "{\n  \"bank_no\": \"003\",\n  \"account_no\": \"0099999\",\n  \"frequency\": \"monthly\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2003,7 +2003,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"bank_no\": 200,\n  \"account_no\": 1999999,\n  \"frequency\": \"monthly\"\n}",
+							"raw": "{\n  \"bank_no\": \"002\",\n  \"account_no\": \"0039999\",\n  \"frequency\": \"monthly\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2031,7 +2031,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Given valid request , status code is 400\", function () {",
+									"pm.test(\"Given invalid request , status code is 400\", function () {",
 									"    pm.response.to.have.status(400);",
 									"});"
 								],
@@ -2059,7 +2059,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"bank_no\": \"20s\",\n  \"account_no\": 1999999,\n  \"frequency\": \"monthly\"\n}",
+							"raw": "{\n  \"bank_no\": \"003\",\n  \"account_no\": \"003232\",\n  \"frequency\": \"monthly\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2087,7 +2087,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Given valid request , status code is 400\", function () {",
+									"pm.test(\"Given invalid request , status code is 400\", function () {",
 									"    pm.response.to.have.status(400);",
 									"});"
 								],
@@ -2115,7 +2115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"bank_no\": 2000,\n  \"account_no\": 1999999,\n  \"frequency\": \"daily\"\n}",
+							"raw": "{\n  \"bank_no\": \"003\",\n  \"account_no\": \"0023456\",\n  \"frequency\": \"daily\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2143,7 +2143,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Given valid request , status code is 400\", function () {",
+									"pm.test(\"Given invalid request , status code is 400\", function () {",
 									"    pm.response.to.have.status(400);",
 									"});"
 								],
@@ -2171,7 +2171,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"bank_no\": \"20s\",\n  \"account_no\": 1999999,\n  \"frequency\": \"monthly\"\n}",
+							"raw": "{\n  \"bank_no\": \"02\",\n  \"account_no\": \"0023456\",\n  \"frequency\": \"monthly\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

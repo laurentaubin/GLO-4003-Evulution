@@ -2,19 +2,19 @@ package ca.ulaval.glo4003.ws.domain.transaction;
 
 public class BankAccount {
 
-  private final int bankNumber;
-  private final int accountNumber;
+  private final String bankNumber;
+  private final String accountNumber;
 
-  public BankAccount(int bankNumber, int accountNumber) {
+  public BankAccount(String bankNumber, String accountNumber) {
     this.bankNumber = bankNumber;
     this.accountNumber = accountNumber;
   }
 
-  public int getBankNumber() {
+  public String getBankNumber() {
     return bankNumber;
   }
 
-  public int getAccountNumber() {
+  public String getAccountNumber() {
     return accountNumber;
   }
 }
