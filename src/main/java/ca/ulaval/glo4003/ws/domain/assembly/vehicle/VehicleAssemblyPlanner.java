@@ -1,15 +1,14 @@
 package ca.ulaval.glo4003.ws.domain.assembly.vehicle;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
+import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 
-import java.util.Random;
-
 public class VehicleAssemblyPlanner extends VehicleAssemblyDelayObservable {
-  private final Random randomDelay;
+  private final RandomProvider randomProvider;
 
-  public VehicleAssemblyPlanner(Random randomDelay) {
-    this.randomDelay = randomDelay;
+  public VehicleAssemblyPlanner(RandomProvider randomProvider) {
+    this.randomProvider = randomProvider;
   }
 
   public ProductionTime getProductionTime(Order order) {
@@ -21,6 +20,6 @@ public class VehicleAssemblyPlanner extends VehicleAssemblyDelayObservable {
   }
 
   private boolean isDelayed() {
-    return randomDelay.nextBoolean();
+    return randomProvider.nextBoolean();
   }
 }
