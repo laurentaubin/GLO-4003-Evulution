@@ -1,10 +1,5 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
@@ -19,21 +14,36 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DuplicateDeliveryException;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.Payment;
+import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import jakarta.ws.rs.container.ContainerRequestContext;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionResourceImplTest {
@@ -216,7 +226,7 @@ class TransactionResourceImplTest {
                 containerRequestContext, AN_ID.toString(), vehicleRequest);
 
     // then
-    assertThrows(WrongOwnerException.class, addingBattery);
+    assertThrows(TransactionNotFoundException.class, addingBattery);
     verify(transactionService, times(0)).addVehicle(any(), any());
   }
 
@@ -255,7 +265,7 @@ class TransactionResourceImplTest {
                 containerRequestContext, AN_ID.toString(), batteryRequest);
 
     // then
-    assertThrows(WrongOwnerException.class, addingBattery);
+    assertThrows(TransactionNotFoundException.class, addingBattery);
     verify(transactionService, times(0)).addBattery(any(), any());
   }
 
@@ -318,7 +328,7 @@ class TransactionResourceImplTest {
                 containerRequestContext, AN_ID.toString(), paymentRequest);
 
     // then
-    assertThrows(WrongOwnerException.class, completingTransaction);
+    assertThrows(TransactionNotFoundException.class, completingTransaction);
     verify(transactionService, times(0)).addPayment(any(), any());
   }
 

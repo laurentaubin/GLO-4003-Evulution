@@ -9,7 +9,7 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 public class CatchTransactionNotFoundExceptionMapper
     implements ExceptionMapper<TransactionNotFoundException> {
-  private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
+  private static final int STATUS_CODE = Response.Status.NOT_FOUND.getStatusCode();
   private static final String ERROR = "TRANSACTION_NOT_FOUND";
   private static final String DESCRIPTION = "Could not find transaction id %s.";
 
