@@ -8,6 +8,8 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
+import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotFoundException;
+import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -44,14 +46,25 @@ public class DeliveryResourceImpl implements DeliveryResource {
       ContainerRequestContext containerRequestContext,
       String deliveryId,
       DeliveryLocationRequest deliveryLocationRequest) {
+    DeliveryId serializedDeliveryId = new DeliveryId(deliveryId);
 
     deliveryRequestValidator.validate(deliveryLocationRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
-    deliveryOwnershipHandler.validateOwnership(userSession, new DeliveryId(deliveryId));
+    validateDeliveryOwnership(containerRequestContext, serializedDeliveryId);
 
     DeliveryDestination deliveryDestination =
         deliveryDestinationAssembler.assemble(deliveryLocationRequest);
-    deliveryService.addDeliveryDestination(new DeliveryId(deliveryId), deliveryDestination);
+    deliveryService.addDeliveryDestination(serializedDeliveryId, deliveryDestination);
     return Response.accepted().entity(ADD_DELIVERY_MESSAGE).build();
+  }
+
+  private void validateDeliveryOwnership(
+      ContainerRequestContext containerRequestContext, DeliveryId deliveryId) {
+    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
+    try {
+      deliveryOwnershipHandler.validateOwnership(userSession, deliveryId);
+
+    } catch (WrongOwnerException ignored) {
+      throw new DeliveryNotFoundException(deliveryId);
+    }
   }
 }

@@ -1,7 +1,11 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.transaction.dto.*;
+import ca.ulaval.glo4003.ws.api.transaction.dto.AddedBatteryResponse;
+import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.CreatedTransactionResponse;
+import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
@@ -9,10 +13,12 @@ import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
+import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
@@ -85,8 +91,8 @@ public class TransactionResourceImpl implements TransactionResource {
       String transactionId,
       VehicleRequest vehicleRequest) {
     vehicleRequestValidator.validate(vehicleRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
-    transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
+
+    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
     transactionService.addVehicle(
         TransactionId.fromString(transactionId),
         vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()));
@@ -99,8 +105,8 @@ public class TransactionResourceImpl implements TransactionResource {
       String transactionId,
       BatteryRequest batteryRequest) {
     batteryRequestValidator.validate(batteryRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
-    transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
+    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
+
     Transaction transaction =
         transactionService.addBattery(
             TransactionId.fromString(transactionId), batteryRequest.getType());
@@ -116,8 +122,8 @@ public class TransactionResourceImpl implements TransactionResource {
       String transactionId,
       PaymentRequest paymentRequest) {
     paymentRequestValidator.validate(paymentRequest);
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
-    transactionOwnershipHandler.validateOwnership(userSession, new TransactionId(transactionId));
+    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
+
     Payment payment = paymentRequestAssembler.create(paymentRequest);
     transactionService.addPayment(TransactionId.fromString(transactionId), payment);
     return Response.ok().build();
@@ -133,5 +139,16 @@ public class TransactionResourceImpl implements TransactionResource {
     Transaction createdTransaction = transactionService.createTransaction();
     transactionOwnershipHandler.addTransactionOwnership(userSession, createdTransaction.getId());
     return createdTransaction;
+  }
+
+  private void validateTransactionOwnership(
+      ContainerRequestContext containerRequestContext, TransactionId transactionId) {
+    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
+    try {
+      transactionOwnershipHandler.validateOwnership(userSession, transactionId);
+
+    } catch (WrongOwnerException ignored) {
+      throw new TransactionNotFoundException(transactionId);
+    }
   }
 }
