@@ -7,10 +7,11 @@ import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-import java.util.LinkedList;
-import java.util.Queue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
     implements BatteryAssemblyLineStrategy {
@@ -39,15 +40,16 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
 
   @Override
   public void addOrder(Order order) {
-    LOGGER.info("Battery order received");
+    LOGGER.info(String.format("Battery order received: %s", order.getId()));
     if (orderQueue.isEmpty() && isAssemblyLineFree()) {
       sendOrderToBeAssembled(order);
       return;
     }
     orderQueue.add(order);
 
-    if (computeRemainingTimeToProduce(order.getId()).inWeeks()
-        > order.getBattery().getProductionTime().inWeeks()) {
+    ProductionTime assemblyDelay = computeAssemblyDelay(order);
+    if (!assemblyDelay.isOver()) {
+      order.addAssemblyDelay(assemblyDelay);
       notifyBatteryAssemblyDelay(order);
     }
   }
@@ -99,6 +101,11 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
     } else {
       currentOrderRemainingTimeToProduce = currentOrderRemainingTimeToProduce.subtractWeeks(1);
     }
+  }
+
+  private ProductionTime computeAssemblyDelay(Order order) {
+    ProductionTime remainingTimeToProduce = computeRemainingTimeToProduce(order.getId());
+    return remainingTimeToProduce.subtract(order.getBattery().getProductionTime());
   }
 
   private ProductionTime computeRemainingTimeToProduceBasedOnPositionInQueue(OrderId orderId) {

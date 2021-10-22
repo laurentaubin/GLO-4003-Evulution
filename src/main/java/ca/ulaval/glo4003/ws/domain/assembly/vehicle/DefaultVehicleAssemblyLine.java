@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,14 +20,13 @@ public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
   @Override
   public void advance() {
     orders.forEach(order -> order.advance());
-    // TODO: notify vehicle ready for delivery
     clearAssembledVehicles();
   }
 
   @Override
   public void assembleVehicle(Order order) {
     ProductionTime productionTime = vehicleAssemblyPlanner.getProductionTime(order);
-    order.setRemainingProductionTime(productionTime);
+    order.setRemainingAssemblyTime(productionTime);
     orders.add(order);
   }
 
@@ -36,7 +36,7 @@ public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
         .filter(order -> order.getId().equals(orderId))
         .findFirst()
         .get()
-        .getRemainingProductionTime();
+        .getRemainingAssemblyTime();
   }
 
   public List<Order> getCurrentOrders() {

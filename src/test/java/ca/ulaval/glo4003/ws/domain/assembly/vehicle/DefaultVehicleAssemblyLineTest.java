@@ -42,7 +42,7 @@ class DefaultVehicleAssemblyLineTest {
     vehicleAssemblyLine.assembleVehicle(anOrder);
 
     // then
-    verify(anOrder).setRemainingProductionTime(DELAYED);
+    verify(anOrder).setRemainingAssemblyTime(DELAYED);
   }
 
   @Test
@@ -76,7 +76,7 @@ class DefaultVehicleAssemblyLineTest {
   public void givenOrder_whenComputeRemainingTimeToProduce_thenReturnRemainingTime() {
     // given
     given(vehicleAssemblyPlanner.getProductionTime(anOrder)).willReturn(DELAYED);
-    given(anOrder.getRemainingProductionTime()).willReturn(DELAYED);
+    given(anOrder.getRemainingAssemblyTime()).willReturn(DELAYED);
     given(anOrder.getId()).willReturn(AN_ID);
 
     vehicleAssemblyLine.assembleVehicle(anOrder);

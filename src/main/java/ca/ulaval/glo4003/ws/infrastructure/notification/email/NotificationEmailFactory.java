@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class NotificationEmailFactory {
-
   private final EmailServer emailServer;
   private final Map<NotificationType, EmailContent> emailContents;
 
@@ -21,16 +20,20 @@ public class NotificationEmailFactory {
 
   public Email createDelayNotificationEmail(
       NotificationType notificationType, Order order, String senderEmail, User recipientUser) {
-    EmailContent emailContent =
-        Optional.ofNullable(emailContents.get(notificationType))
-            .orElseThrow(() -> new NotificationContentNotRegisteredException(notificationType));
+    EmailContent emailContent = getEmailContent(notificationType);
 
     formatEmailContent(order, recipientUser, emailContent);
     return new Email(emailServer, senderEmail, recipientUser.getEmail(), emailContent);
   }
 
+  private EmailContent getEmailContent(NotificationType notificationType) {
+    return Optional.ofNullable(emailContents.get(notificationType))
+        .orElseThrow(() -> new NotificationContentNotRegisteredException(notificationType));
+  }
+
   private void formatEmailContent(Order order, User recipientUser, EmailContent emailContent) {
     emailContent.formatSubject(order.getId());
-    emailContent.formatBodyMessage(recipientUser.getName());
+    emailContent.formatBodyMessage(
+        recipientUser.getName(), order.getAssemblyDelay().inWeeks(), order.computeDeliveryDate());
   }
 }

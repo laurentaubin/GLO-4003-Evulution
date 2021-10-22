@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.infrastructure.notification.email;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.notification.exception.NotificationContentNotRegisteredException;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +28,8 @@ class NotificationEmailFactoryTest {
   private static final String A_RECIPIENT_EMAIL = "recipient@email.com";
   private static final String A_NAME = "Benjamin Girard <3";
   private static final OrderId AN_ORDER_ID = new OrderId("osadoasd");
+  private static final LocalDate A_DELIVERY_DATE = LocalDate.of(1, 10, 10);
+  private static final ProductionTime A_DELAY = new ProductionTime(1);
   private static final Map<NotificationType, EmailContent> emailContents = new HashMap<>();
 
   @Mock private EmailServer emailServer;
@@ -47,6 +51,7 @@ class NotificationEmailFactoryTest {
       givenVehicleAssemblyDelayNotification_whenCreateDelayNotificationEmail_thenReturnEmailWithRightSenderAndRecipient() {
     // given
     given(recipientUser.getEmail()).willReturn(A_RECIPIENT_EMAIL);
+    given(order.getAssemblyDelay()).willReturn(A_DELAY);
 
     // when
     Email actualEmail =
@@ -63,6 +68,7 @@ class NotificationEmailFactoryTest {
       givenVehicleAssemblyDelayNotification_whenCreateDelayNotificationEmail_thenEmailSubjectIsFormattedWithOrderId() {
     // given
     given(order.getId()).willReturn(AN_ORDER_ID);
+    given(order.getAssemblyDelay()).willReturn(A_DELAY);
 
     // when
     notificationEmailFactory.createDelayNotificationEmail(
@@ -74,16 +80,19 @@ class NotificationEmailFactoryTest {
 
   @Test
   public void
-      givenVehicleAssemblyDelayNotification_whenCreateDelayNotificationEmail_thenEmailBodyIsFormattedWithUserName() {
+      givenVehicleAssemblyDelayNotification_whenCreateDelayNotificationEmail_thenEmailBodyIsFormattedWithUserNameDelayAndExpectedDeliveryDate() {
     // given
     given(recipientUser.getName()).willReturn(A_NAME);
+    given(order.getAssemblyDelay()).willReturn(A_DELAY);
+    given(order.computeDeliveryDate()).willReturn(A_DELIVERY_DATE);
 
     // when
     notificationEmailFactory.createDelayNotificationEmail(
         NotificationType.VEHICLE_ASSEMBLY_DELAY, order, A_SENDER_EMAIL, recipientUser);
 
     // then
-    verify(vehicleAssemblyDelayEmailContent).formatBodyMessage(A_NAME);
+    verify(vehicleAssemblyDelayEmailContent)
+        .formatBodyMessage(A_NAME, A_DELAY.inWeeks(), A_DELIVERY_DATE);
   }
 
   @Test

@@ -21,6 +21,10 @@ public class JakartaEmailServer implements EmailServer {
 
   @Override
   public void send(String sender, String recipient, EmailContent emailContent) {
+    LOGGER.info(
+        String.format(
+            "Sending email notification to '%s' with subject '%s'",
+            recipient, emailContent.getSubject()));
     try {
       Message message = messageFactory.create(sender, recipient, emailContent);
       transportWrapper.send(message);

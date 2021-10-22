@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BasicBatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BasicVehicleAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
+import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
@@ -23,6 +24,7 @@ import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.ModelAssemblyLineAdapter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -75,6 +77,7 @@ public class AssemblyContext implements Context {
     vehicleAssemblyPlanner.register(serviceLocator.resolve(NotificationService.class));
     VehicleAssemblyLineStrategy defaultVehicleAssemblyLineStrategy =
         new DefaultVehicleAssemblyLine(vehicleAssemblyPlanner);
+    serviceLocator.register(VehicleAssemblyPlanner.class, vehicleAssemblyPlanner);
     serviceLocator.register(VehicleAssemblyLineStrategy.class, defaultVehicleAssemblyLineStrategy);
   }
 
@@ -97,7 +100,8 @@ public class AssemblyContext implements Context {
         AssemblyLine.class,
         new AssemblyLine(
             assemblyStrategyFactory,
-            new OrderFactory(),
+            new OrderFactory(
+                new LocalDateProvider(), serviceLocator.resolve(VehicleAssemblyPlanner.class)),
             serviceLocator.resolve(LinearAssemblyStrategy.class)));
   }
 
