@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.vehicle.model;
 
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-
 import java.math.BigDecimal;
 
 public class Model {

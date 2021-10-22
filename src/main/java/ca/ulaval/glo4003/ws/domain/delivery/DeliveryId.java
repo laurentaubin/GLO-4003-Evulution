@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class DeliveryId {
-  private String deliveryId;
+  private final String deliveryId;
 
   public DeliveryId(String deliveryId) {
     this.deliveryId = deliveryId;

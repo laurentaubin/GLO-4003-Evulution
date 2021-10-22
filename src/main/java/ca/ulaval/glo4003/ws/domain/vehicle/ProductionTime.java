@@ -4,7 +4,7 @@ import ca.ulaval.glo4003.ws.domain.vehicle.exception.InvalidOperationException;
 import java.time.Period;
 
 public class ProductionTime {
-  Period productionTime;
+  final Period productionTime;
 
   public ProductionTime(int weeks) {
     this.productionTime = Period.ofWeeks(weeks);

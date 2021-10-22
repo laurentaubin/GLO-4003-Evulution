@@ -20,9 +20,6 @@ class InMemorySessionRepositoryTest {
 
   @Test
   public void givenTokenNotSaved_whenDoesSessionExist_thenReturnFalse() {
-    // given
-    Session aSession = new Session(A_TOKEN, AN_EMAIL);
-
     // when
     boolean doesTokenExist = loginTokenRepository.doesSessionExist(A_TOKEN);
 

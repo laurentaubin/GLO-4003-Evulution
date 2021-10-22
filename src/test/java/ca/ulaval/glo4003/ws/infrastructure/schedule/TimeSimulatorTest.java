@@ -14,10 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TimeSimulatorTest {
+  private static final int ANY_NUMBER_OF_SECONDS = 7;
 
   private TimeSimulator timeSimulator;
-
-  private int anyNumberOfSeconds = 7;
 
   @Mock private AssemblyLine assemblyLine;
   @Mock private Timer timer;
@@ -30,7 +29,7 @@ class TimeSimulatorTest {
   @Test
   public void whenSchedule_thenTimeSchedulerIsCalled() {
     // when
-    timeSimulator.schedule(anyNumberOfSeconds);
+    timeSimulator.schedule(ANY_NUMBER_OF_SECONDS);
 
     // then
     verify(timer, times(1))

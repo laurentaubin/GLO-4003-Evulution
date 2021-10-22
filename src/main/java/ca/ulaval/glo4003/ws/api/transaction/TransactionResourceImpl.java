@@ -24,7 +24,6 @@ import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;

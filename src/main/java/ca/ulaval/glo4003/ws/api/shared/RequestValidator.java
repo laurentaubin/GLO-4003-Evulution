@@ -6,7 +6,7 @@ import jakarta.validation.Validator;
 
 public abstract class RequestValidator {
 
-  protected Validator requestValidator;
+  protected final Validator requestValidator;
 
   public RequestValidator(Validator validator) {
     this.requestValidator = validator;

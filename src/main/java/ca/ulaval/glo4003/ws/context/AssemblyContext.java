@@ -9,7 +9,6 @@ import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearBatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearModelAssemblyLineStrategy;
@@ -24,13 +23,12 @@ import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.ModelAssemblyLineAdapter;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class AssemblyContext implements Context {
-  public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   @Override
   public void registerContext() {
@@ -91,15 +89,9 @@ public class AssemblyContext implements Context {
   }
 
   private void registerAssemblyLine() {
-    AssemblyStrategyFactory assemblyStrategyFactory =
-        new AssemblyStrategyFactory(
-            serviceLocator.resolve(LinearModelAssemblyLineStrategy.class),
-            serviceLocator.resolve(LinearBatteryAssemblyLineStrategy.class),
-            serviceLocator.resolve(VehicleAssemblyLineStrategy.class));
     serviceLocator.register(
         AssemblyLine.class,
         new AssemblyLine(
-            assemblyStrategyFactory,
             new OrderFactory(
                 new LocalDateProvider(), serviceLocator.resolve(VehicleAssemblyPlanner.class)),
             serviceLocator.resolve(LinearAssemblyStrategy.class)));

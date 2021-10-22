@@ -2,11 +2,10 @@ package ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta;
 
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContent;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailServer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class JakartaEmailServer implements EmailServer {
   private static final Logger LOGGER = LogManager.getLogger();

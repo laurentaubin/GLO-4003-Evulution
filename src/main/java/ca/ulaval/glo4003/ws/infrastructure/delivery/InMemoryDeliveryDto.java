@@ -5,7 +5,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 
 public class InMemoryDeliveryDto {
   DeliveryId deliveryId;
-  DeliveryDestination deliveryDestination;
+  final DeliveryDestination deliveryDestination;
 
   public InMemoryDeliveryDto(DeliveryId deliveryId, DeliveryDestination deliveryDestination) {
     this.deliveryId = deliveryId;

@@ -13,7 +13,7 @@ import ca.ulaval.glo4003.ws.infrastructure.delivery.InMemoryDeliveryRepository;
 import jakarta.validation.Validation;
 
 public class DeliveryContext implements Context {
-  public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   @Override
   public void registerContext() {

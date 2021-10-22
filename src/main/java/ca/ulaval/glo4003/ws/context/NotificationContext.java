@@ -12,18 +12,17 @@ import ca.ulaval.glo4003.ws.infrastructure.notification.email.NotificationEmailF
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.JakartaEmailServer;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.MessageFactory;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.TransportWrapper;
-
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 
 public class NotificationContext implements Context {
-  public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final String NOTIFICATION_EMAIL_ADDRESS = "equipe4archi@gmail.com";
 
   @Override

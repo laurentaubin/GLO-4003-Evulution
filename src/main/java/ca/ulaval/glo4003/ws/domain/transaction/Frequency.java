@@ -9,7 +9,7 @@ public enum Frequency {
   BIWEEKLY("biweekly"),
   WEEKLY("weekly");
 
-  private String frequency;
+  private final String frequency;
 
   Frequency(String frequency) {
     this.frequency = frequency;

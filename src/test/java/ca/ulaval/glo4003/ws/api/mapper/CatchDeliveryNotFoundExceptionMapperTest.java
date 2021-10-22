@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotFoundException;
@@ -7,8 +9,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static com.google.common.truth.Truth.assertThat;
 
 class CatchDeliveryNotFoundExceptionMapperTest {
   private static final DeliveryId AN_ID = new DeliveryId("id");

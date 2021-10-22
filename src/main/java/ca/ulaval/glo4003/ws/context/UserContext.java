@@ -16,12 +16,16 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.*;
+import ca.ulaval.glo4003.ws.domain.user.BirthDate;
+import ca.ulaval.glo4003.ws.domain.user.Role;
+import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
+import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.UserService;
 import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.UserDtoAssembler;
 import jakarta.validation.Validation;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -29,7 +33,7 @@ public class UserContext implements Context {
   private static final String AUTHENTICATION_HEADER_NAME = "Bearer";
   private static final String BIRTH_DATE_PATTERN = "yyyy-MM-dd";
 
-  public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   @Override
   public void registerContext() {

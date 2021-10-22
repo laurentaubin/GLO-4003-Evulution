@@ -4,7 +4,6 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

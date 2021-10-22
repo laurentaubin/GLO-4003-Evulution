@@ -16,12 +16,10 @@ class PaymentRequestAssemblerTest {
   private static final String A_VALID_ACCOUNT_NUMBER = "0099999";
 
   private PaymentRequestAssembler paymentRequestAssembler;
-  private BankAccountFactory bankAccountFactory;
 
   @BeforeEach
   void setUp() {
-    bankAccountFactory = new BankAccountFactory();
-    paymentRequestAssembler = new PaymentRequestAssembler(bankAccountFactory);
+    paymentRequestAssembler = new PaymentRequestAssembler(new BankAccountFactory());
   }
 
   @Test

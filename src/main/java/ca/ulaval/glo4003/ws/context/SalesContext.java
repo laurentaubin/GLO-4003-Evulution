@@ -11,7 +11,11 @@ import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidat
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
@@ -21,7 +25,7 @@ import ca.ulaval.glo4003.ws.infrastructure.transaction.TransactionAssembler;
 import jakarta.validation.Validation;
 
 public class SalesContext implements Context {
-  public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   @Override
   public void registerContext() {
