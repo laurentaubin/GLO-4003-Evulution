@@ -1,13 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
@@ -21,6 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LinearBatteryAssemblyLineStrategyTest {
@@ -250,6 +250,38 @@ class LinearBatteryAssemblyLineStrategyTest {
 
     // then
     verify(batteryAssemblyDelayObserver).listenBatteryAssemblyDelay(anotherOrder);
+  }
+
+  @Test
+  public void givenNoCurrentOrder_whenAddOrder_thenDoNotAddAssemblyDelayToOrder() {
+    // given
+    given(anOrder.getBattery()).willReturn(aBattery);
+
+    // when
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+
+    // then
+    verify(anOrder, never()).addAssemblyDelay(any());
+  }
+
+  @Test
+  public void givenCurrentOrderInQueue_whenAddOrder_thenAddAssemblyDelayToOrder() {
+    // given
+    setUpAnOrder();
+    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
+    given(anotherOrder.getBattery()).willReturn(anotherBattery);
+    given(anOrder.getBattery().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anotherOrder.getBattery().getProductionTime())
+        .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+        .willReturn(AssemblyStatus.IN_PROGRESS);
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+
+    // when
+    linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
+
+    // then
+    verify(anotherOrder).addAssemblyDelay(A_REMAINING_PRODUCTION_TIME);
   }
 
   private void setUpAnOrder() {

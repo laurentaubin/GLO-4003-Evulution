@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
+import ca.ulaval.glo4003.ws.domain.vehicle.exception.InvalidOperationException;
 import java.time.Period;
 
 public class ProductionTime {
@@ -16,7 +17,7 @@ public class ProductionTime {
   public ProductionTime subtractWeeks(int weeks) {
     int newProductionTime = (productionTime.getDays() / 7) - weeks;
     if (newProductionTime < 0) {
-      throw new IllegalArgumentException("Production time cannot be negative.");
+      throw new InvalidOperationException("Production time cannot be negative.");
     }
     return new ProductionTime(newProductionTime);
   }
@@ -33,5 +34,18 @@ public class ProductionTime {
     }
     ProductionTime object = (ProductionTime) o;
     return productionTime.equals(object.productionTime);
+  }
+
+  public ProductionTime subtract(ProductionTime other) {
+    int newProductionTime = (this.productionTime.getDays() - other.productionTime.getDays()) / 7;
+    if (newProductionTime < 0) {
+      throw new IllegalArgumentException("Production time cannot be negative.");
+    }
+    return new ProductionTime(newProductionTime);
+  }
+
+  public ProductionTime add(ProductionTime other) {
+    int newProductionTime = (this.productionTime.getDays() + other.productionTime.getDays()) / 7;
+    return new ProductionTime(newProductionTime);
   }
 }

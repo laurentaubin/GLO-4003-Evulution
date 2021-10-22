@@ -23,7 +23,7 @@ class EmailContentTest {
   }
 
   @Test
-  public void givenValues_whenFormatSubject_thenBodyMessageIsFormatted() {
+  public void givenValues_whenFormatSubject_thenSubjectIsFormatted() {
     // given
     String aString = "doaskdsoa";
     String anotherString = "221321";
@@ -33,6 +33,37 @@ class EmailContentTest {
 
     // when
     emailContent.formatSubject(aString, anotherString);
+
+    // then
+    assertThat(emailContent.getSubject()).matches(expectedSubject);
+  }
+
+  @Test
+  public void
+      givenBodyMessageAlreadyFormatted_whenFormatBodyMessageAgain_thenBodyMessageIsFormatted() {
+    // given
+    String originalBodyMessage = "dasidiasj %s";
+    EmailContent emailContent = new EmailContent("a subject", originalBodyMessage);
+    emailContent.formatBodyMessage(111);
+    String expectedBodyMessage = "dasidiasj 123";
+
+    // when
+    emailContent.formatBodyMessage(123);
+
+    // then
+    assertThat(emailContent.getBodyMessage()).matches(expectedBodyMessage);
+  }
+
+  @Test
+  public void givenSubjectAlreadyFormatted_whenFormatSubjectAgain_thenSubjectIsFormatted() {
+    // given
+    String originalSubject = "dasidiasj %s";
+    EmailContent emailContent = new EmailContent(originalSubject, "a body message");
+    emailContent.formatSubject(111);
+    String expectedSubject = "dasidiasj 123";
+
+    // when
+    emailContent.formatSubject(123);
 
     // then
     assertThat(emailContent.getSubject()).matches(expectedSubject);

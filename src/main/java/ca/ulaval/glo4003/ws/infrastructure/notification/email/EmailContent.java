@@ -1,27 +1,31 @@
 package ca.ulaval.glo4003.ws.infrastructure.notification.email;
 
 public class EmailContent {
-  private String subject;
-  private String bodyMessage;
+  private final String subjectTemplate;
+  private final String bodyMessageTemplate;
+  private String formattedSubject;
+  private String formattedBodyMessage;
 
-  public EmailContent(String subject, String bodyMessage) {
-    this.subject = subject;
-    this.bodyMessage = bodyMessage;
+  public EmailContent(String subjectTemplate, String bodyMessageTemplate) {
+    this.subjectTemplate = subjectTemplate;
+    this.bodyMessageTemplate = bodyMessageTemplate;
+    this.formattedSubject = subjectTemplate;
+    this.formattedBodyMessage = bodyMessageTemplate;
   }
 
   public String getSubject() {
-    return subject;
+    return formattedSubject;
   }
 
   public String getBodyMessage() {
-    return bodyMessage;
+    return formattedBodyMessage;
   }
 
   public void formatSubject(Object... objects) {
-    subject = String.format(subject, objects);
+    formattedSubject = String.format(subjectTemplate, objects);
   }
 
   public void formatBodyMessage(Object... objects) {
-    bodyMessage = String.format(bodyMessage, objects);
+    formattedBodyMessage = String.format(bodyMessageTemplate, objects);
   }
 }

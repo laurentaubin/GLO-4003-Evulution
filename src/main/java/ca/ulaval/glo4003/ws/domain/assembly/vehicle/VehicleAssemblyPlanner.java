@@ -11,8 +11,17 @@ public class VehicleAssemblyPlanner extends VehicleAssemblyDelayObservable {
     this.randomProvider = randomProvider;
   }
 
+  public ProductionTime getNormalAssemblyTime() {
+    return VehicleAssemblyProductionTime.NORMAL.getProductionTime();
+  }
+
   public ProductionTime getProductionTime(Order order) {
     if (isDelayed()) {
+      ProductionTime assemblyDelay =
+          VehicleAssemblyProductionTime.DELAYED
+              .getProductionTime()
+              .subtract(VehicleAssemblyProductionTime.NORMAL.getProductionTime());
+      order.addAssemblyDelay(assemblyDelay);
       notifyVehicleAssemblyDelay(order);
       return VehicleAssemblyProductionTime.DELAYED.getProductionTime();
     }

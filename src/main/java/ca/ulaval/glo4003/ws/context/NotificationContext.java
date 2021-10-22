@@ -95,17 +95,17 @@ public class NotificationContext implements Context {
             NotificationType.MODEL_ASSEMBLY_DELAY,
             new EmailContent(
                 delaySubject,
-                "Hello %s, \n\r We encountered a delay while assembling the model included in your order. The new expected delivery date is {TODO ADD DATE}. \r\n We're sorry for the inconvenience. \r\n Thanks for shopping with us. \r\n The Evulution team"));
+                "Hello %s, \n\rWe encountered a delay while assembling the model included in your order. Your order now has a total delay of %s weeks and is expected to be delivered on %s. \r\nWe're sorry for the inconvenience. \r\n\r\nThanks for shopping with us, \r\nThe Evulution team"));
         put(
             NotificationType.BATTERY_ASSEMBLY_DELAY,
             new EmailContent(
                 delaySubject,
-                "Hello %s, \n\r We encountered a delay while assembling the battery included in your order. The new expected delivery date is {TODO ADD DATE}. \r\n We're sorry for the inconvenience. \r\n Thanks for shopping with us. \r\n The Evulution team"));
+                "Hello %s, \n\rWe encountered a delay while assembling the battery included in your order. Your order now has a total delay of %s weeks and is expected to be delivered on %s. \r\nWe're sorry for the inconvenience. \r\n\r\nThanks for shopping with us, \r\nThe Evulution team"));
         put(
             NotificationType.VEHICLE_ASSEMBLY_DELAY,
             new EmailContent(
                 delaySubject,
-                "Hello %s, \n\r We encountered a delay while assembling the vehicle included in your order. The new expected delivery date is {TODO ADD DATE}. \r\n We're sorry for the inconvenience. \r\n Thanks for shopping with us. \r\n The Evulution team"));
+                "Hello %s, \n\rWe encountered a delay while assembling the vehicle included in your order. Your order now has a total delay of %s weeks and is expected to be delivered on %s. \r\nWe're sorry for the inconvenience. \r\n\r\nThanks for shopping with us, \r\nThe Evulution team"));
       }
     };
   }

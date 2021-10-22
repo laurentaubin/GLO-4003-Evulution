@@ -1,10 +1,11 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
-
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import ca.ulaval.glo4003.ws.domain.vehicle.exception.InvalidOperationException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 class ProductionTimeTest {
 
@@ -37,7 +38,7 @@ class ProductionTimeTest {
   }
 
   @Test
-  void givenMoreWeeksThanAvailable_whenSubtractingWeeks_thenThrowsException() {
+  void givenMoreWeeksThanAvailable_whenSubtractingWeeks_thenThrowsInvalidOperationException() {
     // given
     ProductionTime productionTime = new ProductionTime(5);
     int weeksToSubtract = 10;
@@ -46,7 +47,7 @@ class ProductionTimeTest {
     Executable subtractingWeeks = () -> productionTime.subtractWeeks(weeksToSubtract);
 
     // then
-    assertThrows(IllegalArgumentException.class, subtractingWeeks);
+    assertThrows(InvalidOperationException.class, subtractingWeeks);
   }
 
   @Test
@@ -71,5 +72,46 @@ class ProductionTimeTest {
 
     // then
     assertThat(isOver).isFalse();
+  }
+
+  @Test
+  public void givenTwoProductionTimes_whenSubtract_thenReturnProductionTimeWithSubtractedTime() {
+    // given
+    ProductionTime aProductionTime = new ProductionTime(10);
+    ProductionTime anotherProductionTime = new ProductionTime(2);
+    ProductionTime subtractedProductionTime = new ProductionTime(8);
+
+    // when
+    ProductionTime actualProductionTime = aProductionTime.subtract(anotherProductionTime);
+
+    // then
+    assertThat(actualProductionTime).isEqualTo(subtractedProductionTime);
+  }
+
+  @Test
+  public void givenTwoProductionTimes_whenSubtractSmallerWithLarger_thenReturnThrowException() {
+    // given
+    ProductionTime aProductionTime = new ProductionTime(10);
+    ProductionTime anotherProductionTime = new ProductionTime(2);
+
+    // when
+    Executable subtracting = () -> anotherProductionTime.subtract(aProductionTime);
+
+    // then
+    assertThrows(IllegalArgumentException.class, subtracting);
+  }
+
+  @Test
+  public void givenTwoProductionTimes_whenAdd_thenReturnProductionTimeWithAddedTimes() {
+    // given
+    ProductionTime aProductionTime = new ProductionTime(10);
+    ProductionTime anotherProductionTime = new ProductionTime(2);
+    ProductionTime addedProductionTime = new ProductionTime(12);
+
+    // when
+    ProductionTime actualProductionTime = aProductionTime.add(anotherProductionTime);
+
+    // then
+    assertThat(actualProductionTime).isEqualTo(addedProductionTime);
   }
 }

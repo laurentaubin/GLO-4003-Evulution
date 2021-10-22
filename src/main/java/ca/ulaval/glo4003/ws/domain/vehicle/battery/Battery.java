@@ -3,11 +3,11 @@ package ca.ulaval.glo4003.ws.domain.vehicle.battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 
 public class Battery {
-  public String type;
-  public Integer baseNRCANRange;
-  public Integer capacity;
-  public Integer price;
-  public ProductionTime productionTime;
+  private final String type;
+  private final Integer baseNRCANRange;
+  private final Integer capacity;
+  private final Integer price;
+  private final ProductionTime productionTime;
 
   public Battery(
       String type,
