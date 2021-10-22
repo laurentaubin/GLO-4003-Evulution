@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 
 class BankAccountFactoryTest {
 
-  private static final int A_BANK_NUMBER = 100;
-  private static final int AN_ACCOUNT_NUMBER = 9999999;
+  private static final String A_VALID_BANK_NUMBER = "003";
+  private static final String A_VALID_ACCOUNT_NUMBER = "0099999";
 
   private BankAccountFactory bankAccountFactory;
 
@@ -20,7 +20,7 @@ class BankAccountFactoryTest {
   @Test
   public void whenCreate_thenCreateBankAccount() {
     // when
-    Object bankAccount = bankAccountFactory.create(A_BANK_NUMBER, AN_ACCOUNT_NUMBER);
+    Object bankAccount = bankAccountFactory.create(A_VALID_BANK_NUMBER, A_VALID_ACCOUNT_NUMBER);
 
     // then
     assertThat(bankAccount).isInstanceOf(BankAccount.class);

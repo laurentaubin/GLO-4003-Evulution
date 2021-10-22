@@ -12,7 +12,7 @@ public class CatchInvalidBankAccountExceptionMapper
   private static final int STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String ERROR = "INVALID_PAYMENT_OPTION";
   private static final String DESCRIPTION =
-      "Bank number must be 3 digits et account number must be 7 digits.";
+      "Bank number must be 3 digits and account number must be 7 digits.";
 
   @Override
   public Response toResponse(InvalidBankAccountException e) {

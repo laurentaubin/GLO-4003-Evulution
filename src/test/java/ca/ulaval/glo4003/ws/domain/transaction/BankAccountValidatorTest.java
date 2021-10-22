@@ -10,10 +10,10 @@ import org.junit.jupiter.api.function.Executable;
 
 class BankAccountValidatorTest {
 
-  private static final int A_VALID_BANK_NUMBER = 100;
-  private static final int A_VALID_ACCOUNT_NUMBER = 9999999;
-  private static final int AN_INVALID_BANK_NUMBER = 10;
-  private static final int AN_INVALID_ACCOUNT_NUMBER = 9999;
+  private static final String A_VALID_BANK_NUMBER = "003";
+  private static final String A_VALID_ACCOUNT_NUMBER = "0099999";
+  private static final String AN_INVALID_BANK_NUMBER = "10";
+  private static final String AN_INVALID_ACCOUNT_NUMBER = "9999";
 
   private BankAccountValidator bankAccountValidator;
 
@@ -24,7 +24,7 @@ class BankAccountValidatorTest {
 
   @Test
   void
-      givenInvalidBankAccountInformation_ValidateBankAccountInformation_thenThrowInvalidBankAccount() {
+      givenInvalidBankAccountInformation_whenValidateBankAccountInformation_thenThrowInvalidBankAccount() {
     // when
     Executable action =
         () ->

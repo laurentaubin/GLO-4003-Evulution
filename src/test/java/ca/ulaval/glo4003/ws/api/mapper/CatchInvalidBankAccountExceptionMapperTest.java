@@ -12,7 +12,7 @@ class CatchInvalidBankAccountExceptionMapperTest {
   private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String EXPECTED_ERROR = "INVALID_PAYMENT_OPTION";
   private static final String EXPECTED_DESCRIPTION =
-      "Bank number must be 3 digits et account number must be 7 digits.";
+      "Bank number must be 3 digits and account number must be 7 digits.";
 
   private CatchInvalidBankAccountExceptionMapper exceptionMapper;
 
