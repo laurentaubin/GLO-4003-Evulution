@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta;
 
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContent;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;

@@ -37,7 +37,4 @@ class TransactionCompletedObservableTest {
     verify(anObserver).listenToTransactionCompleted(transaction);
     verify(anotherObserver).listenToTransactionCompleted(transaction);
   }
-
-  @Test
-  void unregister() {}
 }

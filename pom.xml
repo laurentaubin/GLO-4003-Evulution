@@ -356,9 +356,6 @@
                                         <exclude>
                                             ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException
                                         </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.api.delivery.dto.response.SetDeliveryLocationResponse
-                                        </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.api.mock.MockResourceImpl
                                         </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.api.filter.allowed.*</exclude>
@@ -396,13 +393,10 @@
                                         <exclude>ca.ulaval.glo4003.ws.domain.vehicle.model.Model
                                         </exclude>
                                         <exclude>
-                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyFactory
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy
-                                        </exclude>
-                                        <exclude>
                                             ca.ulaval.glo4003.ws.domain.shared.RandomProvider
+                                        </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.exception.AssemblyStrategyNotRegisteredException
                                         </exclude>
 
                                         <!-- INFRA -->

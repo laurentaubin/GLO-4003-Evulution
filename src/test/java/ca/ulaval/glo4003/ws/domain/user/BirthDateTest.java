@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 class BirthDateTest {
-  LocalDate A_BIRTHDATE = LocalDate.of(1993, 7, 18);
-  LocalDate ANOTHER_BIRTHDATE = LocalDate.of(213132, 7, 18);
+  private static final LocalDate A_BIRTHDATE = LocalDate.of(1993, 7, 18);
+  private static final LocalDate ANOTHER_BIRTHDATE = LocalDate.of(213132, 7, 18);
 
   @Test
   public void givenTwoBirthDatesWithSameDate_whenEquals_thenReturnTrue() {

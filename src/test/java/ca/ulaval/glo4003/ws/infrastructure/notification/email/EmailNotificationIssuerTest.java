@@ -1,5 +1,10 @@
 package ca.ulaval.glo4003.ws.infrastructure.notification.email;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.assembly.DelayType;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.user.User;
@@ -13,14 +18,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class EmailNotificationIssuerTest {
-  private static final String AN_EMAIL_ADDRESS = "benjaminjetaime@outlook.fr";
   private static final String SENDER_EMAIL_ADDRESS = "SIKETHATSTHEWRONGNUMBER@outlook.fr";
   private static final DelayType A_DELAY_TYPE = DelayType.VEHICLE_ASSEMBLY;
 

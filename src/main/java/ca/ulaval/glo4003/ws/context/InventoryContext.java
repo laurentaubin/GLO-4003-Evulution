@@ -20,7 +20,7 @@ public class InventoryContext implements Context {
   private static final File BATTERY_INFO_FILE = new File("./target/classes/batteries.json");
   private static final File MODEL_INVENTORY = new File("./target/classes/models.json");
 
-  public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   @Override
   public void registerContext() {

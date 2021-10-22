@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
-import jakarta.ws.rs.*;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

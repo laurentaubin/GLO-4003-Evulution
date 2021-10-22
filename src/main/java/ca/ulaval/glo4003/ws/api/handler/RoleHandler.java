@@ -12,7 +12,6 @@ import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;
-
 import java.util.List;
 
 public class RoleHandler {

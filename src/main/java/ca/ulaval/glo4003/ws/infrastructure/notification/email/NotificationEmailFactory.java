@@ -4,7 +4,6 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.notification.exception.NotificationContentNotRegisteredException;
-
 import java.util.Map;
 import java.util.Optional;
 

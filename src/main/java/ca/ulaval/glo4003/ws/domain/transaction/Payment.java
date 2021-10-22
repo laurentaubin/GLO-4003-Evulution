@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
 public class Payment {
-  private BankAccount bankAccount;
-  private Frequency frequency;
+  private final BankAccount bankAccount;
+  private final Frequency frequency;
 
   public Payment(BankAccount bankAccount, Frequency frequency) {
     this.bankAccount = bankAccount;

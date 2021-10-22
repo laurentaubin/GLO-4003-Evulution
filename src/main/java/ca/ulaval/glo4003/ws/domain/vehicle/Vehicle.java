@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.ws.domain.vehicle;
 
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Vehicle {
 
@@ -22,7 +22,8 @@ public class Vehicle {
 
   public BigDecimal computeRange() {
     BigDecimal baseBatteryRange = BigDecimal.valueOf(battery.getBaseNRCANRange());
-    return (baseBatteryRange.multiply(model.getEfficiency())).divide(BigDecimal.valueOf(100));
+    return (baseBatteryRange.multiply(model.getEfficiency()))
+        .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
   }
 
   public boolean hasBattery() {

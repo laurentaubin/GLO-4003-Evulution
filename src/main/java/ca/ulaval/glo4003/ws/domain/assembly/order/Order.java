@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.ws.domain.assembly.order;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-
 import java.time.LocalDate;
 
 public class Order {

@@ -13,8 +13,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.ext.Provider;
 
-import java.io.IOException;
-
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -39,7 +37,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
   }
 
   @Override
-  public void filter(ContainerRequestContext requestContext) throws IOException {
+  public void filter(ContainerRequestContext requestContext) {
     String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
     if (isHeaderInvalid(authorizationHeader)) {

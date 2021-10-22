@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.ws.domain.assembly;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.notification.ModelAssemblyDelayObserver;
-
 import java.util.ArrayList;
 import java.util.List;
 

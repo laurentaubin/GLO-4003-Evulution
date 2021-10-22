@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 
 public class PaymentRequestAssembler {
 
-  private BankAccountFactory bankAccountFactory;
+  private final BankAccountFactory bankAccountFactory;
 
   public PaymentRequestAssembler(BankAccountFactory bankAccountFactory) {
     this.bankAccountFactory = bankAccountFactory;

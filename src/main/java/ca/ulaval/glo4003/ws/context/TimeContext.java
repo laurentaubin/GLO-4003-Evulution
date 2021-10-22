@@ -5,7 +5,7 @@ import ca.ulaval.glo4003.ws.infrastructure.schedule.TimeSimulator;
 import java.util.Timer;
 
 public class TimeContext implements Context {
-  public static ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final String defaultSecondsPerWeek = "30";
   private static final String SECONDS_PER_WEEK_JAVA_OPTION = "secondsPerWeek";
 
