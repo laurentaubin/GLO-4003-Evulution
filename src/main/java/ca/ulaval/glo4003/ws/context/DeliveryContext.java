@@ -1,6 +1,5 @@
 package ca.ulaval.glo4003.ws.context;
 
-import ca.ulaval.glo4003.ws.api.delivery.CompletedDeliveryResponseAssembler;
 import ca.ulaval.glo4003.ws.api.delivery.DeliveryDestinationAssembler;
 import ca.ulaval.glo4003.ws.api.delivery.DeliveryResource;
 import ca.ulaval.glo4003.ws.api.delivery.DeliveryResourceImpl;
@@ -34,8 +33,6 @@ public class DeliveryContext implements Context {
     serviceLocator.register(
         DeliveryRequestValidator.class, new DeliveryRequestValidator(validator));
     serviceLocator.register(DeliveryFactory.class, new DeliveryFactory());
-    serviceLocator.register(
-        CompletedDeliveryResponseAssembler.class, new CompletedDeliveryResponseAssembler());
 
     var deliveryService =
         new DeliveryService(
@@ -52,7 +49,6 @@ public class DeliveryContext implements Context {
             serviceLocator.resolve(DeliveryService.class),
             serviceLocator.resolve(DeliveryRequestValidator.class),
             serviceLocator.resolve(DeliveryDestinationAssembler.class),
-            serviceLocator.resolve(CompletedDeliveryResponseAssembler.class),
             serviceLocator.resolve(DeliveryOwnershipHandler.class),
             serviceLocator.resolve(RoleHandler.class)));
   }

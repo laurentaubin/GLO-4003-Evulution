@@ -1,6 +1,5 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
-import ca.ulaval.glo4003.ws.api.delivery.dto.CompletedDeliveryResponse;
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
@@ -14,7 +13,6 @@ import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,6 @@ public class DeliveryResourceImpl implements DeliveryResource {
   private final DeliveryService deliveryService;
   private final DeliveryRequestValidator deliveryRequestValidator;
   private final DeliveryDestinationAssembler deliveryDestinationAssembler;
-  private final CompletedDeliveryResponseAssembler completedDeliveryResponseAssembler;
   private final DeliveryOwnershipHandler deliveryOwnershipHandler;
   private final RoleHandler roleHandler;
 
@@ -34,13 +31,11 @@ public class DeliveryResourceImpl implements DeliveryResource {
       DeliveryService deliveryService,
       DeliveryRequestValidator deliveryRequestValidator,
       DeliveryDestinationAssembler deliveryDestinationAssembler,
-      CompletedDeliveryResponseAssembler completedDeliveryResponseAssembler,
       DeliveryOwnershipHandler deliveryOwnershipHandler,
       RoleHandler roleHandler) {
     this.deliveryService = deliveryService;
     this.deliveryRequestValidator = deliveryRequestValidator;
     this.deliveryDestinationAssembler = deliveryDestinationAssembler;
-    this.completedDeliveryResponseAssembler = completedDeliveryResponseAssembler;
     this.deliveryOwnershipHandler = deliveryOwnershipHandler;
     this.roleHandler = roleHandler;
   }
@@ -59,19 +54,6 @@ public class DeliveryResourceImpl implements DeliveryResource {
         deliveryDestinationAssembler.assemble(deliveryLocationRequest);
     deliveryService.addDeliveryDestination(serializedDeliveryId, deliveryDestination);
     return Response.accepted().entity(ADD_DELIVERY_MESSAGE).build();
-  }
-
-  @Override
-  public Response completeDelivery(
-      ContainerRequestContext containerRequestContext, String deliveryId) {
-    DeliveryId serializedDeliveryId = new DeliveryId(deliveryId);
-
-    validateDeliveryOwnership(containerRequestContext, serializedDeliveryId);
-
-    CompletedDeliveryResponse completedDeliveryResponse =
-        completedDeliveryResponseAssembler.assemble();
-
-    return Response.ok().entity(completedDeliveryResponse).build();
   }
 
   private void validateDeliveryOwnership(
