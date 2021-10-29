@@ -15,7 +15,7 @@ jobs:
         with:
           java-version: 17
       - name: install
-        run: mvn clean install
+        run: mvn -B clean install
       - name: run Evulution
         run: nohup java -Dport=$CI_PORT -jar target/jersey-jetty.jar &
       - name: Run API Tests
