@@ -1,29 +1,25 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.transaction.dto.AddedBatteryResponse;
-import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.CreatedTransactionResponse;
-import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.*;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
-import ca.ulaval.glo4003.ws.domain.transaction.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
+import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
@@ -37,20 +33,18 @@ public class TransactionResourceImpl implements TransactionResource {
   private final TransactionService transactionService;
   private final DeliveryService deliveryService;
   private final RoleHandler roleHandler;
-  private final TransactionOwnershipHandler transactionOwnershipHandler;
+  private final OwnershipHandler ownershipHandler;
   private final CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
   private final VehicleRequestValidator vehicleRequestValidator;
   private final BatteryRequestValidator batteryRequestValidator;
   private final PaymentRequestAssembler paymentRequestAssembler;
   private final PaymentRequestValidator paymentRequestValidator;
-  private final DeliveryOwnershipHandler deliveryOwnershipHandler;
   private final VehicleFactory vehicleFactory;
 
   public TransactionResourceImpl(
       TransactionService transactionService,
       DeliveryService deliveryService,
-      TransactionOwnershipHandler transactionOwnershipHandler,
-      DeliveryOwnershipHandler deliveryOwnershipHandler,
+      OwnershipHandler ownershipHandler,
       CreatedTransactionResponseAssembler createdTransactionResponseAssembler,
       VehicleRequestValidator vehicleRequestValidator,
       RoleHandler roleHandler,
@@ -60,8 +54,7 @@ public class TransactionResourceImpl implements TransactionResource {
       VehicleFactory vehicleFactory) {
     this.transactionService = transactionService;
     this.deliveryService = deliveryService;
-    this.transactionOwnershipHandler = transactionOwnershipHandler;
-    this.deliveryOwnershipHandler = deliveryOwnershipHandler;
+    this.ownershipHandler = ownershipHandler;
     this.createdTransactionResponseAssembler = createdTransactionResponseAssembler;
     this.vehicleRequestValidator = vehicleRequestValidator;
     this.roleHandler = roleHandler;
@@ -74,11 +67,11 @@ public class TransactionResourceImpl implements TransactionResource {
   @Override
   public Response createTransaction(ContainerRequestContext containerRequestContext) {
     Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
-    Transaction createdTransaction = createTransaction(userSession);
-    Delivery delivery = createDelivery(userSession);
+    Transaction createdTransaction = transactionService.createTransaction();
+    Delivery createdDelivery = createDelivery(userSession, createdTransaction.getId());
 
     CreatedTransactionResponse createdTransactionResponse =
-        createdTransactionResponseAssembler.assemble(createdTransaction, delivery);
+        createdTransactionResponseAssembler.assemble(createdTransaction, createdDelivery);
 
     URI transactionUri = URI.create(String.format("/sales/%s", createdTransaction.getId()));
     return Response.created(transactionUri).entity(createdTransactionResponse).build();
@@ -128,23 +121,18 @@ public class TransactionResourceImpl implements TransactionResource {
     return Response.ok().build();
   }
 
-  private Delivery createDelivery(Session userSession) {
-    Delivery delivery = deliveryService.createDelivery();
-    deliveryOwnershipHandler.addDeliveryOwnership(userSession, delivery.getDeliveryId());
-    return delivery;
-  }
-
-  private Transaction createTransaction(Session userSession) {
-    Transaction createdTransaction = transactionService.createTransaction();
-    transactionOwnershipHandler.addTransactionOwnership(userSession, createdTransaction.getId());
-    return createdTransaction;
+  private Delivery createDelivery(Session userSession, TransactionId transactionId) {
+    Delivery createdDelivery = deliveryService.createDelivery();
+    ownershipHandler.mapDeliveryIdToTransactionId(
+        userSession, transactionId, createdDelivery.getDeliveryId());
+    return createdDelivery;
   }
 
   private void validateTransactionOwnership(
       ContainerRequestContext containerRequestContext, TransactionId transactionId) {
     Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
     try {
-      transactionOwnershipHandler.validateOwnership(userSession, transactionId);
+      ownershipHandler.validateTransactionOwnership(userSession, transactionId);
 
     } catch (WrongOwnerException ignored) {
       throw new TransactionNotFoundException(transactionId);

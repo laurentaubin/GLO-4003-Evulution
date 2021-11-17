@@ -1,37 +1,34 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryMode;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.delivery.Location;
+import ca.ulaval.glo4003.ws.domain.delivery.*;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotFoundException;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
+import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryResourceImplTest {
@@ -41,13 +38,17 @@ class DeliveryResourceImplTest {
   private static final String INVALID_MODE = "invalid mode";
   private static final String EXPECTED_DELIVERY_LOCATION_ADDED_MESSAGE =
       "Delivery location successfully added";
+  private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
+  private static final Receipt A_RECEIPT =
+      new Receipt(1200, Frequency.MONTHLY, AMOUNT_OF_YEARS_TO_PAY_OVER);
 
   @Mock private DeliveryService deliveryService;
   @Mock private DeliveryDestinationAssembler deliveryDestinationAssembler;
   @Mock private DeliveryRequestValidator deliveryRequestValidator;
-  @Mock private DeliveryOwnershipHandler deliveryOwnershipHandler;
+  @Mock private OwnershipHandler ownershipHandler;
   @Mock private RoleHandler roleHandler;
   @Mock ContainerRequestContext containerRequestContext;
+  @Mock CompletedDeliveryResponseAssembler completedDeliveryResponseAssembler;
   @Mock private Session aSession;
 
   private DeliveryResource deliveryResource;
@@ -59,7 +60,8 @@ class DeliveryResourceImplTest {
             deliveryService,
             deliveryRequestValidator,
             deliveryDestinationAssembler,
-            deliveryOwnershipHandler,
+            completedDeliveryResponseAssembler,
+            ownershipHandler,
             roleHandler);
   }
 
@@ -146,7 +148,7 @@ class DeliveryResourceImplTest {
     deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
 
     // then
-    verify(deliveryOwnershipHandler).validateOwnership(aSession, AN_ID);
+    verify(ownershipHandler).validateDeliveryOwnership(aSession, AN_ID);
   }
 
   @Test
@@ -156,8 +158,8 @@ class DeliveryResourceImplTest {
     DeliveryLocationRequest request = createDeliveryLocationRequest();
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
     doThrow(WrongOwnerException.class)
-        .when(deliveryOwnershipHandler)
-        .validateOwnership(any(), any());
+        .when(ownershipHandler)
+        .validateDeliveryOwnership(any(), (DeliveryId) any());
 
     // when
     Executable addingDeliveryLocation =
@@ -167,6 +169,32 @@ class DeliveryResourceImplTest {
 
     // then
     assertThrows(DeliveryNotFoundException.class, addingDeliveryLocation);
+  }
+
+  @Test
+  void whenCompleteDelivery_thenReturnCompletedDeliveryResponse() {
+    // given
+    given(deliveryService.generateTransactionReceipt(any())).willReturn(A_RECEIPT);
+
+    // when
+    deliveryResource.completeDelivery(containerRequestContext, AN_ID.toString());
+
+    // then
+    verify(completedDeliveryResponseAssembler)
+        .assemble(A_RECEIPT.getAmountPerPeriod(), A_RECEIPT.getPaymentsLeft());
+  }
+
+  @Test
+  void whenCompleteDelivery_thenRolesAreValidated() {
+    // given
+    given(deliveryService.generateTransactionReceipt(any())).willReturn(A_RECEIPT);
+
+    // when
+    deliveryResource.completeDelivery(containerRequestContext, AN_ID.toString());
+
+    // then
+    verify(roleHandler)
+        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
   }
 
   private DeliveryLocationRequest createDeliveryLocationRequest() {

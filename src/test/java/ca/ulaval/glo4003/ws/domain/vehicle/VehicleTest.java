@@ -1,16 +1,20 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.exception.IncompleteVehicleException;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class VehicleTest {
@@ -81,5 +85,30 @@ class VehicleTest {
 
     // then
     assertThat(hasBattery).isTrue();
+  }
+
+  @Test
+  public void givenAValidVehicle_whenCalculatePrice_thenReturnPrice() {
+    // given
+    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
+    vehicle.addBattery(aBattery);
+
+    // when
+    int actualPrice = vehicle.getVehiclePrice();
+
+    // then
+    assertThat(actualPrice).isEqualTo(aModel.getPrice() + aBattery.getPrice());
+  }
+
+  @Test
+  public void givenAnIncompleteVehicle_whenCalculatePrice_thenThrowIncompleteVehicleException() {
+    // given
+    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
+
+    // when
+    Executable getVehiclePrice = vehicle::getVehiclePrice;
+
+    // then
+    assertThrows(IncompleteVehicleException.class, getVehiclePrice);
   }
 }

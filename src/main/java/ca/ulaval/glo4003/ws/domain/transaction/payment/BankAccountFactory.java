@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.domain.transaction;
+package ca.ulaval.glo4003.ws.domain.transaction.payment;
 
 public class BankAccountFactory {
   public BankAccount create(String bankNumber, String accountNumber) {

@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.api.transaction;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

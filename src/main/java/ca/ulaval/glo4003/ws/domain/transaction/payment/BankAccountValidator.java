@@ -1,6 +1,7 @@
-package ca.ulaval.glo4003.ws.domain.transaction;
+package ca.ulaval.glo4003.ws.domain.transaction.payment;
 
 import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidBankAccountException;
+
 import java.util.regex.Pattern;
 
 public class BankAccountValidator {

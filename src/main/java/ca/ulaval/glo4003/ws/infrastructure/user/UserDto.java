@@ -4,7 +4,8 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.Role;
-import java.util.Collection;
+
+import java.util.Map;
 import java.util.Set;
 
 public class UserDto {
@@ -14,8 +15,7 @@ public class UserDto {
   private final String email;
   private final String password;
   private final Set<Role> roles;
-  private final Collection<TransactionId> transactions;
-  private final Collection<DeliveryId> deliveries;
+  private final Map<TransactionId, DeliveryId> transactionDeliveries;
 
   public UserDto(
       String name,
@@ -24,16 +24,14 @@ public class UserDto {
       String email,
       String password,
       Set<Role> roles,
-      Collection<TransactionId> transactions,
-      Collection<DeliveryId> deliveries) {
+      Map<TransactionId, DeliveryId> transactionDeliveries) {
     this.name = name;
     this.birthDate = birthDate;
     this.sex = sex;
     this.email = email;
     this.password = password;
     this.roles = roles;
-    this.transactions = transactions;
-    this.deliveries = deliveries;
+    this.transactionDeliveries = transactionDeliveries;
   }
 
   public String getName() {
@@ -60,11 +58,7 @@ public class UserDto {
     return roles;
   }
 
-  public Collection<TransactionId> getTransactions() {
-    return transactions;
-  }
-
-  public Collection<DeliveryId> getDeliveries() {
-    return deliveries;
+  public Map<TransactionId, DeliveryId> getTransactionDeliveries() {
+    return transactionDeliveries;
   }
 }

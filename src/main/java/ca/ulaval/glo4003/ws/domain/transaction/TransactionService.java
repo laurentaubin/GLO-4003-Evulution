@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;

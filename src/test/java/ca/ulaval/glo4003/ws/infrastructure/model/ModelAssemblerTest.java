@@ -1,12 +1,13 @@
 package ca.ulaval.glo4003.ws.infrastructure.model;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class ModelAssemblerTest {
   private static final String A_NAME = "a name";
@@ -38,7 +39,7 @@ class ModelAssemblerTest {
     // then
     assertThat(model.getName()).isEqualTo(A_NAME.toUpperCase());
     assertThat(model.getEfficiency()).isEqualTo(AN_EFFICIENCY);
-    assertThat(model.getBasePrice()).isEqualTo(A_PRICE);
+    assertThat(model.getPrice()).isEqualTo(A_PRICE);
     assertThat(model.getProductionTime()).isEqualTo(new ProductionTime(A_PRODUCTION_TIME));
     assertThat(model.getStyle()).isEqualTo(A_STYLE);
   }

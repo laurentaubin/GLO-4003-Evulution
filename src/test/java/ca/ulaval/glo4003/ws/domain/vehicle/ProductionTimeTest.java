@@ -1,16 +1,16 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.InvalidOperationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class ProductionTimeTest {
 
   @Test
-  void givenAProductionTime_whenInWeeks_thenReturnsAmountOfWeeks() {
+  void givenAProductionTime_whenInWeeks_thenReturnAmountOfWeeks() {
     // given
     int expectedAmountOfWeeks = 4;
     ProductionTime productionTime = new ProductionTime(expectedAmountOfWeeks);

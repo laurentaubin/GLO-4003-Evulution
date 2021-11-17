@@ -1,10 +1,10 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.domain.transaction.BankAccount;
-import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
-import ca.ulaval.glo4003.ws.domain.transaction.Frequency;
-import ca.ulaval.glo4003.ws.domain.transaction.Payment;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccount;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 
 public class PaymentRequestAssembler {
 

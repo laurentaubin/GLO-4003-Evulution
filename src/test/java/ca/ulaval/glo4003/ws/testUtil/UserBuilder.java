@@ -1,11 +1,16 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserBuilder {
   private String name = "a name";
@@ -14,6 +19,7 @@ public class UserBuilder {
   private String password = "a password";
   private String sex = "a sex";
   private List<Role> roles = new ArrayList<>(List.of(Role.BASE));
+  private Map<TransactionId, DeliveryId> transactionDeliveries = new HashMap<>();
 
   public UserBuilder withName(String name) {
     this.name = name;

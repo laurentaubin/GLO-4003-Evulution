@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ca.ulaval.glo4003</groupId>
@@ -393,6 +393,9 @@
                                         <exclude>ca.ulaval.glo4003.ws.domain.vehicle.model.Model
                                         </exclude>
                                         <exclude>
+                                            ca.ulaval.glo4003.ws.domain.vehicle.exception.IncompleteVehicleException
+                                        </exclude>
+                                        <exclude>
                                             ca.ulaval.glo4003.ws.domain.shared.RandomProvider
                                         </exclude>
                                         <exclude>
@@ -408,13 +411,13 @@
                                         </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.infrastructure.model.ModelDto
                                         </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException
-                                        </exclude>
                                         <exclude>ca.ulaval.glo4003.ws.infrastructure.model.ModelDto
                                         </exclude>
                                         <exclude>
                                             ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.TransportWrapper
+                                        </exclude>
+                                        <exclude>
+                                            ca.ulaval.glo4003.ws.domain.user.exception.NoTransactionLinkedToDeliveryException
                                         </exclude>
 
                                         <exclude>ca.ulaval.glo4003.EvulutionMain</exclude>
