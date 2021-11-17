@@ -103,7 +103,8 @@ public class AssemblyContext implements Context {
         AssemblyLine.class,
         new AssemblyLine(
             new OrderFactory(
-                new LocalDateProvider(), serviceLocator.resolve(VehicleAssemblyPlanner.class)),
+                serviceLocator.resolve(LocalDateProvider.class),
+                serviceLocator.resolve(VehicleAssemblyPlanner.class)),
             serviceLocator.resolve(LinearAssemblyStrategy.class)));
   }
 

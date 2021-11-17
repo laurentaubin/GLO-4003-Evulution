@@ -39,4 +39,3 @@ public class BatteryBuilder {
     return new Battery(type, baseNRCANRange, capacity, price, productionTime);
   }
 }
-

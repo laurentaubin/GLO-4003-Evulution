@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.api.filter.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.shared.DateParser;
 import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
+import ca.ulaval.glo4003.ws.api.shared.LocalDateWrapper;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserAssembler;
@@ -32,11 +33,19 @@ public class UserContext implements Context {
 
   @Override
   public void registerContext() {
+    registerLocalDateProvider();
     registerRepositories();
     registerSessionServices();
     registerFilters();
     registerUserServices();
     registerResources();
+  }
+
+  private void registerLocalDateProvider() {
+    LocalDateWrapper localDateWrapper = new LocalDateWrapper();
+
+    LocalDateProvider localDateProvider = new LocalDateProvider(localDateWrapper);
+    serviceLocator.register(LocalDateProvider.class, localDateProvider);
   }
 
   private void registerRepositories() {
@@ -95,7 +104,8 @@ public class UserContext implements Context {
 
     serviceLocator.register(
         BirthDateValidator.class,
-        new BirthDateValidator(BIRTH_DATE_PATTERN, new LocalDateProvider()));
+        new BirthDateValidator(
+            BIRTH_DATE_PATTERN, serviceLocator.resolve(LocalDateProvider.class)));
     serviceLocator.register(UserAssembler.class, new UserAssembler(dateParser));
     serviceLocator.register(
         RegisterUserDtoValidator.class,
