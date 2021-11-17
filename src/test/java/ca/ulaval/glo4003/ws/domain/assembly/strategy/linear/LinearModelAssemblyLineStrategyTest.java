@@ -8,9 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObserver;
+import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.notification.ModelAssemblyDelayObserver;
@@ -40,7 +40,7 @@ class LinearModelAssemblyLineStrategyTest {
   @Mock private Model aModel;
   @Mock private Model anotherModel;
   @Mock private Model otherModel;
-  @Mock private AssemblyLineAdapter modelAssemblyLineAdapter;
+  @Mock private ModelAssemblyLineAdapter modelAssemblyLineAdapter;
   @Mock private ModelAssembledObserver modelAssembledObserver;
   @Mock private ModelAssembledObserver anotherModelAssembledObserver;
   @Mock private ModelAssemblyDelayObserver modelAssemblyDelayObserver;

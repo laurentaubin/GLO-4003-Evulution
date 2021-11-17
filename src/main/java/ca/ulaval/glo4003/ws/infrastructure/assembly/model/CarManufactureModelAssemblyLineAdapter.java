@@ -3,17 +3,18 @@ package ca.ulaval.glo4003.ws.infrastructure.assembly.model;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
+import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelOrder;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 
-public class ModelAssemblyLineAdapter implements AssemblyLineAdapter {
+public class CarManufactureModelAssemblyLineAdapter implements ModelAssemblyLineAdapter {
   private final VehicleAssemblyLine vehicleAssemblyLine;
   private final CommandIdFactory commandIdFactory;
 
-  public ModelAssemblyLineAdapter(
+  public CarManufactureModelAssemblyLineAdapter(
       VehicleAssemblyLine vehicleAssemblyLine, CommandIdFactory commandIdFactory) {
     this.vehicleAssemblyLine = vehicleAssemblyLine;
     this.commandIdFactory = commandIdFactory;
@@ -34,6 +35,12 @@ public class ModelAssemblyLineAdapter implements AssemblyLineAdapter {
   public void addOrder(Order order) {
     CommandID commandId = commandIdFactory.getOrCreateFromOrderId(order.getId());
     vehicleAssemblyLine.newCarCommand(commandId, order.getModel().getName());
+  }
+
+  @Override
+  public void addOrder(ModelOrder modelOrder) {
+    CommandID commandID = commandIdFactory.getOrCreateFromOrderId(modelOrder.getOrderId());
+    vehicleAssemblyLine.newCarCommand(commandID, modelOrder.getModelType());
   }
 
   @Override

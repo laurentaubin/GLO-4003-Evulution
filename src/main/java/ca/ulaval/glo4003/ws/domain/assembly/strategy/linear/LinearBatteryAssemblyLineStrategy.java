@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
+import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
@@ -15,14 +15,14 @@ import org.apache.logging.log4j.Logger;
 public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
     implements BatteryAssemblyLineStrategy {
 
-  private final AssemblyLineAdapter batteryAssemblyLineAdapter;
+  private final BatteryAssemblyLineAdapter batteryAssemblyLineAdapter;
   private final Queue<Order> orderQueue = new LinkedList<>();
   private static final Logger LOGGER = LogManager.getLogger();
 
   private Order currentOrder;
   private ProductionTime currentOrderRemainingTimeToProduce;
 
-  public LinearBatteryAssemblyLineStrategy(AssemblyLineAdapter batteryAssemblyLineAdapter) {
+  public LinearBatteryAssemblyLineStrategy(BatteryAssemblyLineAdapter batteryAssemblyLineAdapter) {
     this.batteryAssemblyLineAdapter = batteryAssemblyLineAdapter;
   }
 

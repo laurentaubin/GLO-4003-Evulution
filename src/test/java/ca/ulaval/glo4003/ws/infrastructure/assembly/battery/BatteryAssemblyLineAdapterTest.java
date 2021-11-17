@@ -29,12 +29,12 @@ class BatteryAssemblyLineAdapterTest {
   @Mock private BatteryAssemblyLine batteryAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
 
-  private BatteryAssemblyLineAdapter batteryAssemblyLineAdapter;
+  private CarManufactureBatteryAssemblyLineAdapter batteryAssemblyLineAdapter;
 
   @BeforeEach
   public void setUp() {
     batteryAssemblyLineAdapter =
-        new BatteryAssemblyLineAdapter(batteryAssemblyLine, commandIdFactory);
+        new CarManufactureBatteryAssemblyLineAdapter(batteryAssemblyLine, commandIdFactory);
   }
 
   @Test

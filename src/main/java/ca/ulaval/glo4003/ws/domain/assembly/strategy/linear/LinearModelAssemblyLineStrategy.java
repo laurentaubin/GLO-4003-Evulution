@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy.linear;
 
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
+import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
     implements ModelAssemblyLineStrategy {
 
-  private final AssemblyLineAdapter modelAssemblyLineAdapter;
+  private final ModelAssemblyLineAdapter modelAssemblyLineAdapter;
   private final Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
@@ -23,7 +23,7 @@ public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   private static final Logger LOGGER = LogManager.getLogger();
 
-  public LinearModelAssemblyLineStrategy(AssemblyLineAdapter modelAssemblyLineAdapter) {
+  public LinearModelAssemblyLineStrategy(ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
     this.modelAssemblyLineAdapter = modelAssemblyLineAdapter;
   }
 

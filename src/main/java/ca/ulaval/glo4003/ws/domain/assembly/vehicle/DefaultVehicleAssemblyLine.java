@@ -7,8 +7,12 @@ import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
+  private static final Logger LOGGER = LogManager.getLogger();
+
   private List<Order> orders = new ArrayList<>();
   private final VehicleAssemblyPlanner vehicleAssemblyPlanner;
 
@@ -43,6 +47,14 @@ public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
   }
 
   private void clearAssembledVehicles() {
-    orders = orders.stream().filter(order -> !order.isOver()).collect(Collectors.toList());
+    orders = orders.stream().filter(order -> !isOrderOver(order)).collect(Collectors.toList());
+  }
+
+  private boolean isOrderOver(Order order) {
+    if (order.isOver()) {
+      LOGGER.info(String.format("Vehicle for order %s assembled", order.getId()));
+      return true;
+    }
+    return false;
   }
 }

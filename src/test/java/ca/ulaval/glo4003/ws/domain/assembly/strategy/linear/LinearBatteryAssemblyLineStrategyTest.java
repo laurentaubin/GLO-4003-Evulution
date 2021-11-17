@@ -8,9 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
+import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.notification.BatteryAssemblyDelayObserver;
@@ -40,7 +40,7 @@ class LinearBatteryAssemblyLineStrategyTest {
   @Mock private Battery aBattery;
   @Mock private Battery anotherBattery;
   @Mock private Battery otherBattery;
-  @Mock private AssemblyLineAdapter batteryAssemblyLineAdapter;
+  @Mock private BatteryAssemblyLineAdapter batteryAssemblyLineAdapter;
   @Mock private BatteryAssembledObserver batteryAssembledObserver;
   @Mock private BatteryAssembledObserver anotherBatteryAssemblyObserver;
   @Mock private BatteryAssemblyDelayObserver batteryAssemblyDelayObserver;
