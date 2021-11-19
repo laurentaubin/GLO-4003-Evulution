@@ -1,13 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
@@ -18,7 +10,6 @@ import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import ca.ulaval.glo4003.ws.testUtil.ModelBuilder;
 import ca.ulaval.glo4003.ws.testUtil.ModelOrderBuilder;
 import ca.ulaval.glo4003.ws.testUtil.OrderBuilder;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -26,9 +17,16 @@ import org.mockito.Mock;
 import org.mockito.internal.verification.Times;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class AccumulateModelAssemblyLineStrategyTest {
   private static final ProductionTime PRODUCTION_TIME_OF_ONE_WEEK = new ProductionTime(1);
+  private static final ProductionTime PRODUCTION_TIME_OF_TWO_WEEKS = new ProductionTime(2);
   private static final String FIRST_MODEL_TYPE = "first type";
   private static final Model FIRST_MODEL =
       new ModelBuilder()
@@ -45,7 +43,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   private static final Model THIRD_MODEL =
       new ModelBuilder()
           .withName(THIRD_MODEL_TYPE)
-          .withProductionTime(PRODUCTION_TIME_OF_ONE_WEEK)
+          .withProductionTime(PRODUCTION_TIME_OF_TWO_WEEKS)
           .build();
   private static final List<Model> MODEL_ASSEMBLY_ORDER =
       List.of(FIRST_MODEL, SECOND_MODEL, THIRD_MODEL);
@@ -322,17 +320,114 @@ class AccumulateModelAssemblyLineStrategyTest {
     verify(modelAssembledObserver, new Times(1)).listenToModelAssembled(secondOrder);
   }
 
-  // TODO Implement method and write tests
   @Test
-  public void whenComputeRemainingTimeToProduce_thenReturnNull() {
-    Order order = createAnOrderWithModelType("any type");
+  public void
+      givenOrderAddedWithModelNotInStock_whenComputeRemainingTimeToProduce_thenReturnModelProductionTime() {
+    // given
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    Order order = createAnOrderWithModel(FIRST_MODEL);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         createAccumulateModelAssemblyLineStrategy();
+    accumulateModelAssemblyLineStrategy.addOrder(order);
+    ProductionTime expectedProductionTime = order.getModel().getProductionTime();
 
-    ProductionTime productionTime =
+    // when
+    ProductionTime actualProductionTime =
         accumulateModelAssemblyLineStrategy.computeRemainingTimeToProduce(order.getId());
 
-    assertNull(productionTime);
+    // then
+    assertThat(actualProductionTime).isEqualTo(expectedProductionTime);
+  }
+
+  @Test
+  public void givenOrderAddedWithModelInStock_whenComputeRemainingTimeToProduce_thenReturnZero() {
+    // given
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(true);
+    Order order = createAnOrderWithModel(FIRST_MODEL);
+    AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
+        createAccumulateModelAssemblyLineStrategy();
+    accumulateModelAssemblyLineStrategy.addOrder(order);
+    ProductionTime expectedProductionTime = new ProductionTime(0);
+
+    // when
+    ProductionTime actualProductionTime =
+        accumulateModelAssemblyLineStrategy.computeRemainingTimeToProduce(order.getId());
+
+    // then
+    assertThat(actualProductionTime).isEqualTo(expectedProductionTime);
+  }
+
+  @Test
+  public void
+      givenTwoOrdersAddedWithModelsFollowingCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelProductionTimes() {
+    // given
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    Order firstOrder = createAnOrderWithModel(FIRST_MODEL);
+    Order secondOrder = createAnOrderWithModel(SECOND_MODEL);
+    AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
+        createAccumulateModelAssemblyLineStrategy();
+    accumulateModelAssemblyLineStrategy.addOrder(firstOrder);
+    accumulateModelAssemblyLineStrategy.addOrder(secondOrder);
+    ProductionTime expectedProductionTime =
+        FIRST_MODEL.getProductionTime().add(SECOND_MODEL.getProductionTime());
+
+    // when
+    ProductionTime actualProductionTime =
+        accumulateModelAssemblyLineStrategy.computeRemainingTimeToProduce(secondOrder.getId());
+
+    // then
+    assertThat(actualProductionTime).isEqualTo(expectedProductionTime);
+  }
+
+  @Test
+  public void
+      givenTwoOrdersAddedWithFirstAndThirdModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfFirstSecondAndThirdModelsProductionTime() {
+    // given
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    Order firstOrder = createAnOrderWithModel(FIRST_MODEL);
+    Order secondOrder = createAnOrderWithModel(THIRD_MODEL);
+    AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
+        createAccumulateModelAssemblyLineStrategy();
+    accumulateModelAssemblyLineStrategy.addOrder(firstOrder);
+    accumulateModelAssemblyLineStrategy.addOrder(secondOrder);
+    ProductionTime expectedProductionTime =
+        FIRST_MODEL
+            .getProductionTime()
+            .add(SECOND_MODEL.getProductionTime())
+            .add(THIRD_MODEL.getProductionTime());
+
+    // when
+    ProductionTime actualProductionTime =
+        accumulateModelAssemblyLineStrategy.computeRemainingTimeToProduce(secondOrder.getId());
+
+    // then
+    assertThat(actualProductionTime).isEqualTo(expectedProductionTime);
+  }
+
+  @Test
+  public void
+      givenTwoOrdersAddedWithFirstModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelAndWholeCycleProductionTime() {
+    // given
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    Order firstOrder = createAnOrderWithModel(FIRST_MODEL);
+    Order secondOrder = createAnOrderWithModel(FIRST_MODEL);
+    AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
+        createAccumulateModelAssemblyLineStrategy();
+    accumulateModelAssemblyLineStrategy.addOrder(firstOrder);
+    accumulateModelAssemblyLineStrategy.addOrder(secondOrder);
+    ProductionTime expectedProductionTime =
+        FIRST_MODEL
+            .getProductionTime()
+            .add(SECOND_MODEL.getProductionTime())
+            .add(THIRD_MODEL.getProductionTime().add(FIRST_MODEL.getProductionTime()));
+
+    // when
+    ProductionTime actualProductionTime =
+        accumulateModelAssemblyLineStrategy.computeRemainingTimeToProduce(secondOrder.getId());
+
+    // then
+    assertThat(actualProductionTime).isEqualTo(expectedProductionTime);
   }
 
   @Test
@@ -343,7 +438,7 @@ class AccumulateModelAssemblyLineStrategyTest {
     given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
 
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
-            createAccumulateModelAssemblyLineStrategy();
+        createAccumulateModelAssemblyLineStrategy();
     accumulateModelAssemblyLineStrategy.addOrder(firstOrder);
     accumulateModelAssemblyLineStrategy.addOrder(secondOrder);
 
@@ -357,6 +452,10 @@ class AccumulateModelAssemblyLineStrategyTest {
   private Order createAnOrderWithModelType(String modelType) {
     Model aModel = new ModelBuilder().withName(modelType).build();
     return new OrderBuilder().withModel(aModel).build();
+  }
+
+  private Order createAnOrderWithModel(Model model) {
+    return new OrderBuilder().withModel(model).build();
   }
 
   private AccumulateModelAssemblyLineStrategy createAccumulateModelAssemblyLineStrategy() {

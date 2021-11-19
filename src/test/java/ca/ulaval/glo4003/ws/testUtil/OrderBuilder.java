@@ -7,9 +7,10 @@ import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class OrderBuilder {
-  private OrderId orderId = new OrderId("anOrderId");
+  private OrderId orderId = new OrderId(UUID.randomUUID().toString());
   private Model model = new ModelBuilder().build();
   private Battery battery = new BatteryBuilder().build();
   private LocalDate createdAt = LocalDate.now();
