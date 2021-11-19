@@ -27,10 +27,10 @@ class LinearAssemblyStrategyTest {
   private static final OrderId ANOTHER_ORDER_ID = new OrderId("anotherOrderId");
   private static final OrderId OTHER_ORDER_ID = new OrderId("otherOrderId");
   private static final OrderId YET_ANOTHER_ORDER_ID = new OrderId("yetAnotherOrderId");
-  private Order AN_ORDER = new OrderBuilder().withOrderId(AN_ORDER_ID).build();
-  private Order ANOTHER_ORDER = new OrderBuilder().withOrderId(ANOTHER_ORDER_ID).build();
-  private Order OTHER_ORDER = new OrderBuilder().withOrderId(OTHER_ORDER_ID).build();
-  private Order YET_ANOTHER_ODER = new OrderBuilder().withOrderId(YET_ANOTHER_ORDER_ID).build();
+  private final Order AN_ORDER = new OrderBuilder().withOrderId(AN_ORDER_ID).build();
+  private final Order ANOTHER_ORDER = new OrderBuilder().withOrderId(ANOTHER_ORDER_ID).build();
+  private final Order OTHER_ORDER = new OrderBuilder().withOrderId(OTHER_ORDER_ID).build();
+  private final Order YET_ANOTHER_ODER = new OrderBuilder().withOrderId(YET_ANOTHER_ORDER_ID).build();
   private static final boolean COMPLETED = true;
   private static final boolean NOT_COMPLETED = false;
 

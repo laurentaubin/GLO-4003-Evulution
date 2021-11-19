@@ -30,7 +30,7 @@ class AuthenticationFilterTest {
   private static final String A_VALID_AUTH_HEADER =
       A_AUTH_HEADER_NAME + " " + A_VALID_AUTH_TOKEN_VALUE;
 
-  private TokenExtractor tokenExtractor = new TokenExtractor(A_AUTH_HEADER_NAME);
+  private final TokenExtractor tokenExtractor = new TokenExtractor(A_AUTH_HEADER_NAME);
 
   @Mock ContainerRequestContext aContainerRequest;
 

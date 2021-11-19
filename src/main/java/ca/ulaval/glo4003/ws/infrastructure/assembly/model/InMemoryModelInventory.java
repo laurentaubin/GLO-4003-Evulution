@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 public class InMemoryModelInventory implements ModelInventory {
   private static final Logger LOGGER = LogManager.getLogger();
 
-  private Map<String, Integer> quantityPerModelType = new HashMap<>();
+  private final Map<String, Integer> quantityPerModelType = new HashMap<>();
 
   @Override
   public void addOne(String modelType) {

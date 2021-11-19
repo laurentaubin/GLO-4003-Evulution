@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 // TODO Use DTO instead of Order
 public class InMemoryOrderRepository implements OrderRepository {
-  private static Logger logger = Logger.getLogger(InMemoryOrderRepository.class.getName());
-  private Map<OrderId, Order> orders = new HashMap<>();
+  private static final Logger logger = Logger.getLogger(InMemoryOrderRepository.class.getName());
+  private final Map<OrderId, Order> orders = new HashMap<>();
 
   @Override
   public void save(Order order) {

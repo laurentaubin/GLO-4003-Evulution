@@ -19,7 +19,7 @@ public class UserBuilder {
   private String password = "a password";
   private String sex = "a sex";
   private List<Role> roles = new ArrayList<>(List.of(Role.BASE));
-  private Map<TransactionId, DeliveryId> transactionDeliveries = new HashMap<>();
+  private final Map<TransactionId, DeliveryId> transactionDeliveries = new HashMap<>();
 
   public UserBuilder withName(String name) {
     this.name = name;

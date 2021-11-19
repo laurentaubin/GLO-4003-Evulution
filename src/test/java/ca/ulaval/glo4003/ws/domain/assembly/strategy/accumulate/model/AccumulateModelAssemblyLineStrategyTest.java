@@ -151,7 +151,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void whenAdvance_thenCallAdvanceOnModelAssemblyLine() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK)).willReturn(FIRST_MODEL_ORDER);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         createAccumulateModelAssemblyLineStrategy();
 
@@ -165,7 +165,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void whenCreate_thenSendFirstModelInModelOrderToBeAssembled() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK)).willReturn(FIRST_MODEL_ORDER);
 
     // when
     createAccumulateModelAssemblyLineStrategy();
@@ -177,7 +177,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void whenAdvance_thenCheckIfCurrentModelBeingAssembledIsDoneBeingAssembled() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK)).willReturn(FIRST_MODEL_ORDER);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         createAccumulateModelAssemblyLineStrategy();
 
@@ -206,7 +206,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void givenModelAssemblyOrder_whenAdvance_thenModelsAreAssembledInGivenOrderAndInLoop() {
     // given
-    when(modelOrderFactory.create(FIRST_MODEL_TYPE))
+    when(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK))
         .thenReturn(FIRST_MODEL_ORDER, FOURTH_MODEL_ORDER);
     given(assemblyLineAdapter.getAssemblyStatus(FIRST_ORDER_ID))
         .willReturn(AssemblyStatus.ASSEMBLED);
@@ -271,7 +271,7 @@ class AccumulateModelAssemblyLineStrategyTest {
     // given
     Order firstOrder = createAnOrderWithModelType(SECOND_MODEL_TYPE);
     Order secondOrder = createAnOrderWithModelType(THIRD_MODEL_TYPE);
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK)).willReturn(FIRST_MODEL_ORDER);
     given(assemblyLineAdapter.getAssemblyStatus(FIRST_ORDER_ID))
         .willReturn(AssemblyStatus.ASSEMBLED);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
@@ -291,7 +291,7 @@ class AccumulateModelAssemblyLineStrategyTest {
     // given
     Order firstOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
     Order secondOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    when(modelOrderFactory.create(FIRST_MODEL_TYPE))
+    when(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK))
         .thenReturn(FIRST_MODEL_ORDER, MODEL_ORDER_WITH_SAME_MODEL);
     given(assemblyLineAdapter.getAssemblyStatus(FIRST_MODEL_ORDER.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
@@ -324,7 +324,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenOrderAddedWithModelNotInStock_whenComputeRemainingTimeToProduce_thenReturnModelProductionTime() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, FIRST_MODEL.getProductionTime())).willReturn(FIRST_MODEL_ORDER);
     Order order = createAnOrderWithModel(FIRST_MODEL);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         createAccumulateModelAssemblyLineStrategy();
@@ -342,7 +342,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void givenOrderAddedWithModelInStock_whenComputeRemainingTimeToProduce_thenReturnZero() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, FIRST_MODEL.getProductionTime())).willReturn(FIRST_MODEL_ORDER);
     given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(true);
     Order order = createAnOrderWithModel(FIRST_MODEL);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
@@ -362,7 +362,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenTwoOrdersAddedWithModelsFollowingCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelProductionTimes() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, FIRST_MODEL.getProductionTime())).willReturn(FIRST_MODEL_ORDER);
     Order firstOrder = createAnOrderWithModel(FIRST_MODEL);
     Order secondOrder = createAnOrderWithModel(SECOND_MODEL);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
@@ -384,7 +384,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenTwoOrdersAddedWithFirstAndThirdModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfFirstSecondAndThirdModelsProductionTime() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, FIRST_MODEL.getProductionTime())).willReturn(FIRST_MODEL_ORDER);
     Order firstOrder = createAnOrderWithModel(FIRST_MODEL);
     Order secondOrder = createAnOrderWithModel(THIRD_MODEL);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
@@ -409,7 +409,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenTwoOrdersAddedWithFirstModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelAndWholeCycleProductionTime() {
     // given
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, FIRST_MODEL.getProductionTime())).willReturn(FIRST_MODEL_ORDER);
     Order firstOrder = createAnOrderWithModel(FIRST_MODEL);
     Order secondOrder = createAnOrderWithModel(FIRST_MODEL);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
@@ -470,25 +470,25 @@ class AccumulateModelAssemblyLineStrategyTest {
   }
 
   private void setUpFirstModelOrderAssembledWhenAdvance() {
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK)).willReturn(FIRST_MODEL_ORDER);
     given(assemblyLineAdapter.getAssemblyStatus(FIRST_ORDER_ID))
         .willReturn(AssemblyStatus.ASSEMBLED);
   }
 
   private void setUpFirstModelOrderStillInProgress() {
-    given(modelOrderFactory.create(FIRST_MODEL_TYPE)).willReturn(FIRST_MODEL_ORDER);
+    given(modelOrderFactory.create(FIRST_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK)).willReturn(FIRST_MODEL_ORDER);
     given(assemblyLineAdapter.getAssemblyStatus(FIRST_ORDER_ID))
         .willReturn(AssemblyStatus.IN_PROGRESS);
   }
 
   private void setUpSecondModelOrder() {
-    given(modelOrderFactory.create(SECOND_MODEL_TYPE)).willReturn(SECOND_MODEL_ORDER);
+    given(modelOrderFactory.create(SECOND_MODEL_TYPE, PRODUCTION_TIME_OF_ONE_WEEK)).willReturn(SECOND_MODEL_ORDER);
     given(assemblyLineAdapter.getAssemblyStatus(SECOND_MODEL_ORDER.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
   }
 
   private void setUpThirdModelOrder() {
-    given(modelOrderFactory.create(THIRD_MODEL_TYPE)).willReturn(THIRD_MODEL_ORDER);
+    given(modelOrderFactory.create(THIRD_MODEL_TYPE, THIRD_MODEL.getProductionTime())).willReturn(THIRD_MODEL_ORDER);
     given(assemblyLineAdapter.getAssemblyStatus(THIRD_MODEL_ORDER.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
   }

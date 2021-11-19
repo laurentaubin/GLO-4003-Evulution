@@ -9,13 +9,17 @@ public class TimeSimulator {
   private final AssemblyLine assemblyLine;
   private final LocalDateProvider localDateProvider;
 
-  public TimeSimulator(AssemblyLine assemblyLine, Timer timer, LocalDateProvider localDateProvider) {
+  public TimeSimulator(
+      AssemblyLine assemblyLine, Timer timer, LocalDateProvider localDateProvider) {
     this.assemblyLine = assemblyLine;
     this.timer = timer;
     this.localDateProvider = localDateProvider;
   }
 
   public void schedule(int secondsPerWeek) {
-    timer.schedule(new WeeklyTaskExecutor(assemblyLine, localDateProvider), 0, secondsPerWeek * 1000L);
+    timer.schedule(
+        new WeeklyTaskExecutor(assemblyLine, localDateProvider),
+        secondsPerWeek * 1000L,
+        secondsPerWeek * 1000L);
   }
 }

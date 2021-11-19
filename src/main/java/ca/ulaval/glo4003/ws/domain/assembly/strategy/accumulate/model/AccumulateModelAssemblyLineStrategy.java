@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -147,18 +148,21 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
   }
 
   private void sendFirstModelToBeAssembled() {
-    Model firstModel = modelAssemblyCycle.get(0);
-    String firstModelTypeToAssemble = firstModel.getName();
-    ModelOrder modelOrder = modelOrderFactory.create(firstModelTypeToAssemble);
+    String firstModelTypeToAssemble = modelAssemblyCycle.get(0).getName();
+    Model model = modelAssemblyCycle.stream().filter(model1 -> model1.getName().equals(firstModelTypeToAssemble)).collect(Collectors.toList()).get(0);
+    ModelOrder modelOrder = modelOrderFactory.create(firstModelTypeToAssemble, model.getProductionTime());
+
     modelAssemblyLineAdapter.addOrder(modelOrder);
     currentModelBeingAssembled = modelOrder;
-    currentModelRemainingProductionTime = firstModel.getProductionTime();
+    currentModelRemainingProductionTime = model.getProductionTime();
   }
 
   private void sendNextModelToBeAssembled() {
     Model nextModelTypeToAssemble =
         computeNextModelTypeToBeAssembled(currentModelBeingAssembled.getModelType());
-    ModelOrder modelToAssemble = modelOrderFactory.create(nextModelTypeToAssemble.getName());
+    Model model = modelAssemblyCycle.stream().filter(model1 -> model1.getName().equals(nextModelTypeToAssemble.getName())).collect(Collectors.toList()).get(0);
+    ModelOrder modelToAssemble = modelOrderFactory.create(nextModelTypeToAssemble.getName(), model.getProductionTime());
+
     modelAssemblyLineAdapter.addOrder(modelToAssemble);
     currentModelBeingAssembled = modelToAssemble;
     currentModelRemainingProductionTime = nextModelTypeToAssemble.getProductionTime();
