@@ -1,13 +1,16 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
 
 import static com.google.common.truth.Truth.assertThat;
 
 class ReceiptTest {
-  private static final Integer A_PRICE = 72000;
+  private static final Price A_PRICE = new Price(new BigDecimal(72000));
   private static final Frequency A_MONTHLY_FREQUENCY = Frequency.MONTHLY;
   private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
 
@@ -18,7 +21,7 @@ class ReceiptTest {
     Integer expectedAmountPerPeriod = 1000;
 
     // when
-    Integer actualAmountPerPeriod = receipt.getAmountPerPeriod();
+    Integer actualAmountPerPeriod = receipt.getAmountPerPeriod().toInt();
 
     // then
     assertThat(expectedAmountPerPeriod).isEqualTo(actualAmountPerPeriod);

@@ -39,7 +39,7 @@ class ModelAssemblerTest {
     // then
     assertThat(model.getName()).isEqualTo(A_NAME.toUpperCase());
     assertThat(model.getEfficiency()).isEqualTo(AN_EFFICIENCY);
-    assertThat(model.getPrice()).isEqualTo(A_PRICE);
+    assertThat(model.getPrice().toInt()).isEqualTo(A_PRICE);
     assertThat(model.getProductionTime()).isEqualTo(new ProductionTime(A_PRODUCTION_TIME));
     assertThat(model.getStyle()).isEqualTo(A_STYLE);
   }

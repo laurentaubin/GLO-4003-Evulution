@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 
@@ -7,7 +8,7 @@ public class BatteryBuilder {
   private String type = "a type";
   private int baseNRCANRange = 423;
   private int capacity = 5643;
-  private int price = 200092;
+  private Price price = new Price(200092);
   private ProductionTime productionTime = new ProductionTime(1);
 
   public BatteryBuilder withType(String type) {
@@ -25,7 +26,7 @@ public class BatteryBuilder {
     return this;
   }
 
-  public BatteryBuilder withPrice(int price) {
+  public BatteryBuilder withPrice(Price price) {
     this.price = price;
     return this;
   }

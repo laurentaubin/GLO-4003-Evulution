@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.IncompleteVehicleException;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
@@ -44,9 +45,9 @@ public class Vehicle {
     return battery;
   }
 
-  public Integer getVehiclePrice() {
+  public Price getVehiclePrice() {
     if (hasBattery() && model != null) {
-      return battery.getPrice() + model.getPrice();
+      return model.getPrice().add(battery.getPrice());
     }
     throw new IncompleteVehicleException("Vehicle must be complete to calculate price.");
   }

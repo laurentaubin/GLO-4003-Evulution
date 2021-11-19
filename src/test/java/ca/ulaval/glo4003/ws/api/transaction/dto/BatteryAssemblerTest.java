@@ -1,7 +1,5 @@
 package ca.ulaval.glo4003.ws.api.transaction.dto;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryAssembler;
@@ -10,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class BatteryAssemblerTest {
@@ -45,6 +45,6 @@ class BatteryAssemblerTest {
     assertThat(battery.getBaseNRCANRange()).isEqualTo(Integer.valueOf(A_RANGE));
     assertThat(battery.getProductionTime())
         .isEqualTo(new ProductionTime(Integer.parseInt(A_TIME_TO_PRODUCE)));
-    assertThat(battery.getPrice()).isEqualTo(A_PRICE);
+    assertThat(battery.getPrice().toInt()).isEqualTo(A_PRICE);
   }
 }

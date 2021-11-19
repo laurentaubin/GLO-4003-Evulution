@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.IncompleteVehicleException;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
@@ -22,6 +23,8 @@ class VehicleTest {
   private static final int FIFTY_PERCENT = 50;
   private static final int HUNDRED_PERCENT = 100;
   private static final Color A_COLOR = Color.WHITE;
+  private static final Price A_BATTERY_PRICE = new Price(500);
+  private static final Price A_MODEL_PRICE = new Price(3000);
 
   @Mock private Model aModel;
   @Mock private Battery aBattery;
@@ -90,14 +93,16 @@ class VehicleTest {
   @Test
   public void givenAValidVehicle_whenCalculatePrice_thenReturnPrice() {
     // given
+    given(aModel.getPrice()).willReturn(A_MODEL_PRICE);
+    given(aBattery.getPrice()).willReturn(A_BATTERY_PRICE);
     Vehicle vehicle = new Vehicle(aModel, A_COLOR);
     vehicle.addBattery(aBattery);
 
     // when
-    int actualPrice = vehicle.getVehiclePrice();
+    int actualPrice = vehicle.getVehiclePrice().toInt();
 
     // then
-    assertThat(actualPrice).isEqualTo(aModel.getPrice() + aBattery.getPrice());
+    assertThat(actualPrice).isEqualTo(aModel.getPrice().toInt() + aBattery.getPrice().toInt());
   }
 
   @Test

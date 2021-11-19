@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 
 class ReceiptFactoryTest {
-  private static final Integer A_VEHICLE_PRICE = 72000;
+  private static final Price A_VEHICLE_PRICE = new Price(72000);
   private static final Frequency A_MONTHLY_FREQUENCY = Frequency.MONTHLY;
   private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
 
@@ -21,7 +21,7 @@ class ReceiptFactoryTest {
   public void whenCreate_thenCreateReceipt() {
     // when
     Receipt receipt = receiptFactory.create(A_VEHICLE_PRICE, A_MONTHLY_FREQUENCY);
-    Integer expectedAmountPerPeriod = 1000;
+    Price expectedAmountPerPeriod = new Price(1000);
     Integer expectedPaymentsLeft = 71;
 
     // then

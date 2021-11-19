@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.*;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotFoundException;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
 import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.user.Role;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +41,9 @@ class DeliveryResourceImplTest {
   private static final String EXPECTED_DELIVERY_LOCATION_ADDED_MESSAGE =
       "Delivery location successfully added";
   private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
+  private static final Price A_PRICE = new Price(new BigDecimal(1200));
   private static final Receipt A_RECEIPT =
-      new Receipt(1200, Frequency.MONTHLY, AMOUNT_OF_YEARS_TO_PAY_OVER);
+      new Receipt(A_PRICE, Frequency.MONTHLY, AMOUNT_OF_YEARS_TO_PAY_OVER);
 
   @Mock private DeliveryService deliveryService;
   @Mock private DeliveryDestinationAssembler deliveryDestinationAssembler;
@@ -181,7 +184,7 @@ class DeliveryResourceImplTest {
 
     // then
     verify(completedDeliveryResponseAssembler)
-        .assemble(A_RECEIPT.getAmountPerPeriod(), A_RECEIPT.getPaymentsLeft());
+        .assemble(A_RECEIPT.getAmountPerPeriod().toInt(), A_RECEIPT.getPaymentsLeft());
   }
 
   @Test

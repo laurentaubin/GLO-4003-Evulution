@@ -7,7 +7,7 @@ public class ReceiptFactory {
     this.amountOfYearsToPayOver = amountOfYearsToPayOver;
   }
 
-  public Receipt create(Integer vehiclePrice, Frequency paymentFrequency) {
+  public Receipt create(Price vehiclePrice, Frequency paymentFrequency) {
     return new Receipt(vehiclePrice, paymentFrequency, amountOfYearsToPayOver);
   }
 }

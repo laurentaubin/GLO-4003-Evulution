@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.vehicle.model;
 
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 
 import java.math.BigDecimal;
@@ -8,14 +9,14 @@ public class Model {
   private final String name;
   private final String style;
   private final BigDecimal efficiency;
-  private final Integer basePrice;
+  private final Price basePrice;
   private final ProductionTime productionTime;
 
   public Model(
       String name,
       String style,
       BigDecimal efficiency,
-      Integer basePrice,
+      Price basePrice,
       ProductionTime productionTime) {
     this.name = name;
     this.style = style;
@@ -32,7 +33,7 @@ public class Model {
     return name;
   }
 
-  public Integer getPrice() {
+  public Price getPrice() {
     return basePrice;
   }
 

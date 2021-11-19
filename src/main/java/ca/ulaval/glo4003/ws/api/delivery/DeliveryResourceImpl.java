@@ -78,7 +78,7 @@ public class DeliveryResourceImpl implements DeliveryResource {
     Receipt receipt = deliveryService.generateTransactionReceipt(transactionIdLinkedToDelivery);
     CompletedDeliveryResponse completedDeliveryResponse =
         completedDeliveryResponseAssembler.assemble(
-            receipt.getAmountPerPeriod(), receipt.getPaymentsLeft());
+            receipt.getAmountPerPeriod().toInt(), receipt.getPaymentsLeft());
     return Response.ok().entity(completedDeliveryResponse).build();
   }
 
