@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.inOrder;
@@ -332,6 +333,25 @@ class AccumulateModelAssemblyLineStrategyTest {
         accumulateModelAssemblyLineStrategy.computeRemainingTimeToProduce(order.getId());
 
     assertNull(productionTime);
+  }
+
+  @Test
+  public void givenOrdersInQueue_whenGetActiveOrders_thenReturnOrders() {
+    // given
+    Order firstOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
+    Order secondOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
+
+    AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
+            createAccumulateModelAssemblyLineStrategy();
+    accumulateModelAssemblyLineStrategy.addOrder(firstOrder);
+    accumulateModelAssemblyLineStrategy.addOrder(secondOrder);
+
+    // when
+    List<Order> ordersInQueue = accumulateModelAssemblyLineStrategy.getActiveOrders();
+
+    // then
+    assertThat(ordersInQueue).containsExactly(firstOrder, secondOrder);
   }
 
   private Order createAnOrderWithModelType(String modelType) {

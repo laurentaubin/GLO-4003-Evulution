@@ -45,6 +45,8 @@ public class EmailNotificationIssuer implements NotificationIssuer {
         return NotificationType.BATTERY_ASSEMBLY_DELAY;
       case VEHICLE_ASSEMBLY:
         return NotificationType.VEHICLE_ASSEMBLY_DELAY;
+      case PRODUCTION_SHUTDOWN:
+        return NotificationType.PRODUCTION_SHUTDOWN;
     }
 
     return null;

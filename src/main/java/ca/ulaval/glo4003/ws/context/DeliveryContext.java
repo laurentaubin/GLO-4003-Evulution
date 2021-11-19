@@ -6,6 +6,7 @@ import ca.ulaval.glo4003.ws.api.delivery.DeliveryResource;
 import ca.ulaval.glo4003.ws.api.delivery.DeliveryResourceImpl;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
+import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryFactory;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
@@ -57,7 +58,8 @@ public class DeliveryContext implements Context {
         new DeliveryService(
             serviceLocator.resolve(DeliveryFactory.class),
             serviceLocator.resolve(DeliveryRepository.class),
-            serviceLocator.resolve(PaymentService.class));
+            serviceLocator.resolve(PaymentService.class),
+            serviceLocator.resolve(OrderRepository.class));
 
     serviceLocator.register(DeliveryService.class, deliveryService);
   }

@@ -270,6 +270,25 @@ class LinearModelAssemblyLineStrategyTest {
     verify(anotherOrder).addAssemblyDelay(A_REMAINING_PRODUCTION_TIME);
   }
 
+  @Test
+  public void givenOrdersInQueue_whenGetActiveOrders_thenReturnOrders() {
+    // given
+    setUpAnOrder();
+    setUpAnotherOrder();
+    given(anOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anotherOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(modelAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+            .willReturn(AssemblyStatus.IN_PROGRESS);
+    linearModelAssemblyLineStrategy.addOrder(anOrder);
+    linearModelAssemblyLineStrategy.addOrder(anotherOrder);
+
+    // when
+    var result = linearModelAssemblyLineStrategy.getActiveOrders();
+
+    // then
+    assertThat(result).contains(anOrder);
+  }
+
   private void setUpAnOrder() {
     given(anOrder.getId()).willReturn(AN_ORDER_ID);
     given(anOrder.getModel()).willReturn(aModel);

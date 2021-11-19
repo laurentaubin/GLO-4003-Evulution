@@ -1,17 +1,19 @@
 package ca.ulaval.glo4003.ws.domain.assembly.order;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class OrderTest {
@@ -115,5 +117,34 @@ class OrderTest {
 
     // then
     assertThat(deliveryDate).isEquivalentAccordingToCompareTo(expectedDeliveryDate);
+  }
+
+  @Test
+  public void givenAnOrderAndItsTransaction_whenIsRelatedToTransaction_thenReturnTrue() {
+    // given
+    LocalDate createdAt = LocalDate.of(10, 10, 10);
+    Order order = new Order(AN_ID, model, battery, createdAt, AN_INITIAL_ASSEMBLY_TIME);
+    TransactionId transactionId = new TransactionId(order.getId().toString());
+
+    // when
+    boolean isRelatedToTransaction = order.isRelatedToTransaction(transactionId);
+
+    // then
+    assertThat(isRelatedToTransaction).isTrue();
+  }
+
+  @Test
+  public void givenAnOrderAndARandomTransaction_whenIsRelatedToTransaction_thenReturnFalse() {
+    // given
+    LocalDate createdAt = LocalDate.of(10, 10, 10);
+    Order order = new Order(AN_ID, model, battery, createdAt, AN_INITIAL_ASSEMBLY_TIME);
+    TransactionId transactionId =
+        new TransactionId(order.getId().toString().concat("randomsuffix"));
+
+    // when
+    boolean isRelatedToTransaction = order.isRelatedToTransaction(transactionId);
+
+    // then
+    assertThat(isRelatedToTransaction).isFalse();
   }
 }

@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
+public class DefaultVehicleAssemblyLine extends VehicleAssemblyObservable
+    implements VehicleAssemblyLineStrategy {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private List<Order> orders = new ArrayList<>();
@@ -28,6 +29,7 @@ public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
 
   @Override
   public void assembleVehicle(Order order) {
+    LOGGER.info(String.format("Vehicle assembly order received: %s", order.getId()));
     ProductionTime productionTime = vehicleAssemblyPlanner.getProductionTime(order);
     order.setRemainingAssemblyTime(productionTime);
     orders.add(order);
@@ -42,8 +44,14 @@ public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
         .getRemainingAssemblyTime();
   }
 
-  public List<Order> getCurrentOrders() {
+  @Override
+  public List<Order> getActiveOrders() {
     return orders;
+  }
+
+  @Override
+  public void shutdown() {
+    orders = new ArrayList<>();
   }
 
   private void clearAssembledVehicles() {
@@ -53,6 +61,7 @@ public class DefaultVehicleAssemblyLine implements VehicleAssemblyLineStrategy {
   private boolean isOrderOver(Order order) {
     if (order.isOver()) {
       LOGGER.info(String.format("Vehicle for order %s assembled", order.getId()));
+      notifyVehicleAssembled(order);
       return true;
     }
     return false;

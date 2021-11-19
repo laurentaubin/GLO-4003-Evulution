@@ -1,16 +1,19 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
+import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
@@ -23,6 +26,8 @@ class DeliveryServiceTest {
   @Mock private PaymentService paymentService;
   @Mock private DeliveryFactory deliveryFactory;
   @Mock private Delivery aDelivery;
+  @Mock private Order anOrder;
+  @Mock private OrderRepository orderRepository;
 
   private DeliveryService deliveryService;
   private Delivery delivery;
@@ -31,7 +36,8 @@ class DeliveryServiceTest {
   @BeforeEach
   public void setUp() {
     delivery = createDeliveryWithId();
-    deliveryService = new DeliveryService(deliveryFactory, deliveryRepository, paymentService);
+    deliveryService =
+        new DeliveryService(deliveryFactory, deliveryRepository, paymentService, orderRepository);
   }
 
   @Test
@@ -88,6 +94,10 @@ class DeliveryServiceTest {
 
   @Test
   public void givenATransactionId_whenCompleteDelivery_thenPaymentServiceGeneratesReceipt() {
+    // given
+    given(anOrder.isRelatedToTransaction(A_TRANSACTION_ID)).willReturn(true);
+    given(orderRepository.findAllCompletedOrders()).willReturn(List.of(anOrder));
+
     // when
     deliveryService.generateTransactionReceipt(A_TRANSACTION_ID);
 

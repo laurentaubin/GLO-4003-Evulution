@@ -7,21 +7,26 @@ import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
     implements ModelAssemblyLineStrategy {
 
+  private static final Logger LOGGER = LogManager.getLogger();
+
   private final ModelAssemblyLineAdapter modelAssemblyLineAdapter;
+
   private final Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
   private ProductionTime currentOrderRemainingTimeToProduce;
-
-  private static final Logger LOGGER = LogManager.getLogger();
 
   public LinearModelAssemblyLineStrategy(ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
     this.modelAssemblyLineAdapter = modelAssemblyLineAdapter;
@@ -118,5 +123,14 @@ public class LinearModelAssemblyLineStrategy extends ModelAssemblyObservable
     return modelAssemblyLineAdapter
         .getAssemblyStatus(currentOrder.getId())
         .equals(AssemblyStatus.ASSEMBLED);
+  }
+
+  @Override
+  public List<Order> getActiveOrders() {
+    List<Order> activeOrders = new ArrayList<>(orderQueue);
+    if (isAnOrderBeingAssembled()) {
+      activeOrders.add(0, currentOrder);
+    }
+    return activeOrders;
   }
 }

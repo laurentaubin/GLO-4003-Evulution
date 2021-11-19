@@ -25,6 +25,7 @@ import static org.mockito.BDDMockito.given;
 class InMemoryUserRepositoryTest {
   private static final TransactionId A_TRANSACTION_ID = TransactionId.fromString("id");
   private static final String AN_EMAIL = "remw@mfs.com";
+  private static final String ANOTHER_EMAIL = "email2@email.com";
   private static final String ANOTHER_NAME = "sdaidhsauidhasiuhda";
 
   private final UserDtoAssembler userDtoAssembler = new UserDtoAssembler();
@@ -125,5 +126,20 @@ class InMemoryUserRepositoryTest {
 
     // then
     assertThat(foundUser.getEmail()).isEqualTo(AN_EMAIL);
+  }
+
+  @Test
+  public void givenUsersSaved_whenFindAll_thenReturnAllUsers() {
+    // given
+    User aUser = new UserBuilder().withEmail(AN_EMAIL).build();
+    User anotherUser = new UserBuilder().withEmail(ANOTHER_EMAIL).build();
+    userRepository.registerUser(aUser);
+    userRepository.registerUser(anotherUser);
+
+    // when
+    List<User> foundUsers = userRepository.findAll();
+
+    // then
+    assertThat(foundUsers).hasSize(2);
   }
 }

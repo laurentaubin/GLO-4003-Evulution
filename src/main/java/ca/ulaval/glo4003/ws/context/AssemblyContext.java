@@ -8,8 +8,8 @@ import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
-import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
+import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.AccumulateModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelOrderFactory;
@@ -28,14 +28,10 @@ import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.CarManufactureBatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.CarManufactureModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.InMemoryModelInventory;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
 
 public class AssemblyContext implements Context {
-  private static final boolean ACCUMULATE_MODEL_ASSEMBLY_LINE_ENABELD = true;
   private static final List<String> MODEL_ASSEMBLY_ORDER_BY_NAME =
       List.of("Desjardins", "Vandry", "Pouliot");
 
@@ -54,6 +50,7 @@ public class AssemblyContext implements Context {
     registerAssemblyLine();
     registerModelAssemblyObservers();
     registerBatteryAssemblyObservers();
+    registerVehicleAssemblyObservers();
   }
 
   private void registerModelAssemblyLine() {
@@ -83,18 +80,19 @@ public class AssemblyContext implements Context {
     VehicleAssemblyPlanner vehicleAssemblyPlanner =
         new VehicleAssemblyPlanner(new RandomProvider(new Random()));
     vehicleAssemblyPlanner.register(serviceLocator.resolve(NotificationService.class));
-    VehicleAssemblyLineStrategy defaultVehicleAssemblyLineStrategy =
+    DefaultVehicleAssemblyLine defaultVehicleAssemblyLineStrategy =
         new DefaultVehicleAssemblyLine(vehicleAssemblyPlanner);
     serviceLocator.register(VehicleAssemblyPlanner.class, vehicleAssemblyPlanner);
-    serviceLocator.register(VehicleAssemblyLineStrategy.class, defaultVehicleAssemblyLineStrategy);
+    serviceLocator.register(DefaultVehicleAssemblyLine.class, defaultVehicleAssemblyLineStrategy);
   }
 
   private void registerAssemblyStrategy() {
     LinearAssemblyStrategy linearAssemblyStrategy =
         new LinearAssemblyStrategy(
-            serviceLocator.resolve(AccumulateModelAssemblyLineStrategy.class),
+            serviceLocator.resolve(LinearModelAssemblyLineStrategy.class),
             serviceLocator.resolve(LinearBatteryAssemblyLineStrategy.class),
-            serviceLocator.resolve(VehicleAssemblyLineStrategy.class));
+            serviceLocator.resolve(DefaultVehicleAssemblyLine.class),
+            serviceLocator.resolve(OrderRepository.class));
     serviceLocator.register(LinearAssemblyStrategy.class, linearAssemblyStrategy);
   }
 
@@ -133,6 +131,7 @@ public class AssemblyContext implements Context {
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         serviceLocator.resolve(AccumulateModelAssemblyLineStrategy.class);
     modelAssemblyLineStrategy.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
+    modelAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
     accumulateModelAssemblyLineStrategy.register(
         serviceLocator.resolve(LinearAssemblyStrategy.class));
   }
@@ -141,6 +140,15 @@ public class AssemblyContext implements Context {
     LinearBatteryAssemblyLineStrategy batteryAssemblyLineStrategy =
         serviceLocator.resolve(LinearBatteryAssemblyLineStrategy.class);
     batteryAssemblyLineStrategy.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
+    batteryAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
+  }
+
+  private void registerVehicleAssemblyObservers() {
+    var vehicleAssemblyPlanner = serviceLocator.resolve(VehicleAssemblyPlanner.class);
+    vehicleAssemblyPlanner.register(serviceLocator.resolve(NotificationService.class));
+    DefaultVehicleAssemblyLine defaultVehicleAssemblyLine =
+        serviceLocator.resolve(DefaultVehicleAssemblyLine.class);
+    defaultVehicleAssemblyLine.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
   }
 
   private void registerLinearModelAssemblyLineStrategy(

@@ -6,8 +6,11 @@ import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.notification.ProductionShutdownObserver;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,9 +18,10 @@ import org.apache.logging.log4j.Logger;
 public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
     implements BatteryAssemblyLineStrategy {
 
+  private static final Logger LOGGER = LogManager.getLogger();
+
   private final BatteryAssemblyLineAdapter batteryAssemblyLineAdapter;
   private final Queue<Order> orderQueue = new LinkedList<>();
-  private static final Logger LOGGER = LogManager.getLogger();
 
   private Order currentOrder;
   private ProductionTime currentOrderRemainingTimeToProduce;
@@ -59,6 +63,22 @@ public class LinearBatteryAssemblyLineStrategy extends BatteryAssemblyObservable
       return currentOrderRemainingTimeToProduce;
     }
     return computeRemainingTimeToProduceBasedOnPositionInQueue(orderId);
+  }
+
+  @Override
+  public List<Order> getActiveOrders() {
+    List<Order> activeOrders = new ArrayList<>(orderQueue);
+    if (isAnOrderBeingAssembled()) {
+      activeOrders.add(0, currentOrder);
+    }
+    return activeOrders;
+  }
+
+  @Override
+  public void shutdown() {
+    currentOrder = null;
+    currentOrderRemainingTimeToProduce = null;
+    orderQueue.clear();
   }
 
   private boolean isAssemblyLineFree() {

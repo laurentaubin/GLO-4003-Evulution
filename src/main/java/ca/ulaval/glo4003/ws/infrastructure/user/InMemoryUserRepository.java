@@ -53,4 +53,9 @@ public class InMemoryUserRepository implements UserRepository {
         .findFirst()
         .get();
   }
+
+  @Override
+  public List<User> findAll() {
+    return users.values().stream().map(userDtoAssembler::assemble).collect(Collectors.toList());
+  }
 }

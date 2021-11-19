@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class VehicleAssemblyPlanner extends VehicleAssemblyDelayObservable {
+public class VehicleAssemblyPlanner extends VehicleAssemblyObservable {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final RandomProvider randomProvider;
@@ -34,6 +34,7 @@ public class VehicleAssemblyPlanner extends VehicleAssemblyDelayObservable {
   }
 
   private boolean isDelayed() {
+    //    return true;
     return randomProvider.nextBoolean();
   }
 }

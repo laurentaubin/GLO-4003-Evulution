@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
@@ -25,6 +26,7 @@ class DefaultVehicleAssemblyLineTest {
   @Mock private Order anOrder;
   @Mock private Order anotherOrder;
   @Mock private VehicleAssemblyPlanner vehicleAssemblyPlanner;
+  @Mock private VehicleAssembledObserver vehicleAssembledObserver;
 
   private DefaultVehicleAssemblyLine vehicleAssemblyLine;
 
@@ -69,7 +71,7 @@ class DefaultVehicleAssemblyLineTest {
     vehicleAssemblyLine.advance();
 
     // then
-    assertThat(vehicleAssemblyLine.getCurrentOrders()).doesNotContain(anOrder);
+    assertThat(vehicleAssemblyLine.getActiveOrders()).doesNotContain(anOrder);
   }
 
   @Test
@@ -86,6 +88,33 @@ class DefaultVehicleAssemblyLineTest {
 
     // then
     assertThat(actualProductionTime).isEqualTo(DELAYED);
+  }
+
+  @Test
+  public void givenOrdersAssembling_whenShutdown_thenRemoveAllOrders() {
+    // given
+    vehicleAssemblyLine.assembleVehicle(anOrder);
+
+    // when
+    vehicleAssemblyLine.shutdown();
+
+    // then
+    assertThat(vehicleAssemblyLine.getActiveOrders()).isEmpty();
+  }
+
+  @Test
+  public void givenVehicleAssembled_whenAdvance_thenNotifyObservers() {
+    // given
+    given(vehicleAssemblyPlanner.getProductionTime(anOrder)).willReturn(NORMAL);
+    vehicleAssemblyLine.assembleVehicle(anOrder);
+    given(anOrder.isOver()).willReturn(true);
+    vehicleAssemblyLine.register(vehicleAssembledObserver);
+
+    // when
+    vehicleAssemblyLine.advance();
+
+    // then
+    verify(vehicleAssembledObserver).listenToVehicleAssembled(anOrder);
   }
 
   private void setUpOrders() {

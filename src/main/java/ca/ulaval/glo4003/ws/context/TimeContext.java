@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.context;
 import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.infrastructure.schedule.TimeSimulator;
+
 import java.util.Timer;
 
 public class TimeContext implements Context {

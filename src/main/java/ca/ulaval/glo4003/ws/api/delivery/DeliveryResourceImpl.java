@@ -16,11 +16,14 @@ import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DeliveryResourceImpl implements DeliveryResource {
+  private static final Logger LOGGER = LogManager.getLogger();
+
   public static final String ADD_DELIVERY_MESSAGE = "Delivery location successfully added";
   private static final List<Role> PRIVILEGED_ROLES =
       new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
@@ -68,6 +71,8 @@ public class DeliveryResourceImpl implements DeliveryResource {
   @Override
   public Response completeDelivery(
       ContainerRequestContext containerRequestContext, String deliveryId) {
+    LOGGER.info("Complete delivery");
+
     DeliveryId serializedDeliveryId = new DeliveryId(deliveryId);
     Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
 
@@ -83,7 +88,6 @@ public class DeliveryResourceImpl implements DeliveryResource {
   }
 
   private void validateDeliveryOwnership(Session userSession, DeliveryId deliveryId) {
-
     try {
       ownershipHandler.validateDeliveryOwnership(userSession, deliveryId);
 

@@ -75,6 +75,11 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
     return null;
   }
 
+  @Override
+  public List<Order> getActiveOrders() {
+    return new ArrayList<>(orderQueue);
+  }
+
   private void sendFirstModelToBeAssembled() {
     String firstModelTypeToAssemble = modelAssemblyOrder.get(0).getName();
     ModelOrder modelOrder = modelOrderFactory.create(firstModelTypeToAssemble);

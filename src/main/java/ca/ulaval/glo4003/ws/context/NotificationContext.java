@@ -105,6 +105,12 @@ public class NotificationContext implements Context {
             new EmailContent(
                 delaySubject,
                 "Hello %s, \n\rWe encountered a delay while assembling the vehicle included in your order. Your order now has a total delay of %s weeks and is expected to be delivered on %s. \r\nWe're sorry for the inconvenience. \r\n\r\nThanks for shopping with us, \r\nThe Evulution team"));
+        put(
+            NotificationType.PRODUCTION_SHUTDOWN,
+            new EmailContent(
+                delaySubject,
+                "Hello %s, \n\rWe encountered a delay while assembling the vehicle included in your order. The production line has shutdown and your order has been delayed for an undetermined amount of time -- we hope to resolve the issue in the most brief delay. \r\nWe're sorry for the inconvenience. \r\n\r\nThanks for shopping with us, \r\nThe Evulution team"));
+
       }
     };
   }

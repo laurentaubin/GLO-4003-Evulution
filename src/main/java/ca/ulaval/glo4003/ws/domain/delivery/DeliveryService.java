@@ -1,21 +1,28 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
+import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
+import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
+import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotReadyException;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
+import java.util.List;
 
 public class DeliveryService {
   private final DeliveryFactory deliveryFactory;
   private final DeliveryRepository deliveryRepository;
   private final PaymentService paymentService;
+  private final OrderRepository orderRepository;
 
   public DeliveryService(
       DeliveryFactory deliveryFactory,
       DeliveryRepository deliveryRepository,
-      PaymentService paymentService) {
+      PaymentService paymentService,
+      OrderRepository orderRepository) {
     this.deliveryFactory = deliveryFactory;
     this.deliveryRepository = deliveryRepository;
     this.paymentService = paymentService;
+    this.orderRepository = orderRepository;
   }
 
   public Delivery createDelivery() {
@@ -32,6 +39,14 @@ public class DeliveryService {
   }
 
   public Receipt generateTransactionReceipt(TransactionId transactionId) {
-    return paymentService.generateReceipt(transactionId);
+    List<Order> ordersReadyToBeDelivered = orderRepository.findAllCompletedOrders();
+    for (Order order : ordersReadyToBeDelivered) {
+      if (order.isRelatedToTransaction(transactionId)) {
+        Receipt receipt = paymentService.generateReceipt(transactionId);
+        orderRepository.remove(order);
+        return receipt;
+      }
+    }
+    throw new DeliveryNotReadyException();
   }
 }

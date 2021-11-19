@@ -284,6 +284,41 @@ class LinearBatteryAssemblyLineStrategyTest {
     verify(anotherOrder).addAssemblyDelay(A_REMAINING_PRODUCTION_TIME);
   }
 
+  @Test
+  public void givenOrders_whenShutdown_thenOrderQueueEmptied() {
+    // given
+    given(anOrder.getBattery()).willReturn(aBattery);
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+
+    // when
+    linearBatteryAssemblyLineStrategy.shutdown();
+
+    // then
+    assertThat(linearBatteryAssemblyLineStrategy.getActiveOrders()).isEmpty();
+  }
+
+  @Test
+  public void givenActiveOrderAndOrdersInQueue_whenGetActiveOrders_thenReturnAllOrders() {
+    // given
+    setUpAnOrder();
+    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
+    given(anotherOrder.getBattery()).willReturn(anotherBattery);
+    given(anOrder.getBattery().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anotherOrder.getBattery().getProductionTime())
+            .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+            .willReturn(AssemblyStatus.IN_PROGRESS);
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+    linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
+
+    // when
+    var result = linearBatteryAssemblyLineStrategy.getActiveOrders();
+
+    // then
+
+    assertThat(result).containsExactly(anOrder, anotherOrder);
+  }
+
   private void setUpAnOrder() {
     given(anOrder.getId()).willReturn(AN_ORDER_ID);
     given(anOrder.getBattery()).willReturn(aBattery);

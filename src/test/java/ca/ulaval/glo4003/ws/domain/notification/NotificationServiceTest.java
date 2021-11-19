@@ -15,6 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
   private static final OrderId ORDER_ID = new OrderId("id");
@@ -71,5 +74,17 @@ class NotificationServiceTest {
 
     // then
     verify(notificationIssuer).issueDelayNotification(user, order, DelayType.BATTERY_ASSEMBLY);
+  }
+
+  @Test
+  void givenTransactionIdAndFoundUser_whenListenProductionLineShutdown_thenShouldIssueProductionShutdownNotification() {
+    // given
+    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
+
+    // when
+    notificationService.listenProductionLineShutdown(new ArrayList<>(List.of(order)));
+
+    // then
+    verify(notificationIssuer).issueDelayNotification(user, order, DelayType.PRODUCTION_SHUTDOWN);
   }
 }
