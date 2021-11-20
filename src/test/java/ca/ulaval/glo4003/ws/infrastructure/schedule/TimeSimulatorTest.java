@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import java.util.Timer;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +21,11 @@ class TimeSimulatorTest {
 
   @Mock private AssemblyLine assemblyLine;
   @Mock private Timer timer;
+  @Mock private LocalDateProvider localDateProvider;
 
   @BeforeEach
   public void setUp() {
-    timeSimulator = new TimeSimulator(assemblyLine, timer);
+    timeSimulator = new TimeSimulator(assemblyLine, timer, localDateProvider);
   }
 
   @Test

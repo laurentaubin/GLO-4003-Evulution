@@ -1,15 +1,11 @@
 package ca.ulaval.glo4003.ws.infrastructure.user;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,10 +13,19 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+
 @ExtendWith(MockitoExtension.class)
 class InMemoryUserRepositoryTest {
   private static final TransactionId A_TRANSACTION_ID = TransactionId.fromString("id");
   private static final String AN_EMAIL = "remw@mfs.com";
+  private static final String ANOTHER_EMAIL = "email2@email.com";
   private static final String ANOTHER_NAME = "sdaidhsauidhasiuhda";
 
   private final UserDtoAssembler userDtoAssembler = new UserDtoAssembler();
@@ -111,7 +116,9 @@ class InMemoryUserRepositoryTest {
   public void givenTransactionId_whenFindByTransaction_thenReturnUser() {
     // given
     given(user.getEmail()).willReturn(AN_EMAIL);
-    given(user.getTransactions()).willReturn(List.of(A_TRANSACTION_ID));
+    Map<TransactionId, DeliveryId> transactionDeliveries = new HashMap<>();
+    transactionDeliveries.put(A_TRANSACTION_ID, null);
+    given(user.getTransactionIdToDeliveryId()).willReturn(transactionDeliveries);
     userRepository.registerUser(user);
 
     // when
@@ -119,5 +126,20 @@ class InMemoryUserRepositoryTest {
 
     // then
     assertThat(foundUser.getEmail()).isEqualTo(AN_EMAIL);
+  }
+
+  @Test
+  public void givenUsersSaved_whenFindAll_thenReturnAllUsers() {
+    // given
+    User aUser = new UserBuilder().withEmail(AN_EMAIL).build();
+    User anotherUser = new UserBuilder().withEmail(ANOTHER_EMAIL).build();
+    userRepository.registerUser(aUser);
+    userRepository.registerUser(anotherUser);
+
+    // when
+    List<User> foundUsers = userRepository.findAll();
+
+    // then
+    assertThat(foundUsers).hasSize(2);
   }
 }

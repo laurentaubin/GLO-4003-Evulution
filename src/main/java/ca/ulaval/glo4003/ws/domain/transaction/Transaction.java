@@ -2,8 +2,12 @@ package ca.ulaval.glo4003.ws.domain.transaction;
 
 import ca.ulaval.glo4003.ws.domain.transaction.exception.CannotAddBatteryBeforeVehicleException;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.IncompleteTransactionException;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.ReceiptFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+
 import java.math.BigDecimal;
 
 public class Transaction {
@@ -46,6 +50,13 @@ public class Transaction {
 
   public Payment getPayment() {
     return payment;
+  }
+
+  public Receipt generateReceipt(ReceiptFactory receiptFactory) {
+    if (this.vehicle != null && this.payment != null) {
+      return receiptFactory.create(getVehicle().getVehiclePrice(), getPayment().getFrequency());
+    }
+    throw new IncompleteTransactionException();
   }
 
   private void validate() {

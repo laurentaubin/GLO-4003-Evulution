@@ -6,10 +6,15 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class NotificationService
     implements ModelAssemblyDelayObserver,
         BatteryAssemblyDelayObserver,
-        VehicleAssemblyDelayObserver {
+        VehicleAssemblyDelayObserver,
+        ProductionShutdownObserver {
   private final NotificationIssuer notificationIssuer;
   private final UserRepository userRepository;
 
@@ -36,8 +41,23 @@ public class NotificationService
     notificationIssuer.issueDelayNotification(user, order, DelayType.BATTERY_ASSEMBLY);
   }
 
+  @Override
+  public void listenProductionLineShutdown(List<Order> orders) {
+    Map<Order, User> orderUserMap = findOrderOwners(orders);
+    orderUserMap.forEach(
+        (order, user) -> {
+          notificationIssuer.issueDelayNotification(user, order, DelayType.PRODUCTION_SHUTDOWN);
+        });
+  }
+
   private User findOrderOwner(Order order) {
     TransactionId transactionId = TransactionId.fromString(order.getId().toString());
     return userRepository.findUserByTransactionId(transactionId);
+  }
+
+  private Map<Order, User> findOrderOwners(List<Order> orders) {
+    Map<Order, User> orderUserMap = new HashMap<>();
+    orders.forEach(order -> orderUserMap.put(order, findOrderOwner(order)));
+    return orderUserMap;
   }
 }

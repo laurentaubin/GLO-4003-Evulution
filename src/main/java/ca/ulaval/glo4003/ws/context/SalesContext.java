@@ -9,19 +9,13 @@ import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidat
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryOwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.transaction.BankAccountFactory;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.user.TransactionOwnershipHandler;
+import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
+import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
-import ca.ulaval.glo4003.ws.infrastructure.transaction.InMemoryTransactionRepository;
-import ca.ulaval.glo4003.ws.infrastructure.transaction.TransactionAssembler;
 import jakarta.validation.Validation;
 
 public class SalesContext implements Context {
@@ -29,16 +23,8 @@ public class SalesContext implements Context {
 
   @Override
   public void registerContext() {
-    registerRepositories();
     registerServices();
     registerResources();
-  }
-
-  private void registerRepositories() {
-    serviceLocator.register(TransactionAssembler.class, new TransactionAssembler());
-    serviceLocator.register(
-        TransactionRepository.class,
-        new InMemoryTransactionRepository(serviceLocator.resolve(TransactionAssembler.class)));
   }
 
   private void registerServices() {
@@ -75,8 +61,7 @@ public class SalesContext implements Context {
         new TransactionResourceImpl(
             serviceLocator.resolve(TransactionService.class),
             serviceLocator.resolve(DeliveryService.class),
-            serviceLocator.resolve(TransactionOwnershipHandler.class),
-            serviceLocator.resolve(DeliveryOwnershipHandler.class),
+            serviceLocator.resolve(OwnershipHandler.class),
             serviceLocator.resolve(CreatedTransactionResponseAssembler.class),
             serviceLocator.resolve(VehicleRequestValidator.class),
             serviceLocator.resolve(RoleHandler.class),

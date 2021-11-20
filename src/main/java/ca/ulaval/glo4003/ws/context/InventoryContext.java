@@ -1,7 +1,9 @@
 package ca.ulaval.glo4003.ws.context;
 
+import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
+import ca.ulaval.glo4003.ws.infrastructure.assembly.order.InMemoryOrderRepository;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
 import ca.ulaval.glo4003.ws.infrastructure.battery.InMemoryBatteryRepository;
@@ -26,6 +28,7 @@ public class InventoryContext implements Context {
   public void registerContext() {
     registerBatteryInventory();
     registerModelInventory();
+    registerOrderRepository();
   }
 
   private void registerBatteryInventory() {
@@ -41,7 +44,12 @@ public class InventoryContext implements Context {
         ModelRepository.class, new InMemoryModelRepository(modelsInventory, new ModelAssembler()));
   }
 
-  private static Map<String, BatteryDto> setupBatteryInventory() {
+  private void registerOrderRepository() {
+    OrderRepository orderRepository = new InMemoryOrderRepository();
+    serviceLocator.register(OrderRepository.class, orderRepository);
+  }
+
+  private Map<String, BatteryDto> setupBatteryInventory() {
     Map<String, BatteryDto> batteriesInventory = new HashMap<>();
     try {
       ObjectMapper objectMapper = new ObjectMapper();
@@ -57,7 +65,7 @@ public class InventoryContext implements Context {
     return batteriesInventory;
   }
 
-  private static Map<String, ModelDto> setUpModelInventory() {
+  private Map<String, ModelDto> setUpModelInventory() {
     Map<String, ModelDto> modelInventory = new HashMap<>();
     try {
       ObjectMapper objectMapper = new ObjectMapper();

@@ -8,9 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.ModelAssembledObserver;
+import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.notification.ModelAssemblyDelayObserver;
@@ -40,7 +40,7 @@ class LinearModelAssemblyLineStrategyTest {
   @Mock private Model aModel;
   @Mock private Model anotherModel;
   @Mock private Model otherModel;
-  @Mock private AssemblyLineAdapter modelAssemblyLineAdapter;
+  @Mock private ModelAssemblyLineAdapter modelAssemblyLineAdapter;
   @Mock private ModelAssembledObserver modelAssembledObserver;
   @Mock private ModelAssembledObserver anotherModelAssembledObserver;
   @Mock private ModelAssemblyDelayObserver modelAssemblyDelayObserver;
@@ -268,6 +268,25 @@ class LinearModelAssemblyLineStrategyTest {
 
     // then
     verify(anotherOrder).addAssemblyDelay(A_REMAINING_PRODUCTION_TIME);
+  }
+
+  @Test
+  public void givenOrdersInQueue_whenGetActiveOrders_thenReturnOrders() {
+    // given
+    setUpAnOrder();
+    setUpAnotherOrder();
+    given(anOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anotherOrder.getModel().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(modelAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+            .willReturn(AssemblyStatus.IN_PROGRESS);
+    linearModelAssemblyLineStrategy.addOrder(anOrder);
+    linearModelAssemblyLineStrategy.addOrder(anotherOrder);
+
+    // when
+    var result = linearModelAssemblyLineStrategy.getActiveOrders();
+
+    // then
+    assertThat(result).contains(anOrder);
   }
 
   private void setUpAnOrder() {

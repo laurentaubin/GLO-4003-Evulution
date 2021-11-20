@@ -1,7 +1,10 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
+import ca.ulaval.glo4003.ws.domain.vehicle.exception.IncompleteVehicleException;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -40,5 +43,12 @@ public class Vehicle {
 
   public Battery getBattery() {
     return battery;
+  }
+
+  public Price getVehiclePrice() {
+    if (hasBattery() && model != null) {
+      return model.getPrice().add(battery.getPrice());
+    }
+    throw new IncompleteVehicleException("Vehicle must be complete to calculate price.");
   }
 }

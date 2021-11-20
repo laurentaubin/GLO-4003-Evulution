@@ -1,19 +1,20 @@
 package ca.ulaval.glo4003.ws.domain.vehicle.battery;
 
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 
 public class Battery {
   private final String type;
   private final Integer baseNRCANRange;
   private final Integer capacity;
-  private final Integer price;
+  private final Price price;
   private final ProductionTime productionTime;
 
   public Battery(
       String type,
       Integer baseNRCANRange,
       Integer capacity,
-      Integer price,
+      Price price,
       ProductionTime productionTime) {
     this.type = type;
     this.baseNRCANRange = baseNRCANRange;
@@ -34,7 +35,7 @@ public class Battery {
     return capacity;
   }
 
-  public Integer getPrice() {
+  public Price getPrice() {
     return price;
   }
 

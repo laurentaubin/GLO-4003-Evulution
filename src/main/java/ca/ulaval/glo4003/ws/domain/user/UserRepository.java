@@ -2,6 +2,8 @@ package ca.ulaval.glo4003.ws.domain.user;
 
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 
+import java.util.List;
+
 public interface UserRepository {
   void registerUser(User user);
 
@@ -12,4 +14,6 @@ public interface UserRepository {
   boolean doesUserExist(String email);
 
   User findUserByTransactionId(TransactionId transactionId);
+
+  List<User> findAll();
 }

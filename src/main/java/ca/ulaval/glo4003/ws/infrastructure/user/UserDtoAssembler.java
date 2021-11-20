@@ -4,17 +4,18 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
-import java.util.ArrayList;
-import java.util.Collection;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class UserDtoAssembler {
 
   public UserDto assemble(User user) {
     Set<Role> rolesCopy = new HashSet<>(user.getRoles());
-    Collection<TransactionId> transactionsCopy = new ArrayList<>(user.getTransactions());
-    Collection<DeliveryId> deliveriesCopy = new ArrayList<>(user.getDeliveries());
+    Map<TransactionId, DeliveryId> transactionDeliveries =
+        new HashMap<>(user.getTransactionIdToDeliveryId());
 
     return new UserDto(
         user.getName(),
@@ -23,8 +24,7 @@ public class UserDtoAssembler {
         user.getEmail(),
         user.getPassword(),
         rolesCopy,
-        transactionsCopy,
-        deliveriesCopy);
+        transactionDeliveries);
   }
 
   public User assemble(UserDto userDto) {
@@ -40,14 +40,7 @@ public class UserDtoAssembler {
       user.addRole(role);
     }
 
-    for (TransactionId transactionId : userDto.getTransactions()) {
-      user.addTransaction(transactionId);
-    }
-
-    for (DeliveryId deliveryId : userDto.getDeliveries()) {
-      user.addDelivery(deliveryId);
-    }
-
+    user.setTransactionIdToDeliveryId(userDto.getTransactionDeliveries());
     return user;
   }
 }

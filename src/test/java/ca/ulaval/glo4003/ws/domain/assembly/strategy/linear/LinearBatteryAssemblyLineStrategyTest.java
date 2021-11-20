@@ -8,9 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssembledObserver;
+import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.notification.BatteryAssemblyDelayObserver;
@@ -40,7 +40,7 @@ class LinearBatteryAssemblyLineStrategyTest {
   @Mock private Battery aBattery;
   @Mock private Battery anotherBattery;
   @Mock private Battery otherBattery;
-  @Mock private AssemblyLineAdapter batteryAssemblyLineAdapter;
+  @Mock private BatteryAssemblyLineAdapter batteryAssemblyLineAdapter;
   @Mock private BatteryAssembledObserver batteryAssembledObserver;
   @Mock private BatteryAssembledObserver anotherBatteryAssemblyObserver;
   @Mock private BatteryAssemblyDelayObserver batteryAssemblyDelayObserver;
@@ -282,6 +282,41 @@ class LinearBatteryAssemblyLineStrategyTest {
 
     // then
     verify(anotherOrder).addAssemblyDelay(A_REMAINING_PRODUCTION_TIME);
+  }
+
+  @Test
+  public void givenOrders_whenShutdown_thenOrderQueueEmptied() {
+    // given
+    given(anOrder.getBattery()).willReturn(aBattery);
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+
+    // when
+    linearBatteryAssemblyLineStrategy.shutdown();
+
+    // then
+    assertThat(linearBatteryAssemblyLineStrategy.getActiveOrders()).isEmpty();
+  }
+
+  @Test
+  public void givenActiveOrderAndOrdersInQueue_whenGetActiveOrders_thenReturnAllOrders() {
+    // given
+    setUpAnOrder();
+    given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
+    given(anotherOrder.getBattery()).willReturn(anotherBattery);
+    given(anOrder.getBattery().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anotherOrder.getBattery().getProductionTime())
+            .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
+            .willReturn(AssemblyStatus.IN_PROGRESS);
+    linearBatteryAssemblyLineStrategy.addOrder(anOrder);
+    linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
+
+    // when
+    var result = linearBatteryAssemblyLineStrategy.getActiveOrders();
+
+    // then
+
+    assertThat(result).containsExactly(anOrder, anotherOrder);
   }
 
   private void setUpAnOrder() {

@@ -4,5 +4,5 @@ public enum AssemblyStatus {
   RECEIVED,
   IN_PROGRESS,
   ASSEMBLED,
-  DOES_NOT_EXIST;
+  DOES_NOT_EXIST
 }

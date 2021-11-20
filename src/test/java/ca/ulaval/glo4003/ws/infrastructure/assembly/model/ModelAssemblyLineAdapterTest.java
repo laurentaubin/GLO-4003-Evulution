@@ -29,11 +29,12 @@ class ModelAssemblyLineAdapterTest {
   @Mock private VehicleAssemblyLine vehicleAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
 
-  private ModelAssemblyLineAdapter modelAssemblyLineAdapter;
+  private CarManufactureModelAssemblyLineAdapter modelAssemblyLineAdapter;
 
   @BeforeEach
   public void setUp() {
-    modelAssemblyLineAdapter = new ModelAssemblyLineAdapter(vehicleAssemblyLine, commandIdFactory);
+    modelAssemblyLineAdapter =
+        new CarManufactureModelAssemblyLineAdapter(vehicleAssemblyLine, commandIdFactory);
   }
 
   @Test

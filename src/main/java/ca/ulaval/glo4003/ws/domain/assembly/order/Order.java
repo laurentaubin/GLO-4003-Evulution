@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.assembly.order;
 
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
@@ -13,6 +14,7 @@ public class Order {
   private final ProductionTime initialProductionTime;
   private ProductionTime remainingAssemblyTime;
   private ProductionTime assemblyDelay;
+  private boolean isReadyForDelivery = false;
 
   public Order(
       OrderId orderId,
@@ -72,5 +74,17 @@ public class Order {
 
   public LocalDate computeDeliveryDate() {
     return createdAt.plusWeeks(initialProductionTime.inWeeks()).plusWeeks(assemblyDelay.inWeeks());
+  }
+
+  public boolean isReadyForDelivery() {
+    return isReadyForDelivery;
+  }
+
+  public void setIsReadyForDelivery(boolean isReadyForDelivery) {
+    this.isReadyForDelivery = isReadyForDelivery;
+  }
+
+  public boolean isRelatedToTransaction(TransactionId transactionId) {
+    return id.toString().equals(transactionId.toString());
   }
 }

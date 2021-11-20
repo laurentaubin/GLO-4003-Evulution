@@ -1,23 +1,25 @@
 package ca.ulaval.glo4003.ws.infrastructure.user;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class UserDtoAssemblerTest {
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
+
+class UserDtoAssemblerTest {
+  private static final TransactionId A_TRANSACTION_ID = new TransactionId("xyz");
+  private static final DeliveryId A_DELIVERY_ID = new DeliveryId("abc");
   private UserDtoAssembler assembler;
 
   @BeforeEach
@@ -40,8 +42,7 @@ class UserDtoAssemblerTest {
     assertThat(userDto.getEmail()).isEqualTo(user.getEmail());
     assertThat(userDto.getPassword()).isEqualTo(user.getPassword());
     assertThat(userDto.getRoles()).containsExactly(user.getRoles().toArray());
-    assertThat(userDto.getTransactions()).containsExactly(user.getTransactions().toArray());
-    assertThat(userDto.getDeliveries()).containsExactly(user.getDeliveries().toArray());
+    assertThat(userDto.getTransactionDeliveries()).isEqualTo(user.getTransactionIdToDeliveryId());
   }
 
   @Test
@@ -62,13 +63,12 @@ class UserDtoAssemblerTest {
     // given
     User user = new UserBuilder().build();
     UserDto userDto = assembler.assemble(user);
-    TransactionId transactionId = new TransactionId("odsakdaos");
 
     // when
-    user.addTransaction(transactionId);
+    user.addTransactionDelivery(A_TRANSACTION_ID, null);
 
     // then
-    assertThat(userDto.getTransactions()).doesNotContain(transactionId);
+    assertThat(userDto.getTransactionDeliveries()).doesNotContainKey(A_TRANSACTION_ID);
   }
 
   @Test
@@ -76,13 +76,13 @@ class UserDtoAssemblerTest {
     // given
     User user = new UserBuilder().build();
     UserDto userDto = assembler.assemble(user);
-    DeliveryId deliveryid = new DeliveryId("odsakdoa");
 
     // when
-    user.addDelivery(deliveryid);
+    user.addTransactionDelivery(A_TRANSACTION_ID, A_DELIVERY_ID);
 
     // then
-    assertThat(userDto.getDeliveries()).doesNotContain(deliveryid);
+    assertThat(userDto.getTransactionDeliveries())
+        .doesNotContainEntry(A_TRANSACTION_ID, A_DELIVERY_ID);
   }
 
   @Test
@@ -115,55 +115,62 @@ class UserDtoAssemblerTest {
   }
 
   @Test
-  public void givenUserDtoWithTransactions_whenAssemble_thenReturnUserWithSameTransactions() {
+  public void givenUserDtoWithTransactions_whenAssemble_thenReturnUserWithSameTransaction() {
     // given
-    TransactionId transactionId = new TransactionId("doaskdsoa");
-    UserDto userDto = givenUserDtoWithTransactionIds(List.of(transactionId));
+    Map<TransactionId, DeliveryId> transactionDeliveries = createTransactionDeliveries();
+    UserDto userDto = givenUserDtoWithTransactionDeliveries(transactionDeliveries);
 
     // when
     User user = assembler.assemble(userDto);
 
     // then
-    assertThat(user.doesOwnTransaction(transactionId)).isTrue();
+    assertThat(user.doesOwnTransaction(A_TRANSACTION_ID)).isTrue();
+  }
+
+  @Test
+  public void
+      givenTransactionsAndDeliveries_whenAssemble_thenReturnUserWithSameTransactionDeliveries() {
+    // given
+    Map<TransactionId, DeliveryId> transactionDeliveries = createTransactionDeliveries();
+    UserDto userDto = givenUserDtoWithTransactionDeliveries(transactionDeliveries);
+
+    // when
+    User user = assembler.assemble(userDto);
+
+    // then
+    assertThat(user.getTransactionIdToDeliveryId()).isEqualTo(userDto.getTransactionDeliveries());
   }
 
   @Test
   public void givenUserDtoWithDeliveries_whenAssemble_thenReturnUserWithSameDeliveries() {
     // given
-    DeliveryId deliveryId = new DeliveryId("doaskdsoa");
-    UserDto userDto = givenUserDtoWithDeliveryIds(List.of(deliveryId));
+    Map<TransactionId, DeliveryId> transactionDeliveries = createTransactionDeliveries();
+    UserDto userDto = givenUserDtoWithTransactionDeliveries(transactionDeliveries);
 
     // when
     User user = assembler.assemble(userDto);
 
     // then
-    assertThat(user.doesOwnDelivery(deliveryId)).isTrue();
+    assertThat(user.doesOwnDelivery(A_DELIVERY_ID)).isTrue();
   }
 
   private UserDto givenUserDto() {
-    return givenUserDtoWithRolesTransactionIdsAndDeliveryIds(
-        Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+    return givenUserDtoWithRolesAndTransactionDeliveries(
+        Collections.emptySet(), createTransactionDeliveries());
   }
 
   private UserDto givenUserDtoWithRoles(Set<Role> roles) {
-    return givenUserDtoWithRolesTransactionIdsAndDeliveryIds(
-        roles, Collections.emptyList(), Collections.emptyList());
+    return givenUserDtoWithRolesAndTransactionDeliveries(roles, new HashMap<>());
   }
 
-  private UserDto givenUserDtoWithTransactionIds(Collection<TransactionId> transactionIds) {
-    return givenUserDtoWithRolesTransactionIdsAndDeliveryIds(
-        Collections.emptySet(), transactionIds, Collections.emptyList());
+  private UserDto givenUserDtoWithTransactionDeliveries(
+      Map<TransactionId, DeliveryId> transactionDeliveries) {
+    return givenUserDtoWithRolesAndTransactionDeliveries(
+        Collections.emptySet(), transactionDeliveries);
   }
 
-  private UserDto givenUserDtoWithDeliveryIds(Collection<DeliveryId> deliveryIds) {
-    return givenUserDtoWithRolesTransactionIdsAndDeliveryIds(
-        Collections.emptySet(), Collections.emptyList(), deliveryIds);
-  }
-
-  private UserDto givenUserDtoWithRolesTransactionIdsAndDeliveryIds(
-      Set<Role> roles,
-      Collection<TransactionId> transactionIds,
-      Collection<DeliveryId> deliveryIds) {
+  private UserDto givenUserDtoWithRolesAndTransactionDeliveries(
+      Set<Role> roles, Map<TransactionId, DeliveryId> transactionDeliveries) {
     return new UserDto(
         "aName",
         new BirthDate(LocalDate.now()),
@@ -171,7 +178,12 @@ class UserDtoAssemblerTest {
         "anEmail",
         "aPassword",
         roles,
-        transactionIds,
-        deliveryIds);
+        transactionDeliveries);
+  }
+
+  private Map<TransactionId, DeliveryId> createTransactionDeliveries() {
+    Map<TransactionId, DeliveryId> transactionDeliveries = new HashMap<>();
+    transactionDeliveries.put(A_TRANSACTION_ID, A_DELIVERY_ID);
+    return transactionDeliveries;
   }
 }

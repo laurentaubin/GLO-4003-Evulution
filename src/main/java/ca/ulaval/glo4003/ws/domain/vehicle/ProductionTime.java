@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.InvalidOperationException;
+
 import java.time.Period;
 
 public class ProductionTime {

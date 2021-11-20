@@ -15,7 +15,7 @@ jobs:
       - name : checkout
         uses: actions/checkout@v2
       - name: Build & Deploy
-        run: mvn -B clean install && HEROKU_API_KEY=${{ secrets.HEROKU_AUTH_TOKEN }} mvn clean heroku:deploy
+        run: mvn clean install && HEROKU_API_KEY=${{ secrets.HEROKU_AUTH_TOKEN }} mvn clean heroku:deploy
       - name: Run API Tests
         id: run-newman
         uses: anthonyvscode/newman-action@v1
