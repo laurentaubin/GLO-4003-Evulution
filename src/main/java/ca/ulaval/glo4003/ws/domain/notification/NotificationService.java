@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.DelayType;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.user.UserFinder;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 
 import java.util.HashMap;
@@ -16,11 +17,11 @@ public class NotificationService
         VehicleAssemblyDelayObserver,
         ProductionShutdownObserver {
   private final NotificationIssuer notificationIssuer;
-  private final UserRepository userRepository;
+  private final UserFinder userFinder;
 
-  public NotificationService(NotificationIssuer notificationIssuer, UserRepository userRepository) {
+  public NotificationService(NotificationIssuer notificationIssuer, UserFinder userFinder) {
     this.notificationIssuer = notificationIssuer;
-    this.userRepository = userRepository;
+    this.userFinder = userFinder;
   }
 
   @Override
@@ -52,7 +53,7 @@ public class NotificationService
 
   private User findOrderOwner(Order order) {
     TransactionId transactionId = TransactionId.fromString(order.getId().toString());
-    return userRepository.findUserByTransactionId(transactionId);
+    return userFinder.findUserByTransactionId(transactionId);
   }
 
   private Map<Order, User> findOrderOwners(List<Order> orders) {

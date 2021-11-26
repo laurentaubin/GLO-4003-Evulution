@@ -3,6 +3,8 @@ package ca.ulaval.glo4003.ws.api.transaction;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
+import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import jakarta.annotation.Resource;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -28,7 +30,7 @@ public interface TransactionResource {
   @Path("/{transactionId}/vehicle")
   Response addVehicle(
       @Context ContainerRequestContext containerRequestContext,
-      @PathParam("transactionId") String transactionId,
+      @PathParam("transactionId") TransactionId transactionId,
       VehicleRequest vehicleRequest);
 
   @POST
@@ -37,7 +39,7 @@ public interface TransactionResource {
   @Path("/{transactionId}/battery")
   Response addBattery(
       @Context ContainerRequestContext containerRequestContext,
-      @PathParam("transactionId") String transactionId,
+      @PathParam("transactionId") TransactionId transactionId,
       BatteryRequest batteryRequest);
 
   @POST
@@ -46,6 +48,6 @@ public interface TransactionResource {
   @Path("/{transactionId}/complete")
   Response completeTransaction(
       @Context ContainerRequestContext containerRequestContext,
-      @PathParam("transactionId") String transactionId,
+      @PathParam("transactionId") TransactionId transactionId,
       PaymentRequest paymentRequest);
 }

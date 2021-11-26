@@ -2,13 +2,10 @@ package ca.ulaval.glo4003.ws.api.transaction.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-public class AddedBatteryResponse {
+public class BatteryResponse {
 
   @JsonProperty("estimated_range")
   public BigDecimal estimatedRange;
-
-  public AddedBatteryResponse(BigDecimal estimatedRange) {
-    this.estimatedRange = estimatedRange;
-  }
 }

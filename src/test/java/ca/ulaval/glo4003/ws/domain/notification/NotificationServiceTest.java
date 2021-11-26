@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.UserFinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,14 +25,14 @@ class NotificationServiceTest {
 
   @Mock private Order order;
   @Mock private User user;
-  @Mock private UserRepository userRepository;
+  @Mock private UserFinder userFinder;
   @Mock private NotificationIssuer notificationIssuer;
 
   private NotificationService notificationService;
 
   @BeforeEach
   void setUp() {
-    notificationService = new NotificationService(notificationIssuer, userRepository);
+    notificationService = new NotificationService(notificationIssuer, userFinder);
 
     given(order.getId()).willReturn(ORDER_ID);
   }
@@ -41,7 +41,7 @@ class NotificationServiceTest {
   void
       givenTransactionIdAndFoundUser_whenListenVehicleAssemblyDelay_thenShouldIssueVehicleAssemblyNotification() {
     // given
-    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
+    given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
     notificationService.listenVehicleAssemblyDelay(order);
@@ -54,7 +54,7 @@ class NotificationServiceTest {
   void
       givenTransactionIdAndFoundUser_whenListenModelAssemblyDelay_thenShouldIssueModelAssemblyDelayNotification() {
     // given
-    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
+    given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
     notificationService.listenModelAssemblyDelay(order);
@@ -67,7 +67,7 @@ class NotificationServiceTest {
   void
       givenTransactionIdAndFoundUser_whenListenBatteryAssemblyDelay_thenShouldIssueBatteryAssemblyDelayNotification() {
     // given
-    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
+    given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
     notificationService.listenBatteryAssemblyDelay(order);
@@ -79,7 +79,7 @@ class NotificationServiceTest {
   @Test
   void givenTransactionIdAndFoundUser_whenListenProductionLineShutdown_thenShouldIssueProductionShutdownNotification() {
     // given
-    given(userRepository.findUserByTransactionId(AN_ID)).willReturn(user);
+    given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
     notificationService.listenProductionLineShutdown(new ArrayList<>(List.of(order)));

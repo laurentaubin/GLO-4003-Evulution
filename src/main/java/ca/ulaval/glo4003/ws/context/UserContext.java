@@ -50,9 +50,9 @@ public class UserContext implements Context {
 
   private void registerRepositories() {
     serviceLocator.register(UserDtoAssembler.class, new UserDtoAssembler());
-    serviceLocator.register(
-        UserRepository.class,
-        new InMemoryUserRepository(serviceLocator.resolve(UserDtoAssembler.class)));
+    var userRepository = new InMemoryUserRepository(serviceLocator.resolve(UserDtoAssembler.class));
+    serviceLocator.register(UserRepository.class, userRepository);
+    serviceLocator.register(UserFinder.class, userRepository);
     serviceLocator.register(SessionRepository.class, new InMemorySessionRepository());
   }
 
@@ -66,7 +66,7 @@ public class UserContext implements Context {
     serviceLocator.register(
         SessionAdministrator.class,
         new SessionAdministrator(
-            serviceLocator.resolve(UserRepository.class),
+            serviceLocator.resolve(UserFinder.class),
             serviceLocator.resolve(SessionRepository.class),
             serviceLocator.resolve(SessionFactory.class)));
 

@@ -129,21 +129,21 @@ class UserTest {
   }
 
   @Test
-  void givenTransactionAddedToUser_whenDoesOwnTransaction_thenReturnTrue() {
+  void givenTransactionAddedToUser_whenOwnsTransaction_thenReturnTrue() {
     // given
     user.addTransactionDelivery(transactionId, deliveryId);
 
     // when
-    boolean doesUserOwnTransaction = user.doesOwnTransaction(transactionId);
+    boolean doesUserOwnTransaction = user.ownsTransaction(transactionId);
 
     // then
     assertThat(doesUserOwnTransaction).isTrue();
   }
 
   @Test
-  void givenTransactionNotAddedToUser_whenDoesOwnTransaction_thenReturnFalse() {
+  void givenTransactionNotAddedToUser_whenOwnsTransaction_thenReturnFalse() {
     // when
-    boolean doesUserOwnTransaction = user.doesOwnTransaction(transactionId);
+    boolean doesUserOwnTransaction = user.ownsTransaction(transactionId);
 
     // then
     assertThat(doesUserOwnTransaction).isFalse();

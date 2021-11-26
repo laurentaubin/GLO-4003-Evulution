@@ -62,6 +62,7 @@ class TransactionResourceImplTest {
   @Mock private Session aSession;
   @Mock private VehicleFactory vehicleFactory;
   @Mock private Vehicle aVehicle;
+  @Mock private BatteryResponseAssembler batteryResponseAssembler;
 
   private Transaction transaction;
   private Delivery delivery;
@@ -82,7 +83,8 @@ class TransactionResourceImplTest {
             batteryRequestValidator,
             paymentRequestAssembler,
             paymentRequestValidator,
-            vehicleFactory);
+            vehicleFactory,
+            batteryResponseAssembler);
   }
 
   @Test
@@ -102,7 +104,7 @@ class TransactionResourceImplTest {
   public void whenCreateTransaction_thenRolesAreValidated() {
     // when
     transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(roleHandler)
@@ -166,7 +168,7 @@ class TransactionResourceImplTest {
   public void whenAddVehicle_thenRolesAreValidated() {
     // when
     transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(roleHandler)
@@ -177,7 +179,7 @@ class TransactionResourceImplTest {
   public void givenVehicleRequest_whenAddVehicle_thenValidateRequest() {
     // when
     transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(vehicleRequestValidator).validate(vehicleRequest);
@@ -191,7 +193,7 @@ class TransactionResourceImplTest {
 
     // when
     transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(transactionService).addVehicle(A_TRANSACTION_ID, aVehicle);
@@ -208,7 +210,7 @@ class TransactionResourceImplTest {
     Executable addingBattery =
         () ->
             transactionResource.addVehicle(
-                containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+                containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     assertThrows(TransactionNotFoundException.class, addingBattery);
@@ -222,7 +224,7 @@ class TransactionResourceImplTest {
 
     // when
     transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);
@@ -232,7 +234,7 @@ class TransactionResourceImplTest {
   public void givenTransactionIsOwnedByUser_whenAddBattery_thenBatteryIsAdded() {
     // when
     transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
+        containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
     verify(batteryRequestValidator).validate(batteryRequest);
@@ -249,7 +251,7 @@ class TransactionResourceImplTest {
     Executable addingBattery =
         () ->
             transactionResource.addBattery(
-                containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
+                containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
     assertThrows(TransactionNotFoundException.class, addingBattery);
@@ -260,7 +262,7 @@ class TransactionResourceImplTest {
   public void whenAddBattery_thenRolesAreValidated() {
     // when
     transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
+        containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
     verify(roleHandler)
@@ -274,7 +276,7 @@ class TransactionResourceImplTest {
 
     // when
     transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
+        containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
     verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);
@@ -284,7 +286,7 @@ class TransactionResourceImplTest {
   void whenAddPayment_thenValidatePaymentRequest() {
     // when
     transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+        containerRequestContext, A_TRANSACTION_ID, paymentRequest);
 
     // then
     verify(paymentRequestValidator).validate(paymentRequest);
@@ -297,7 +299,7 @@ class TransactionResourceImplTest {
 
     // when
     transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+        containerRequestContext, A_TRANSACTION_ID, paymentRequest);
 
     // then
     verify(transactionService).addPayment(A_TRANSACTION_ID, payment);
@@ -314,7 +316,7 @@ class TransactionResourceImplTest {
     Executable completingTransaction =
         () ->
             transactionResource.completeTransaction(
-                containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+                containerRequestContext, A_TRANSACTION_ID, paymentRequest);
 
     // then
     assertThrows(TransactionNotFoundException.class, completingTransaction);
@@ -325,7 +327,7 @@ class TransactionResourceImplTest {
   public void whenCompleteTransaction_thenRolesAreValidated() {
     // when
     transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+        containerRequestContext, A_TRANSACTION_ID, paymentRequest);
 
     // then
     verify(roleHandler)
@@ -339,7 +341,7 @@ class TransactionResourceImplTest {
 
     // when
     transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+        containerRequestContext, A_TRANSACTION_ID, paymentRequest);
 
     // then
     verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);

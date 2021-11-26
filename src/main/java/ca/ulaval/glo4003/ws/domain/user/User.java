@@ -80,7 +80,7 @@ public class User {
     throw new NoTransactionLinkedToDeliveryException(deliveryId);
   }
 
-  public boolean doesOwnTransaction(TransactionId transactionId) {
+  public boolean ownsTransaction(TransactionId transactionId) {
     return transactionIdToDeliveryId.containsKey(transactionId);
   }
 

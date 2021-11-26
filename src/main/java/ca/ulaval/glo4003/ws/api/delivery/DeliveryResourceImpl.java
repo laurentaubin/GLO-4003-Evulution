@@ -53,44 +53,35 @@ public class DeliveryResourceImpl implements DeliveryResource {
   @Override
   public Response addDeliveryLocation(
       ContainerRequestContext containerRequestContext,
-      String deliveryId,
+      DeliveryId deliveryId,
       DeliveryLocationRequest deliveryLocationRequest) {
-    DeliveryId serializedDeliveryId = new DeliveryId(deliveryId);
-
     deliveryRequestValidator.validate(deliveryLocationRequest);
     Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
 
-    validateDeliveryOwnership(userSession, serializedDeliveryId);
+    validateDeliveryOwnership(userSession, deliveryId);
 
-    DeliveryDestination deliveryDestination =
-        deliveryDestinationAssembler.assemble(deliveryLocationRequest);
-    deliveryService.addDeliveryDestination(serializedDeliveryId, deliveryDestination);
+    DeliveryDestination deliveryDestination = deliveryDestinationAssembler.assemble(deliveryLocationRequest);
+    deliveryService.addDeliveryDestination(deliveryId, deliveryDestination);
     return Response.accepted().entity(ADD_DELIVERY_MESSAGE).build();
   }
 
   @Override
   public Response completeDelivery(
-      ContainerRequestContext containerRequestContext, String deliveryId) {
+      ContainerRequestContext containerRequestContext, DeliveryId deliveryId) {
     LOGGER.info("Complete delivery");
-
-    DeliveryId serializedDeliveryId = new DeliveryId(deliveryId);
     Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
 
-    validateDeliveryOwnership(userSession, serializedDeliveryId);
-    TransactionId transactionIdLinkedToDelivery =
-        ownershipHandler.retrieveTransactionId(userSession, serializedDeliveryId);
+    validateDeliveryOwnership(userSession, deliveryId);
+    TransactionId transactionId = ownershipHandler.retrieveTransactionId(userSession, deliveryId);
 
-    Receipt receipt = deliveryService.generateTransactionReceipt(transactionIdLinkedToDelivery);
-    CompletedDeliveryResponse completedDeliveryResponse =
-        completedDeliveryResponseAssembler.assemble(
-            receipt.getAmountPerPeriod().toInt(), receipt.getPaymentsLeft());
-    return Response.ok().entity(completedDeliveryResponse).build();
+    Receipt receipt = deliveryService.generateTransactionReceipt(transactionId);
+    CompletedDeliveryResponse deliveryResponse = completedDeliveryResponseAssembler.assemble(receipt);
+    return Response.ok().entity(deliveryResponse).build();
   }
 
   private void validateDeliveryOwnership(Session userSession, DeliveryId deliveryId) {
     try {
       ownershipHandler.validateDeliveryOwnership(userSession, deliveryId);
-
     } catch (WrongOwnerException ignored) {
       throw new DeliveryNotFoundException(deliveryId);
     }

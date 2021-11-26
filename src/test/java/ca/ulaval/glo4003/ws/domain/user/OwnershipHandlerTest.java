@@ -67,7 +67,7 @@ class OwnershipHandlerTest {
   void givenUserIsOwnerOfTransaction_whenValidateTransactionOwnership_thenDoNothing() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.doesOwnTransaction(aTransactionId)).willReturn(true);
+    given(aUser.ownsTransaction(aTransactionId)).willReturn(true);
 
     // when
     Executable validatingOwnership =
@@ -96,7 +96,7 @@ class OwnershipHandlerTest {
       givenUserIsNotOwnerOfTransaction_whenValidateTransactionOwnership_thenThrowWrongOwnerException() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.doesOwnTransaction(aTransactionId)).willReturn(false);
+    given(aUser.ownsTransaction(aTransactionId)).willReturn(false);
 
     // when
     Executable validatingOwnership =

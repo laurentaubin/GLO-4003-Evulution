@@ -5,6 +5,8 @@ import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 
+import java.math.BigDecimal;
+
 public class TransactionService {
 
   private final TransactionRepository transactionRepository;
@@ -35,12 +37,11 @@ public class TransactionService {
     transactionRepository.update(transaction);
   }
 
-  public Transaction addBattery(TransactionId transactionId, String batteryRequestType) {
+  public void addBattery(TransactionId transactionId, String batteryRequestType) {
     Transaction transaction = getTransaction(transactionId);
     Battery battery = batteryRepository.findByType(batteryRequestType);
     transaction.addBattery(battery);
     transactionRepository.update(transaction);
-    return transaction;
   }
 
   public void addPayment(TransactionId transactionId, Payment payment) {
@@ -48,6 +49,11 @@ public class TransactionService {
     transaction.addPayment(payment);
     transactionRepository.update(transaction);
     transactionCompletedObservable.notifyTransactionCompleted(transaction);
+  }
+
+  public BigDecimal getVehicleEstimatedRange(TransactionId transactionId) {
+    Transaction transaction = getTransaction(transactionId);
+    return transaction.computeEstimatedVehicleRange();
   }
 
   private Transaction getTransaction(TransactionId transactionId) {

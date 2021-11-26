@@ -1,16 +1,16 @@
 package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.transaction.CreatedTransactionResponseAssembler;
-import ca.ulaval.glo4003.ws.api.transaction.PaymentRequestAssembler;
-import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
-import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
+import ca.ulaval.glo4003.ws.api.transaction.*;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
 import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
@@ -68,6 +68,7 @@ public class SalesContext implements Context {
             serviceLocator.resolve(BatteryRequestValidator.class),
             serviceLocator.resolve(PaymentRequestAssembler.class),
             serviceLocator.resolve(PaymentRequestValidator.class),
-            serviceLocator.resolve(VehicleFactory.class)));
+            serviceLocator.resolve(VehicleFactory.class),
+                new BatteryResponseAssembler()));
   }
 }

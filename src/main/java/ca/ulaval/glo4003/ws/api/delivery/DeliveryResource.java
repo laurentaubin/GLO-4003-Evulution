@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
@@ -15,7 +16,7 @@ public interface DeliveryResource {
   @Path("/{deliveryId}/location")
   Response addDeliveryLocation(
       @Context ContainerRequestContext containerRequestContext,
-      @PathParam("deliveryId") String deliveryId,
+      @PathParam("deliveryId") DeliveryId deliveryId,
       DeliveryLocationRequest deliveryLocationRequest);
 
   @POST
@@ -23,5 +24,6 @@ public interface DeliveryResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{deliveryId}/complete")
   Response completeDelivery(
-      ContainerRequestContext containerRequestContext, @PathParam("deliveryId") String deliveryId);
+      @Context ContainerRequestContext containerRequestContext,
+      @PathParam("deliveryId") DeliveryId deliveryId);
 }

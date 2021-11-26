@@ -11,6 +11,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.verify;
 class TransactionServiceTest {
   private static final TransactionId AN_ID = new TransactionId("id");
   private static final String A_BATTERY_TYPE = "STANDARD";
+  private static final BigDecimal A_RANGE = BigDecimal.ONE;
 
   @Mock private TransactionRepository transactionRepository;
   @Mock private TransactionFactory transactionFactory;
@@ -162,6 +165,19 @@ class TransactionServiceTest {
 
     // then
     verify(transactionCompletedObservable).notifyTransactionCompleted(transaction);
+  }
+
+  @Test
+  public void givenTransactionId_whenGetVehicleEstimatedRange_thenReturnRange() {
+    // given
+    givenATransactionReadyToBeCompleted();
+    given(aVehicle.computeRange()).willReturn(A_RANGE);
+
+    // when
+    var result = transactionService.getVehicleEstimatedRange(AN_ID);
+
+    // then
+    assertThat(result).isEqualTo(A_RANGE);
   }
 
   private void givenATransactionReadyToBeCompleted() {

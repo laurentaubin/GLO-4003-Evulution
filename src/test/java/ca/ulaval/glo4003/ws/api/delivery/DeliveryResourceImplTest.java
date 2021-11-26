@@ -79,7 +79,7 @@ class DeliveryResourceImplTest {
     DeliveryLocationRequest request = createDeliveryLocationRequest();
 
     // when
-    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
     verify(deliveryRequestValidator).validate(request);
@@ -93,7 +93,7 @@ class DeliveryResourceImplTest {
     given(deliveryDestinationAssembler.assemble(request)).willReturn(deliveryDestination);
 
     // when
-    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
     verify(deliveryService).addDeliveryDestination(AN_ID, deliveryDestination);
@@ -110,7 +110,7 @@ class DeliveryResourceImplTest {
     Executable addingLocation =
         () ->
             deliveryResource.addDeliveryLocation(
-                containerRequestContext, AN_ID.toString(), invalidRequest);
+                containerRequestContext, AN_ID, invalidRequest);
 
     // then
     assertThrows(InvalidFormatException.class, addingLocation);
@@ -126,7 +126,7 @@ class DeliveryResourceImplTest {
 
     // when
     Response response =
-        deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
+        deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
     assertThat(response.getStatus()).isEqualTo(Status.ACCEPTED.getStatusCode());
@@ -139,7 +139,7 @@ class DeliveryResourceImplTest {
     DeliveryLocationRequest request = createDeliveryLocationRequest();
 
     // when
-    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
     verify(roleHandler)
@@ -153,7 +153,7 @@ class DeliveryResourceImplTest {
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
 
     // when
-    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID.toString(), request);
+    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
     verify(ownershipHandler).validateDeliveryOwnership(aSession, AN_ID);
@@ -173,7 +173,7 @@ class DeliveryResourceImplTest {
     Executable addingDeliveryLocation =
         () ->
             deliveryResource.addDeliveryLocation(
-                containerRequestContext, AN_ID.toString(), request);
+                containerRequestContext, AN_ID, request);
 
     // then
     assertThrows(DeliveryNotFoundException.class, addingDeliveryLocation);
@@ -185,11 +185,10 @@ class DeliveryResourceImplTest {
     given(deliveryService.generateTransactionReceipt(any())).willReturn(A_RECEIPT);
 
     // when
-    deliveryResource.completeDelivery(containerRequestContext, AN_ID.toString());
+    deliveryResource.completeDelivery(containerRequestContext, AN_ID);
 
     // then
-    verify(completedDeliveryResponseAssembler)
-        .assemble(A_RECEIPT.getAmountPerPeriod().toInt(), A_RECEIPT.getPaymentsLeft());
+    verify(completedDeliveryResponseAssembler).assemble(A_RECEIPT);
   }
 
   @Test
@@ -198,7 +197,7 @@ class DeliveryResourceImplTest {
     given(deliveryService.generateTransactionReceipt(any())).willReturn(A_RECEIPT);
 
     // when
-    deliveryResource.completeDelivery(containerRequestContext, AN_ID.toString());
+    deliveryResource.completeDelivery(containerRequestContext, AN_ID);
 
     // then
     verify(roleHandler)

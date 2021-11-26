@@ -21,7 +21,6 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +39,7 @@ public class TransactionResourceImpl implements TransactionResource {
   private final PaymentRequestAssembler paymentRequestAssembler;
   private final PaymentRequestValidator paymentRequestValidator;
   private final VehicleFactory vehicleFactory;
+  private final BatteryResponseAssembler batteryResponseAssembler;
 
   public TransactionResourceImpl(
       TransactionService transactionService,
@@ -51,7 +51,8 @@ public class TransactionResourceImpl implements TransactionResource {
       BatteryRequestValidator batteryRequestValidator,
       PaymentRequestAssembler paymentRequestAssembler,
       PaymentRequestValidator paymentRequestValidator,
-      VehicleFactory vehicleFactory) {
+      VehicleFactory vehicleFactory,
+      BatteryResponseAssembler batteryResponseAssembler) {
     this.transactionService = transactionService;
     this.deliveryService = deliveryService;
     this.ownershipHandler = ownershipHandler;
@@ -62,6 +63,7 @@ public class TransactionResourceImpl implements TransactionResource {
     this.paymentRequestAssembler = paymentRequestAssembler;
     this.paymentRequestValidator = paymentRequestValidator;
     this.vehicleFactory = vehicleFactory;
+    this.batteryResponseAssembler = batteryResponseAssembler;
   }
 
   @Override
@@ -80,44 +82,45 @@ public class TransactionResourceImpl implements TransactionResource {
   @Override
   public Response addVehicle(
       ContainerRequestContext containerRequestContext,
-      String transactionId,
+      TransactionId transactionId,
       VehicleRequest vehicleRequest) {
     vehicleRequestValidator.validate(vehicleRequest);
+    validateTransactionOwnership(containerRequestContext, transactionId);
 
-    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
     transactionService.addVehicle(
-        TransactionId.fromString(transactionId),
+        transactionId,
         vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()));
+
     return Response.accepted().build();
   }
 
   @Override
   public Response addBattery(
       ContainerRequestContext containerRequestContext,
-      String transactionId,
+      TransactionId transactionId,
       BatteryRequest batteryRequest) {
     batteryRequestValidator.validate(batteryRequest);
-    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
+    validateTransactionOwnership(containerRequestContext, transactionId);
 
-    Transaction transaction =
-        transactionService.addBattery(
-            TransactionId.fromString(transactionId), batteryRequest.getType());
-    BigDecimal batteryEstimatedRange =
-        transaction.computeEstimatedVehicleRange().setScale(2, RoundingMode.HALF_UP);
-    AddedBatteryResponse batteryResponse = new AddedBatteryResponse(batteryEstimatedRange);
+    transactionService.addBattery(transactionId, batteryRequest.getType());
+
+    BigDecimal estimatedRange = transactionService.getVehicleEstimatedRange(transactionId);
+    BatteryResponse batteryResponse = batteryResponseAssembler.assemble(estimatedRange);
+
     return Response.accepted().entity(batteryResponse).build();
   }
 
   @Override
   public Response completeTransaction(
       ContainerRequestContext containerRequestContext,
-      String transactionId,
+      TransactionId transactionId,
       PaymentRequest paymentRequest) {
     paymentRequestValidator.validate(paymentRequest);
-    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
+    validateTransactionOwnership(containerRequestContext, transactionId);
 
     Payment payment = paymentRequestAssembler.create(paymentRequest);
-    transactionService.addPayment(TransactionId.fromString(transactionId), payment);
+    transactionService.addPayment(transactionId, payment);
+
     return Response.ok().build();
   }
 
@@ -125,6 +128,7 @@ public class TransactionResourceImpl implements TransactionResource {
     Delivery createdDelivery = deliveryService.createDelivery();
     ownershipHandler.mapDeliveryIdToTransactionId(
         userSession, transactionId, createdDelivery.getDeliveryId());
+
     return createdDelivery;
   }
 
@@ -133,7 +137,6 @@ public class TransactionResourceImpl implements TransactionResource {
     Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
     try {
       ownershipHandler.validateTransactionOwnership(userSession, transactionId);
-
     } catch (WrongOwnerException ignored) {
       throw new TransactionNotFoundException(transactionId);
     }

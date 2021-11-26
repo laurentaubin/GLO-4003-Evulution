@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.context;
 import ca.ulaval.glo4003.ws.context.exception.CouldNotLoadPropertiesFileException;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationIssuer;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
+import ca.ulaval.glo4003.ws.domain.user.UserFinder;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContent;
@@ -55,7 +56,7 @@ public class NotificationContext implements Context {
         NotificationService.class,
         new NotificationService(
             serviceLocator.resolve(NotificationIssuer.class),
-            serviceLocator.resolve(UserRepository.class)));
+            serviceLocator.resolve(UserFinder.class)));
   }
 
   private Session createEmailNotificationSession() {

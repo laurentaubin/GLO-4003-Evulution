@@ -21,7 +21,7 @@ public class OwnershipHandler {
 
   public void validateTransactionOwnership(Session session, TransactionId transactionId) {
     User user = userRepository.findUser(session.getEmail());
-    if (!user.doesOwnTransaction(transactionId)) {
+    if (!user.ownsTransaction(transactionId)) {
       throw new WrongOwnerException();
     }
   }

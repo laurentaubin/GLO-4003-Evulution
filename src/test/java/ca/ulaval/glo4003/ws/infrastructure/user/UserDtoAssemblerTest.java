@@ -124,7 +124,7 @@ class UserDtoAssemblerTest {
     User user = assembler.assemble(userDto);
 
     // then
-    assertThat(user.doesOwnTransaction(A_TRANSACTION_ID)).isTrue();
+    assertThat(user.ownsTransaction(A_TRANSACTION_ID)).isTrue();
   }
 
   @Test
