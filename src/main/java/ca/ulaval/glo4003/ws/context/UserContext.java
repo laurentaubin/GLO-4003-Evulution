@@ -8,10 +8,7 @@ import ca.ulaval.glo4003.ws.api.shared.LocalDateWrapper;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserAssembler;
-import ca.ulaval.glo4003.ws.api.user.UserResource;
-import ca.ulaval.glo4003.ws.api.user.UserResourceImpl;
 import ca.ulaval.glo4003.ws.api.user.validator.BirthDateValidator;
-import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
@@ -20,7 +17,6 @@ import ca.ulaval.glo4003.ws.domain.user.*;
 import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.UserDtoAssembler;
-import jakarta.validation.Validation;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +34,6 @@ public class UserContext implements Context {
     registerSessionServices();
     registerFilters();
     registerUserServices();
-    registerResources();
   }
 
   private void registerLocalDateProvider() {
@@ -49,8 +44,7 @@ public class UserContext implements Context {
   }
 
   private void registerRepositories() {
-    serviceLocator.register(UserDtoAssembler.class, new UserDtoAssembler());
-    var userRepository = new InMemoryUserRepository(serviceLocator.resolve(UserDtoAssembler.class));
+    var userRepository = new InMemoryUserRepository(new UserDtoAssembler());
     serviceLocator.register(UserRepository.class, userRepository);
     serviceLocator.register(UserFinder.class, userRepository);
     serviceLocator.register(SessionRepository.class, new InMemorySessionRepository());
@@ -94,35 +88,16 @@ public class UserContext implements Context {
 
   private void registerUserServices() {
     var dateParser = new DateParser(DateTimeFormatter.ofPattern(BIRTH_DATE_PATTERN));
-    var defaultValidator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    serviceLocator.register(
-        UserService.class,
-        new UserService(
-            serviceLocator.resolve(UserRepository.class),
-            serviceLocator.resolve(SessionAdministrator.class)));
+    serviceLocator.register(UserService.class, new UserService());
 
     serviceLocator.register(
         BirthDateValidator.class,
         new BirthDateValidator(
             BIRTH_DATE_PATTERN, serviceLocator.resolve(LocalDateProvider.class)));
     serviceLocator.register(UserAssembler.class, new UserAssembler(dateParser));
-    serviceLocator.register(
-        RegisterUserDtoValidator.class,
-        new RegisterUserDtoValidator(
-            defaultValidator, serviceLocator.resolve(BirthDateValidator.class)));
     serviceLocator.register(LoginResponseAssembler.class, new LoginResponseAssembler());
     createCatherinesAccount();
-  }
-
-  private void registerResources() {
-    serviceLocator.register(
-        UserResource.class,
-        new UserResourceImpl(
-            serviceLocator.resolve(UserAssembler.class),
-            serviceLocator.resolve(LoginResponseAssembler.class),
-            serviceLocator.resolve(UserService.class),
-            serviceLocator.resolve(RegisterUserDtoValidator.class)));
   }
 
   private static void createCatherinesAccount() {

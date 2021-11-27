@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.api.delivery.dto.CompletedDeliveryResponse;
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
@@ -16,13 +17,15 @@ import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DeliveryResourceImpl implements DeliveryResource {
   private static final Logger LOGGER = LogManager.getLogger();
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   public static final String ADD_DELIVERY_MESSAGE = "Delivery location successfully added";
   private static final List<Role> PRIVILEGED_ROLES =
@@ -34,6 +37,16 @@ public class DeliveryResourceImpl implements DeliveryResource {
   private final CompletedDeliveryResponseAssembler completedDeliveryResponseAssembler;
   private final OwnershipHandler ownershipHandler;
   private final RoleHandler roleHandler;
+
+  public DeliveryResourceImpl() {
+    this(
+        serviceLocator.resolve(DeliveryService.class),
+        new DeliveryRequestValidator(),
+        new DeliveryDestinationAssembler(),
+        new CompletedDeliveryResponseAssembler(),
+        serviceLocator.resolve(OwnershipHandler.class),
+        serviceLocator.resolve(RoleHandler.class));
+  }
 
   public DeliveryResourceImpl(
       DeliveryService deliveryService,
@@ -60,7 +73,8 @@ public class DeliveryResourceImpl implements DeliveryResource {
 
     validateDeliveryOwnership(userSession, deliveryId);
 
-    DeliveryDestination deliveryDestination = deliveryDestinationAssembler.assemble(deliveryLocationRequest);
+    DeliveryDestination deliveryDestination =
+        deliveryDestinationAssembler.assemble(deliveryLocationRequest);
     deliveryService.addDeliveryDestination(deliveryId, deliveryDestination);
     return Response.accepted().entity(ADD_DELIVERY_MESSAGE).build();
   }
@@ -75,7 +89,8 @@ public class DeliveryResourceImpl implements DeliveryResource {
     TransactionId transactionId = ownershipHandler.retrieveTransactionId(userSession, deliveryId);
 
     Receipt receipt = deliveryService.generateTransactionReceipt(transactionId);
-    CompletedDeliveryResponse deliveryResponse = completedDeliveryResponseAssembler.assemble(receipt);
+    CompletedDeliveryResponse deliveryResponse =
+        completedDeliveryResponseAssembler.assemble(receipt);
     return Response.ok().entity(deliveryResponse).build();
   }
 

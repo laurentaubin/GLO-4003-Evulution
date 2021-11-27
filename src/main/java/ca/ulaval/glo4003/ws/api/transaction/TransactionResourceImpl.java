@@ -5,6 +5,7 @@ import ca.ulaval.glo4003.ws.api.transaction.dto.*;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
@@ -13,6 +14,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.user.Role;
@@ -28,6 +30,7 @@ import java.util.List;
 public class TransactionResourceImpl implements TransactionResource {
   private static final List<Role> PRIVILEGED_ROLES =
       new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   private final TransactionService transactionService;
   private final DeliveryService deliveryService;
@@ -40,6 +43,21 @@ public class TransactionResourceImpl implements TransactionResource {
   private final PaymentRequestValidator paymentRequestValidator;
   private final VehicleFactory vehicleFactory;
   private final BatteryResponseAssembler batteryResponseAssembler;
+
+  public TransactionResourceImpl() {
+    this(
+        serviceLocator.resolve(TransactionService.class),
+        serviceLocator.resolve(DeliveryService.class),
+        serviceLocator.resolve(OwnershipHandler.class),
+        new CreatedTransactionResponseAssembler(),
+        new VehicleRequestValidator(),
+        serviceLocator.resolve(RoleHandler.class),
+        new BatteryRequestValidator(),
+        new PaymentRequestAssembler(new BankAccountFactory()),
+        new PaymentRequestValidator(),
+        serviceLocator.resolve(VehicleFactory.class),
+        new BatteryResponseAssembler());
+  }
 
   public TransactionResourceImpl(
       TransactionService transactionService,
@@ -88,8 +106,7 @@ public class TransactionResourceImpl implements TransactionResource {
     validateTransactionOwnership(containerRequestContext, transactionId);
 
     transactionService.addVehicle(
-        transactionId,
-        vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()));
+        transactionId, vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()));
 
     return Response.accepted().build();
   }
