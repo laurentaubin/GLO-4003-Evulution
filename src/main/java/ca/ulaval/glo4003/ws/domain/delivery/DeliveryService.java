@@ -1,29 +1,18 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
-import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotReadyException;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
-
 import java.util.List;
 
 public class DeliveryService {
-  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private final DeliveryFactory deliveryFactory;
   private final DeliveryRepository deliveryRepository;
   private final PaymentService paymentService;
   private final OrderRepository orderRepository;
-
-  public DeliveryService() {
-    this(
-        serviceLocator.resolve(DeliveryFactory.class),
-        serviceLocator.resolve(DeliveryRepository.class),
-        serviceLocator.resolve(PaymentService.class),
-        serviceLocator.resolve(OrderRepository.class));
-  }
 
   public DeliveryService(
       DeliveryFactory deliveryFactory,

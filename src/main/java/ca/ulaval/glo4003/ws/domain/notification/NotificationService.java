@@ -1,11 +1,11 @@
 package ca.ulaval.glo4003.ws.domain.notification;
 
-import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.assembly.DelayType;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,14 +16,8 @@ public class NotificationService
         BatteryAssemblyDelayObserver,
         VehicleAssemblyDelayObserver,
         ProductionShutdownObserver {
-  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private final NotificationIssuer notificationIssuer;
   private final UserFinder userFinder;
-
-  public NotificationService() {
-    this(
-        serviceLocator.resolve(NotificationIssuer.class), serviceLocator.resolve(UserFinder.class));
-  }
 
   public NotificationService(NotificationIssuer notificationIssuer, UserFinder userFinder) {
     this.notificationIssuer = notificationIssuer;

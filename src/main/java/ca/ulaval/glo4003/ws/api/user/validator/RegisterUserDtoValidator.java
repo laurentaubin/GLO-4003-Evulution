@@ -2,24 +2,14 @@ package ca.ulaval.glo4003.ws.api.user.validator;
 
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.dto.RegisterUserDto;
-import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-
 import java.util.Set;
 
 public class RegisterUserDtoValidator {
-  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   private final Validator userDtoValidator;
   private final BirthDateValidator birthDateValidator;
-
-  public RegisterUserDtoValidator() {
-    this(
-        Validation.buildDefaultValidatorFactory().getValidator(),
-        serviceLocator.resolve(BirthDateValidator.class));
-  }
 
   public RegisterUserDtoValidator(Validator fieldValidator, BirthDateValidator birthDateValidator) {
     this.userDtoValidator = fieldValidator;

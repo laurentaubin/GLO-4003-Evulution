@@ -1,6 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
-import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
@@ -9,20 +8,11 @@ import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import java.math.BigDecimal;
 
 public class TransactionService {
-  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   private final TransactionRepository transactionRepository;
   private final TransactionFactory transactionFactory;
   private final BatteryRepository batteryRepository;
   private final TransactionCompletedObservable transactionCompletedObservable;
-
-  public TransactionService() {
-    this(
-        serviceLocator.resolve(TransactionRepository.class),
-        serviceLocator.resolve(TransactionFactory.class),
-        serviceLocator.resolve(BatteryRepository.class),
-        serviceLocator.resolve(TransactionCompletedObservable.class));
-  }
 
   public TransactionService(
       TransactionRepository transactionRepository,
