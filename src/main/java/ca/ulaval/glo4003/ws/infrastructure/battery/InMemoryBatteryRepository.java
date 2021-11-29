@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.infrastructure.battery;
 
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.exception.InvalidBatteryException;
@@ -10,6 +11,10 @@ import java.util.stream.Collectors;
 public class InMemoryBatteryRepository implements BatteryRepository {
   private final Map<String, BatteryDto> existingBatteries;
   private final BatteryAssembler batteryAssembler;
+
+  public InMemoryBatteryRepository(Map<String, BatteryDto> batteries) {
+    this(batteries, new BatteryAssembler());
+  }
 
   public InMemoryBatteryRepository(
       Map<String, BatteryDto> batteries, BatteryAssembler batteryAssembler) {

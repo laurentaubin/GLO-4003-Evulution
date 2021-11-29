@@ -5,16 +5,20 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryTransactionRepository implements TransactionRepository {
 
-  private final Map<TransactionId, TransactionDto> transactions;
+  private final Map<TransactionId, TransactionDto> transactions = new HashMap<>();
   private final TransactionAssembler transactionAssembler;
 
+  public InMemoryTransactionRepository() {
+    this(new TransactionAssembler());
+  }
+
   public InMemoryTransactionRepository(TransactionAssembler transactionAssembler) {
-    transactions = new HashMap<>();
     this.transactionAssembler = transactionAssembler;
   }
 

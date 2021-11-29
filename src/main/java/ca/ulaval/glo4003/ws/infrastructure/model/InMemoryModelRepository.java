@@ -11,6 +11,10 @@ public class InMemoryModelRepository implements ModelRepository {
   private final Map<String, ModelDto> models;
   private final ModelAssembler modelAssembler;
 
+  public InMemoryModelRepository(Map<String, ModelDto> models) {
+    this(models, new ModelAssembler());
+  }
+
   public InMemoryModelRepository(Map<String, ModelDto> models, ModelAssembler modelAssembler) {
     this.models = models;
     this.modelAssembler = modelAssembler;

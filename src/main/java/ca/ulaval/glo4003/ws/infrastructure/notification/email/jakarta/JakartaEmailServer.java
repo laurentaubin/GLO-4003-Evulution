@@ -13,6 +13,10 @@ public class JakartaEmailServer implements EmailServer {
   private final MessageFactory messageFactory;
   private final TransportWrapper transportWrapper;
 
+  public JakartaEmailServer(MessageFactory messageFactory) {
+    this(messageFactory, new TransportWrapper());
+  }
+
   public JakartaEmailServer(MessageFactory messageFactory, TransportWrapper transportWrapper) {
     this.messageFactory = messageFactory;
     this.transportWrapper = transportWrapper;

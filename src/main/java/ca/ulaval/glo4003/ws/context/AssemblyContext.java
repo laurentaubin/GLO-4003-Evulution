@@ -34,11 +34,11 @@ import ca.ulaval.glo4003.ws.infrastructure.assembly.model.InMemoryModelInventory
 import java.util.*;
 
 public class AssemblyContext implements Context {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
+
   private static final String VEHICLE_PRODUCTION_LINE_MODE = "vehicleProductionLineMode";
   private static final List<String> MODEL_ASSEMBLY_ORDER_BY_NAME =
       List.of("Desjardins", "Vandry", "Pouliot");
-
-  public static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   @Override
   public void registerContext() {

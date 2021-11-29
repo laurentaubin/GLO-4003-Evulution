@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.api.filter.secured;
 
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
@@ -17,13 +18,20 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
-  private String authorizationHeaderName;
-  private SessionAdministrator sessionAdministrator;
-  private SessionTokenGenerator sessionTokenGenerator;
-  private TokenExtractor tokenExtractor;
+  private final String authorizationHeaderName;
+  private final SessionAdministrator sessionAdministrator;
+  private final SessionTokenGenerator sessionTokenGenerator;
+  private final TokenExtractor tokenExtractor;
 
-  private AuthenticationFilter() {}
+  public AuthenticationFilter(String authorizationHeaderName) {
+    this(
+        authorizationHeaderName,
+        serviceLocator.resolve(SessionAdministrator.class),
+        serviceLocator.resolve(SessionTokenGenerator.class),
+        serviceLocator.resolve(TokenExtractor.class));
+  }
 
   public AuthenticationFilter(
       String authorizationHeaderName,

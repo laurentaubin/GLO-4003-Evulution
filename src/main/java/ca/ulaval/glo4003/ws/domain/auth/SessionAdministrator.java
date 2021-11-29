@@ -1,19 +1,25 @@
 package ca.ulaval.glo4003.ws.domain.auth;
 
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
-import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 
 public class SessionAdministrator {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   private final UserFinder userFinder;
   private final SessionRepository sessionRepository;
   private final SessionFactory sessionFactory;
 
+  public SessionAdministrator() {
+    this(
+        serviceLocator.resolve(UserFinder.class),
+        serviceLocator.resolve(SessionRepository.class),
+        serviceLocator.resolve(SessionFactory.class));
+  }
+
   public SessionAdministrator(
-      UserFinder userFinder,
-      SessionRepository sessionRepository,
-      SessionFactory sessionFactory) {
+      UserFinder userFinder, SessionRepository sessionRepository, SessionFactory sessionFactory) {
     this.userFinder = userFinder;
     this.sessionRepository = sessionRepository;
     this.sessionFactory = sessionFactory;

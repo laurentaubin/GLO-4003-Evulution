@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.infrastructure.notification.email;
 
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.assembly.DelayType;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationIssuer;
@@ -10,10 +11,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class EmailNotificationIssuer implements NotificationIssuer {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final String notificationEmailAddress;
   private final NotificationEmailFactory notificationEmailFactory;
+
+  public EmailNotificationIssuer(String notificationEmailAddress) {
+    this(notificationEmailAddress, serviceLocator.resolve(NotificationEmailFactory.class));
+  }
 
   public EmailNotificationIssuer(
       String notificationEmailAddress, NotificationEmailFactory notificationEmailFactory) {

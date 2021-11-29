@@ -11,12 +11,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InMemoryUserRepository implements UserRepository, UserFinder {
-  private final Map<String, UserDto> users;
+  private final Map<String, UserDto> users = new HashMap<>();
   private final UserDtoAssembler userDtoAssembler;
+
+  public InMemoryUserRepository() {
+    this(new UserDtoAssembler());
+  }
 
   public InMemoryUserRepository(UserDtoAssembler userDtoAssembler) {
     this.userDtoAssembler = userDtoAssembler;
-    users = new HashMap<>();
   }
 
   @Override
