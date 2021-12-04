@@ -4,15 +4,12 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.order.InMemoryOrderRepository;
-import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.battery.BatteryDto;
 import ca.ulaval.glo4003.ws.infrastructure.battery.InMemoryBatteryRepository;
 import ca.ulaval.glo4003.ws.infrastructure.model.InMemoryModelRepository;
-import ca.ulaval.glo4003.ws.infrastructure.model.ModelAssembler;
 import ca.ulaval.glo4003.ws.infrastructure.model.ModelDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,11 +30,13 @@ public class InventoryContext implements Context {
   }
 
   private void registerBatteryInventory() {
-    serviceLocator.register(BatteryRepository.class, new InMemoryBatteryRepository(setupBatteryInventory()));
+    serviceLocator.register(
+        BatteryRepository.class, new InMemoryBatteryRepository(setupBatteryInventory()));
   }
 
   private void registerModelInventory() {
-    serviceLocator.register(ModelRepository.class, new InMemoryModelRepository(setUpModelInventory()));
+    serviceLocator.register(
+        ModelRepository.class, new InMemoryModelRepository(setUpModelInventory()));
   }
 
   private void registerOrderRepository() {

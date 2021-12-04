@@ -4,7 +4,7 @@ import ca.ulaval.glo4003.ws.api.shared.exception.EmptyTokenHeaderException;
 
 public class TokenExtractor {
 
-  String authorizationHeaderName;
+  private final String authorizationHeaderName;
 
   public TokenExtractor(String authorizationHeaderName) {
     this.authorizationHeaderName = authorizationHeaderName;

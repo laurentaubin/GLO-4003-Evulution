@@ -1,6 +1,5 @@
 package ca.ulaval.glo4003.ws.infrastructure.battery;
 
-import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.exception.InvalidBatteryException;

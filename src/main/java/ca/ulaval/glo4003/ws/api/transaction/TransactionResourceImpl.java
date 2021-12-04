@@ -1,7 +1,11 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.transaction.dto.*;
+import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryResponse;
+import ca.ulaval.glo4003.ws.api.transaction.dto.CreatedTransactionResponse;
+import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
+import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
@@ -21,7 +25,6 @@ import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
-
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;

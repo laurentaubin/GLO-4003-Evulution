@@ -6,7 +6,6 @@ import ca.ulaval.glo4003.ws.domain.production.ProductionLineService;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
-
 import java.util.ArrayList;
 import java.util.List;
 

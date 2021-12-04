@@ -10,13 +10,13 @@ import jakarta.ws.rs.core.Response;
 
 @Path("/productions")
 public interface ProductionLineResource {
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/shutdown")
-    Response shutdown(@Context ContainerRequestContext containerRequestContext);
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/shutdown")
+  Response shutdown(@Context ContainerRequestContext containerRequestContext);
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/reactivate")
-    Response reactivate(@Context ContainerRequestContext containerRequestContext);
+  @POST
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/reactivate")
+  Response reactivate(@Context ContainerRequestContext containerRequestContext);
 }

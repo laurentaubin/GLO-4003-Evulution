@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.transaction.payment;
 
 import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidFrequencyException;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 

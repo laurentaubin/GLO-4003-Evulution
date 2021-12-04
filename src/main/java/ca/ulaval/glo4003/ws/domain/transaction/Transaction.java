@@ -7,7 +7,6 @@ import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.ReceiptFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
-
 import java.math.BigDecimal;
 
 public class Transaction {

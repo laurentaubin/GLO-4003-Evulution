@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.ws.api.transaction;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
-import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import jakarta.annotation.Resource;
 import jakarta.ws.rs.Consumes;

@@ -11,8 +11,6 @@ import ca.ulaval.glo4003.ws.api.user.UserResourceImpl;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 public class ApplicationBinder extends AbstractBinder {
-  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
-
   @Override
   protected void configure() {
     bind(new UserResourceImpl()).to(UserResource.class);

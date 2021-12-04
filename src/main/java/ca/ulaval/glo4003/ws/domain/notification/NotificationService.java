@@ -6,7 +6,6 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +51,8 @@ public class NotificationService
   public void listenProductionLineShutdown(List<Order> orders) {
     Map<Order, User> orderUserMap = findOrderOwners(orders);
     orderUserMap.forEach(
-        (order, user) -> {
-          notificationIssuer.issueDelayNotification(user, order, DelayType.PRODUCTION_SHUTDOWN);
-        });
+        (order, user) ->
+            notificationIssuer.issueDelayNotification(user, order, DelayType.PRODUCTION_SHUTDOWN));
   }
 
   private User findOrderOwner(Order order) {

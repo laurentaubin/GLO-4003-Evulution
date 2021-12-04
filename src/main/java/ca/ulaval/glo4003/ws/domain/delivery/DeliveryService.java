@@ -7,7 +7,6 @@ import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotReadyException;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
-
 import java.util.List;
 
 public class DeliveryService {

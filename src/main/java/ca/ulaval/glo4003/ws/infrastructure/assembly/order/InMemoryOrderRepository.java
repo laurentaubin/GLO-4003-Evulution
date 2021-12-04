@@ -4,7 +4,6 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.assembly.order.exception.OrderNotFoundException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +41,6 @@ public class InMemoryOrderRepository implements OrderRepository {
   }
 
   private Optional<Order> findById(OrderId orderId) {
-    return orders.values().stream().filter(order -> orderId.equals(orderId)).findFirst();
+    return orders.values().stream().filter(order -> order.getId().equals(orderId)).findFirst();
   }
 }

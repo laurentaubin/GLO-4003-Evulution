@@ -9,7 +9,6 @@ import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserService;
 import jakarta.ws.rs.core.Response;
-
 import java.net.URI;
 
 public class UserResourceImpl implements UserResource {

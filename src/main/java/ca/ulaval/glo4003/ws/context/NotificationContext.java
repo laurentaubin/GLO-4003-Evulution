@@ -10,16 +10,14 @@ import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailServer;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.NotificationEmailFactory;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.JakartaEmailServer;
 import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.MessageFactory;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.TransportWrapper;
-
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 
 public class NotificationContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -35,17 +33,14 @@ public class NotificationContext implements Context {
   private void registerJakartaEmailServer() {
     Session emailNotificationSession = createEmailNotificationSession();
     serviceLocator.register(
-        EmailServer.class,
-        new JakartaEmailServer(
-            new MessageFactory(emailNotificationSession)));
+        EmailServer.class, new JakartaEmailServer(new MessageFactory(emailNotificationSession)));
   }
 
   private void registerEmailNotificationSystem() {
-    serviceLocator.register(NotificationEmailFactory.class,
-        new NotificationEmailFactory(createEmailContents()));
     serviceLocator.register(
-        NotificationIssuer.class,
-        new EmailNotificationIssuer(NOTIFICATION_EMAIL_ADDRESS));
+        NotificationEmailFactory.class, new NotificationEmailFactory(createEmailContents()));
+    serviceLocator.register(
+        NotificationIssuer.class, new EmailNotificationIssuer(NOTIFICATION_EMAIL_ADDRESS));
     serviceLocator.register(NotificationService.class, new NotificationService());
   }
 

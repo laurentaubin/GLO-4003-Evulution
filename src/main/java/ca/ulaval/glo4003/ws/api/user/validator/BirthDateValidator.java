@@ -4,7 +4,6 @@ import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.exception.BirthDateInTheFutureException;
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

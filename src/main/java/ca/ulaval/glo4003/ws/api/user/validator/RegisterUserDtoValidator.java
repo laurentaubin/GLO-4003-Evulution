@@ -6,7 +6,6 @@ import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-
 import java.util.Set;
 
 public class RegisterUserDtoValidator {
