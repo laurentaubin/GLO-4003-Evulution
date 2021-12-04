@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 
 public class ModelOrderBuilder {

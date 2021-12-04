@@ -1,10 +1,10 @@
 package ca.ulaval.glo4003.ws.context;
 
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
+import ca.ulaval.glo4003.ws.service.AssemblyLineService;
 
 public class SalesContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -18,7 +18,7 @@ public class SalesContext implements Context {
     // TODO extend TransactionCompleted Observable instead of injecting
     TransactionCompletedObservable txCompletedObservable = new TransactionCompletedObservable();
     serviceLocator.register(TransactionCompletedObservable.class, txCompletedObservable);
-    txCompletedObservable.register(serviceLocator.resolve(AssemblyLine.class));
+    txCompletedObservable.register(serviceLocator.resolve(AssemblyLineService.class));
 
     serviceLocator.register(TransactionFactory.class, new TransactionFactory());
     serviceLocator.register(VehicleFactory.class, new VehicleFactory());

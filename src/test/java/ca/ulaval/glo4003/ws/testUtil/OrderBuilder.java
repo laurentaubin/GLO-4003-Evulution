@@ -1,18 +1,17 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
+import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class OrderBuilder {
   private OrderId orderId = new OrderId(UUID.randomUUID().toString());
-  private Model model = new ModelBuilder().build();
-  private Battery battery = new BatteryBuilder().build();
+  private ModelOrder modelOrder = new ModelOrderBuilder().build();
+  private BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
   private LocalDate createdAt = LocalDate.now();
   private ProductionTime initialProductionTime = new ProductionTime(3);
 
@@ -21,13 +20,13 @@ public class OrderBuilder {
     return this;
   }
 
-  public OrderBuilder withModel(Model model) {
-    this.model = model;
+  public OrderBuilder withModelOrder(ModelOrder modelOrder) {
+    this.modelOrder = modelOrder;
     return this;
   }
 
-  public OrderBuilder withBattery(Battery battery) {
-    this.battery = battery;
+  public OrderBuilder withBatteryOrder(BatteryOrder batteryOrder) {
+    this.batteryOrder = batteryOrder;
     return this;
   }
 
@@ -42,6 +41,6 @@ public class OrderBuilder {
   }
 
   public Order build() {
-    return new Order(orderId, model, battery, createdAt, initialProductionTime);
+    return new Order(orderId, modelOrder, batteryOrder, createdAt, initialProductionTime);
   }
 }

@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.infrastructure.assembly.model;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.NotAvailableModelException;
+import ca.ulaval.glo4003.ws.domain.assembly.model.NotAvailableModelException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

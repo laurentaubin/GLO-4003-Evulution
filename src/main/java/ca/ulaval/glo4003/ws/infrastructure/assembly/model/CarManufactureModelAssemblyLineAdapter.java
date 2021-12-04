@@ -4,10 +4,10 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
-import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelOrder;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 
 public class CarManufactureModelAssemblyLineAdapter implements ModelAssemblyLineAdapter {
@@ -34,7 +34,7 @@ public class CarManufactureModelAssemblyLineAdapter implements ModelAssemblyLine
   @Override
   public void addOrder(Order order) {
     CommandID commandId = commandIdFactory.getOrCreateFromOrderId(order.getId());
-    vehicleAssemblyLine.newCarCommand(commandId, order.getModel().getName());
+    vehicleAssemblyLine.newCarCommand(commandId, order.getModelOrder().getModelType());
   }
 
   @Override

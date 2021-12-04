@@ -1,6 +1,9 @@
 package ca.ulaval.glo4003.ws.context;
 
+import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.infrastructure.schedule.TimeSimulator;
+import ca.ulaval.glo4003.ws.service.AssemblyLineService;
+import java.util.Timer;
 
 public class TimeContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -14,7 +17,11 @@ public class TimeContext implements Context {
   }
 
   private void registerTimeSimulator() {
-    TimeSimulator timeSimulator = new TimeSimulator();
+    AssemblyLineService assemblyLine = serviceLocator.resolve(AssemblyLineService.class);
+    TimeSimulator timeSimulator =
+        new TimeSimulator(
+            assemblyLine, new Timer(), serviceLocator.resolve(LocalDateProvider.class));
+
     timeSimulator.schedule(getSecondsPerWeekFromArgs());
     serviceLocator.register(TimeSimulator.class, timeSimulator);
   }

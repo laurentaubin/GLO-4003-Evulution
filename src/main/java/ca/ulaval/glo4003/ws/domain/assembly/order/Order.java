@@ -1,15 +1,15 @@
 package ca.ulaval.glo4003.ws.domain.assembly.order;
 
+import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import java.time.LocalDate;
 
 public class Order {
   private final OrderId id;
-  private final Model model;
-  private final Battery battery;
+  private final ModelOrder modelOrder;
+  private final BatteryOrder batteryOrder;
   private final LocalDate createdAt;
   private final ProductionTime initialProductionTime;
   private ProductionTime remainingAssemblyTime;
@@ -18,13 +18,13 @@ public class Order {
 
   public Order(
       OrderId orderId,
-      Model model,
-      Battery battery,
+      ModelOrder model,
+      BatteryOrder battery,
       LocalDate createdAt,
       ProductionTime initialAssemblyTime) {
     this.id = orderId;
-    this.model = model;
-    this.battery = battery;
+    this.modelOrder = model;
+    this.batteryOrder = battery;
     this.createdAt = createdAt;
     this.initialProductionTime =
         initialAssemblyTime.add(model.getProductionTime()).add(battery.getProductionTime());
@@ -44,12 +44,12 @@ public class Order {
     return id;
   }
 
-  public Model getModel() {
-    return model;
+  public ModelOrder getModelOrder() {
+    return modelOrder;
   }
 
-  public Battery getBattery() {
-    return battery;
+  public BatteryOrder getBatteryOrder() {
+    return batteryOrder;
   }
 
   public LocalDate getCreatedAt() {

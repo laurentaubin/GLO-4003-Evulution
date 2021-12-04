@@ -9,14 +9,12 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
+import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelOrder;
-import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
-import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
-import ca.ulaval.glo4003.ws.testUtil.BatteryBuilder;
-import ca.ulaval.glo4003.ws.testUtil.ModelBuilder;
+import ca.ulaval.glo4003.ws.testUtil.BatteryOrderBuilder;
 import ca.ulaval.glo4003.ws.testUtil.ModelOrderBuilder;
 import ca.ulaval.glo4003.ws.testUtil.OrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,9 +117,13 @@ class CarManufactureModelAssemblyLineAdapterTest {
   }
 
   private Order createAnOrder() {
-    Model model = new ModelBuilder().build();
-    Battery battery = new BatteryBuilder().build();
-    return new OrderBuilder().withOrderId(orderId).withModel(model).withBattery(battery).build();
+    ModelOrder modelOrder = new ModelOrderBuilder().build();
+    BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
+    return new OrderBuilder()
+        .withOrderId(orderId)
+        .withModelOrder(modelOrder)
+        .withBatteryOrder(batteryOrder)
+        .build();
   }
 
   private ModelOrder createAModelOrder() {

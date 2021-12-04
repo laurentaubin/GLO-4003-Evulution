@@ -8,9 +8,9 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
+import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class BatteryAssemblyLineAdapterTest {
 
   @Mock private OrderId anOrderId;
   @Mock private Order anOrder;
-  @Mock private Battery aBattery;
+  @Mock private BatteryOrder batteryOrder;
   @Mock private CommandID aCommandId;
   @Mock private BatteryAssemblyLine batteryAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
@@ -81,8 +81,8 @@ class BatteryAssemblyLineAdapterTest {
     // given
     given(anOrder.getId()).willReturn(anOrderId);
     given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(anOrder.getBattery()).willReturn(aBattery);
-    given(aBattery.getType()).willReturn(A_BATTERY_TYPE);
+    given(anOrder.getBatteryOrder()).willReturn(batteryOrder);
+    given(batteryOrder.getBatteryType()).willReturn(A_BATTERY_TYPE);
 
     // when
     batteryAssemblyLineAdapter.addOrder(anOrder);

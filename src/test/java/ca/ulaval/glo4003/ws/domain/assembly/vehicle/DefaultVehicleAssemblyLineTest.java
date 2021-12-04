@@ -4,9 +4,9 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import ca.ulaval.glo4003.ws.domain.assembly.VehicleAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.assembly.vehicle.strategy.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

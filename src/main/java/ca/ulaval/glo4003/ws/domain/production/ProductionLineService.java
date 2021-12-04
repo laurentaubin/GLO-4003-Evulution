@@ -1,21 +1,13 @@
 package ca.ulaval.glo4003.ws.domain.production;
 
-import ca.ulaval.glo4003.ws.context.ServiceLocator;
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
-
+import ca.ulaval.glo4003.ws.service.AssemblyLineService;
 import java.util.List;
 
 public class ProductionLineService extends ProductionLineShutdownObservable {
-  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
+  private final AssemblyLineService assemblyLine;
 
-  private final AssemblyLine assemblyLine;
-
-  public ProductionLineService() {
-    this(serviceLocator.resolve(AssemblyLine.class));
-  }
-
-  public ProductionLineService(AssemblyLine assemblyLine) {
+  public ProductionLineService(AssemblyLineService assemblyLine) {
     this.assemblyLine = assemblyLine;
   }
 

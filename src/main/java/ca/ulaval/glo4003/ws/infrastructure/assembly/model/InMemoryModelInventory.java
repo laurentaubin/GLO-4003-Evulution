@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.assembly.model;
 
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelInventory;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.NotAvailableModelException;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelInventory;
+import ca.ulaval.glo4003.ws.domain.assembly.model.NotAvailableModelException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;

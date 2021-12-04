@@ -5,21 +5,21 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BasicVehicleAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
-import ca.ulaval.glo4003.ws.domain.assembly.BatteryAssemblyLineAdapter;
-import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineAdapter;
-import ca.ulaval.glo4003.ws.domain.assembly.ModelAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrderFactory;
+import ca.ulaval.glo4003.ws.domain.assembly.battery.strategy.OnDemandBatteryAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelInventory;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrderFactory;
+import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.AccumulateModelAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.JustInTimeModelAssemblyStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.ModelAssemblyLineStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.OnDemandModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.AccumulateModelAssemblyLineStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelInventory;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.accumulate.model.ModelOrderFactory;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.justintime.JustInTimeModelAssemblyStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearAssemblyStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearBatteryAssemblyLineStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.strategy.linear.LinearModelAssemblyLineStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.vehicle.DefaultVehicleAssemblyLine;
+import ca.ulaval.glo4003.ws.domain.assembly.strategy.LinearAssemblyStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
+import ca.ulaval.glo4003.ws.domain.assembly.vehicle.strategy.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
 import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
@@ -30,8 +30,12 @@ import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.CarManufactureBatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.CarManufactureModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.InMemoryModelInventory;
-
-import java.util.*;
+import ca.ulaval.glo4003.ws.service.AssemblyLineService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class AssemblyContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -73,11 +77,11 @@ public class AssemblyContext implements Context {
     BatteryAssemblyLineAdapter batteryAssemblyLineAdapter =
         new CarManufactureBatteryAssemblyLineAdapter(
             basicBatteryAssemblyLine, new CommandIdFactory());
-    LinearBatteryAssemblyLineStrategy linearBatteryAssemblyLineStrategy =
-        new LinearBatteryAssemblyLineStrategy(batteryAssemblyLineAdapter);
+    OnDemandBatteryAssemblyLineStrategy linearBatteryAssemblyLineStrategy =
+        new OnDemandBatteryAssemblyLineStrategy(batteryAssemblyLineAdapter);
     linearBatteryAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
     serviceLocator.register(
-        LinearBatteryAssemblyLineStrategy.class, linearBatteryAssemblyLineStrategy);
+        OnDemandBatteryAssemblyLineStrategy.class, linearBatteryAssemblyLineStrategy);
   }
 
   private void registerVehicleAssemblyLine() {
@@ -93,7 +97,7 @@ public class AssemblyContext implements Context {
     LinearAssemblyStrategy linearAssemblyStrategy =
         new LinearAssemblyStrategy(
             selectModelAssemblyLineStrategy(),
-            serviceLocator.resolve(LinearBatteryAssemblyLineStrategy.class),
+            serviceLocator.resolve(OnDemandBatteryAssemblyLineStrategy.class),
             serviceLocator.resolve(DefaultVehicleAssemblyLine.class),
             serviceLocator.resolve(OrderRepository.class));
     serviceLocator.register(LinearAssemblyStrategy.class, linearAssemblyStrategy);
@@ -101,12 +105,14 @@ public class AssemblyContext implements Context {
 
   private void registerAssemblyLine() {
     serviceLocator.register(
-        AssemblyLine.class,
-        new AssemblyLine(
+        AssemblyLineService.class,
+        new AssemblyLineService(
             new OrderFactory(
                 serviceLocator.resolve(LocalDateProvider.class),
                 serviceLocator.resolve(VehicleAssemblyPlanner.class)),
-            serviceLocator.resolve(LinearAssemblyStrategy.class)));
+            serviceLocator.resolve(LinearAssemblyStrategy.class),
+            new ModelOrderFactory(),
+            new BatteryOrderFactory()));
   }
 
   private Map<String, Integer> createVehicleAssemblyLineConfiguration() {
@@ -129,8 +135,8 @@ public class AssemblyContext implements Context {
   }
 
   private void registerModelAssemblyObservers() {
-    LinearModelAssemblyLineStrategy modelAssemblyLineStrategy =
-        serviceLocator.resolve(LinearModelAssemblyLineStrategy.class);
+    OnDemandModelAssemblyLineStrategy modelAssemblyLineStrategy =
+        serviceLocator.resolve(OnDemandModelAssemblyLineStrategy.class);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         serviceLocator.resolve(AccumulateModelAssemblyLineStrategy.class);
     JustInTimeModelAssemblyStrategy justInTimeModelAssemblyStrategy =
@@ -144,8 +150,8 @@ public class AssemblyContext implements Context {
   }
 
   private void registerBatteryAssemblyObservers() {
-    LinearBatteryAssemblyLineStrategy batteryAssemblyLineStrategy =
-        serviceLocator.resolve(LinearBatteryAssemblyLineStrategy.class);
+    OnDemandBatteryAssemblyLineStrategy batteryAssemblyLineStrategy =
+        serviceLocator.resolve(OnDemandBatteryAssemblyLineStrategy.class);
     batteryAssemblyLineStrategy.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
     batteryAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
   }
@@ -160,10 +166,11 @@ public class AssemblyContext implements Context {
 
   private void registerLinearModelAssemblyLineStrategy(
       ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
-    LinearModelAssemblyLineStrategy linearModelAssemblyLineStrategy =
-        new LinearModelAssemblyLineStrategy(modelAssemblyLineAdapter);
+    OnDemandModelAssemblyLineStrategy linearModelAssemblyLineStrategy =
+        new OnDemandModelAssemblyLineStrategy(modelAssemblyLineAdapter);
     linearModelAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
-    serviceLocator.register(LinearModelAssemblyLineStrategy.class, linearModelAssemblyLineStrategy);
+    serviceLocator.register(
+        OnDemandModelAssemblyLineStrategy.class, linearModelAssemblyLineStrategy);
   }
 
   private void registerAccumulateModelAssemblyLineStrategy(
@@ -199,13 +206,13 @@ public class AssemblyContext implements Context {
   private ModelAssemblyLineStrategy selectModelAssemblyLineStrategy() {
     String modelAssemblyLineMode = System.getProperty(VEHICLE_PRODUCTION_LINE_MODE);
     if (modelAssemblyLineMode == null || modelAssemblyLineMode.isEmpty()) {
-      return serviceLocator.resolve(LinearModelAssemblyLineStrategy.class);
+      return serviceLocator.resolve(OnDemandModelAssemblyLineStrategy.class);
     } else if (modelAssemblyLineMode.equals("JIT")) {
       return serviceLocator.resolve(JustInTimeModelAssemblyStrategy.class);
     } else if (modelAssemblyLineMode.equals("CONTINUOUSLY")) {
       return serviceLocator.resolve(AccumulateModelAssemblyLineStrategy.class);
     } else {
-      return serviceLocator.resolve(LinearModelAssemblyLineStrategy.class);
+      return serviceLocator.resolve(OnDemandModelAssemblyLineStrategy.class);
     }
   }
 }

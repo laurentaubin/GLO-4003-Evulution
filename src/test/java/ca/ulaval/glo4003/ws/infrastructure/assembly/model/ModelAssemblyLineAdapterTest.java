@@ -8,9 +8,9 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class ModelAssemblyLineAdapterTest {
 
   @Mock private OrderId anOrderId;
   @Mock private Order anOrder;
-  @Mock private Model aModel;
+  @Mock private ModelOrder modelOrder;
   @Mock private CommandID aCommandId;
   @Mock private VehicleAssemblyLine vehicleAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
@@ -81,8 +81,8 @@ class ModelAssemblyLineAdapterTest {
     // given
     given(anOrder.getId()).willReturn(anOrderId);
     given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(anOrder.getModel()).willReturn(aModel);
-    given(aModel.getName()).willReturn(A_MODEL_NAME);
+    given(anOrder.getModelOrder()).willReturn(modelOrder);
+    given(modelOrder.getModelType()).willReturn(A_MODEL_NAME);
 
     // when
     modelAssemblyLineAdapter.addOrder(anOrder);

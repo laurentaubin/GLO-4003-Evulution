@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.domain.assembly.AssemblyLine;
+import ca.ulaval.glo4003.ws.service.AssemblyLineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ class WeeklyTaskExecutorTest {
 
   private WeeklyTaskExecutor weeklyTaskExecutor;
 
-  @Mock private AssemblyLine assemblyLine;
+  @Mock private AssemblyLineService assemblyLine;
   @Mock private LocalDateProvider localDateProvider;
 
   @BeforeEach
