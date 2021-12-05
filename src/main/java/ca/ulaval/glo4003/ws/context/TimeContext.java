@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.context;
 
-import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
+import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.infrastructure.schedule.TimeSimulator;
 import ca.ulaval.glo4003.ws.service.AssemblyLineService;
 import java.util.Timer;

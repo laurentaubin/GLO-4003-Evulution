@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.api.user;
 
-import ca.ulaval.glo4003.ws.api.shared.DateParser;
+import ca.ulaval.glo4003.ws.domain.shared.DateParser;
 import ca.ulaval.glo4003.ws.api.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.User;

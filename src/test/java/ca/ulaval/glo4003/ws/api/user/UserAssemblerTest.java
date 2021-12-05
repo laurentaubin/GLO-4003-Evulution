@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.api.user;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import ca.ulaval.glo4003.ws.api.shared.DateParser;
+import ca.ulaval.glo4003.ws.domain.shared.DateParser;
 import ca.ulaval.glo4003.ws.api.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.User;

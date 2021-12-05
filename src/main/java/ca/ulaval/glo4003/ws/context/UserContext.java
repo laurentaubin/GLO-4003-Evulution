@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.shared.DateParser;
-import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.api.shared.LocalDateWrapper;
+import ca.ulaval.glo4003.ws.domain.shared.DateParser;
+import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
+import ca.ulaval.glo4003.ws.domain.shared.LocalDateWrapper;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.api.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.api.user.UserAssembler;

@@ -4,7 +4,7 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BasicBatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BasicVehicleAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
-import ca.ulaval.glo4003.ws.api.shared.LocalDateProvider;
+import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.strategy.OnDemandBatteryAssemblyLineStrategy;

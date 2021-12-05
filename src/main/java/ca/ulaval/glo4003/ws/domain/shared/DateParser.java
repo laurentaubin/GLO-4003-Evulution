@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.api.shared;
+package ca.ulaval.glo4003.ws.domain.shared;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
