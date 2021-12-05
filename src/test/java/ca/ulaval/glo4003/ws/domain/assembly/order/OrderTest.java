@@ -5,8 +5,8 @@ import static org.mockito.BDDMockito.given;
 
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,41 +18,41 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderTest {
   private static final OrderId AN_ID = new OrderId("id");
   private static final LocalDate A_LOCAL_DATE = LocalDate.of(23, 1, 1);
-  private static final ProductionTime AN_INITIAL_ASSEMBLY_TIME = new ProductionTime(1);
-  private static final ProductionTime A_PRODUCTION_TIME = new ProductionTime(10);
+  private static final AssemblyTime AN_INITIAL_ASSEMBLY_TIME = new AssemblyTime(1);
+  private static final AssemblyTime A_PRODUCTION_TIME = new AssemblyTime(10);
 
   @Mock private BatteryOrder batteryOrder;
   @Mock private ModelOrder modelOrder;
-  @Mock private ProductionTime aProductionTime;
+  @Mock private AssemblyTime aAssemblyTime;
 
   private Order order;
 
   @BeforeEach
   void setUp() {
-    given(batteryOrder.getProductionTime()).willReturn(new ProductionTime(1));
-    given(modelOrder.getProductionTime()).willReturn(new ProductionTime(2));
+    given(batteryOrder.getAssemblyTime()).willReturn(new AssemblyTime(1));
+    given(modelOrder.getAssemblyTime()).willReturn(new AssemblyTime(2));
 
     order = new Order(AN_ID, modelOrder, batteryOrder, A_LOCAL_DATE, AN_INITIAL_ASSEMBLY_TIME);
     order.setRemainingAssemblyTime(A_PRODUCTION_TIME);
   }
 
   @Test
-  public void whenAdvance_thenRemainingProductionTimeDecreasedByOne() {
+  public void whenAdvance_thenRemainingAssemblyTimeDecreasedByOne() {
     // given
-    ProductionTime expectedProductionTime = A_PRODUCTION_TIME.subtractWeeks(1);
+    AssemblyTime expectedAssemblyTime = A_PRODUCTION_TIME.subtractWeeks(1);
 
     // when
     order.advance();
 
     // then
-    assertThat(order.getRemainingAssemblyTime()).isEqualTo(expectedProductionTime);
+    assertThat(order.getRemainingAssemblyTime()).isEqualTo(expectedAssemblyTime);
   }
 
   @Test
-  public void givenProductionTimeOver_whenIsOver_thenReturnTrue() {
+  public void givenAssemblyTimeOver_whenIsOver_thenReturnTrue() {
     // given
-    given(aProductionTime.isOver()).willReturn(true);
-    order.setRemainingAssemblyTime(aProductionTime);
+    given(aAssemblyTime.isOver()).willReturn(true);
+    order.setRemainingAssemblyTime(aAssemblyTime);
 
     // when
     boolean isOrderOver = order.isOver();
@@ -62,10 +62,10 @@ class OrderTest {
   }
 
   @Test
-  public void givenProductionTimeOver_whenIsOver_thenReturnFalse() {
+  public void givenAssemblyTimeOver_whenIsOver_thenReturnFalse() {
     // given
-    given(aProductionTime.isOver()).willReturn(false);
-    order.setRemainingAssemblyTime(aProductionTime);
+    given(aAssemblyTime.isOver()).willReturn(false);
+    order.setRemainingAssemblyTime(aAssemblyTime);
 
     // when
     boolean isOrderOver = order.isOver();
@@ -77,7 +77,7 @@ class OrderTest {
   @Test
   public void whenAddDelay_thenDelayIsAdded() {
     // given
-    ProductionTime aDelay = new ProductionTime(1);
+    AssemblyTime aDelay = new AssemblyTime(1);
 
     // when
     order.addAssemblyDelay(aDelay);
@@ -88,7 +88,7 @@ class OrderTest {
 
   @Test
   public void
-      givenNoDelay_whenComputeDeliveryDate_thenReturnCreatedAtPlusSumOfModelBatteryAndAssemblyProductionTime() {
+      givenNoDelay_whenComputeDeliveryDate_thenReturnCreatedAtPlusSumOfModelBatteryAndAssemblyAssemblyTime() {
     // given
     LocalDate createdAt = LocalDate.of(10, 10, 10);
     Order order = new Order(AN_ID, modelOrder, batteryOrder, createdAt, AN_INITIAL_ASSEMBLY_TIME);
@@ -103,11 +103,11 @@ class OrderTest {
 
   @Test
   public void
-      givenTwoWeeksDelay_whenComputeDeliveryDate_thenReturnCreatedAtPlusInitialProductionTimePlusTwoWeeks() {
+      givenTwoWeeksDelay_whenComputeDeliveryDate_thenReturnCreatedAtPlusInitialAssemblyTimePlusTwoWeeks() {
     // given
     LocalDate createdAt = LocalDate.of(10, 10, 10);
     Order order = new Order(AN_ID, modelOrder, batteryOrder, createdAt, AN_INITIAL_ASSEMBLY_TIME);
-    ProductionTime aDelay = new ProductionTime(2);
+    AssemblyTime aDelay = new AssemblyTime(2);
     order.addAssemblyDelay(aDelay);
     LocalDate expectedDeliveryDate = LocalDate.of(10, 11, 21);
 

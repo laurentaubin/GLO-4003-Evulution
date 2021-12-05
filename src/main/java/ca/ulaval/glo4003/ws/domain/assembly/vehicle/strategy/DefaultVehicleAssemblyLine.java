@@ -2,9 +2,9 @@ package ca.ulaval.glo4003.ws.domain.assembly.vehicle.strategy;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,13 +31,13 @@ public class DefaultVehicleAssemblyLine extends VehicleAssemblyObservable
   @Override
   public void assembleVehicle(Order order) {
     LOGGER.info(String.format("Vehicle assembly order received: %s", order.getId()));
-    ProductionTime productionTime = vehicleAssemblyPlanner.getProductionTime(order);
-    order.setRemainingAssemblyTime(productionTime);
+    AssemblyTime assemblyTime = vehicleAssemblyPlanner.getAssemblyTime(order);
+    order.setRemainingAssemblyTime(assemblyTime);
     orders.add(order);
   }
 
   @Override
-  public ProductionTime computeRemainingTimeToProduce(OrderId orderId) {
+  public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
     return orders.stream()
         .filter(order -> order.getId().equals(orderId))
         .findFirst()

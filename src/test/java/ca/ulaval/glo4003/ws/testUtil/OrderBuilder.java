@@ -4,7 +4,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ public class OrderBuilder {
   private ModelOrder modelOrder = new ModelOrderBuilder().build();
   private BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
   private LocalDate createdAt = LocalDate.now();
-  private ProductionTime initialProductionTime = new ProductionTime(3);
+  private AssemblyTime initialAssemblyTime = new AssemblyTime(3);
 
   public OrderBuilder withOrderId(OrderId orderId) {
     this.orderId = orderId;
@@ -35,12 +35,12 @@ public class OrderBuilder {
     return this;
   }
 
-  public OrderBuilder withInitialProductionTime(ProductionTime initialProductionTime) {
-    this.initialProductionTime = initialProductionTime;
+  public OrderBuilder withInitialAssemblyTime(AssemblyTime initialAssemblyTime) {
+    this.initialAssemblyTime = initialAssemblyTime;
     return this;
   }
 
   public Order build() {
-    return new Order(orderId, modelOrder, batteryOrder, createdAt, initialProductionTime);
+    return new Order(orderId, modelOrder, batteryOrder, createdAt, initialAssemblyTime);
   }
 }

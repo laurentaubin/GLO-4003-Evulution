@@ -5,11 +5,9 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
-import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,21 +21,18 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
   private static final Logger LOGGER = LogManager.getLogger();
 
   private ModelOrder currentModelBeingAssembled;
-  private ProductionTime currentOrderRemainingTimeToProduce;
+  private AssemblyTime currentOrderRemainingTimeToProduce;
   private final ModelAssemblyLineAdapter modelAssemblyLineAdapter;
   private final ModelInventory modelInventory;
-  private final ModelOrderFactory modelOrderFactory;
   private final List<ModelOrder> modelOrders = new ArrayList<>();
   private final List<Order> orderQueue = new ArrayList<>();
 
   public JustInTimeModelAssemblyStrategy(
       ModelAssemblyLineAdapter modelAssemblyLineAdapter,
       ModelInventory modelInventory,
-      ModelOrderFactory modelOrderFactory,
-      List<Model> initialModelAssemblyOrder) {
+      List<ModelOrder> initialModelAssemblyOrder) {
     this.modelAssemblyLineAdapter = modelAssemblyLineAdapter;
     this.modelInventory = modelInventory;
-    this.modelOrderFactory = modelOrderFactory;
     sendInitialModelsToBeAssembled(initialModelAssemblyOrder);
   }
 
@@ -51,8 +46,8 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
 
     if (currentOrderRemainingTimeToProduce != null) {
       currentOrderRemainingTimeToProduce =
-          currentOrderRemainingTimeToProduce.subtract(new ProductionTime(1));
-      if (currentOrderRemainingTimeToProduce.equals(new ProductionTime(0))) {
+          currentOrderRemainingTimeToProduce.subtract(new AssemblyTime(1));
+      if (currentOrderRemainingTimeToProduce.equals(new AssemblyTime(0))) {
         currentOrderRemainingTimeToProduce = null;
       }
     }
@@ -95,11 +90,11 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
   }
 
   @Override
-  public ProductionTime computeRemainingTimeToProduce(OrderId orderId) {
+  public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
     Optional<Order> optionalRequestedOrder =
         orderQueue.stream().filter(order -> order.getId() == orderId).findFirst();
     if (optionalRequestedOrder.isEmpty()) {
-      return new ProductionTime(0);
+      return new AssemblyTime(0);
     }
 
     Order requestedOrder = optionalRequestedOrder.get();
@@ -116,14 +111,14 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
       return currentOrderRemainingTimeToProduce;
     }
 
-    ProductionTime remainingTime = new ProductionTime(0);
+    AssemblyTime remainingTime = new AssemblyTime(0);
     Integer modelOrdersOfTypeRequestedOrderType = 0;
     if (currentModelBeingAssembled.getModelType().equals(requestedOrderType)) {
-      remainingTime = new ProductionTime(currentOrderRemainingTimeToProduce.inWeeks());
+      remainingTime = new AssemblyTime(currentOrderRemainingTimeToProduce.inWeeks());
       modelOrdersOfTypeRequestedOrderType = 1;
     }
     for (ModelOrder modelOrder : modelOrders) {
-      remainingTime = remainingTime.add(modelOrder.getProductionTime());
+      remainingTime = remainingTime.add(modelOrder.getAssemblyTime());
       if (modelOrder.getModelType().equals(requestedOrderType)) {
         if (modelOrdersOfTypeRequestedOrderType.equals(positionInQueue)) {
           return remainingTime;
@@ -140,12 +135,8 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
     return new ArrayList<>(orderQueue);
   }
 
-  private void sendInitialModelsToBeAssembled(List<Model> initialModelAssemblyOrder) {
-    List<ModelOrder> initialModelOrders = new ArrayList<>();
-    for (Model model : initialModelAssemblyOrder) {
-      initialModelOrders.add(modelOrderFactory.create(model.getName(), model.getProductionTime()));
-    }
-    modelOrders.addAll(initialModelOrders);
+  private void sendInitialModelsToBeAssembled(List<ModelOrder> initialModelAssemblyOrder) {
+    modelOrders.addAll(initialModelAssemblyOrder);
     sendNextModelToBeAssembled();
   }
 
@@ -153,7 +144,7 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
     if (!modelOrders.isEmpty()) {
       ModelOrder modelOrder = modelOrders.remove(0);
       currentModelBeingAssembled = modelOrder;
-      currentOrderRemainingTimeToProduce = modelOrder.getProductionTime();
+      currentOrderRemainingTimeToProduce = modelOrder.getAssemblyTime();
       modelAssemblyLineAdapter.addOrder(modelOrder);
       LOGGER.info(String.format("Model %s sent to be assembled", modelOrder.getModelType()));
     } else {

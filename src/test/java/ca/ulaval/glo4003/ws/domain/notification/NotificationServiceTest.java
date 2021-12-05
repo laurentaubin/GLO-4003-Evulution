@@ -9,14 +9,13 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
@@ -77,7 +76,8 @@ class NotificationServiceTest {
   }
 
   @Test
-  void givenTransactionIdAndFoundUser_whenListenProductionLineShutdown_thenShouldIssueProductionShutdownNotification() {
+  void
+      givenTransactionIdAndFoundUser_whenListenProductionLineShutdown_thenShouldIssueProductionShutdownNotification() {
     // given
     given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 

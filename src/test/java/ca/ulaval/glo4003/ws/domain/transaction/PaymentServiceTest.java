@@ -1,5 +1,8 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.ReceiptFactory;
@@ -8,9 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {

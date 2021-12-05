@@ -1,11 +1,10 @@
 package ca.ulaval.glo4003.ws.domain.transaction.payment;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static com.google.common.truth.Truth.assertThat;
 
 import java.math.BigDecimal;
-
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class PriceTest {
   private static final Price ANOTHER_PRICE = new Price(500);

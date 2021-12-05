@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.notification.exception.NotificationContentNotRegisteredException;
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ class NotificationEmailFactoryTest {
   private static final String A_NAME = "Benjamin Girard <3";
   private static final OrderId AN_ORDER_ID = new OrderId("osadoasd");
   private static final LocalDate A_DELIVERY_DATE = LocalDate.of(1, 10, 10);
-  private static final ProductionTime A_DELAY = new ProductionTime(1);
+  private static final AssemblyTime A_DELAY = new AssemblyTime(1);
   private static final Map<NotificationType, EmailContent> emailContents = new HashMap<>();
 
   @Mock private EmailServer emailServer;

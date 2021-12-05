@@ -1,11 +1,11 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccount;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static com.google.common.truth.Truth.assertThat;
 
 class BankAccountFactoryTest {
 

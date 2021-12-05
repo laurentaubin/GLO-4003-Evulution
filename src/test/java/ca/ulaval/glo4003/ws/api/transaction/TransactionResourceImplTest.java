@@ -1,5 +1,14 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
@@ -24,20 +33,14 @@ import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import jakarta.ws.rs.container.ContainerRequestContext;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionResourceImplTest {
@@ -103,8 +106,7 @@ class TransactionResourceImplTest {
   @Test
   public void whenCreateTransaction_thenRolesAreValidated() {
     // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
+    transactionResource.addVehicle(containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(roleHandler)
@@ -167,8 +169,7 @@ class TransactionResourceImplTest {
   @Test
   public void whenAddVehicle_thenRolesAreValidated() {
     // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
+    transactionResource.addVehicle(containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(roleHandler)
@@ -178,8 +179,7 @@ class TransactionResourceImplTest {
   @Test
   public void givenVehicleRequest_whenAddVehicle_thenValidateRequest() {
     // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
+    transactionResource.addVehicle(containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(vehicleRequestValidator).validate(vehicleRequest);
@@ -192,8 +192,7 @@ class TransactionResourceImplTest {
         .willReturn(aVehicle);
 
     // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
+    transactionResource.addVehicle(containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(transactionService).addVehicle(A_TRANSACTION_ID, aVehicle);
@@ -223,8 +222,7 @@ class TransactionResourceImplTest {
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
 
     // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
+    transactionResource.addVehicle(containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
     verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);
@@ -233,8 +231,7 @@ class TransactionResourceImplTest {
   @Test
   public void givenTransactionIsOwnedByUser_whenAddBattery_thenBatteryIsAdded() {
     // when
-    transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID, batteryRequest);
+    transactionResource.addBattery(containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
     verify(batteryRequestValidator).validate(batteryRequest);
@@ -261,8 +258,7 @@ class TransactionResourceImplTest {
   @Test
   public void whenAddBattery_thenRolesAreValidated() {
     // when
-    transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID, batteryRequest);
+    transactionResource.addBattery(containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
     verify(roleHandler)
@@ -275,8 +271,7 @@ class TransactionResourceImplTest {
     given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
 
     // when
-    transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID, batteryRequest);
+    transactionResource.addBattery(containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
     verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);

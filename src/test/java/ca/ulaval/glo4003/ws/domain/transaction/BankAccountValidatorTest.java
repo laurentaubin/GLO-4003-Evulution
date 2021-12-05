@@ -1,13 +1,13 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import ca.ulaval.glo4003.ws.domain.transaction.exception.InvalidBankAccountException;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BankAccountValidatorTest {
 

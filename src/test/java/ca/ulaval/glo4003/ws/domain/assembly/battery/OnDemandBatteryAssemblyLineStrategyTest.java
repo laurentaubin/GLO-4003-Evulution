@@ -12,8 +12,8 @@ import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.strategy.OnDemandBatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.notification.BatteryAssemblyDelayObserver;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +28,9 @@ class OnDemandBatteryAssemblyLineStrategyTest {
   private static final OrderId AN_ORDER_ID = new OrderId(AN_ID);
   private static final OrderId ANOTHER_ORDER_ID = new OrderId(ANOTHER_ID);
   private static final OrderId OTHER_ORDER_ID = new OrderId(OTHER_ID);
-  private static final ProductionTime A_REMAINING_PRODUCTION_TIME = new ProductionTime(43);
-  private static final ProductionTime ANOTHER_REMAINING_PRODUCTION_TIME = new ProductionTime(763);
-  private static final ProductionTime OTHER_REMAINING_PRODUCTION_TIME = new ProductionTime(43212);
+  private static final AssemblyTime A_REMAINING_ASSEMBLY_TIME = new AssemblyTime(43);
+  private static final AssemblyTime ANOTHER_REMAINING_ASSEMBLY_TIME = new AssemblyTime(763);
+  private static final AssemblyTime OTHER_REMAINING_ASSEMBLY_TIME = new AssemblyTime(43212);
 
   @Mock private Order anOrder;
   @Mock private Order anotherOrder;
@@ -94,13 +94,13 @@ class OnDemandBatteryAssemblyLineStrategyTest {
       givenAnOrderDoneBeingAssembledAndAnotherOrderInQueue_whenAdvance_thenOrderInQueueIsSentToBeAssembled() {
     // given
     setUpAnOrder();
-    given(anOrder.getBatteryOrder().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anOrder.getBatteryOrder().getAssemblyTime()).willReturn(A_REMAINING_ASSEMBLY_TIME);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
     when(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
         .thenReturn(AssemblyStatus.IN_PROGRESS, AssemblyStatus.ASSEMBLED);
     setUpAnotherOrder();
-    given(anotherOrder.getBatteryOrder().getProductionTime())
-        .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(anotherOrder.getBatteryOrder().getAssemblyTime())
+        .willReturn(ANOTHER_REMAINING_ASSEMBLY_TIME);
     linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
 
     // when
@@ -115,7 +115,7 @@ class OnDemandBatteryAssemblyLineStrategyTest {
       givenAnOrderBeingAssembledAndAnotherOrderInQueue_whenAdvance_thenOrderInQueueIsNotSentToBeAssembled() {
     // given
     setUpAnOrder();
-    given(anOrder.getBatteryOrder().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anOrder.getBatteryOrder().getAssemblyTime()).willReturn(A_REMAINING_ASSEMBLY_TIME);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
     given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
         .willReturn(AssemblyStatus.IN_PROGRESS);
@@ -149,8 +149,8 @@ class OnDemandBatteryAssemblyLineStrategyTest {
   public void
       givenAnOrderSentToBeAssembled_whenComputeEstimatedTime_thenReturnTheBatteryRemainingTimeToProduce() {
     // given
-    ProductionTime batteryTimeToProduce = new ProductionTime(2);
-    given(batteryOrder.getProductionTime()).willReturn(batteryTimeToProduce);
+    AssemblyTime batteryTimeToProduce = new AssemblyTime(2);
+    given(batteryOrder.getAssemblyTime()).willReturn(batteryTimeToProduce);
     setUpAnOrder();
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
 
@@ -166,9 +166,9 @@ class OnDemandBatteryAssemblyLineStrategyTest {
   public void
       givenAnOrderANumberOfWeeksElapsedIntoBeingAssembled_whenComputeRemainingTimeToProduce_thenReturnTheOrderBatteryRemainingTimeToProduceMinusTheNumberOfWeeksElapsed() {
     // given
-    ProductionTime batteryTimeToProduce = new ProductionTime(4);
-    ProductionTime expectedRemainingTimeToProduce = new ProductionTime(2);
-    given(batteryOrder.getProductionTime()).willReturn(batteryTimeToProduce);
+    AssemblyTime batteryTimeToProduce = new AssemblyTime(4);
+    AssemblyTime expectedRemainingTimeToProduce = new AssemblyTime(2);
+    given(batteryOrder.getAssemblyTime()).willReturn(batteryTimeToProduce);
     setUpAnOrder();
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
     given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
@@ -189,29 +189,28 @@ class OnDemandBatteryAssemblyLineStrategyTest {
       givenAQueuedOrder_whenComputeRemainingTimeToProduce_thenTimeIsComputedBasedOnTheQueuedOrderPosition() {
     // given
     setUpAnOrder();
-    given(anOrder.getBatteryOrder().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anOrder.getBatteryOrder().getAssemblyTime()).willReturn(A_REMAINING_ASSEMBLY_TIME);
     given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
         .willReturn(AssemblyStatus.RECEIVED);
-    given(anOrder.getBatteryOrder().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
+    given(anOrder.getBatteryOrder().getAssemblyTime()).willReturn(A_REMAINING_ASSEMBLY_TIME);
     given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
     given(anotherOrder.getBatteryOrder()).willReturn(anotherBatteryOrder);
-    given(anotherOrder.getBatteryOrder().getProductionTime())
-        .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(anotherOrder.getBatteryOrder().getAssemblyTime())
+        .willReturn(ANOTHER_REMAINING_ASSEMBLY_TIME);
     given(otherOrder.getId()).willReturn(OTHER_ORDER_ID);
     given(otherOrder.getBatteryOrder()).willReturn(otherBatteryOrder);
-    given(otherOrder.getBatteryOrder().getProductionTime())
-        .willReturn(OTHER_REMAINING_PRODUCTION_TIME);
+    given(otherOrder.getBatteryOrder().getAssemblyTime()).willReturn(OTHER_REMAINING_ASSEMBLY_TIME);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
     linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
     linearBatteryAssemblyLineStrategy.addOrder(otherOrder);
-    ProductionTime expectedRemainingTimeToProduce =
-        new ProductionTime(
-            A_REMAINING_PRODUCTION_TIME.inWeeks()
-                + ANOTHER_REMAINING_PRODUCTION_TIME.inWeeks()
-                + OTHER_REMAINING_PRODUCTION_TIME.inWeeks());
+    AssemblyTime expectedRemainingTimeToProduce =
+        new AssemblyTime(
+            A_REMAINING_ASSEMBLY_TIME.inWeeks()
+                + ANOTHER_REMAINING_ASSEMBLY_TIME.inWeeks()
+                + OTHER_REMAINING_ASSEMBLY_TIME.inWeeks());
 
     // when
-    ProductionTime remainingTimeToProduce =
+    AssemblyTime remainingTimeToProduce =
         linearBatteryAssemblyLineStrategy.computeRemainingTimeToProduce(OTHER_ORDER_ID);
 
     // then
@@ -236,9 +235,9 @@ class OnDemandBatteryAssemblyLineStrategyTest {
     setUpAnOrder();
     given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
     given(anotherOrder.getBatteryOrder()).willReturn(anotherBatteryOrder);
-    given(anOrder.getBatteryOrder().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
-    given(anotherOrder.getBatteryOrder().getProductionTime())
-        .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(anOrder.getBatteryOrder().getAssemblyTime()).willReturn(A_REMAINING_ASSEMBLY_TIME);
+    given(anotherOrder.getBatteryOrder().getAssemblyTime())
+        .willReturn(ANOTHER_REMAINING_ASSEMBLY_TIME);
     given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
         .willReturn(AssemblyStatus.IN_PROGRESS);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
@@ -269,9 +268,9 @@ class OnDemandBatteryAssemblyLineStrategyTest {
     setUpAnOrder();
     given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
     given(anotherOrder.getBatteryOrder()).willReturn(anotherBatteryOrder);
-    given(anOrder.getBatteryOrder().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
-    given(anotherOrder.getBatteryOrder().getProductionTime())
-        .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(anOrder.getBatteryOrder().getAssemblyTime()).willReturn(A_REMAINING_ASSEMBLY_TIME);
+    given(anotherOrder.getBatteryOrder().getAssemblyTime())
+        .willReturn(ANOTHER_REMAINING_ASSEMBLY_TIME);
     given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
         .willReturn(AssemblyStatus.IN_PROGRESS);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);
@@ -280,7 +279,7 @@ class OnDemandBatteryAssemblyLineStrategyTest {
     linearBatteryAssemblyLineStrategy.addOrder(anotherOrder);
 
     // then
-    verify(anotherOrder).addAssemblyDelay(A_REMAINING_PRODUCTION_TIME);
+    verify(anotherOrder).addAssemblyDelay(A_REMAINING_ASSEMBLY_TIME);
   }
 
   @Test
@@ -302,9 +301,9 @@ class OnDemandBatteryAssemblyLineStrategyTest {
     setUpAnOrder();
     given(anotherOrder.getId()).willReturn(ANOTHER_ORDER_ID);
     given(anotherOrder.getBatteryOrder()).willReturn(anotherBatteryOrder);
-    given(anOrder.getBatteryOrder().getProductionTime()).willReturn(A_REMAINING_PRODUCTION_TIME);
-    given(anotherOrder.getBatteryOrder().getProductionTime())
-        .willReturn(ANOTHER_REMAINING_PRODUCTION_TIME);
+    given(anOrder.getBatteryOrder().getAssemblyTime()).willReturn(A_REMAINING_ASSEMBLY_TIME);
+    given(anotherOrder.getBatteryOrder().getAssemblyTime())
+        .willReturn(ANOTHER_REMAINING_ASSEMBLY_TIME);
     given(batteryAssemblyLineAdapter.getAssemblyStatus(AN_ORDER_ID))
         .willReturn(AssemblyStatus.IN_PROGRESS);
     linearBatteryAssemblyLineStrategy.addOrder(anOrder);

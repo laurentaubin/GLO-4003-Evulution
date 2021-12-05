@@ -1,17 +1,16 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import ca.ulaval.glo4003.ws.api.delivery.dto.CompletedDeliveryResponse;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-
-import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class CompletedDeliveryResponseAssemblerTest {

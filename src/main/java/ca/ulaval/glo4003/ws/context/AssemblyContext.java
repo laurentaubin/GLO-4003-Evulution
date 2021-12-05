@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.strategy.OnDemandBatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelInventory;
+import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.AccumulateModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.JustInTimeModelAssemblyStrategy;
@@ -18,6 +19,8 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.OnDemandModelAssembly
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.LinearAssemblyStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTimeFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.strategy.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
@@ -112,7 +115,8 @@ public class AssemblyContext implements Context {
                 serviceLocator.resolve(VehicleAssemblyPlanner.class)),
             serviceLocator.resolve(LinearAssemblyStrategy.class),
             new ModelOrderFactory(),
-            new BatteryOrderFactory()));
+            new BatteryOrderFactory(),
+            new AssemblyTimeFactory()));
   }
 
   private Map<String, Integer> createVehicleAssemblyLineConfiguration() {
@@ -175,30 +179,34 @@ public class AssemblyContext implements Context {
 
   private void registerAccumulateModelAssemblyLineStrategy(
       ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
-    List<Model> modelAssemblyOrder = createModelAssemblyOrder();
+    List<ModelOrder> modelAssemblyOrder = createModelAssemblyOrder();
     ModelInventory modelInventory = new InMemoryModelInventory();
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         new AccumulateModelAssemblyLineStrategy(
-            modelAssemblyOrder, modelAssemblyLineAdapter, modelInventory, new ModelOrderFactory());
+            modelAssemblyOrder, modelAssemblyLineAdapter, modelInventory);
     serviceLocator.register(
         AccumulateModelAssemblyLineStrategy.class, accumulateModelAssemblyLineStrategy);
   }
 
   private void registerJustInTimeModelAssemblyLineStrategy(
       ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
-    List<Model> modelAssemblyOrder = createModelAssemblyOrder();
+    List<ModelOrder> modelAssemblyOrder = createModelAssemblyOrder();
     ModelInventory modelInventory = new InMemoryModelInventory();
     JustInTimeModelAssemblyStrategy justInTimeModelAssemblyStrategy =
         new JustInTimeModelAssemblyStrategy(
-            modelAssemblyLineAdapter, modelInventory, new ModelOrderFactory(), modelAssemblyOrder);
+            modelAssemblyLineAdapter, modelInventory, modelAssemblyOrder);
     serviceLocator.register(JustInTimeModelAssemblyStrategy.class, justInTimeModelAssemblyStrategy);
   }
 
-  private List<Model> createModelAssemblyOrder() {
+  private List<ModelOrder> createModelAssemblyOrder() {
+    ModelOrderFactory factory = new ModelOrderFactory();
     ModelRepository modelRepository = serviceLocator.resolve(ModelRepository.class);
-    List<Model> modelAssemblyOrder = new ArrayList<>();
+    List<ModelOrder> modelAssemblyOrder = new ArrayList<>();
     for (String modelName : MODEL_ASSEMBLY_ORDER_BY_NAME) {
-      modelAssemblyOrder.add(modelRepository.findByModel(modelName));
+      Model model = modelRepository.findByModel(modelName);
+      ModelOrder modelOrder =
+          factory.create(model.getName(), new AssemblyTime(model.getProductionTime().inWeeks()));
+      modelAssemblyOrder.add(modelOrder);
     }
     return modelAssemblyOrder;
   }

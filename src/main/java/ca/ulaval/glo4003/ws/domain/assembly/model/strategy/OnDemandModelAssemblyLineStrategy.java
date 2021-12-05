@@ -5,7 +5,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class OnDemandModelAssemblyLineStrategy extends ModelAssemblyObservable
   private final Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
-  private ProductionTime currentOrderRemainingTimeToProduce;
+  private AssemblyTime currentOrderRemainingTimeToProduce;
 
   public OnDemandModelAssemblyLineStrategy(ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
     this.modelAssemblyLineAdapter = modelAssemblyLineAdapter;
@@ -49,7 +49,7 @@ public class OnDemandModelAssemblyLineStrategy extends ModelAssemblyObservable
     }
     orderQueue.add(order);
 
-    ProductionTime assemblyDelay = computeAssemblyDelay(order);
+    AssemblyTime assemblyDelay = computeAssemblyDelay(order);
     if (!assemblyDelay.isOver()) {
       order.addAssemblyDelay(assemblyDelay);
       notifyModelAssemblyDelay(order);
@@ -57,7 +57,7 @@ public class OnDemandModelAssemblyLineStrategy extends ModelAssemblyObservable
   }
 
   @Override
-  public ProductionTime computeRemainingTimeToProduce(OrderId orderId) {
+  public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
     if (orderId == currentOrder.getId()) {
       return currentOrderRemainingTimeToProduce;
     }
@@ -73,7 +73,7 @@ public class OnDemandModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   private void sendOrderToBeAssembled(Order order) {
     currentOrder = order;
-    currentOrderRemainingTimeToProduce = order.getModelOrder().getProductionTime();
+    currentOrderRemainingTimeToProduce = order.getModelOrder().getAssemblyTime();
     modelAssemblyLineAdapter.addOrder(currentOrder);
   }
 
@@ -87,7 +87,7 @@ public class OnDemandModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   private void sendNextOrderToBeAssembled() {
     currentOrder = orderQueue.remove();
-    currentOrderRemainingTimeToProduce = currentOrder.getModelOrder().getProductionTime();
+    currentOrderRemainingTimeToProduce = currentOrder.getModelOrder().getAssemblyTime();
     modelAssemblyLineAdapter.addOrder(currentOrder);
   }
 
@@ -101,19 +101,18 @@ public class OnDemandModelAssemblyLineStrategy extends ModelAssemblyObservable
     }
   }
 
-  private ProductionTime computeAssemblyDelay(Order order) {
-    ProductionTime remainingTimeToProduce = computeRemainingTimeToProduce(order.getId());
-    return remainingTimeToProduce.subtract(order.getModelOrder().getProductionTime());
+  private AssemblyTime computeAssemblyDelay(Order order) {
+    AssemblyTime remainingTimeToProduce = computeRemainingTimeToProduce(order.getId());
+    return remainingTimeToProduce.subtract(order.getModelOrder().getAssemblyTime());
   }
 
-  private ProductionTime computeRemainingTimeToProduceBasedOnPositionInQueue(OrderId orderId) {
+  private AssemblyTime computeRemainingTimeToProduceBasedOnPositionInQueue(OrderId orderId) {
     int remainingTimeToProduce = 0;
     for (Order order : orderQueue) {
-      remainingTimeToProduce += order.getModelOrder().getProductionTime().inWeeks();
+      remainingTimeToProduce += order.getModelOrder().getAssemblyTime().inWeeks();
       if (order.getId().equals(orderId)) break;
     }
-    return new ProductionTime(
-        remainingTimeToProduce + currentOrderRemainingTimeToProduce.inWeeks());
+    return new AssemblyTime(remainingTimeToProduce + currentOrderRemainingTimeToProduce.inWeeks());
   }
 
   private boolean isCurrentOrderAssembled() {

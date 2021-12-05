@@ -5,15 +5,12 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
-import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
-import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,28 +20,25 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
   private static final Logger LOGGER = LogManager.getLogger();
 
   private ModelOrder currentModelBeingAssembled;
-  private ProductionTime currentModelRemainingProductionTime;
-  private final List<Model> modelAssemblyCycle;
+  private AssemblyTime currentModelRemainingAssemblyTime;
+  private final List<ModelOrder> modelAssemblyCycle;
   private final ModelAssemblyLineAdapter modelAssemblyLineAdapter;
   private final ModelInventory modelInventory;
-  private final ModelOrderFactory modelOrderFactory;
   private final List<Order> orderQueue = new ArrayList<>();
 
   public AccumulateModelAssemblyLineStrategy(
-      List<Model> modelAssemblyCycle,
+      List<ModelOrder> modelAssemblyCycle,
       ModelAssemblyLineAdapter modelAssemblyLineAdapter,
-      ModelInventory modelInventory,
-      ModelOrderFactory modelOrderFactory) {
+      ModelInventory modelInventory) {
     this.modelAssemblyCycle = modelAssemblyCycle;
     this.modelAssemblyLineAdapter = modelAssemblyLineAdapter;
     this.modelInventory = modelInventory;
-    this.modelOrderFactory = modelOrderFactory;
     sendFirstModelToBeAssembled();
   }
 
   public void advance() {
     modelAssemblyLineAdapter.advance();
-    currentModelRemainingProductionTime.subtract(new ProductionTime(1));
+    currentModelRemainingAssemblyTime.subtract(new AssemblyTime(1));
     if (isCurrentModelAssembled()) {
       LOGGER.info(String.format("Model %s assembled", currentModelBeingAssembled.getModelType()));
       if (isModelNeededByAnOrder(currentModelBeingAssembled.getModelType())) {
@@ -76,25 +70,25 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
   }
 
   @Override
-  public ProductionTime computeRemainingTimeToProduce(OrderId orderId) {
+  public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
     Optional<Order> fetchedOrder =
         orderQueue.stream().filter(order -> order.getId().equals(orderId)).findFirst();
     if (fetchedOrder.isEmpty()) {
-      return new ProductionTime(0);
+      return new AssemblyTime(0);
     }
     ModelOrder fetchedModel = fetchedOrder.get().getModelOrder();
     String orderModelType = fetchedModel.getModelType();
 
     int numberOfModelsOfTypeInQueue = computeNumberOfModelsOfTypesInQueue(orderModelType);
-    ProductionTime timeBeforeAssemblingModelType =
+    AssemblyTime timeBeforeAssemblingModelType =
         computeTimeRemainingBeforeAssemblingModelType(orderModelType);
-    ProductionTime timeToAssembleFullCycles =
-        new ProductionTime(
+    AssemblyTime timeToAssembleFullCycles =
+        new AssemblyTime(
             computeTimeToAssembleEntireCycle().inWeeks() * (numberOfModelsOfTypeInQueue - 1));
 
     if (currentModelBeingAssembled.getModelType().equals(orderModelType)) {
       if (numberOfModelsOfTypeInQueue == 1) {
-        return fetchedModel.getProductionTime();
+        return fetchedModel.getAssemblyTime();
       }
 
       return timeBeforeAssemblingModelType.add(timeToAssembleFullCycles);
@@ -102,7 +96,7 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
 
     return timeBeforeAssemblingModelType
         .add(timeToAssembleFullCycles)
-        .add(fetchedModel.getProductionTime());
+        .add(fetchedModel.getAssemblyTime());
   }
 
   private int computeNumberOfModelsOfTypesInQueue(String orderModelType) {
@@ -116,27 +110,27 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
     return count;
   }
 
-  public ProductionTime computeTimeRemainingBeforeAssemblingModelType(String orderModelType) {
+  public AssemblyTime computeTimeRemainingBeforeAssemblingModelType(String orderModelType) {
     if (orderModelType.equals(currentModelBeingAssembled.getModelType())) {
-      return currentModelRemainingProductionTime;
+      return currentModelRemainingAssemblyTime;
     }
 
-    ProductionTime timeRemainingBeforeAssemblingModel = currentModelRemainingProductionTime;
-    Model nextModelInLine =
+    AssemblyTime timeRemainingBeforeAssemblingModel = currentModelRemainingAssemblyTime;
+    ModelOrder nextModelOrderInLine =
         computeNextModelTypeToBeAssembled(currentModelBeingAssembled.getModelType());
-    while (!nextModelInLine.getName().equals(orderModelType)) {
+    while (!nextModelOrderInLine.getModelType().equals(orderModelType)) {
       timeRemainingBeforeAssemblingModel =
-          timeRemainingBeforeAssemblingModel.add(nextModelInLine.getProductionTime());
-      nextModelInLine = computeNextModelTypeToBeAssembled(nextModelInLine.getName());
+          timeRemainingBeforeAssemblingModel.add(nextModelOrderInLine.getAssemblyTime());
+      nextModelOrderInLine = computeNextModelTypeToBeAssembled(nextModelOrderInLine.getModelType());
     }
 
     return timeRemainingBeforeAssemblingModel;
   }
 
-  private ProductionTime computeTimeToAssembleEntireCycle() {
-    ProductionTime timeToAssemblyEntireCycle = new ProductionTime(0);
-    for (Model model : modelAssemblyCycle) {
-      timeToAssemblyEntireCycle = timeToAssemblyEntireCycle.add(model.getProductionTime());
+  private AssemblyTime computeTimeToAssembleEntireCycle() {
+    AssemblyTime timeToAssemblyEntireCycle = new AssemblyTime(0);
+    for (ModelOrder modelOrder : modelAssemblyCycle) {
+      timeToAssemblyEntireCycle = timeToAssemblyEntireCycle.add(modelOrder.getAssemblyTime());
     }
 
     return timeToAssemblyEntireCycle;
@@ -148,37 +142,20 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
   }
 
   private void sendFirstModelToBeAssembled() {
-    String firstModelTypeToAssemble = modelAssemblyCycle.get(0).getName();
-    Model model =
-        modelAssemblyCycle.stream()
-            .filter(model1 -> model1.getName().equals(firstModelTypeToAssemble))
-            .collect(Collectors.toList())
-            .get(0);
-    ModelOrder modelOrder =
-        modelOrderFactory.create(firstModelTypeToAssemble, model.getProductionTime());
-
+    ModelOrder modelOrder = modelAssemblyCycle.get(0);
     modelAssemblyLineAdapter.addOrder(modelOrder);
     currentModelBeingAssembled = modelOrder;
-    currentModelRemainingProductionTime = model.getProductionTime();
+    currentModelRemainingAssemblyTime = modelOrder.getAssemblyTime();
   }
 
   private void sendNextModelToBeAssembled() {
-    Model nextModelTypeToAssemble =
-        computeNextModelTypeToBeAssembled(currentModelBeingAssembled.getModelType());
-    Model model =
-        modelAssemblyCycle.stream()
-            .filter(model1 -> model1.getName().equals(nextModelTypeToAssemble.getName()))
-            .collect(Collectors.toList())
-            .get(0);
-    ModelOrder modelToAssemble =
-        modelOrderFactory.create(nextModelTypeToAssemble.getName(), model.getProductionTime());
-
-    modelAssemblyLineAdapter.addOrder(modelToAssemble);
-    currentModelBeingAssembled = modelToAssemble;
-    currentModelRemainingProductionTime = nextModelTypeToAssemble.getProductionTime();
+    ModelOrder model = computeNextModelTypeToBeAssembled(currentModelBeingAssembled.getModelType());
+    modelAssemblyLineAdapter.addOrder(model);
+    currentModelBeingAssembled = model;
+    currentModelRemainingAssemblyTime = model.getAssemblyTime();
   }
 
-  private Model computeNextModelTypeToBeAssembled(String currentModelTypeToAssemble) {
+  private ModelOrder computeNextModelTypeToBeAssembled(String currentModelTypeToAssemble) {
     int currentModelPositionInModelAssemblyCycle =
         computeCurrentModelPositionInModelAssemblyCycle(currentModelTypeToAssemble);
     if (isLastModel(currentModelPositionInModelAssemblyCycle)) {
@@ -215,7 +192,7 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   private int computeCurrentModelPositionInModelAssemblyCycle(String currentModelType) {
     return IntStream.range(0, modelAssemblyCycle.size())
-        .filter(index -> modelAssemblyCycle.get(index).getName().equals(currentModelType))
+        .filter(index -> modelAssemblyCycle.get(index).getModelType().equals(currentModelType))
         .findFirst()
         .orElse(-1);
   }

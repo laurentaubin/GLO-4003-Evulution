@@ -1,13 +1,12 @@
 package ca.ulaval.glo4003.ws.infrastructure.model;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-
-import static com.google.common.truth.Truth.assertThat;
 
 class ModelAssemblerTest {
   private static final String A_NAME = "a name";

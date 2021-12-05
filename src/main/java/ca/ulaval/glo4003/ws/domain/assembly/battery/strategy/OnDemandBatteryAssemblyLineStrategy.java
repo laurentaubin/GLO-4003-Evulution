@@ -5,7 +5,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyObservable;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class OnDemandBatteryAssemblyLineStrategy extends BatteryAssemblyObservab
   private final Queue<Order> orderQueue = new LinkedList<>();
 
   private Order currentOrder;
-  private ProductionTime currentOrderRemainingTimeToProduce;
+  private AssemblyTime currentOrderRemainingTimeToProduce;
 
   public OnDemandBatteryAssemblyLineStrategy(
       BatteryAssemblyLineAdapter batteryAssemblyLineAdapter) {
@@ -49,7 +49,7 @@ public class OnDemandBatteryAssemblyLineStrategy extends BatteryAssemblyObservab
     }
     orderQueue.add(order);
 
-    ProductionTime assemblyDelay = computeAssemblyDelay(order);
+    AssemblyTime assemblyDelay = computeAssemblyDelay(order);
     if (!assemblyDelay.isOver()) {
       order.addAssemblyDelay(assemblyDelay);
       notifyBatteryAssemblyDelay(order);
@@ -57,7 +57,7 @@ public class OnDemandBatteryAssemblyLineStrategy extends BatteryAssemblyObservab
   }
 
   @Override
-  public ProductionTime computeRemainingTimeToProduce(OrderId orderId) {
+  public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
     if (orderId == currentOrder.getId()) {
       return currentOrderRemainingTimeToProduce;
     }
@@ -100,12 +100,12 @@ public class OnDemandBatteryAssemblyLineStrategy extends BatteryAssemblyObservab
   private void sendOrderToBeAssembled(Order order) {
     batteryAssemblyLineAdapter.addOrder(order);
     currentOrder = order;
-    currentOrderRemainingTimeToProduce = order.getBatteryOrder().getProductionTime();
+    currentOrderRemainingTimeToProduce = order.getBatteryOrder().getAssemblyTime();
   }
 
   private void sendNextOrderToBeAssembled() {
     currentOrder = orderQueue.remove();
-    currentOrderRemainingTimeToProduce = currentOrder.getBatteryOrder().getProductionTime();
+    currentOrderRemainingTimeToProduce = currentOrder.getBatteryOrder().getAssemblyTime();
     batteryAssemblyLineAdapter.addOrder(currentOrder);
   }
 
@@ -121,18 +121,17 @@ public class OnDemandBatteryAssemblyLineStrategy extends BatteryAssemblyObservab
     }
   }
 
-  private ProductionTime computeAssemblyDelay(Order order) {
-    ProductionTime remainingTimeToProduce = computeRemainingTimeToProduce(order.getId());
-    return remainingTimeToProduce.subtract(order.getBatteryOrder().getProductionTime());
+  private AssemblyTime computeAssemblyDelay(Order order) {
+    AssemblyTime remainingTimeToProduce = computeRemainingTimeToProduce(order.getId());
+    return remainingTimeToProduce.subtract(order.getBatteryOrder().getAssemblyTime());
   }
 
-  private ProductionTime computeRemainingTimeToProduceBasedOnPositionInQueue(OrderId orderId) {
+  private AssemblyTime computeRemainingTimeToProduceBasedOnPositionInQueue(OrderId orderId) {
     int remainingTimeToProduce = 0;
     for (Order order : orderQueue) {
-      remainingTimeToProduce += order.getBatteryOrder().getProductionTime().inWeeks();
+      remainingTimeToProduce += order.getBatteryOrder().getAssemblyTime().inWeeks();
       if (order.getId().equals(orderId)) break;
     }
-    return new ProductionTime(
-        remainingTimeToProduce + currentOrderRemainingTimeToProduce.inWeeks());
+    return new AssemblyTime(remainingTimeToProduce + currentOrderRemainingTimeToProduce.inWeeks());
   }
 }

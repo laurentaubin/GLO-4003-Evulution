@@ -1,17 +1,17 @@
 package ca.ulaval.glo4003.ws.domain.assembly.model;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 
 public class ModelOrder {
   private final OrderId orderId;
   private final String modelType;
-  private final ProductionTime productionTime;
+  private final AssemblyTime assemblyTime;
 
-  public ModelOrder(OrderId id, String modelType, ProductionTime productionTime) {
+  public ModelOrder(OrderId id, String modelType, AssemblyTime assemblyTime) {
     this.orderId = id;
     this.modelType = modelType;
-    this.productionTime = productionTime;
+    this.assemblyTime = assemblyTime;
   }
 
   public OrderId getOrderId() {
@@ -22,7 +22,7 @@ public class ModelOrder {
     return modelType;
   }
 
-  public ProductionTime getProductionTime() {
-    return productionTime;
+  public AssemblyTime getAssemblyTime() {
+    return assemblyTime;
   }
 }

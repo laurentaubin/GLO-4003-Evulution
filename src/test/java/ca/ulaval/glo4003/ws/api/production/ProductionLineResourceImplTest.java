@@ -1,5 +1,11 @@
 package ca.ulaval.glo4003.ws.api.production;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.handler.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
@@ -12,80 +18,74 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class ProductionLineResourceImplTest {
 
-    @Mock private Session session;
-    @Mock private ContainerRequestContext containerRequestContext;
-    @Mock private ProductionLineService productionLineService;
-    @Mock private RoleHandler roleHandler;
+  @Mock private Session session;
+  @Mock private ContainerRequestContext containerRequestContext;
+  @Mock private ProductionLineService productionLineService;
+  @Mock private RoleHandler roleHandler;
 
-    private ProductionLineResource productionLineResource;
+  private ProductionLineResource productionLineResource;
 
-    @BeforeEach
-    void setUp() {
-        productionLineResource = new ProductionLineResourceImpl(productionLineService, roleHandler);
-    }
+  @BeforeEach
+  void setUp() {
+    productionLineResource = new ProductionLineResourceImpl(productionLineService, roleHandler);
+  }
 
-    @Test
-    void givenAuthorizedRole_whenShutdown_thenShutdownCalled() {
-        // given
-        givenAuthorizedRole();
+  @Test
+  void givenAuthorizedRole_whenShutdown_thenShutdownCalled() {
+    // given
+    givenAuthorizedRole();
 
-        // when
-        productionLineResource.shutdown(containerRequestContext);
+    // when
+    productionLineResource.shutdown(containerRequestContext);
 
-        // then
-        verify(productionLineService).shutdown();
-    }
+    // then
+    verify(productionLineService).shutdown();
+  }
 
-    @Test
-    void givenUnauthorizedRole_whenShutdown_thenExceptionThrown() {
-        // given
-        givenUnauthorizedRole();
+  @Test
+  void givenUnauthorizedRole_whenShutdown_thenExceptionThrown() {
+    // given
+    givenUnauthorizedRole();
 
-        // when
-        Executable action = () -> productionLineResource.shutdown(containerRequestContext);
+    // when
+    Executable action = () -> productionLineResource.shutdown(containerRequestContext);
 
-        // then
-        assertThrows(UnauthorizedUserException.class, action);
-    }
+    // then
+    assertThrows(UnauthorizedUserException.class, action);
+  }
 
-    @Test
-    void givenAuthorizedRole_whenReactivate_thenReactivateCalled() {
-        // given
-        givenAuthorizedRole();
+  @Test
+  void givenAuthorizedRole_whenReactivate_thenReactivateCalled() {
+    // given
+    givenAuthorizedRole();
 
-        // when
-        productionLineResource.reactivate(containerRequestContext);
+    // when
+    productionLineResource.reactivate(containerRequestContext);
 
-        // then
-        verify(productionLineService).reactivate();
-    }
+    // then
+    verify(productionLineService).reactivate();
+  }
 
-    @Test
-    void givenUnauthorizedRole_whenReactivate_thenExceptionThrown() {
-        // given
-        givenUnauthorizedRole();
+  @Test
+  void givenUnauthorizedRole_whenReactivate_thenExceptionThrown() {
+    // given
+    givenUnauthorizedRole();
 
-        // when
-        Executable action = () -> productionLineResource.reactivate(containerRequestContext);
+    // when
+    Executable action = () -> productionLineResource.reactivate(containerRequestContext);
 
-        // then
-        assertThrows(UnauthorizedUserException.class, action);
-    }
+    // then
+    assertThrows(UnauthorizedUserException.class, action);
+  }
 
-    private void givenUnauthorizedRole() {
-        doThrow(UnauthorizedUserException.class).when(roleHandler).retrieveSession(any(), any());
-    }
+  private void givenUnauthorizedRole() {
+    doThrow(UnauthorizedUserException.class).when(roleHandler).retrieveSession(any(), any());
+  }
 
-    private void givenAuthorizedRole() {
-        given(roleHandler.retrieveSession(any(), any())).willReturn(session);
-    }
+  private void givenAuthorizedRole() {
+    given(roleHandler.retrieveSession(any(), any())).willReturn(session);
+  }
 }

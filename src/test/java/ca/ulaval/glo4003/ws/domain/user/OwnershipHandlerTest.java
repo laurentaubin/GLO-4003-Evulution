@@ -1,24 +1,23 @@
 package ca.ulaval.glo4003.ws.domain.user;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class OwnershipHandlerTest {
@@ -150,8 +149,7 @@ class OwnershipHandlerTest {
   private User givenUserWithMappedDeliveryToTransaction(
       TransactionId transactionId, DeliveryId deliveryId) {
     User user =
-        new User(
-            "Sean", new BirthDate(LocalDate.of(1994, 06, 16)), "male", "sean@sean.sean", "pwd");
+        new User("Sean", new BirthDate(LocalDate.of(1994, 6, 16)), "male", "sean@sean.sean", "pwd");
     user.addTransactionDelivery(transactionId, deliveryId);
     return user;
   }

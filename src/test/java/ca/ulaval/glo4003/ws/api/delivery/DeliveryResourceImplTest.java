@@ -108,9 +108,7 @@ class DeliveryResourceImplTest {
 
     // when
     Executable addingLocation =
-        () ->
-            deliveryResource.addDeliveryLocation(
-                containerRequestContext, AN_ID, invalidRequest);
+        () -> deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, invalidRequest);
 
     // then
     assertThrows(InvalidFormatException.class, addingLocation);
@@ -171,9 +169,7 @@ class DeliveryResourceImplTest {
 
     // when
     Executable addingDeliveryLocation =
-        () ->
-            deliveryResource.addDeliveryLocation(
-                containerRequestContext, AN_ID, request);
+        () -> deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
     assertThrows(DeliveryNotFoundException.class, addingDeliveryLocation);

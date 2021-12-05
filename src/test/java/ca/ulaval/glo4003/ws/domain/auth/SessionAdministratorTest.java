@@ -35,8 +35,7 @@ class SessionAdministratorTest {
   public void setUp() {
     aUser = new UserBuilder().withEmail(AN_EMAIL).withPassword(A_PASSWORD).build();
 
-    sessionAdministrator =
-        new SessionAdministrator(userFinder, sessionRepository, sessionFactory);
+    sessionAdministrator = new SessionAdministrator(userFinder, sessionRepository, sessionFactory);
   }
 
   @Test

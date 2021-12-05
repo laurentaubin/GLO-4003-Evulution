@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTimeFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
@@ -22,16 +23,19 @@ public class AssemblyLineService implements TransactionObserver {
   private final OrderFactory orderFactory;
   private final ModelOrderFactory modelOrderFactory;
   private final BatteryOrderFactory batteryOrderFactory;
+  private final AssemblyTimeFactory assemblyTimeFactory;
 
   public AssemblyLineService(
       OrderFactory orderFactory,
       AssemblyStrategy assemblyStrategy,
       ModelOrderFactory modelOrderFactory,
-      BatteryOrderFactory batteryOrderFactory) {
+      BatteryOrderFactory batteryOrderFactory,
+      AssemblyTimeFactory assemblyTimeFactory) {
     this.assemblyStrategy = assemblyStrategy;
     this.orderFactory = orderFactory;
     this.modelOrderFactory = modelOrderFactory;
     this.batteryOrderFactory = batteryOrderFactory;
+    this.assemblyTimeFactory = assemblyTimeFactory;
   }
 
   public void advance() {
@@ -60,10 +64,12 @@ public class AssemblyLineService implements TransactionObserver {
   }
 
   private ModelOrder createModelOrder(Model model) {
-    return modelOrderFactory.create(model.getName(), model.getProductionTime());
+    return modelOrderFactory.create(
+        model.getName(), assemblyTimeFactory.create(model.getProductionTime().inWeeks()));
   }
 
   private BatteryOrder createBatteryOrder(Battery battery) {
-    return batteryOrderFactory.create(battery.getType(), battery.getProductionTime());
+    return batteryOrderFactory.create(
+        battery.getType(), assemblyTimeFactory.create(battery.getProductionTime().inWeeks()));
   }
 }

@@ -11,9 +11,12 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTimeFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.vehicle.Color;
+import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
@@ -31,17 +34,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class AssemblyLineServiceTest {
   private static final String AN_ID = "an id";
   private static final TransactionId TRANSACTION_ID = new TransactionId(AN_ID);
-  private static final Model MODEL = new ModelBuilder().build();
-  private static final Battery BATTERY = new BatteryBuilder().build();
+  private static final Model MODEL =
+      new ModelBuilder().withProductionTime(new ProductionTime(1)).build();
+  private static final Battery BATTERY =
+      new BatteryBuilder().withProductionTime(new ProductionTime(2)).build();
 
   @Mock private OrderFactory orderFactory;
   @Mock private Order anOrder;
   @Mock private AssemblyStrategy assemblyStrategy;
   @Mock private ModelOrderFactory modelOrderFactory;
   @Mock private BatteryOrderFactory batteryOrderFactory;
+  @Mock private AssemblyTimeFactory assemblyTimeFactory;
   @Mock private Transaction transaction;
   @Mock private ModelOrder modelOrder;
   @Mock private BatteryOrder batteryOrder;
+  @Mock private AssemblyTime modelAssemblyTime;
+  @Mock private AssemblyTime batteryAssemblyTime;
 
   private AssemblyLineService assemblyLine;
   private Vehicle vehicle;
@@ -53,7 +61,11 @@ class AssemblyLineServiceTest {
 
     assemblyLine =
         new AssemblyLineService(
-            orderFactory, assemblyStrategy, modelOrderFactory, batteryOrderFactory);
+            orderFactory,
+            assemblyStrategy,
+            modelOrderFactory,
+            batteryOrderFactory,
+            assemblyTimeFactory);
   }
 
   @Test
@@ -61,9 +73,12 @@ class AssemblyLineServiceTest {
     // given
     given(transaction.getId()).willReturn(TRANSACTION_ID);
     given(transaction.getVehicle()).willReturn(vehicle);
-    given(modelOrderFactory.create(MODEL.getName(), MODEL.getProductionTime()))
-        .willReturn(modelOrder);
-    given(batteryOrderFactory.create(BATTERY.getType(), BATTERY.getProductionTime()))
+    given(assemblyTimeFactory.create(MODEL.getProductionTime().inWeeks()))
+        .willReturn(modelAssemblyTime);
+    given(assemblyTimeFactory.create(BATTERY.getProductionTime().inWeeks()))
+        .willReturn(batteryAssemblyTime);
+    given(modelOrderFactory.create(MODEL.getName(), modelAssemblyTime)).willReturn(modelOrder);
+    given(batteryOrderFactory.create(BATTERY.getType(), batteryAssemblyTime))
         .willReturn(batteryOrder);
     given(orderFactory.create(AN_ID, modelOrder, batteryOrder)).willReturn(anOrder);
 

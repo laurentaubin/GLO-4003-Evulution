@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.ws.domain.assembly.order;
 
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import java.time.LocalDate;
 
 public class Order {
@@ -11,9 +11,9 @@ public class Order {
   private final ModelOrder modelOrder;
   private final BatteryOrder batteryOrder;
   private final LocalDate createdAt;
-  private final ProductionTime initialProductionTime;
-  private ProductionTime remainingAssemblyTime;
-  private ProductionTime assemblyDelay;
+  private final AssemblyTime initialAssemblyTime;
+  private AssemblyTime remainingAssemblyTime;
+  private AssemblyTime assemblyDelay;
   private boolean isReadyForDelivery = false;
 
   public Order(
@@ -21,15 +21,15 @@ public class Order {
       ModelOrder model,
       BatteryOrder battery,
       LocalDate createdAt,
-      ProductionTime initialAssemblyTime) {
+      AssemblyTime initialAssemblyTime) {
     this.id = orderId;
     this.modelOrder = model;
     this.batteryOrder = battery;
     this.createdAt = createdAt;
-    this.initialProductionTime =
-        initialAssemblyTime.add(model.getProductionTime()).add(battery.getProductionTime());
+    this.initialAssemblyTime =
+        initialAssemblyTime.add(model.getAssemblyTime()).add(battery.getAssemblyTime());
     this.remainingAssemblyTime = initialAssemblyTime;
-    this.assemblyDelay = new ProductionTime(0);
+    this.assemblyDelay = new AssemblyTime(0);
   }
 
   public void advance() {
@@ -56,24 +56,24 @@ public class Order {
     return createdAt;
   }
 
-  public ProductionTime getRemainingAssemblyTime() {
+  public AssemblyTime getRemainingAssemblyTime() {
     return remainingAssemblyTime;
   }
 
-  public void setRemainingAssemblyTime(ProductionTime remainingAssemblyTime) {
+  public void setRemainingAssemblyTime(AssemblyTime remainingAssemblyTime) {
     this.remainingAssemblyTime = remainingAssemblyTime;
   }
 
-  public ProductionTime getAssemblyDelay() {
+  public AssemblyTime getAssemblyDelay() {
     return assemblyDelay;
   }
 
-  public void addAssemblyDelay(ProductionTime additionalDelay) {
+  public void addAssemblyDelay(AssemblyTime additionalDelay) {
     assemblyDelay = assemblyDelay.add(additionalDelay);
   }
 
   public LocalDate computeDeliveryDate() {
-    return createdAt.plusWeeks(initialProductionTime.inWeeks()).plusWeeks(assemblyDelay.inWeeks());
+    return createdAt.plusWeeks(initialAssemblyTime.inWeeks()).plusWeeks(assemblyDelay.inWeeks());
   }
 
   public boolean isReadyForDelivery() {

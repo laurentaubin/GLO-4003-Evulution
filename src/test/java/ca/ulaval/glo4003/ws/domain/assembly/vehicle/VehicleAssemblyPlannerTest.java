@@ -7,9 +7,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.notification.VehicleAssemblyDelayObserver;
 import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,10 +41,10 @@ class VehicleAssemblyPlannerTest {
     given(randomProvider.nextBoolean()).willReturn(true);
 
     // when
-    var productionTime = vehicleAssemblyPlanner.getProductionTime(delayedOrder);
+    var productionTime = vehicleAssemblyPlanner.getAssemblyTime(delayedOrder);
 
     // then
-    assertThat(productionTime).isEqualTo(DELAYED.getProductionTime());
+    assertThat(productionTime).isEqualTo(DELAYED.getAssemblyTime());
   }
 
   @Test
@@ -53,7 +53,7 @@ class VehicleAssemblyPlannerTest {
     given(randomProvider.nextBoolean()).willReturn(true);
 
     // when
-    vehicleAssemblyPlanner.getProductionTime(delayedOrder);
+    vehicleAssemblyPlanner.getAssemblyTime(delayedOrder);
 
     // then
     verify(observer).listenVehicleAssemblyDelay(delayedOrder);
@@ -65,20 +65,20 @@ class VehicleAssemblyPlannerTest {
     given(randomProvider.nextBoolean()).willReturn(false);
 
     // when
-    var productionTime = vehicleAssemblyPlanner.getProductionTime(order);
+    var productionTime = vehicleAssemblyPlanner.getAssemblyTime(order);
 
     // then
-    assertThat(productionTime).isEqualTo(NORMAL.getProductionTime());
+    assertThat(productionTime).isEqualTo(NORMAL.getAssemblyTime());
   }
 
   @Test
   public void givenDelayInProduction_whenGetProductionTime_shouldAddDelayToOrder() {
     // given
     given(randomProvider.nextBoolean()).willReturn(true);
-    ProductionTime expectedDelay = DELAYED.getProductionTime().subtract(NORMAL.getProductionTime());
+    AssemblyTime expectedDelay = DELAYED.getAssemblyTime().subtract(NORMAL.getAssemblyTime());
 
     // when
-    vehicleAssemblyPlanner.getProductionTime(delayedOrder);
+    vehicleAssemblyPlanner.getAssemblyTime(delayedOrder);
 
     // then
     verify(delayedOrder).addAssemblyDelay(expectedDelay);
@@ -90,7 +90,7 @@ class VehicleAssemblyPlannerTest {
     given(randomProvider.nextBoolean()).willReturn(false);
 
     // when
-    vehicleAssemblyPlanner.getProductionTime(delayedOrder);
+    vehicleAssemblyPlanner.getAssemblyTime(delayedOrder);
 
     // then
     verify(delayedOrder, never()).addAssemblyDelay(any());
@@ -99,10 +99,9 @@ class VehicleAssemblyPlannerTest {
   @Test
   public void whenGetNormalAssemblyTime_thenReturnNormalAssemblyTime() {
     // when
-    ProductionTime actualProductionTime = vehicleAssemblyPlanner.getNormalAssemblyTime();
+    AssemblyTime assemblyTime = vehicleAssemblyPlanner.getNormalAssemblyTime();
 
     // then
-    assertThat(actualProductionTime)
-        .isEqualTo(VehicleAssemblyProductionTime.NORMAL.getProductionTime());
+    assertThat(assemblyTime).isEqualTo(VehicleAssemblyProductionTime.NORMAL.getAssemblyTime());
   }
 }

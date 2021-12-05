@@ -1,13 +1,13 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryDestinationAssemblerTest {

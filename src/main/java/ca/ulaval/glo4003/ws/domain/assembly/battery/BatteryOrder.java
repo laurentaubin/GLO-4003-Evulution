@@ -1,17 +1,17 @@
 package ca.ulaval.glo4003.ws.domain.assembly.battery;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
+import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
 
 public class BatteryOrder {
   private final OrderId orderId;
   private final String batteryType;
-  private final ProductionTime productionTime;
+  private final AssemblyTime assemblyTime;
 
-  public BatteryOrder(OrderId orderId, String batteryType, ProductionTime productionTime) {
+  public BatteryOrder(OrderId orderId, String batteryType, AssemblyTime assemblyTime) {
     this.orderId = orderId;
     this.batteryType = batteryType;
-    this.productionTime = productionTime;
+    this.assemblyTime = assemblyTime;
   }
 
   public OrderId getOrderId() {
@@ -22,7 +22,7 @@ public class BatteryOrder {
     return batteryType;
   }
 
-  public ProductionTime getProductionTime() {
-    return productionTime;
+  public AssemblyTime getAssemblyTime() {
+    return assemblyTime;
   }
 }
