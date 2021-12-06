@@ -1,0 +1,57 @@
+package ca.ulaval.glo4003.ws.service.user;
+
+import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
+import ca.ulaval.glo4003.ws.domain.auth.Session;
+import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
+import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
+import ca.ulaval.glo4003.ws.domain.user.User;
+import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
+import ca.ulaval.glo4003.ws.service.user.dto.LoginResponseDto;
+import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
+
+public class UserService {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
+
+  private final UserRepository userRepository;
+  private final SessionAdministrator sessionAdministrator;
+  private final UserAssembler userAssembler;
+  private final LoginResponseAssembler loginResponseAssembler;
+
+  public UserService() {
+    this(
+        serviceLocator.resolve(UserRepository.class),
+        serviceLocator.resolve(SessionAdministrator.class),
+        serviceLocator.resolve(UserAssembler.class),
+        new LoginResponseAssembler());
+  }
+
+  public UserService(
+      UserRepository userRepository,
+      SessionAdministrator sessionAdministrator,
+      UserAssembler userAssembler,
+      LoginResponseAssembler loginResponseAssembler) {
+    this.userRepository = userRepository;
+    this.sessionAdministrator = sessionAdministrator;
+    this.userAssembler = userAssembler;
+    this.loginResponseAssembler = loginResponseAssembler;
+  }
+
+  public void registerUser(RegisterUserDto registerUserDto) {
+    User user = userAssembler.assemble(registerUserDto);
+    if (userRepository.doesUserExist(user.getEmail())) {
+      throw new EmailAlreadyInUseException();
+    }
+    userRepository.registerUser(user);
+  }
+
+  public LoginResponseDto login(String email, String password) {
+    try {
+      Session session = sessionAdministrator.login(email, password);
+      return loginResponseAssembler.assemble(session);
+    } catch (InvalidCredentialsException ignored) {
+      throw new LoginFailedException();
+    }
+  }
+}

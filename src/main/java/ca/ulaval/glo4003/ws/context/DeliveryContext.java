@@ -2,12 +2,12 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryFactory;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryRepository;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.ReceiptFactory;
 import ca.ulaval.glo4003.ws.infrastructure.delivery.InMemoryDeliveryRepository;
 import ca.ulaval.glo4003.ws.infrastructure.transaction.InMemoryTransactionRepository;
+import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
 
 public class DeliveryContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();

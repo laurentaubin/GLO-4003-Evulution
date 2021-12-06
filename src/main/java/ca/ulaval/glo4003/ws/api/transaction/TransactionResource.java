@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
-import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryRequest;
+import ca.ulaval.glo4003.ws.service.transaction.dto.PaymentRequest;
+import ca.ulaval.glo4003.ws.service.transaction.dto.VehicleRequest;
 import jakarta.annotation.Resource;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;

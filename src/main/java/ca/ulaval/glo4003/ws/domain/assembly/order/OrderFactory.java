@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.domain.assembly.order;
 
-import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
+import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 
 public class OrderFactory {
   private final LocalDateProvider localDateProvider;

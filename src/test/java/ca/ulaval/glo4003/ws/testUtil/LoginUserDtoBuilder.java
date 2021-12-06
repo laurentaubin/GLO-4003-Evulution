@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
-import ca.ulaval.glo4003.ws.api.user.dto.LoginUserDto;
+import ca.ulaval.glo4003.ws.service.user.dto.LoginUserDto;
 
 public class LoginUserDtoBuilder {
   private String email = "email@email.com";

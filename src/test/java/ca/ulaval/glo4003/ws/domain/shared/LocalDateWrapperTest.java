@@ -3,8 +3,6 @@ package ca.ulaval.glo4003.ws.domain.shared;
 import static com.google.common.truth.Truth.assertThat;
 
 import java.time.LocalDate;
-
-import ca.ulaval.glo4003.ws.domain.shared.LocalDateWrapper;
 import org.junit.jupiter.api.Test;
 
 class LocalDateWrapperTest {

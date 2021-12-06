@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.ws.api.user.validator;
 
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
-import ca.ulaval.glo4003.ws.api.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
+import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

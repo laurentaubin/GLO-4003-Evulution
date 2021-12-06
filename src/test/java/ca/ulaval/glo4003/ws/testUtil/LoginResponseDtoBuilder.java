@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
-import ca.ulaval.glo4003.ws.api.user.dto.LoginResponseDto;
+import ca.ulaval.glo4003.ws.service.user.dto.LoginResponseDto;
 
 public class LoginResponseDtoBuilder {
   private String token = "token132";

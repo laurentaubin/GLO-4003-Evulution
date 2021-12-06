@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.schedule;
 
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.service.AssemblyLineService;
+import ca.ulaval.glo4003.ws.service.assembly.AssemblyLineService;
 import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

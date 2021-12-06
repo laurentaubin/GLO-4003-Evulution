@@ -10,6 +10,5 @@ public class ApiContext {
     new DeliveryContext().registerContext();
     new SalesContext().registerContext();
     new TimeContext().registerContext();
-    new ProductionLineContext().registerContext();
   }
 }

@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
-import ca.ulaval.glo4003.ws.api.user.dto.RegisterUserDto;
+import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 
 public class RegisterUserDtoBuilder {
   private String name = "a name";

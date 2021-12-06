@@ -4,9 +4,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDate;
-
-import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.domain.shared.LocalDateWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +16,7 @@ class LocalDateProviderTest {
   private static final LocalDate A_DATE = LocalDate.of(3, 3, 3);
   private static final LocalDate A_DATE_A_WEEK_LATER = LocalDate.of(3, 3, 10);
 
-  @Mock
-  LocalDateWrapper localDateWrapper;
+  @Mock LocalDateWrapper localDateWrapper;
 
   private LocalDateProvider localDateProvider;
 

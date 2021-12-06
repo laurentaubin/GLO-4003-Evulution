@@ -4,7 +4,6 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BasicBatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BasicVehicleAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
-import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.strategy.OnDemandBatteryAssemblyLineStrategy;
@@ -24,6 +23,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTimeFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.VehicleAssemblyPlanner;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.strategy.DefaultVehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
+import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
@@ -33,7 +33,7 @@ import ca.ulaval.glo4003.ws.infrastructure.assembly.CommandIdFactory;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.battery.CarManufactureBatteryAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.CarManufactureModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.infrastructure.assembly.model.InMemoryModelInventory;
-import ca.ulaval.glo4003.ws.service.AssemblyLineService;
+import ca.ulaval.glo4003.ws.service.assembly.AssemblyLineService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +61,10 @@ public class AssemblyContext implements Context {
     registerModelAssemblyObservers();
     registerBatteryAssemblyObservers();
     registerVehicleAssemblyObservers();
+    // TODO: ici pour l'instant, une autre PR pour fix le context de assembly
+    serviceLocator
+        .resolve(AssemblyLineService.class)
+        .register(serviceLocator.resolve(NotificationService.class));
   }
 
   private void registerModelAssemblyLine() {

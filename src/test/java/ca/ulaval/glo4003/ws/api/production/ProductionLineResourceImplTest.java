@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.handler.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.production.ProductionLineService;
+import ca.ulaval.glo4003.ws.service.assembly.AssemblyLineService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class ProductionLineResourceImplTest {
 
   @Mock private Session session;
   @Mock private ContainerRequestContext containerRequestContext;
-  @Mock private ProductionLineService productionLineService;
+  @Mock private AssemblyLineService productionLineService;
   @Mock private RoleHandler roleHandler;
 
   private ProductionLineResource productionLineResource;
@@ -58,7 +58,7 @@ class ProductionLineResourceImplTest {
   }
 
   @Test
-  void givenAuthorizedRole_whenReactivate_thenReactivateCalled() {
+  void givenAuthorizedRole_whenActivate_thenActivateCalled() {
     // given
     givenAuthorizedRole();
 
@@ -66,7 +66,7 @@ class ProductionLineResourceImplTest {
     productionLineResource.reactivate(containerRequestContext);
 
     // then
-    verify(productionLineService).reactivate();
+    verify(productionLineService).activate();
   }
 
   @Test
