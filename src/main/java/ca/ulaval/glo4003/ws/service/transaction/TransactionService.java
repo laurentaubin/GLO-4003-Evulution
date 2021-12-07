@@ -9,90 +9,100 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryRequest;
-import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryResponse;
-import ca.ulaval.glo4003.ws.service.transaction.dto.CreatedTransactionResponse;
-import ca.ulaval.glo4003.ws.service.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.service.transaction.dto.VehicleRequest;
+import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryConfigurationDto;
+import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureBatteryDto;
+import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigurePaymentDto;
+import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureVehicleDto;
+import ca.ulaval.glo4003.ws.service.transaction.dto.TransactionCreationDto;
 import java.math.BigDecimal;
 
 public class TransactionService {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   private final DeliveryService deliveryService;
-  private final CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
-  private final BatteryResponseAssembler batteryResponseAssembler;
   private final VehicleFactory vehicleFactory;
-  private final PaymentRequestAssembler paymentRequestAssembler;
   private final TransactionRepository transactionRepository;
   private final TransactionFactory transactionFactory;
   private final BatteryRepository batteryRepository;
   private final TransactionCompletedObservable transactionCompletedObservable;
+  private final BatteryConfigurationDtoAssembler batteryConfigurationDtoAssembler;
+  private final PaymentFactory paymentFactory;
+  private final TransactionCreationDtoAssembler transactionCreationDtoAssembler;
 
   public TransactionService() {
     this(
         serviceLocator.resolve(DeliveryService.class),
-        new CreatedTransactionResponseAssembler(),
-        new BatteryResponseAssembler(),
         new VehicleFactory(),
-        new PaymentRequestAssembler(new BankAccountFactory()),
         serviceLocator.resolve(TransactionRepository.class),
         serviceLocator.resolve(TransactionFactory.class),
         serviceLocator.resolve(BatteryRepository.class),
-        serviceLocator.resolve(TransactionCompletedObservable.class));
+        serviceLocator.resolve(TransactionCompletedObservable.class),
+        new BatteryConfigurationDtoAssembler(),
+        new PaymentFactory(new BankAccountFactory()),
+        new TransactionCreationDtoAssembler());
   }
 
   public TransactionService(
       DeliveryService deliveryService,
-      CreatedTransactionResponseAssembler createdTransactionResponseAssembler,
-      BatteryResponseAssembler batteryResponseAssembler,
       VehicleFactory vehicleFactory,
-      PaymentRequestAssembler paymentRequestAssembler,
       TransactionRepository transactionRepository,
       TransactionFactory transactionFactory,
       BatteryRepository batteryRepository,
-      TransactionCompletedObservable transactionCompletedObservable) {
+      TransactionCompletedObservable transactionCompletedObservable,
+      BatteryConfigurationDtoAssembler batteryConfigurationDtoAssembler,
+      PaymentFactory paymentFactory,
+      TransactionCreationDtoAssembler transactionCreationDtoAssembler) {
     this.deliveryService = deliveryService;
-    this.createdTransactionResponseAssembler = createdTransactionResponseAssembler;
-    this.batteryResponseAssembler = batteryResponseAssembler;
     this.vehicleFactory = vehicleFactory;
-    this.paymentRequestAssembler = paymentRequestAssembler;
     this.transactionRepository = transactionRepository;
     this.transactionFactory = transactionFactory;
     this.batteryRepository = batteryRepository;
     this.transactionCompletedObservable = transactionCompletedObservable;
+    this.batteryConfigurationDtoAssembler = batteryConfigurationDtoAssembler;
+    this.paymentFactory = paymentFactory;
+    this.transactionCreationDtoAssembler = transactionCreationDtoAssembler;
   }
 
-  public CreatedTransactionResponse createTransaction() {
+  public TransactionCreationDto createTransaction() {
     Transaction transaction = transactionFactory.createTransaction();
     transactionRepository.save(transaction);
     Delivery delivery = deliveryService.createDelivery();
-    return createdTransactionResponseAssembler.assemble(transaction, delivery);
+    return transactionCreationDtoAssembler.assemble(transaction.getId(), delivery.getDeliveryId());
   }
 
-  public void addVehicle(TransactionId transactionId, VehicleRequest vehicleRequest) {
-    Vehicle vehicle = vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor());
+  public void configureVehicle(
+      TransactionId transactionId, ConfigureVehicleDto vehicleConfigurationDto) {
+    Vehicle vehicle =
+        vehicleFactory.create(
+            vehicleConfigurationDto.getModelName(), vehicleConfigurationDto.getColor());
     Transaction transaction = getTransaction(transactionId);
     transaction.addVehicle(vehicle);
     transactionRepository.update(transaction);
   }
 
-  public BatteryResponse addBattery(TransactionId transactionId, BatteryRequest batteryRequest) {
+  public BatteryConfigurationDto configureBattery(
+      TransactionId transactionId, ConfigureBatteryDto batteryConfigurationDto) {
     Transaction transaction = getTransaction(transactionId);
-    Battery battery = batteryRepository.findByType(batteryRequest.getType());
+    Battery battery = batteryRepository.findByType(batteryConfigurationDto.getTypeName());
     transaction.addBattery(battery);
     transactionRepository.update(transaction);
     BigDecimal estimatedRange = transaction.computeEstimatedVehicleRange();
-    return batteryResponseAssembler.assemble(estimatedRange);
+    return batteryConfigurationDtoAssembler.assemble(estimatedRange);
   }
 
-  public void completeTransaction(TransactionId transactionId, PaymentRequest paymentRequest) {
-    Payment payment = paymentRequestAssembler.create(paymentRequest);
+  public void completeTransaction(
+      TransactionId transactionId, ConfigurePaymentDto configurePaymentDto) {
+    Payment payment =
+        paymentFactory.create(
+            configurePaymentDto.getBankNumber(),
+            configurePaymentDto.getAccountNumber(),
+            configurePaymentDto.getFrequency());
     Transaction transaction = getTransaction(transactionId);
     transaction.addPayment(payment);
     transactionRepository.update(transaction);

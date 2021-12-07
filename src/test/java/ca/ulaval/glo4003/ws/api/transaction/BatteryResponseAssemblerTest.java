@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.api.transaction;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import ca.ulaval.glo4003.ws.service.transaction.BatteryResponseAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.response.BatteryConfigurationResponseAssembler;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test;
 class BatteryResponseAssemblerTest {
   private static final double A_NUMBER = 10.999;
 
-  private BatteryResponseAssembler batteryResponseAssembler;
+  private BatteryConfigurationResponseAssembler batteryResponseAssembler;
 
   @BeforeEach
   void setUp() {
-    batteryResponseAssembler = new BatteryResponseAssembler();
+    batteryResponseAssembler = new BatteryConfigurationResponseAssembler();
   }
 
   @Test

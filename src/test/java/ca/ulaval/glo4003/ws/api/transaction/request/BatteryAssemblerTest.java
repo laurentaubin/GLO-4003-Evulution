@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.service.transaction.dto;
+package ca.ulaval.glo4003.ws.api.transaction.request;
 
 import static com.google.common.truth.Truth.assertThat;
 

@@ -13,14 +13,15 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryRequest;
-import ca.ulaval.glo4003.ws.service.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.service.transaction.dto.VehicleRequest;
+import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureBatteryDto;
+import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigurePaymentDto;
+import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureVehicleDto;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,20 +39,23 @@ class TransactionServiceTest {
   private static final String WHITE = "White";
 
   @Mock private DeliveryService deliveryService;
-  @Mock private CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
-  @Mock private BatteryResponseAssembler batteryResponseAssembler;
   @Mock private VehicleFactory vehicleFactory;
-  @Mock private PaymentRequestAssembler paymentRequestAssembler;
   @Mock private TransactionRepository transactionRepository;
   @Mock private TransactionFactory transactionFactory;
   @Mock private BatteryRepository batteryRepository;
   @Mock private TransactionCompletedObservable transactionCompletedObservable;
+  @Mock private BatteryConfigurationDtoAssembler batteryConfigurationDtoAssembler;
+  @Mock private PaymentFactory paymentFactory;
+  @Mock private TransactionCreationDtoAssembler transactionCreationDtoAssembler;
 
   @Mock private Transaction transaction;
   @Mock private Delivery delivery;
   @Mock private Vehicle vehicle;
   @Mock private Battery battery;
   @Mock private Payment payment;
+  @Mock private ConfigureVehicleDto configureVehicleDto;
+  @Mock private ConfigureBatteryDto configureBatteryDto;
+  @Mock private ConfigurePaymentDto configurePaymentDto;
 
   private TransactionService transactionService;
 
@@ -60,18 +64,22 @@ class TransactionServiceTest {
     transactionService =
         new TransactionService(
             deliveryService,
-            createdTransactionResponseAssembler,
-            batteryResponseAssembler,
             vehicleFactory,
-            paymentRequestAssembler,
             transactionRepository,
             transactionFactory,
             batteryRepository,
-            transactionCompletedObservable);
+            transactionCompletedObservable,
+            batteryConfigurationDtoAssembler,
+            paymentFactory,
+            transactionCreationDtoAssembler);
   }
 
   @Test
   public void whenCreateTransaction_thenTransactionCreated() {
+    // given
+    given(transactionFactory.createTransaction()).willReturn(transaction);
+    given(deliveryService.createDelivery()).willReturn(delivery);
+
     // when
     transactionService.createTransaction();
 
@@ -81,6 +89,10 @@ class TransactionServiceTest {
 
   @Test
   public void whenCreateTransaction_thenDeliveryCreated() {
+    // given
+    given(transactionFactory.createTransaction()).willReturn(transaction);
+    given(deliveryService.createDelivery()).willReturn(delivery);
+
     // when
     transactionService.createTransaction();
 
@@ -89,9 +101,10 @@ class TransactionServiceTest {
   }
 
   @Test
-  void givenTransaction_whenCreateTransaction_thenRepositorySaveTransaction() {
+  void whenCreateTransaction_thenRepositorySaveTransaction() {
     // given
     given(transactionFactory.createTransaction()).willReturn(transaction);
+    given(deliveryService.createDelivery()).willReturn(delivery);
 
     // when
     transactionService.createTransaction();
@@ -102,7 +115,7 @@ class TransactionServiceTest {
 
   @Test
   public void
-      givenCreatedTransactionAndDelivery_whenCreatedTransaction_createdTransactionResponseAssembled() {
+      whenCreateTransaction_thenTransactionCreationDtoIsAssembledFromCreatedTransactionAndDelivery() {
     // given
     given(transactionFactory.createTransaction()).willReturn(transaction);
     given(deliveryService.createDelivery()).willReturn(delivery);
@@ -111,91 +124,99 @@ class TransactionServiceTest {
     transactionService.createTransaction();
 
     // then
-    verify(createdTransactionResponseAssembler).assemble(transaction, delivery);
+    verify(transactionCreationDtoAssembler).assemble(transaction.getId(), delivery.getDeliveryId());
   }
 
   @Test
-  public void givenTransactionIdVehicleRequest_whenAddVehicle_thenVehicleCreatedByFactory() {
+  public void
+      givenATransactionIdAndAConfigureVehicleDto_whenConfigureVehicle_thenVehicleIsCreatedFromDto() {
     // given
-    var vehicleRequest = createVehicleRequest();
+    given(configureVehicleDto.getModelName()).willReturn(A_MODEL);
+    given(configureVehicleDto.getColor()).willReturn(WHITE);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.addVehicle(AN_ID, vehicleRequest);
+    transactionService.configureVehicle(AN_ID, configureVehicleDto);
 
     // then
     verify(vehicleFactory).create(A_MODEL, WHITE);
   }
 
   @Test
-  public void givenTransactionIdAndVehicleRequest_whenAddVehicle_thenVehicleAddedToTransaction() {
+  public void
+      givenTransactionIdAndAConfigureVehicleDto_whenConfigureVehicle_thenConfiguredVehicleIsAddedToTransaction() {
     // given
-    var vehicleRequest = createVehicleRequest();
-
+    given(vehicleFactory.create(any(), any())).willReturn(vehicle);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
-    given(vehicleFactory.create(A_MODEL, WHITE)).willReturn(vehicle);
 
     // when
-    transactionService.addVehicle(AN_ID, vehicleRequest);
+    transactionService.configureVehicle(AN_ID, configureVehicleDto);
 
     // then
     verify(transaction).addVehicle(vehicle);
   }
 
   @Test
-  public void givenTransactionIdAndVehicleRequest_whenAddVehicle_thenTransactionUpdated() {
+  public void
+      givenTransactionIdAndAConfigureVehicleDto_whenConfigureVehicle_thenTransactionUpdated() {
     // given
-    var vehicleRequest = createVehicleRequest();
-
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
-    given(vehicleFactory.create(A_MODEL, WHITE)).willReturn(vehicle);
+    given(vehicleFactory.create(any(), any())).willReturn(vehicle);
 
     // when
-    transactionService.addVehicle(AN_ID, vehicleRequest);
+    transactionService.configureVehicle(AN_ID, configureVehicleDto);
 
     // then
     verify(transactionRepository).update(transaction);
   }
 
   @Test
-  void givenNotExistingTransactionId_whenAddVehicle_thenThrowTransactionNotFoundException() {
+  void givenNotExistingTransactionId_whenConfigureVehicle_thenThrowTransactionNotFoundException() {
     // given
-    var vehicleRequest = createVehicleRequest();
     given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
-    Executable action = () -> transactionService.addVehicle(AN_ID, vehicleRequest);
+    Executable action = () -> transactionService.configureVehicle(AN_ID, configureVehicleDto);
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
   }
 
   @Test
-  public void givenBatteryRequest_whenAddBattery_thenBatteryAddedToTransaction() {
+  public void
+      givenConfigureBatteryDtoAndATransactionId_whenConfigureBattery_thenDesiredBatteryIsFetch() {
     // given
-    var batteryRequest = new BatteryRequest();
-    batteryRequest.setType(BATTERY_TYPE);
+    given(transactionRepository.find(any())).willReturn(transaction);
+    given(configureBatteryDto.getTypeName()).willReturn(BATTERY_TYPE);
 
+    // when
+    transactionService.configureBattery(AN_ID, configureBatteryDto);
+
+    // then
+    verify(batteryRepository).findByType(BATTERY_TYPE);
+  }
+
+  @Test
+  public void givenConfigureBatteryDto_whenConfigureBattery_thenBatteryIsAddedToTransaction() {
+    // given
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
     given(batteryRepository.findByType(any())).willReturn(battery);
 
     // when
-    transactionService.addBattery(AN_ID, batteryRequest);
+    transactionService.configureBattery(AN_ID, configureBatteryDto);
 
     // then
     verify(transaction).addBattery(battery);
   }
 
   @Test
-  void givenBatteryAndTransactionId_whenAddBattery_thenRepositoryUpdateTransaction() {
+  void
+      givenConfigureBatteryDtoAndTransactionId_whenConfigureBattery_thenRepositoryUpdateTransaction() {
     // given
-    var batteryRequest = new BatteryRequest();
-    batteryRequest.setType(BATTERY_TYPE);
-
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.addBattery(AN_ID, batteryRequest);
+    transactionService.configureBattery(AN_ID, configureBatteryDto);
 
     // then
     verify(transactionRepository).update(transaction);
@@ -204,54 +225,52 @@ class TransactionServiceTest {
   @Test
   void givenNotExistingTransactionId_whenAddBattery_thenThrowTransactionNotFoundException() {
     // given
-    var batteryRequest = new BatteryRequest();
     given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
-    Executable action = () -> transactionService.addBattery(AN_ID, batteryRequest);
+    Executable action = () -> transactionService.configureBattery(AN_ID, configureBatteryDto);
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
   }
 
   @Test
-  public void givenTransactionId_whenAddBattery_thenBatteryResponseAssembledWithEstimatedRange() {
+  public void
+      givenTransactionId_whenConfigureBattery_thenBatteryConfigurationDtoAssembledWithEstimatedRange() {
     // given
-    var batteryRequest = new BatteryRequest();
-    batteryRequest.setType(BATTERY_TYPE);
-
     given(transaction.computeEstimatedVehicleRange()).willReturn(A_RANGE);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.addBattery(AN_ID, batteryRequest);
+    transactionService.configureBattery(AN_ID, configureBatteryDto);
 
     // then
-    verify(batteryResponseAssembler).assemble(A_RANGE);
+    verify(batteryConfigurationDtoAssembler).assemble(A_RANGE);
   }
 
   @Test
   public void
-      givenTransactionIdAndPaymentRequest_whenCompleteTransaction_thenPaymentAddedToTransaction() {
+      givenTransactionIdAndPaymentConfigurationDto_whenCompleteTransaction_thenPaymentAddedToTransaction() {
     // given
-    given(paymentRequestAssembler.create(any())).willReturn(payment);
+    given(paymentFactory.create(any(), any(), any())).willReturn(payment);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.completeTransaction(AN_ID, new PaymentRequest());
+    transactionService.completeTransaction(AN_ID, configurePaymentDto);
 
     // then
     verify(transaction).addPayment(payment);
   }
 
   @Test
-  void givenPaymentAndTransactionId_whenAddPayment_thenRepositoryUpdateTransaction() {
+  void
+      givenConfigurePaymentDtoAndTransactionId_whenCompleteTransaction_thenRepositoryUpdateTransaction() {
     // given
-    given(paymentRequestAssembler.create(any())).willReturn(payment);
+    given(paymentFactory.create(any(), any(), any())).willReturn(payment);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.completeTransaction(AN_ID, new PaymentRequest());
+    transactionService.completeTransaction(AN_ID, configurePaymentDto);
 
     // then
     verify(transactionRepository).update(transaction);
@@ -263,29 +282,22 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
-    Executable action = () -> transactionService.completeTransaction(AN_ID, new PaymentRequest());
+    Executable action = () -> transactionService.completeTransaction(AN_ID, configurePaymentDto);
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
   }
 
   @Test
-  public void whenAddPayment_thenNotifyTransactionCompletedObservers() {
+  public void whenCompleteTransaction_thenNotifyTransactionCompletedObservers() {
     // given
-    given(paymentRequestAssembler.create(any())).willReturn(payment);
+    given(paymentFactory.create(any(), any(), any())).willReturn(payment);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.completeTransaction(AN_ID, new PaymentRequest());
+    transactionService.completeTransaction(AN_ID, configurePaymentDto);
 
     // then
     verify(transactionCompletedObservable).notifyTransactionCompleted(transaction);
-  }
-
-  private VehicleRequest createVehicleRequest() {
-    var request = new VehicleRequest();
-    request.setModel(A_MODEL);
-    request.setColor(WHITE);
-    return request;
   }
 }
