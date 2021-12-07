@@ -5,7 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
-import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryResponse;
+import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryDto;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,26 +16,26 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CompletedDeliveryResponseAssemblerTest {
   private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
   private static final Price A_PRICE = new Price(new BigDecimal(1200));
+  private static final int A_PAYMENT_TAKEN = 17;
+  private static final int PAYMENTS_LEFT = 70;
 
-  private CompletedDeliveryResponseAssembler completedDeliveryResponseAssembler;
+  private CompletedDeliveryDtoAssembler completedDeliveryAssembler;
 
   @BeforeEach
   void setUp() {
-    completedDeliveryResponseAssembler = new CompletedDeliveryResponseAssembler();
+    completedDeliveryAssembler = new CompletedDeliveryDtoAssembler();
   }
 
   @Test
   void givenReceipt_whenAssemble_thenReturnCorrectResponse() {
     // given
-    int expectedPaymentTaken = 17;
-    int expectedPaymentsLeft = 70;
-    var receipt = new Receipt(A_PRICE, Frequency.MONTHLY, AMOUNT_OF_YEARS_TO_PAY_OVER);
+    Receipt receipt = new Receipt(A_PRICE, Frequency.MONTHLY, AMOUNT_OF_YEARS_TO_PAY_OVER);
 
     // when
-    CompletedDeliveryResponse actual = completedDeliveryResponseAssembler.assemble(receipt);
+    CompletedDeliveryDto actual = completedDeliveryAssembler.assemble(receipt);
 
     // then
-    assertThat(actual.paymentsLeft).isEqualTo(expectedPaymentsLeft);
-    assertThat(actual.paymentTaken).isEqualTo(expectedPaymentTaken);
+    assertThat(actual.paymentsLeft).isEqualTo(PAYMENTS_LEFT);
+    assertThat(actual.paymentTaken).isEqualTo(A_PAYMENT_TAKEN);
   }
 }

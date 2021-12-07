@@ -7,6 +7,8 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
+import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
@@ -14,8 +16,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotFoundException;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.service.authentication.AuthenticationService;
 import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationRequest;
-import ca.ulaval.glo4003.ws.service.delivery.dto.validator.DeliveryRequestValidator;
+import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -39,6 +40,7 @@ class DeliveryResourceImplTest {
   @Mock private DeliveryService deliveryService;
   @Mock private AuthenticationService authenticationService;
   @Mock private DeliveryRequestValidator deliveryRequestValidator;
+  @Mock private DeliveryDtoAssembler deliveryDtoAssembler;
   @Mock private ContainerRequestContext containerRequestContext;
   @Mock private Session aSession;
 
@@ -47,7 +49,8 @@ class DeliveryResourceImplTest {
   @BeforeEach
   void setUp() {
     deliveryResource =
-        new DeliveryResourceImpl(deliveryService, authenticationService, deliveryRequestValidator);
+        new DeliveryResourceImpl(
+            deliveryService, authenticationService, deliveryRequestValidator, deliveryDtoAssembler);
   }
 
   @Test
@@ -66,12 +69,14 @@ class DeliveryResourceImplTest {
   void givenDeliveryLocationRequest_whenAddLocation_thenServiceAddsDeliveryLocation() {
     // given
     DeliveryLocationRequest request = createDeliveryLocationRequest();
+    DeliveryLocationDto requestDto = createDeliveryLocationRequestDto();
+    given(deliveryDtoAssembler.assemble(request)).willReturn(requestDto);
 
     // when
     deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
-    verify(deliveryService).addDeliveryLocation(AN_ID, request);
+    verify(deliveryService).addDeliveryLocation(AN_ID, requestDto);
   }
 
   @Test
@@ -171,6 +176,13 @@ class DeliveryResourceImplTest {
     DeliveryLocationRequest request = new DeliveryLocationRequest();
     request.setMode(A_MODE);
     request.setLocation(A_LOCATION);
+    return request;
+  }
+
+  private DeliveryLocationDto createDeliveryLocationRequestDto() {
+    DeliveryLocationDto request = new DeliveryLocationDto();
+    request.mode = A_MODE;
+    request.location = A_LOCATION;
     return request;
   }
 

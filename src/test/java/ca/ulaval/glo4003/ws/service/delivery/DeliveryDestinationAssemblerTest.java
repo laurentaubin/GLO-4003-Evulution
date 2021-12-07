@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.service.delivery;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
-import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,11 +22,9 @@ class DeliveryDestinationAssemblerTest {
   }
 
   @Test
-  void givenDeliveryLocationRequest_whenCreate_thenReturnCorrectDeliveryLocation() {
+  void givenDeliveryLocationDto_whenCreate_thenReturnCorrectDeliveryLocation() {
     // given
-    DeliveryLocationRequest request = new DeliveryLocationRequest();
-    request.setMode(A_MODE);
-    request.setLocation(A_LOCATION);
+    DeliveryLocationDto request = createDeliveryLocationDto();
 
     // when
     DeliveryDestination deliveryDestination = deliveryDestinationAssembler.assemble(request);
@@ -34,5 +32,12 @@ class DeliveryDestinationAssemblerTest {
     // then
     assertThat(deliveryDestination.getMode().getDeliveryMode()).matches(A_MODE);
     assertThat(deliveryDestination.getLocation().getCampusLocation()).matches(A_LOCATION);
+  }
+
+  private DeliveryLocationDto createDeliveryLocationDto() {
+    DeliveryLocationDto request = new DeliveryLocationDto();
+    request.mode = A_MODE;
+    request.location = A_LOCATION;
+    return request;
   }
 }

@@ -7,13 +7,19 @@ import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
-import ca.ulaval.glo4003.ws.domain.delivery.*;
+import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryFactory;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryMode;
+import ca.ulaval.glo4003.ws.domain.delivery.DeliveryRepository;
+import ca.ulaval.glo4003.ws.domain.delivery.Location;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
-import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,9 +41,9 @@ class DeliveryServiceTest {
   private static final DeliveryMode A_DELIVERY_MODE = DeliveryMode.CAMPUS;
   private static final Location A_LOCATION = Location.VACHON;
 
-  @Mock private CompletedDeliveryResponseAssembler deliveryResponseAssembler;
+  @Mock private CompletedDeliveryDtoAssembler deliveryResponseAssembler;
   @Mock private DeliveryDestinationAssembler deliveryDestinationAssembler;
-  @Mock private DeliveryLocationRequest deliveryLocationRequest;
+  @Mock private DeliveryLocationDto deliveryLocationRequest;
   @Mock private DeliveryDestination deliveryDestination;
   @Mock private DeliveryRepository deliveryRepository;
   @Mock private PaymentService paymentService;
@@ -91,13 +97,13 @@ class DeliveryServiceTest {
   public void
       givenDeliveryDestinationAndDeliveryId_whenAddDeliveryDestination_thenRepositoryUpdateDelivery() {
     // given
-    var deliveryLocation = givenADeliveryDestination();
+    DeliveryDestination deliveryDestination = givenADeliveryDestination();
 
-    given(deliveryDestinationAssembler.assemble(any())).willReturn(deliveryLocation);
+    given(deliveryDestinationAssembler.assemble(any())).willReturn(deliveryDestination);
     given(deliveryRepository.find(DELIVERY_ID)).willReturn(delivery);
 
     // when
-    deliveryService.addDeliveryLocation(DELIVERY_ID, new DeliveryLocationRequest());
+    deliveryService.addDeliveryLocation(DELIVERY_ID, new DeliveryLocationDto());
 
     // then
     verify(deliveryRepository).update(delivery);

@@ -6,7 +6,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;

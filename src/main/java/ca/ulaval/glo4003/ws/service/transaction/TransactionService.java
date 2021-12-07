@@ -2,7 +2,11 @@ package ca.ulaval.glo4003.ws.service.transaction;
 
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.transaction.*;
+import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.BankAccountFactory;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
@@ -10,7 +14,11 @@ import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.service.transaction.dto.*;
+import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryRequest;
+import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryResponse;
+import ca.ulaval.glo4003.ws.service.transaction.dto.CreatedTransactionResponse;
+import ca.ulaval.glo4003.ws.service.transaction.dto.PaymentRequest;
+import ca.ulaval.glo4003.ws.service.transaction.dto.VehicleRequest;
 import java.math.BigDecimal;
 
 public class TransactionService {
