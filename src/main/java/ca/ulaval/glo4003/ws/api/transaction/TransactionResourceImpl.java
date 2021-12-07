@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
+import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
@@ -11,11 +12,9 @@ import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryResponse;
 import ca.ulaval.glo4003.ws.service.transaction.dto.CreatedTransactionResponse;
 import ca.ulaval.glo4003.ws.service.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.service.transaction.dto.VehicleRequest;
-import ca.ulaval.glo4003.ws.service.transaction.dto.validators.BatteryRequestValidator;
-import ca.ulaval.glo4003.ws.service.transaction.dto.validators.PaymentRequestValidator;
-import ca.ulaval.glo4003.ws.service.transaction.dto.validators.VehicleRequestValidator;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,30 +26,22 @@ public class TransactionResourceImpl implements TransactionResource {
 
   private final TransactionService transactionService;
   private final AuthenticationService authenticationService;
-  private final VehicleRequestValidator vehicleRequestValidator;
-  private final BatteryRequestValidator batteryRequestValidator;
-  private final PaymentRequestValidator paymentRequestValidator;
+  private final RequestValidator requestValidator;
 
   public TransactionResourceImpl() {
     this(
         serviceLocator.resolve(TransactionService.class),
         serviceLocator.resolve(AuthenticationService.class),
-        new VehicleRequestValidator(),
-        new BatteryRequestValidator(),
-        new PaymentRequestValidator());
+        new RequestValidator());
   }
 
   public TransactionResourceImpl(
       TransactionService transactionService,
       AuthenticationService authenticationService,
-      VehicleRequestValidator vehicleRequestValidator,
-      BatteryRequestValidator batteryRequestValidator,
-      PaymentRequestValidator paymentRequestValidator) {
+      RequestValidator requestValidator) {
     this.transactionService = transactionService;
     this.authenticationService = authenticationService;
-    this.vehicleRequestValidator = vehicleRequestValidator;
-    this.batteryRequestValidator = batteryRequestValidator;
-    this.paymentRequestValidator = paymentRequestValidator;
+    this.requestValidator = requestValidator;
   }
 
   @Override
@@ -71,7 +62,7 @@ public class TransactionResourceImpl implements TransactionResource {
       ContainerRequestContext containerRequestContext,
       TransactionId transactionId,
       VehicleRequest vehicleRequest) {
-    vehicleRequestValidator.validate(vehicleRequest);
+    requestValidator.validate(vehicleRequest);
     authenticationService.validateTransactionOwnership(
         containerRequestContext, transactionId, PRIVILEGED_ROLES);
 
@@ -85,7 +76,7 @@ public class TransactionResourceImpl implements TransactionResource {
       ContainerRequestContext containerRequestContext,
       TransactionId transactionId,
       BatteryRequest batteryRequest) {
-    batteryRequestValidator.validate(batteryRequest);
+    requestValidator.validate(batteryRequest);
     authenticationService.validateTransactionOwnership(
         containerRequestContext, transactionId, PRIVILEGED_ROLES);
 
@@ -99,7 +90,7 @@ public class TransactionResourceImpl implements TransactionResource {
       ContainerRequestContext containerRequestContext,
       TransactionId transactionId,
       PaymentRequest paymentRequest) {
-    paymentRequestValidator.validate(paymentRequest);
+    requestValidator.validate(paymentRequest);
     authenticationService.validateTransactionOwnership(
         containerRequestContext, transactionId, PRIVILEGED_ROLES);
 

@@ -1,9 +1,10 @@
-package ca.ulaval.glo4003.ws.api.user.validator;
+package ca.ulaval.glo4003.ws.domain.user;
 
-import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
-import ca.ulaval.glo4003.ws.api.user.exception.BirthDateInTheFutureException;
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
+import ca.ulaval.glo4003.ws.domain.user.exception.BirthDateInTheFutureException;
+import ca.ulaval.glo4003.ws.domain.user.exception.InvalidDateFormatException;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -39,7 +40,7 @@ public class BirthDateValidator {
       return LocalDate.parse(date, dateTimeFormatter);
     } catch (DateTimeParseException e) {
       String description = String.format("birthdate does not follow the format %s", datePattern);
-      throw new InvalidFormatException(description);
+      throw new InvalidDateFormatException(description);
     }
   }
 }

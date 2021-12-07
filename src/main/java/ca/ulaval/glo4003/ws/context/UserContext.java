@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
-import ca.ulaval.glo4003.ws.api.user.validator.BirthDateValidator;
+import ca.ulaval.glo4003.ws.domain.user.BirthDateValidator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;

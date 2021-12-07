@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryDto;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 

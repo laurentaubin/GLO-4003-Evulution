@@ -1,14 +1,8 @@
 package ca.ulaval.glo4003.ws.api.user;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
+import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
-import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
 import ca.ulaval.glo4003.ws.service.user.UserService;
 import ca.ulaval.glo4003.ws.service.user.dto.LoginResponseDto;
@@ -25,11 +19,18 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class UserResourceImplTest {
 
   @Mock private UserService userService;
-  @Mock private RegisterUserDtoValidator registerUserDtoValidator;
+
+  @Mock private RequestValidator registerUserDtoValidator;
 
   private UserResourceImpl userResource;
 
@@ -54,7 +55,7 @@ class UserResourceImplTest {
   public void givenInvalidRegisterUserDto_whenRegisterUser_thenThrowInvalidFormatException() {
     // given
     RegisterUserDto aUserDto = new RegisterUserDtoBuilder().build();
-    doThrow(InvalidFormatException.class).when(registerUserDtoValidator).validateDto(aUserDto);
+    doThrow(InvalidFormatException.class).when(registerUserDtoValidator).validate(aUserDto);
 
     // when
     Executable registeringUser = () -> userResource.registerUser(aUserDto);

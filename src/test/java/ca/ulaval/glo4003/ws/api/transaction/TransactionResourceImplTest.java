@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
+import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -20,18 +21,21 @@ import ca.ulaval.glo4003.ws.service.transaction.dto.BatteryRequest;
 import ca.ulaval.glo4003.ws.service.transaction.dto.CreatedTransactionResponse;
 import ca.ulaval.glo4003.ws.service.transaction.dto.PaymentRequest;
 import ca.ulaval.glo4003.ws.service.transaction.dto.VehicleRequest;
-import ca.ulaval.glo4003.ws.service.transaction.dto.validators.BatteryRequestValidator;
-import ca.ulaval.glo4003.ws.service.transaction.dto.validators.PaymentRequestValidator;
-import ca.ulaval.glo4003.ws.service.transaction.dto.validators.VehicleRequestValidator;
 import jakarta.ws.rs.container.ContainerRequestContext;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionResourceImplTest {
@@ -42,10 +46,8 @@ class TransactionResourceImplTest {
 
   @Mock private TransactionService transactionService;
   @Mock private AuthenticationService authenticationService;
-  @Mock private VehicleRequestValidator vehicleRequestValidator;
   @Mock private ContainerRequestContext containerRequestContext;
-  @Mock private BatteryRequestValidator batteryRequestValidator;
-  @Mock private PaymentRequestValidator paymentRequestValidator;
+  @Mock private RequestValidator requestValidator;
   @Mock private VehicleRequest vehicleRequest;
   @Mock private BatteryRequest batteryRequest;
   @Mock private PaymentRequest paymentRequest;
@@ -56,12 +58,7 @@ class TransactionResourceImplTest {
   @BeforeEach
   void setUp() {
     transactionResource =
-        new TransactionResourceImpl(
-            transactionService,
-            authenticationService,
-            vehicleRequestValidator,
-            batteryRequestValidator,
-            paymentRequestValidator);
+        new TransactionResourceImpl(transactionService, authenticationService, requestValidator);
   }
 
   @Test
@@ -117,7 +114,7 @@ class TransactionResourceImplTest {
     transactionResource.addVehicle(containerRequestContext, A_TRANSACTION_ID, vehicleRequest);
 
     // then
-    verify(vehicleRequestValidator).validate(vehicleRequest);
+    verify(requestValidator).validate(vehicleRequest);
   }
 
   @Test
@@ -163,7 +160,7 @@ class TransactionResourceImplTest {
     transactionResource.addBattery(containerRequestContext, A_TRANSACTION_ID, batteryRequest);
 
     // then
-    verify(batteryRequestValidator).validate(batteryRequest);
+    verify(requestValidator).validate(batteryRequest);
   }
 
   @Test
@@ -201,7 +198,7 @@ class TransactionResourceImplTest {
         containerRequestContext, A_TRANSACTION_ID, paymentRequest);
 
     // then
-    verify(paymentRequestValidator).validate(paymentRequest);
+    verify(requestValidator).validate(paymentRequest);
   }
 
   @Test
