@@ -16,7 +16,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class TransactionLogEntryFactoryTest {
+class TransactionLogFactoryTest {
   private static final LocalDate TODAY = LocalDate.of(1, 1, 1);
 
   private final TransactionFixture transactionFixture = new TransactionFixture();

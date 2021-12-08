@@ -13,7 +13,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class TransactionLogEntryServiceTest {
+class TransactionLogServiceTest {
   TransactionFixture transactionFixture = new TransactionFixture();
   TransactionLogFixture transactionLogFixture = new TransactionLogFixture();
 
