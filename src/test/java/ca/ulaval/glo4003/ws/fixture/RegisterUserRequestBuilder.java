@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.testUtil;
+package ca.ulaval.glo4003.ws.fixture;
 
 import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 

@@ -1,10 +1,5 @@
 package ca.ulaval.glo4003.ws.service.assembly;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
@@ -22,15 +17,21 @@ import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
-import ca.ulaval.glo4003.ws.testUtil.BatteryBuilder;
-import ca.ulaval.glo4003.ws.testUtil.ModelBuilder;
-import java.util.ArrayList;
-import java.util.List;
+import ca.ulaval.glo4003.ws.fixture.BatteryBuilder;
+import ca.ulaval.glo4003.ws.fixture.ModelBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AssemblyLineServiceTest {

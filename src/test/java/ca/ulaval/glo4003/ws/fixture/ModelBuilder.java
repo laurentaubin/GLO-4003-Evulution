@@ -1,8 +1,9 @@
-package ca.ulaval.glo4003.ws.testUtil;
+package ca.ulaval.glo4003.ws.fixture;
 
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
+
 import java.math.BigDecimal;
 
 public class ModelBuilder {

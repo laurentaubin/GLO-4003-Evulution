@@ -1,12 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.assembly.model.strategy;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
@@ -15,15 +8,23 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.testUtil.ModelOrderBuilder;
-import ca.ulaval.glo4003.ws.testUtil.OrderBuilder;
-import java.util.ArrayList;
-import java.util.List;
+import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
+import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JustInTimeModelAssemblyStrategyTest {
@@ -260,7 +261,8 @@ class JustInTimeModelAssemblyStrategyTest {
     Order order = createAnOrderWithModelType(FIRST_MODEL_TYPE);
     List<ModelOrder> modelsToAssemble = List.of(FIRST_INITIAL_MODEL_ORDER);
     assemblyLineStrategy =
-        new JustInTimeModelAssemblyLineStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
+        new JustInTimeModelAssemblyLineStrategy(
+            assemblyLineAdapter, modelInventory, modelsToAssemble);
     assemblyLineStrategy.addOrder(order);
 
     // when
@@ -280,7 +282,8 @@ class JustInTimeModelAssemblyStrategyTest {
     List<ModelOrder> modelsToAssemble =
         List.of(FIRST_INITIAL_MODEL_ORDER, SECOND_INITIAL_MODEL_ORDER);
     assemblyLineStrategy =
-        new JustInTimeModelAssemblyLineStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
+        new JustInTimeModelAssemblyLineStrategy(
+            assemblyLineAdapter, modelInventory, modelsToAssemble);
     assemblyLineStrategy.addOrder(order);
     assemblyLineStrategy.addOrder(anotherOrder);
     AssemblyTime expectedAssemblyTime =
@@ -303,7 +306,8 @@ class JustInTimeModelAssemblyStrategyTest {
     Order order = createAnOrderWithModelType(FIRST_INITIAL_MODEL_ORDER.getModelType());
     List<ModelOrder> modelsToAssemble = List.of(FIRST_INITIAL_MODEL_ORDER);
     assemblyLineStrategy =
-        new JustInTimeModelAssemblyLineStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
+        new JustInTimeModelAssemblyLineStrategy(
+            assemblyLineAdapter, modelInventory, modelsToAssemble);
     assemblyLineStrategy.addOrder(order);
 
     // when

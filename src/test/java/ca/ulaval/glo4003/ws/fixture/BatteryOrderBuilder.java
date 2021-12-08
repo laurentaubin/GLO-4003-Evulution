@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.testUtil;
+package ca.ulaval.glo4003.ws.fixture;
 
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;

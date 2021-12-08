@@ -45,6 +45,6 @@ public class Price {
       return false;
     }
     Price object = (Price) o;
-    return price.equals(object.price);
+    return price.doubleValue() == (object.price.doubleValue());
   }
 }

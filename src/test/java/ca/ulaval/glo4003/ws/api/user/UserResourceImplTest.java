@@ -1,11 +1,5 @@
 package ca.ulaval.glo4003.ws.api.user;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
@@ -13,13 +7,13 @@ import ca.ulaval.glo4003.ws.api.user.request.LoginUserRequest;
 import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 import ca.ulaval.glo4003.ws.api.user.response.LoginResponse;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
+import ca.ulaval.glo4003.ws.fixture.LoginResponseBuilder;
+import ca.ulaval.glo4003.ws.fixture.LoginResponseDtoBuilder;
+import ca.ulaval.glo4003.ws.fixture.LoginUserRequestBuilder;
+import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestBuilder;
 import ca.ulaval.glo4003.ws.service.user.UserService;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
-import ca.ulaval.glo4003.ws.testUtil.LoginResponseBuilder;
-import ca.ulaval.glo4003.ws.testUtil.LoginResponseDtoBuilder;
-import ca.ulaval.glo4003.ws.testUtil.LoginUserRequestBuilder;
-import ca.ulaval.glo4003.ws.testUtil.RegisterUserRequestBuilder;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +21,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class UserResourceImplTest {

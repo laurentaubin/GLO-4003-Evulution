@@ -1,11 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.assembly.model.strategy;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.assembly.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelAssemblyLineAdapter;
@@ -14,9 +8,8 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.testUtil.ModelOrderBuilder;
-import ca.ulaval.glo4003.ws.testUtil.OrderBuilder;
-import java.util.List;
+import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
+import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +17,14 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.internal.verification.Times;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class AccumulateModelAssemblyLineStrategyTest {
