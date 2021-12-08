@@ -44,7 +44,6 @@ class UserAssemblerTest {
     // then
     assertThat(actualUser.getName()).matches(aUserDto.getName());
     assertThat(actualUser.getEmail()).matches(aUserDto.getEmail());
-    assertThat(actualUser.getPassword()).matches(aUserDto.getPassword());
     assertThat(actualUser.getSex()).matches(aUserDto.getSex());
     assertThat(actualUser.getBirthDate()).isEqualTo(expectedBirthDate);
   }

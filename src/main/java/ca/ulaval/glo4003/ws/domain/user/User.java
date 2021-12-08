@@ -16,16 +16,14 @@ public class User {
   private final BirthDate birthDate;
   private final String sex;
   private final String email;
-  private final String password;
   private final Set<Role> roles;
   private Map<TransactionId, DeliveryId> transactionIdToDeliveryId;
 
-  public User(String name, BirthDate birthDate, String sex, String email, String password) {
+  public User(String name, BirthDate birthDate, String sex, String email) {
     this.name = name;
     this.birthDate = birthDate;
     this.sex = sex;
     this.email = email;
-    this.password = password;
     this.roles = new HashSet<>(List.of(Role.BASE));
     this.transactionIdToDeliveryId = new HashMap<>();
   }
@@ -44,10 +42,6 @@ public class User {
 
   public String getEmail() {
     return email;
-  }
-
-  public String getPassword() {
-    return password;
   }
 
   public void addRole(Role role) {
@@ -89,7 +83,7 @@ public class User {
     return transactionIdToDeliveryId.containsKey(transactionId);
   }
 
-  public boolean doesOwnDelivery(DeliveryId deliveryId) {
+  public boolean ownDelivery(DeliveryId deliveryId) {
     return transactionIdToDeliveryId.containsValue(deliveryId);
   }
 

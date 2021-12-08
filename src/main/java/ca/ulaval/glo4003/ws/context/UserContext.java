@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
-import ca.ulaval.glo4003.ws.domain.user.BirthDateValidator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
@@ -11,13 +10,17 @@ import ca.ulaval.glo4003.ws.domain.shared.DateParser;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateWrapper;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
+import ca.ulaval.glo4003.ws.domain.user.BirthDateValidator;
 import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordAdministrator;
+import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordRegistry;
 import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
+import ca.ulaval.glo4003.ws.infrastructure.user.credentials.InMemoryPasswordRegistry;
 import ca.ulaval.glo4003.ws.service.authentication.AuthenticationService;
 import ca.ulaval.glo4003.ws.service.user.LoginResponseAssembler;
 import ca.ulaval.glo4003.ws.service.user.UserAssembler;
@@ -33,6 +36,7 @@ public class UserContext implements Context {
 
   @Override
   public void registerContext() {
+    registerPasswordAdministrator();
     registerLocalDateProvider();
     registerRepositories();
     registerSessionServices();
@@ -73,15 +77,18 @@ public class UserContext implements Context {
     createAccountForCatherine();
   }
 
+  private void registerPasswordAdministrator() {
+    PasswordRegistry passwordRegistry = new InMemoryPasswordRegistry();
+    serviceLocator.register(
+        PasswordAdministrator.class, new PasswordAdministrator(passwordRegistry));
+  }
+
   private static void createAccountForCatherine() {
-    var adminUser =
-        new User(
-            "Catherine",
-            new BirthDate(LocalDate.of(1997, 7, 31)),
-            "F",
-            "catherineleuf@evul.ulaval.ca",
-            "RoulezVert2021!");
+    String email = "catherineleuf@evul.ulaval.ca";
+    String password = "RoulezVert2021!";
+    var adminUser = new User("Catherine", new BirthDate(LocalDate.of(1997, 7, 31)), "F", email);
     adminUser.addRole(Role.ADMIN);
     serviceLocator.resolve(UserRepository.class).registerUser(adminUser);
+    serviceLocator.resolve(PasswordAdministrator.class).register(email, password);
   }
 }

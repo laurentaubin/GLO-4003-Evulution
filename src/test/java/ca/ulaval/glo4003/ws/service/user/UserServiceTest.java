@@ -13,6 +13,7 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordAdministrator;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
 import ca.ulaval.glo4003.ws.service.user.dto.LoginResponseDto;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
@@ -34,6 +35,8 @@ class UserServiceTest {
   @Mock private SessionAdministrator sessionAdministrator;
   @Mock private UserAssembler userAssembler;
   @Mock private LoginResponseAssembler loginResponseAssembler;
+  @Mock private PasswordAdministrator passwordAdministrator;
+
   @Mock private User aUser;
 
   private UserService userService;
@@ -44,7 +47,11 @@ class UserServiceTest {
     registerUserDto = createRegisterUserDto();
     userService =
         new UserService(
-            userRepository, sessionAdministrator, userAssembler, loginResponseAssembler);
+            userRepository,
+            sessionAdministrator,
+            userAssembler,
+            loginResponseAssembler,
+            passwordAdministrator);
   }
 
   @Test
@@ -72,6 +79,18 @@ class UserServiceTest {
 
     // then
     verify(userRepository).registerUser(aUser);
+  }
+
+  @Test
+  public void whenRegisterUser_thenCredentialsAreRegistered() {
+    // given
+    given(userAssembler.assemble(registerUserDto)).willReturn(aUser);
+
+    // when
+    userService.registerUser(registerUserDto);
+
+    // then
+    verify(passwordAdministrator).register(AN_EMAIL, A_PASSWORD);
   }
 
   @Test

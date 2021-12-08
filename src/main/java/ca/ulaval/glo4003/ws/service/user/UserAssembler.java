@@ -8,7 +8,6 @@ import ca.ulaval.glo4003.ws.domain.user.BirthDateValidator;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.exception.InvalidDateFormatException;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
-
 import java.time.LocalDate;
 
 public class UserAssembler {
@@ -35,8 +34,7 @@ public class UserAssembler {
           registerUserDto.getName(),
           birthDate,
           registerUserDto.getSex(),
-          registerUserDto.getEmail(),
-          registerUserDto.getPassword());
+          registerUserDto.getEmail());
     } catch (InvalidDateFormatException invalidDateFormatException) {
       throw new InvalidFormatException(invalidDateFormatException.getDescription());
     }

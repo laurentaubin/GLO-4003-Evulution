@@ -21,19 +21,13 @@ public class UserDtoAssembler {
         user.getBirthDate(),
         user.getSex(),
         user.getEmail(),
-        user.getPassword(),
         rolesCopy,
         transactionDeliveries);
   }
 
   public User assemble(UserDto userDto) {
     User user =
-        new User(
-            userDto.getName(),
-            userDto.getBirthDate(),
-            userDto.getSex(),
-            userDto.getEmail(),
-            userDto.getPassword());
+        new User(userDto.getName(), userDto.getBirthDate(), userDto.getSex(), userDto.getEmail());
 
     for (Role role : userDto.getRoles()) {
       user.addRole(role);

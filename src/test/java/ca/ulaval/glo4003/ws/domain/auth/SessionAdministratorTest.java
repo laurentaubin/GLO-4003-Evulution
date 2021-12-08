@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import ca.ulaval.glo4003.ws.domain.auth.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
+import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordAdministrator;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class SessionAdministratorTest {
   private static final String AN_EMAIL = "an@email.com";
   private static final String A_PASSWORD = "pass123";
+  private static final String INVALID_PASSWORD = "invalidPassword";
 
   @Mock private UserFinder userFinder;
   @Mock private SessionRepository sessionRepository;
   @Mock private SessionFactory sessionFactory;
   @Mock private Session aSession;
   @Mock private SessionToken sessionToken;
+  @Mock private PasswordAdministrator passwordAdministrator;
 
   private User aUser;
 
@@ -33,9 +36,11 @@ class SessionAdministratorTest {
 
   @BeforeEach
   public void setUp() {
-    aUser = new UserBuilder().withEmail(AN_EMAIL).withPassword(A_PASSWORD).build();
+    aUser = new UserBuilder().withEmail(AN_EMAIL).build();
 
-    sessionAdministrator = new SessionAdministrator(userFinder, sessionRepository, sessionFactory);
+    sessionAdministrator =
+        new SessionAdministrator(
+            userFinder, sessionRepository, sessionFactory, passwordAdministrator);
   }
 
   @Test
@@ -54,11 +59,11 @@ class SessionAdministratorTest {
   public void givenUserExistsButPasswordDoesNotMatch_whenLogin_thenThrowLoginFailedException() {
     // given
     given(userFinder.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(userFinder.findUser(AN_EMAIL)).willReturn(aUser);
+    given(passwordAdministrator.areCredentialsValid(AN_EMAIL, INVALID_PASSWORD)).willReturn(false);
 
     // when
     Executable checkingCredentials =
-        () -> sessionAdministrator.login(aUser.getEmail(), "wrong password");
+        () -> sessionAdministrator.login(aUser.getEmail(), INVALID_PASSWORD);
 
     // then
     assertThrows(InvalidCredentialsException.class, checkingCredentials);
@@ -68,7 +73,7 @@ class SessionAdministratorTest {
   public void givenTokenCreatedByFactory_whenLogin_thenAddTokenToPool() {
     // given
     given(userFinder.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(userFinder.findUser(AN_EMAIL)).willReturn(aUser);
+    given(passwordAdministrator.areCredentialsValid(AN_EMAIL, A_PASSWORD)).willReturn(true);
     given(sessionFactory.create(AN_EMAIL)).willReturn(aSession);
 
     // when
@@ -82,8 +87,8 @@ class SessionAdministratorTest {
   public void givenTokenCreatedByFactory_whenLogin_thenReturnToken() {
     // given
     given(userFinder.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(userFinder.findUser(AN_EMAIL)).willReturn(aUser);
     given(sessionFactory.create(AN_EMAIL)).willReturn(aSession);
+    given(passwordAdministrator.areCredentialsValid(AN_EMAIL, A_PASSWORD)).willReturn(true);
 
     // when
     Session actualSession = sessionAdministrator.login(AN_EMAIL, A_PASSWORD);

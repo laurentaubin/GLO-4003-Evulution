@@ -15,7 +15,6 @@ public class UserBuilder {
   private String name = "a name";
   private BirthDate birthDate = new BirthDate(LocalDate.of(4584, 7, 18));
   private String email = "an@email.com";
-  private String password = "a password";
   private String sex = "a sex";
   private List<Role> roles = new ArrayList<>(List.of(Role.BASE));
   private final Map<TransactionId, DeliveryId> transactionDeliveries = new HashMap<>();
@@ -35,11 +34,6 @@ public class UserBuilder {
     return this;
   }
 
-  public UserBuilder withPassword(String password) {
-    this.password = password;
-    return this;
-  }
-
   public UserBuilder withSex(String sex) {
     this.sex = sex;
     return this;
@@ -51,7 +45,7 @@ public class UserBuilder {
   }
 
   public User build() {
-    User user = new User(name, birthDate, sex, email, password);
+    User user = new User(name, birthDate, sex, email);
 
     for (Role role : roles) {
       user.addRole(role);

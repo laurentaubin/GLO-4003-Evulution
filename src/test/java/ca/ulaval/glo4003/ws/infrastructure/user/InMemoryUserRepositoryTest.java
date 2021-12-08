@@ -48,7 +48,6 @@ class InMemoryUserRepositoryTest {
 
     // then
     assertThat(actualUser.getEmail()).isEqualTo(aUser.getEmail());
-    assertThat(actualUser.getPassword()).isEqualTo(aUser.getPassword());
   }
 
   @Test

@@ -47,7 +47,7 @@ class UserTest {
     user.addTransactionDelivery(transactionId, deliveryId);
 
     // then
-    assertThat(user.doesOwnDelivery(deliveryId)).isTrue();
+    assertThat(user.ownDelivery(deliveryId)).isTrue();
   }
 
   @Test
@@ -56,7 +56,7 @@ class UserTest {
     DeliveryId invalidDeliveryId = new DeliveryId("1234");
 
     // when
-    boolean result = user.doesOwnDelivery(invalidDeliveryId);
+    boolean result = user.ownDelivery(invalidDeliveryId);
 
     // then
     assertThat(result).isFalse();

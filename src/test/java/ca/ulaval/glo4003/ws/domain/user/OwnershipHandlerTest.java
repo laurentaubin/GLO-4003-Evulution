@@ -80,7 +80,7 @@ class OwnershipHandlerTest {
   void givenUserIsOwnerOfDelivery_whenValidateDeliveryOwnership_thenDoNothing() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.doesOwnDelivery(aDeliveryId)).willReturn(true);
+    given(aUser.ownDelivery(aDeliveryId)).willReturn(true);
 
     // when
     Executable validatingOwnership =
@@ -109,7 +109,7 @@ class OwnershipHandlerTest {
   void givenUserIsNotOwnerOfDelivery_whenValidateDeliveryOwnership_thenThrowWrongOwnerException() {
     // given
     given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.doesOwnDelivery(aDeliveryId)).willReturn(false);
+    given(aUser.ownDelivery(aDeliveryId)).willReturn(false);
 
     // when
     Executable validatingOwnership =
@@ -149,7 +149,7 @@ class OwnershipHandlerTest {
   private User givenUserWithMappedDeliveryToTransaction(
       TransactionId transactionId, DeliveryId deliveryId) {
     User user =
-        new User("Sean", new BirthDate(LocalDate.of(1994, 6, 16)), "male", "sean@sean.sean", "pwd");
+        new User("Sean", new BirthDate(LocalDate.of(1994, 6, 16)), "male", "sean@sean.sean");
     user.addTransactionDelivery(transactionId, deliveryId);
     return user;
   }

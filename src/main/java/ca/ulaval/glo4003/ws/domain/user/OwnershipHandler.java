@@ -35,7 +35,7 @@ public class OwnershipHandler {
 
   public void validateDeliveryOwnership(Session session, DeliveryId deliveryId) {
     User user = userRepository.findUser(session.getEmail());
-    if (!user.doesOwnDelivery(deliveryId)) {
+    if (!user.ownDelivery(deliveryId)) {
       throw new WrongOwnerException();
     }
   }
