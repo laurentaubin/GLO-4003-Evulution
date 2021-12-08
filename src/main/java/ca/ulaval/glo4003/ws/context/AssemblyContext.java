@@ -12,7 +12,7 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.AccumulateModelAssemblyLineStrategy;
-import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.JustInTimeModelAssemblyStrategy;
+import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.JustInTimeModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.ModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.OnDemandModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderFactory;
@@ -147,14 +147,14 @@ public class AssemblyContext implements Context {
         serviceLocator.resolve(OnDemandModelAssemblyLineStrategy.class);
     AccumulateModelAssemblyLineStrategy accumulateModelAssemblyLineStrategy =
         serviceLocator.resolve(AccumulateModelAssemblyLineStrategy.class);
-    JustInTimeModelAssemblyStrategy justInTimeModelAssemblyStrategy =
-        serviceLocator.resolve(JustInTimeModelAssemblyStrategy.class);
+    JustInTimeModelAssemblyLineStrategy justInTimeModelAssemblyLineStrategy =
+        serviceLocator.resolve(JustInTimeModelAssemblyLineStrategy.class);
 
     modelAssemblyLineStrategy.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
     modelAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
     accumulateModelAssemblyLineStrategy.register(
         serviceLocator.resolve(LinearAssemblyStrategy.class));
-    justInTimeModelAssemblyStrategy.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
+    justInTimeModelAssemblyLineStrategy.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
   }
 
   private void registerBatteryAssemblyObservers() {
@@ -196,10 +196,10 @@ public class AssemblyContext implements Context {
       ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
     List<ModelOrder> modelAssemblyOrder = createModelAssemblyOrder();
     ModelInventory modelInventory = new InMemoryModelInventory();
-    JustInTimeModelAssemblyStrategy justInTimeModelAssemblyStrategy =
-        new JustInTimeModelAssemblyStrategy(
+    JustInTimeModelAssemblyLineStrategy justInTimeModelAssemblyLineStrategy =
+        new JustInTimeModelAssemblyLineStrategy(
             modelAssemblyLineAdapter, modelInventory, modelAssemblyOrder);
-    serviceLocator.register(JustInTimeModelAssemblyStrategy.class, justInTimeModelAssemblyStrategy);
+    serviceLocator.register(JustInTimeModelAssemblyLineStrategy.class, justInTimeModelAssemblyLineStrategy);
   }
 
   private List<ModelOrder> createModelAssemblyOrder() {
@@ -220,7 +220,7 @@ public class AssemblyContext implements Context {
     if (modelAssemblyLineMode == null || modelAssemblyLineMode.isEmpty()) {
       return serviceLocator.resolve(OnDemandModelAssemblyLineStrategy.class);
     } else if (modelAssemblyLineMode.equals("JIT")) {
-      return serviceLocator.resolve(JustInTimeModelAssemblyStrategy.class);
+      return serviceLocator.resolve(JustInTimeModelAssemblyLineStrategy.class);
     } else if (modelAssemblyLineMode.equals("CONTINUOUSLY")) {
       return serviceLocator.resolve(AccumulateModelAssemblyLineStrategy.class);
     } else {

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,8 +72,7 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   @Override
   public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
-    Optional<Order> fetchedOrder =
-        orderQueue.stream().filter(order -> order.getId().equals(orderId)).findFirst();
+    Optional<Order> fetchedOrder = fetchOrder(orderId);
     if (fetchedOrder.isEmpty()) {
       return new AssemblyTime(0);
     }
@@ -80,23 +80,7 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
     String orderModelType = fetchedModel.getModelType();
 
     int numberOfModelsOfTypeInQueue = computeNumberOfModelsOfTypesInQueue(orderModelType);
-    AssemblyTime timeBeforeAssemblingModelType =
-        computeTimeRemainingBeforeAssemblingModelType(orderModelType);
-    AssemblyTime timeToAssembleFullCycles =
-        new AssemblyTime(
-            computeTimeToAssembleEntireCycle().inWeeks() * (numberOfModelsOfTypeInQueue - 1));
-
-    if (currentModelBeingAssembled.getModelType().equals(orderModelType)) {
-      if (numberOfModelsOfTypeInQueue == 1) {
-        return fetchedModel.getAssemblyTime();
-      }
-
-      return timeBeforeAssemblingModelType.add(timeToAssembleFullCycles);
-    }
-
-    return timeBeforeAssemblingModelType
-        .add(timeToAssembleFullCycles)
-        .add(fetchedModel.getAssemblyTime());
+    return timeBeforeAssemblingModelType(numberOfModelsOfTypeInQueue, fetchedModel);
   }
 
   private int computeNumberOfModelsOfTypesInQueue(String orderModelType) {
@@ -110,7 +94,7 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
     return count;
   }
 
-  public AssemblyTime computeTimeRemainingBeforeAssemblingModelType(String orderModelType) {
+  private AssemblyTime timeUntilModelTypeIsOnTopAndAssembled(String orderModelType) {
     if (orderModelType.equals(currentModelBeingAssembled.getModelType())) {
       return currentModelRemainingAssemblyTime;
     }
@@ -199,5 +183,30 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   private boolean isLastModel(int modelPositionInModelAssemblyOrder) {
     return modelPositionInModelAssemblyOrder == modelAssemblyCycle.size() - 1;
+  }
+
+  private AssemblyTime timeBeforeAssemblingModelType(Integer numberOfModelsOfTypeInQueue, ModelOrder modelOrder) {
+    String orderModelType = modelOrder.getModelType();
+
+    AssemblyTime timeBeforeAssemblingModelType =
+            timeUntilModelTypeIsOnTopAndAssembled(orderModelType);
+    AssemblyTime timeToAssembleFullCycles =
+            new AssemblyTime(
+                    computeTimeToAssembleEntireCycle().inWeeks() * (numberOfModelsOfTypeInQueue - 1));
+
+    if (currentModelBeingAssembled.getModelType().equals(orderModelType)) {
+      if (numberOfModelsOfTypeInQueue == 1) {
+        return currentModelRemainingAssemblyTime;
+      }
+      return timeBeforeAssemblingModelType.add(timeToAssembleFullCycles);
+    }
+
+    return timeBeforeAssemblingModelType
+            .add(timeToAssembleFullCycles)
+            .add(modelOrder.getAssemblyTime());
+  }
+
+  private Optional<Order> fetchOrder(OrderId orderId) {
+    return orderQueue.stream().filter(order -> order.getId().equals(orderId)).findFirst();
   }
 }

@@ -13,10 +13,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
+public class JustInTimeModelAssemblyLineStrategy extends ModelAssemblyObservable
     implements ModelAssemblyLineStrategy {
   private static final Logger LOGGER = LogManager.getLogger();
 
@@ -27,7 +28,7 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
   private final List<ModelOrder> modelOrders = new ArrayList<>();
   private final List<Order> orderQueue = new ArrayList<>();
 
-  public JustInTimeModelAssemblyStrategy(
+  public JustInTimeModelAssemblyLineStrategy(
       ModelAssemblyLineAdapter modelAssemblyLineAdapter,
       ModelInventory modelInventory,
       List<ModelOrder> initialModelAssemblyOrder) {
@@ -39,29 +40,14 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
   @Override
   public void advance() {
     modelAssemblyLineAdapter.advance();
-    if (currentModelBeingAssembled == null && modelOrders.isEmpty()) {
+    if (nothingToBeAssembled()) {
       LOGGER.info("Nothing to be assembled and no pending order");
       return;
     }
 
-    if (currentOrderRemainingTimeToProduce != null) {
-      currentOrderRemainingTimeToProduce =
-          currentOrderRemainingTimeToProduce.subtract(new AssemblyTime(1));
-      if (currentOrderRemainingTimeToProduce.equals(new AssemblyTime(0))) {
-        currentOrderRemainingTimeToProduce = null;
-      }
-    }
-
-    if (isCurrentModelAssembled()) {
-      LOGGER.info(String.format("Model %s assembled", currentModelBeingAssembled.getModelType()));
-      if (isModelNeededByAnOrder(currentModelBeingAssembled.getModelType())) {
-        processFirstOrderWaitingForModelType(currentModelBeingAssembled.getModelType());
-      } else {
-        modelInventory.addOne(currentModelBeingAssembled.getModelType());
-      }
-      sendNextModelToBeAssembled();
-    }
-    if (!modelOrders.isEmpty() && currentModelBeingAssembled == null) {
+    subtractTimeToProduceFromCurrentOrder();
+    processCurrentOrder();
+    if (readyForNextOrder()) {
       sendNextModelToBeAssembled();
     }
   }
@@ -79,55 +65,31 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
       modelInventory.removeOne(modelTypeFromOrder);
       LOGGER.info(
           String.format("Model %s added to model orders", order.getModelOrder().getModelType()));
-      modelOrders.add(order.getModelOrder());
     } else {
       LOGGER.info(
           String.format(
               "Model for order %s not in stock, adding to order to queue", order.getId()));
       orderQueue.add(order);
-      modelOrders.add(order.getModelOrder());
     }
+    modelOrders.add(order.getModelOrder());
   }
 
   @Override
   public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
-    Optional<Order> optionalRequestedOrder =
-        orderQueue.stream().filter(order -> order.getId() == orderId).findFirst();
+    Optional<Order> optionalRequestedOrder = fetchOrder(orderId);
     if (optionalRequestedOrder.isEmpty()) {
       return new AssemblyTime(0);
     }
+    Order order = optionalRequestedOrder.get();
+    String modelType = order.getModelOrder().getModelType();
 
-    Order requestedOrder = optionalRequestedOrder.get();
-    String requestedOrderType = requestedOrder.getModelOrder().getModelType();
-    List<Order> ordersOfRequestedTypeInQueue =
-        orderQueue.stream()
-            .filter(
-                order -> Objects.equals(order.getModelOrder().getModelType(), requestedOrderType))
-            .collect(Collectors.toList());
-    Integer positionInQueue = ordersOfRequestedTypeInQueue.indexOf(requestedOrder);
+    Integer positionInQueue = getPositionInQueueOfOrder(order);
 
-    if (Objects.equals(currentModelBeingAssembled.getModelType(), requestedOrderType)
-        && positionInQueue == 0) {
+    if (orderIsBeingAssembled(modelType, positionInQueue)) {
       return currentOrderRemainingTimeToProduce;
     }
 
-    AssemblyTime remainingTime = new AssemblyTime(0);
-    Integer modelOrdersOfTypeRequestedOrderType = 0;
-    if (currentModelBeingAssembled.getModelType().equals(requestedOrderType)) {
-      remainingTime = new AssemblyTime(currentOrderRemainingTimeToProduce.inWeeks());
-      modelOrdersOfTypeRequestedOrderType = 1;
-    }
-    for (ModelOrder modelOrder : modelOrders) {
-      remainingTime = remainingTime.add(modelOrder.getAssemblyTime());
-      if (modelOrder.getModelType().equals(requestedOrderType)) {
-        if (modelOrdersOfTypeRequestedOrderType.equals(positionInQueue)) {
-          return remainingTime;
-        } else {
-          modelOrdersOfTypeRequestedOrderType += 1;
-        }
-      }
-    }
-    return remainingTime;
+    return timeUntilPositionInQueueIsProduced(positionInQueue, modelType);
   }
 
   @Override
@@ -179,5 +141,72 @@ public class JustInTimeModelAssemblyStrategy extends ModelAssemblyObservable
         return;
       }
     }
+  }
+
+  private void subtractTimeToProduceFromCurrentOrder() {
+    if (currentOrderRemainingTimeToProduce != null) {
+      currentOrderRemainingTimeToProduce =
+              currentOrderRemainingTimeToProduce.subtract(new AssemblyTime(1));
+      if (currentOrderRemainingTimeToProduce.equals(new AssemblyTime(0))) {
+        currentOrderRemainingTimeToProduce = null;
+      }
+    }
+  }
+
+  private Boolean nothingToBeAssembled() {
+    return currentModelBeingAssembled == null && modelOrders.isEmpty();
+  }
+
+  private Boolean readyForNextOrder() {
+    return !modelOrders.isEmpty() && currentModelBeingAssembled == null;
+  }
+
+  private void processCurrentOrder() {
+    if (isCurrentModelAssembled()) {
+      LOGGER.info(String.format("Model %s assembled", currentModelBeingAssembled.getModelType()));
+      if (isModelNeededByAnOrder(currentModelBeingAssembled.getModelType())) {
+        processFirstOrderWaitingForModelType(currentModelBeingAssembled.getModelType());
+      } else {
+        modelInventory.addOne(currentModelBeingAssembled.getModelType());
+      }
+      sendNextModelToBeAssembled();
+    }
+  }
+
+  private Optional<Order> fetchOrder(OrderId orderId) {
+    return orderQueue.stream().filter(order -> order.getId() == orderId).findFirst();
+  }
+
+  private AssemblyTime timeUntilPositionInQueueIsProduced(Integer positionInQueue, String modelType) {
+    AssemblyTime remainingTime = new AssemblyTime(0);
+    Integer modelOrdersOfTypeRequestedOrderType = 0;
+    if (currentModelBeingAssembled.getModelType().equals(modelType)) {
+      remainingTime = new AssemblyTime(currentOrderRemainingTimeToProduce.inWeeks());
+      modelOrdersOfTypeRequestedOrderType = 1;
+    }
+    for (ModelOrder modelOrder : modelOrders) {
+      remainingTime = remainingTime.add(modelOrder.getAssemblyTime());
+      if (modelOrder.getModelType().equals(modelType)) {
+        if (modelOrdersOfTypeRequestedOrderType.equals(positionInQueue)) {
+          return remainingTime;
+        } else {
+          modelOrdersOfTypeRequestedOrderType += 1;
+        }
+      }
+    }
+    return remainingTime;
+  }
+
+  private Boolean orderIsBeingAssembled(String modelType, Integer positionInQueue) {
+    return currentModelBeingAssembled.getModelType().equals(modelType) && positionInQueue == 0;
+  }
+
+  private Integer getPositionInQueueOfOrder(Order order) {
+    List<Order> ordersOfRequestedTypeInQueue =
+            orderQueue.stream()
+                    .filter(
+                            orderInQueue -> Objects.equals(orderInQueue.getModelOrder().getModelType(), order.getModelOrder().getModelType()))
+                    .collect(Collectors.toList());
+    return ordersOfRequestedTypeInQueue.indexOf(order);
   }
 }

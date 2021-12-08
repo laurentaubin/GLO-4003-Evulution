@@ -63,12 +63,12 @@ class JustInTimeModelAssemblyStrategyTest {
   @Mock private ModelAssembledObserver modelAssembledObserver;
   @Mock private ModelAssembledObserver anotherModelAssembledObserver;
 
-  private JustInTimeModelAssemblyStrategy assemblyLineStrategy;
+  private JustInTimeModelAssemblyLineStrategy assemblyLineStrategy;
 
   @BeforeEach
   public void setUp() {
     assemblyLineStrategy =
-        new JustInTimeModelAssemblyStrategy(
+        new JustInTimeModelAssemblyLineStrategy(
             assemblyLineAdapter, modelInventory, MODELS_TO_ASSEMBLE);
   }
 
@@ -132,13 +132,13 @@ class JustInTimeModelAssemblyStrategyTest {
     Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
     given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
 
-    JustInTimeModelAssemblyStrategy justInTimeModelAssemblyStrategy =
+    JustInTimeModelAssemblyLineStrategy justInTimeModelAssemblyLineStrategy =
         createJustInTimeModelAssemblyStrategy();
-    justInTimeModelAssemblyStrategy.register(modelAssembledObserver);
-    justInTimeModelAssemblyStrategy.register(anotherModelAssembledObserver);
+    justInTimeModelAssemblyLineStrategy.register(modelAssembledObserver);
+    justInTimeModelAssemblyLineStrategy.register(anotherModelAssembledObserver);
 
     // when
-    justInTimeModelAssemblyStrategy.addOrder(anOrder);
+    justInTimeModelAssemblyLineStrategy.addOrder(anOrder);
 
     // then
     verify(modelAssembledObserver, never()).listenToModelAssembled(anOrder);
@@ -148,11 +148,11 @@ class JustInTimeModelAssemblyStrategyTest {
   @Test
   public void whenAdvance_thenCallAdvanceOnModelAssemblyLine() {
     // given
-    JustInTimeModelAssemblyStrategy JustInTimeModelAssemblyStrategy =
+    JustInTimeModelAssemblyLineStrategy JustInTimeModelAssemblyLineStrategy =
         createJustInTimeModelAssemblyStrategy();
 
     // when
-    JustInTimeModelAssemblyStrategy.advance();
+    JustInTimeModelAssemblyLineStrategy.advance();
 
     // then
     verify(assemblyLineAdapter).advance();
@@ -260,7 +260,7 @@ class JustInTimeModelAssemblyStrategyTest {
     Order order = createAnOrderWithModelType(FIRST_MODEL_TYPE);
     List<ModelOrder> modelsToAssemble = List.of(FIRST_INITIAL_MODEL_ORDER);
     assemblyLineStrategy =
-        new JustInTimeModelAssemblyStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
+        new JustInTimeModelAssemblyLineStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
     assemblyLineStrategy.addOrder(order);
 
     // when
@@ -280,7 +280,7 @@ class JustInTimeModelAssemblyStrategyTest {
     List<ModelOrder> modelsToAssemble =
         List.of(FIRST_INITIAL_MODEL_ORDER, SECOND_INITIAL_MODEL_ORDER);
     assemblyLineStrategy =
-        new JustInTimeModelAssemblyStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
+        new JustInTimeModelAssemblyLineStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
     assemblyLineStrategy.addOrder(order);
     assemblyLineStrategy.addOrder(anotherOrder);
     AssemblyTime expectedAssemblyTime =
@@ -303,7 +303,7 @@ class JustInTimeModelAssemblyStrategyTest {
     Order order = createAnOrderWithModelType(FIRST_INITIAL_MODEL_ORDER.getModelType());
     List<ModelOrder> modelsToAssemble = List.of(FIRST_INITIAL_MODEL_ORDER);
     assemblyLineStrategy =
-        new JustInTimeModelAssemblyStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
+        new JustInTimeModelAssemblyLineStrategy(assemblyLineAdapter, modelInventory, modelsToAssemble);
     assemblyLineStrategy.addOrder(order);
 
     // when
@@ -319,14 +319,14 @@ class JustInTimeModelAssemblyStrategyTest {
     // given
     Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
     when(modelInventory.isInStock(FIRST_MODEL_TYPE)).thenReturn(true);
-    JustInTimeModelAssemblyStrategy justInTimeModelAssemblyStrategy =
+    JustInTimeModelAssemblyLineStrategy justInTimeModelAssemblyLineStrategy =
         createJustInTimeModelAssemblyStrategyWithoutInitialAssemblyStep();
 
     // when
-    justInTimeModelAssemblyStrategy.addOrder(anOrder);
+    justInTimeModelAssemblyLineStrategy.addOrder(anOrder);
 
     // then
-    justInTimeModelAssemblyStrategy.advance();
+    justInTimeModelAssemblyLineStrategy.advance();
     verify(modelInventory).removeOne(anOrder.getModelOrder().getModelType());
     verify(assemblyLineAdapter).addOrder(anOrder.getModelOrder());
   }
@@ -335,12 +335,12 @@ class JustInTimeModelAssemblyStrategyTest {
   public void givenOrders_whenGetActiveOrders_thenReturnOrders() {
     // given
     Order order = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    JustInTimeModelAssemblyStrategy justInTimeModelAssemblyStrategy =
+    JustInTimeModelAssemblyLineStrategy justInTimeModelAssemblyLineStrategy =
         createJustInTimeModelAssemblyStrategy();
-    justInTimeModelAssemblyStrategy.addOrder(order);
+    justInTimeModelAssemblyLineStrategy.addOrder(order);
 
     // when
-    List<Order> activeOrders = justInTimeModelAssemblyStrategy.getActiveOrders();
+    List<Order> activeOrders = justInTimeModelAssemblyLineStrategy.getActiveOrders();
 
     // then
     assertThat(activeOrders).containsExactly(order);
@@ -351,14 +351,14 @@ class JustInTimeModelAssemblyStrategyTest {
     return new OrderBuilder().withModelOrder(aModelOrder).build();
   }
 
-  private JustInTimeModelAssemblyStrategy createJustInTimeModelAssemblyStrategy() {
-    return new JustInTimeModelAssemblyStrategy(
+  private JustInTimeModelAssemblyLineStrategy createJustInTimeModelAssemblyStrategy() {
+    return new JustInTimeModelAssemblyLineStrategy(
         assemblyLineAdapter, modelInventory, MODELS_TO_ASSEMBLE);
   }
 
-  private JustInTimeModelAssemblyStrategy
+  private JustInTimeModelAssemblyLineStrategy
       createJustInTimeModelAssemblyStrategyWithoutInitialAssemblyStep() {
-    return new JustInTimeModelAssemblyStrategy(
+    return new JustInTimeModelAssemblyLineStrategy(
         assemblyLineAdapter, modelInventory, new ArrayList<>());
   }
 
