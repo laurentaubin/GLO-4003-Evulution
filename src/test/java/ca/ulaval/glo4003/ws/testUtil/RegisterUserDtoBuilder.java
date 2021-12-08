@@ -10,12 +10,12 @@ public class RegisterUserDtoBuilder {
   private String sex = "a sex";
 
   public RegisterUserDto build() {
-    var registerUserDto = new RegisterUserDto();
-    registerUserDto.setName(name);
-    registerUserDto.setBirthDate(birthDate);
-    registerUserDto.setEmail(email);
-    registerUserDto.setPassword(password);
-    registerUserDto.setSex(sex);
+    RegisterUserDto registerUserDto = new RegisterUserDto();
+    registerUserDto.name = name;
+    registerUserDto.birthDate = birthDate;
+    registerUserDto.email = email;
+    registerUserDto.password = password;
+    registerUserDto.sex = sex;
 
     return registerUserDto;
   }

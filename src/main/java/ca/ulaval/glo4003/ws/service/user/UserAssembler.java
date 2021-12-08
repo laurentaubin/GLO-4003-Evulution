@@ -11,9 +11,10 @@ import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 import java.time.LocalDate;
 
 public class UserAssembler {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
+
   private final DateParser dateParser;
   private final BirthDateValidator birthDateValidator;
-  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   public UserAssembler(DateParser dateParser) {
     this(dateParser, serviceLocator.resolve(BirthDateValidator.class));
@@ -26,15 +27,10 @@ public class UserAssembler {
 
   public User assemble(RegisterUserDto registerUserDto) {
     try {
-      birthDateValidator.validate(registerUserDto.getBirthDate());
-      LocalDate localBirthDate = dateParser.parse(registerUserDto.getBirthDate());
+      birthDateValidator.validate(registerUserDto.birthDate);
+      LocalDate localBirthDate = dateParser.parse(registerUserDto.birthDate);
       BirthDate birthDate = new BirthDate(localBirthDate);
-
-      return new User(
-          registerUserDto.getName(),
-          birthDate,
-          registerUserDto.getSex(),
-          registerUserDto.getEmail());
+      return new User(registerUserDto.name, birthDate, registerUserDto.sex, registerUserDto.email);
     } catch (InvalidDateFormatException invalidDateFormatException) {
       throw new InvalidFormatException(invalidDateFormatException.getDescription());
     }

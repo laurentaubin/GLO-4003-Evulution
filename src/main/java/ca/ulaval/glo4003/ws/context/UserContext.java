@@ -22,7 +22,7 @@ import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.credentials.InMemoryPasswordRegistry;
 import ca.ulaval.glo4003.ws.service.authentication.AuthenticationService;
-import ca.ulaval.glo4003.ws.service.user.LoginResponseAssembler;
+import ca.ulaval.glo4003.ws.service.user.SessionDtoAssembler;
 import ca.ulaval.glo4003.ws.service.user.UserAssembler;
 import ca.ulaval.glo4003.ws.service.user.UserService;
 import java.time.LocalDate;
@@ -71,7 +71,7 @@ public class UserContext implements Context {
     DateParser dateParser = new DateParser(DateTimeFormatter.ofPattern(BIRTH_DATE_PATTERN));
     serviceLocator.register(BirthDateValidator.class, new BirthDateValidator(BIRTH_DATE_PATTERN));
     serviceLocator.register(UserAssembler.class, new UserAssembler(dateParser));
-    serviceLocator.register(LoginResponseAssembler.class, new LoginResponseAssembler());
+    serviceLocator.register(SessionDtoAssembler.class, new SessionDtoAssembler());
     serviceLocator.register(UserService.class, new UserService());
 
     createAccountForCatherine();

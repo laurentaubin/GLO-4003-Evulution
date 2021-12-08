@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.testUtil;
 
-import ca.ulaval.glo4003.ws.service.user.dto.LoginResponseDto;
+import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 
 public class LoginResponseDtoBuilder {
   private String token = "token132";
@@ -10,9 +10,9 @@ public class LoginResponseDtoBuilder {
     return this;
   }
 
-  public LoginResponseDto build() {
-    LoginResponseDto loginResponseDto = new LoginResponseDto();
-    loginResponseDto.setToken(token);
+  public SessionDto build() {
+    SessionDto loginResponseDto = new SessionDto();
+    loginResponseDto.token = token;
 
     return loginResponseDto;
   }

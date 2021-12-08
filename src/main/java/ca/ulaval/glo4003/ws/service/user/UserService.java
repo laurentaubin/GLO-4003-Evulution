@@ -9,8 +9,8 @@ import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordAdministrator;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
-import ca.ulaval.glo4003.ws.service.user.dto.LoginResponseDto;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
+import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 
 public class UserService {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -18,7 +18,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final SessionAdministrator sessionAdministrator;
   private final UserAssembler userAssembler;
-  private final LoginResponseAssembler loginResponseAssembler;
+  private final SessionDtoAssembler sessionDtoAssembler;
   private final PasswordAdministrator passwordAdministrator;
 
   public UserService() {
@@ -26,7 +26,7 @@ public class UserService {
         serviceLocator.resolve(UserRepository.class),
         serviceLocator.resolve(SessionAdministrator.class),
         serviceLocator.resolve(UserAssembler.class),
-        new LoginResponseAssembler(),
+        new SessionDtoAssembler(),
         serviceLocator.resolve(PasswordAdministrator.class));
   }
 
@@ -34,12 +34,12 @@ public class UserService {
       UserRepository userRepository,
       SessionAdministrator sessionAdministrator,
       UserAssembler userAssembler,
-      LoginResponseAssembler loginResponseAssembler,
+      SessionDtoAssembler sessionDtoAssembler,
       PasswordAdministrator passwordAdministrator) {
     this.userRepository = userRepository;
     this.sessionAdministrator = sessionAdministrator;
     this.userAssembler = userAssembler;
-    this.loginResponseAssembler = loginResponseAssembler;
+    this.sessionDtoAssembler = sessionDtoAssembler;
     this.passwordAdministrator = passwordAdministrator;
   }
 
@@ -49,13 +49,13 @@ public class UserService {
       throw new EmailAlreadyInUseException();
     }
     userRepository.registerUser(user);
-    passwordAdministrator.register(registerUserDto.getEmail(), registerUserDto.getPassword());
+    passwordAdministrator.register(registerUserDto.email, registerUserDto.password);
   }
 
-  public LoginResponseDto login(String email, String password) {
+  public SessionDto login(String email, String password) {
     try {
       Session session = sessionAdministrator.login(email, password);
-      return loginResponseAssembler.assemble(session);
+      return sessionDtoAssembler.assemble(session);
     } catch (InvalidCredentialsException ignored) {
       throw new LoginFailedException();
     }

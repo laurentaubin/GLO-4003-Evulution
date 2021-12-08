@@ -15,8 +15,8 @@ import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordAdministrator;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
-import ca.ulaval.glo4003.ws.service.user.dto.LoginResponseDto;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
+import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class UserServiceTest {
   @Mock private UserRepository userRepository;
   @Mock private SessionAdministrator sessionAdministrator;
   @Mock private UserAssembler userAssembler;
-  @Mock private LoginResponseAssembler loginResponseAssembler;
+  @Mock private SessionDtoAssembler sessionDtoAssembler;
   @Mock private PasswordAdministrator passwordAdministrator;
 
   @Mock private User aUser;
@@ -50,7 +50,7 @@ class UserServiceTest {
             userRepository,
             sessionAdministrator,
             userAssembler,
-            loginResponseAssembler,
+            sessionDtoAssembler,
             passwordAdministrator);
   }
 
@@ -112,25 +112,25 @@ class UserServiceTest {
     // given
     Session aSession = new Session(A_TOKEN, AN_EMAIL);
     given(sessionAdministrator.login(AN_EMAIL, A_PASSWORD)).willReturn(aSession);
-    given(loginResponseAssembler.assemble(aSession)).willReturn(createLoginResponseDto());
+    given(sessionDtoAssembler.assemble(aSession)).willReturn(createSessionDto());
 
     // when
-    LoginResponseDto loginResponseDto = userService.login(AN_EMAIL, A_PASSWORD);
+    SessionDto sessionDto = userService.login(AN_EMAIL, A_PASSWORD);
 
     // then
-    assertThat(loginResponseDto.getToken()).isEqualTo(A_TOKEN.getTokenValue());
+    assertThat(sessionDto.token).isEqualTo(A_TOKEN.getTokenValue());
   }
 
   private RegisterUserDto createRegisterUserDto() {
-    var registerUserDto = new RegisterUserDto();
-    registerUserDto.setEmail(AN_EMAIL);
-    registerUserDto.setPassword(A_PASSWORD);
+    RegisterUserDto registerUserDto = new RegisterUserDto();
+    registerUserDto.email = AN_EMAIL;
+    registerUserDto.password = A_PASSWORD;
     return registerUserDto;
   }
 
-  private LoginResponseDto createLoginResponseDto() {
-    var loginResponseDto = new LoginResponseDto();
-    loginResponseDto.setToken(A_TOKEN.getTokenValue());
-    return loginResponseDto;
+  private SessionDto createSessionDto() {
+    SessionDto sessionDto = new SessionDto();
+    sessionDto.token = A_TOKEN.getTokenValue();
+    return sessionDto;
   }
 }

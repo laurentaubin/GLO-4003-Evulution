@@ -1,6 +1,6 @@
-package ca.ulaval.glo4003.ws.service.user.dto;
+package ca.ulaval.glo4003.ws.api.user.response;
 
-public class LoginResponseDto {
+public class LoginResponse {
   private String token;
 
   public String getToken() {

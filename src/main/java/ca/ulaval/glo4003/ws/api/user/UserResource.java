@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.api.user;
 
-import ca.ulaval.glo4003.ws.service.user.dto.LoginUserDto;
-import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
+import ca.ulaval.glo4003.ws.api.user.request.LoginUserRequest;
+import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -16,11 +16,11 @@ public interface UserResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/customers")
-  Response registerUser(RegisterUserDto registerUserDto);
+  Response registerUser(RegisterUserRequest registerUserRequest);
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/login")
-  Response login(LoginUserDto loginUserDto);
+  Response login(LoginUserRequest loginUserRequest);
 }
