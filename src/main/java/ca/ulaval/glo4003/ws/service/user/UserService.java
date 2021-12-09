@@ -49,7 +49,7 @@ public class UserService {
       throw new EmailAlreadyInUseException();
     }
     userRepository.registerUser(user);
-    passwordAdministrator.register(registerUserDto.email, registerUserDto.password);
+    passwordAdministrator.register(registerUserDto.getEmail(), registerUserDto.getPassword());
   }
 
   public SessionDto login(String email, String password) {

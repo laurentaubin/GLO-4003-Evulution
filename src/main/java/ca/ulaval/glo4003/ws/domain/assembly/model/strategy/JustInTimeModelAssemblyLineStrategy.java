@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -146,7 +145,7 @@ public class JustInTimeModelAssemblyLineStrategy extends ModelAssemblyObservable
   private void subtractTimeToProduceFromCurrentOrder() {
     if (currentOrderRemainingTimeToProduce != null) {
       currentOrderRemainingTimeToProduce =
-              currentOrderRemainingTimeToProduce.subtract(new AssemblyTime(1));
+          currentOrderRemainingTimeToProduce.subtract(new AssemblyTime(1));
       if (currentOrderRemainingTimeToProduce.equals(new AssemblyTime(0))) {
         currentOrderRemainingTimeToProduce = null;
       }
@@ -177,7 +176,8 @@ public class JustInTimeModelAssemblyLineStrategy extends ModelAssemblyObservable
     return orderQueue.stream().filter(order -> order.getId() == orderId).findFirst();
   }
 
-  private AssemblyTime timeUntilPositionInQueueIsProduced(Integer positionInQueue, String modelType) {
+  private AssemblyTime timeUntilPositionInQueueIsProduced(
+      Integer positionInQueue, String modelType) {
     AssemblyTime remainingTime = new AssemblyTime(0);
     Integer modelOrdersOfTypeRequestedOrderType = 0;
     if (currentModelBeingAssembled.getModelType().equals(modelType)) {
@@ -203,10 +203,13 @@ public class JustInTimeModelAssemblyLineStrategy extends ModelAssemblyObservable
 
   private Integer getPositionInQueueOfOrder(Order order) {
     List<Order> ordersOfRequestedTypeInQueue =
-            orderQueue.stream()
-                    .filter(
-                            orderInQueue -> Objects.equals(orderInQueue.getModelOrder().getModelType(), order.getModelOrder().getModelType()))
-                    .collect(Collectors.toList());
+        orderQueue.stream()
+            .filter(
+                orderInQueue ->
+                    Objects.equals(
+                        orderInQueue.getModelOrder().getModelType(),
+                        order.getModelOrder().getModelType()))
+            .collect(Collectors.toList());
     return ordersOfRequestedTypeInQueue.indexOf(order);
   }
 }

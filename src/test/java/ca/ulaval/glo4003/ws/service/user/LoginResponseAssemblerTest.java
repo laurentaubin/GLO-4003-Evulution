@@ -28,6 +28,6 @@ class LoginResponseAssemblerTest {
     SessionDto sessionDto = assembler.assemble(aSession);
 
     // then
-    assertThat(sessionDto.token).matches(aSession.getToken().getTokenValue());
+    assertThat(sessionDto.getToken()).matches(aSession.getToken().getTokenValue());
   }
 }

@@ -35,7 +35,7 @@ class CompletedDeliveryResponseAssemblerTest {
     CompletedDeliveryDto actual = completedDeliveryAssembler.assemble(receipt);
 
     // then
-    assertThat(actual.paymentsLeft).isEqualTo(PAYMENTS_LEFT);
-    assertThat(actual.paymentTaken).isEqualTo(A_PAYMENT_TAKEN);
+    assertThat(actual.getPaymentsLeft()).isEqualTo(PAYMENTS_LEFT);
+    assertThat(actual.getPaymentTaken()).isEqualTo(A_PAYMENT_TAKEN);
   }
 }

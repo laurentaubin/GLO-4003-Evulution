@@ -8,16 +8,13 @@ import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 public class DeliveryDtoAssembler {
 
   public DeliveryLocationDto assemble(DeliveryLocationRequest request) {
-    DeliveryLocationDto deliveryLocationRequestDto = new DeliveryLocationDto();
-    deliveryLocationRequestDto.mode = request.getMode();
-    deliveryLocationRequestDto.location = request.getLocation();
-    return deliveryLocationRequestDto;
+    return new DeliveryLocationDto(request.getMode(), request.getLocation());
   }
 
   public CompletedDeliveryResponse assemble(CompletedDeliveryDto response) {
     CompletedDeliveryResponse completedDeliveryResponse = new CompletedDeliveryResponse();
-    completedDeliveryResponse.paymentsLeft = response.paymentsLeft;
-    completedDeliveryResponse.paymentTaken = response.paymentTaken;
+    completedDeliveryResponse.paymentsLeft = response.getPaymentsLeft();
+    completedDeliveryResponse.paymentTaken = response.getPaymentTaken();
     return completedDeliveryResponse;
   }
 }

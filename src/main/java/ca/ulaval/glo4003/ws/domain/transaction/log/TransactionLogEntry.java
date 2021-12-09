@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.transaction.log;
 
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
-
 import java.time.LocalDate;
 import java.util.Objects;
 

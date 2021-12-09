@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -185,14 +184,15 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
     return modelPositionInModelAssemblyOrder == modelAssemblyCycle.size() - 1;
   }
 
-  private AssemblyTime timeBeforeAssemblingModelType(Integer numberOfModelsOfTypeInQueue, ModelOrder modelOrder) {
+  private AssemblyTime timeBeforeAssemblingModelType(
+      Integer numberOfModelsOfTypeInQueue, ModelOrder modelOrder) {
     String orderModelType = modelOrder.getModelType();
 
     AssemblyTime timeBeforeAssemblingModelType =
-            timeUntilModelTypeIsOnTopAndAssembled(orderModelType);
+        timeUntilModelTypeIsOnTopAndAssembled(orderModelType);
     AssemblyTime timeToAssembleFullCycles =
-            new AssemblyTime(
-                    computeTimeToAssembleEntireCycle().inWeeks() * (numberOfModelsOfTypeInQueue - 1));
+        new AssemblyTime(
+            computeTimeToAssembleEntireCycle().inWeeks() * (numberOfModelsOfTypeInQueue - 1));
 
     if (currentModelBeingAssembled.getModelType().equals(orderModelType)) {
       if (numberOfModelsOfTypeInQueue == 1) {
@@ -202,8 +202,8 @@ public class AccumulateModelAssemblyLineStrategy extends ModelAssemblyObservable
     }
 
     return timeBeforeAssemblingModelType
-            .add(timeToAssembleFullCycles)
-            .add(modelOrder.getAssemblyTime());
+        .add(timeToAssembleFullCycles)
+        .add(modelOrder.getAssemblyTime());
   }
 
   private Optional<Order> fetchOrder(OrderId orderId) {

@@ -10,7 +10,6 @@ import ca.ulaval.glo4003.ws.domain.vehicle.Color;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
-
 import java.util.UUID;
 
 public class TransactionFixture {

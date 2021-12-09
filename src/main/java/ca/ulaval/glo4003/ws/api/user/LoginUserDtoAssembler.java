@@ -7,7 +7,7 @@ public class LoginUserDtoAssembler {
 
   public LoginResponse assemble(SessionDto sessionDto) {
     var loginResponse = new LoginResponse();
-    loginResponse.setToken(sessionDto.token);
+    loginResponse.setToken(sessionDto.getToken());
     return loginResponse;
   }
 }

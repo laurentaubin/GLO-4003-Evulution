@@ -1,5 +1,11 @@
 package ca.ulaval.glo4003.ws.service.user;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
@@ -19,16 +25,11 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
   private static final String AN_EMAIL = "an@email.com";
   private static final String A_PASSWORD = "pass123";
+  private static final String A_FIELD = "dummy";
   private static final SessionToken A_TOKEN = new SessionToken("token");
 
   @Mock private UserRepository userRepository;
@@ -118,19 +119,14 @@ class UserServiceTest {
     SessionDto sessionDto = userService.login(AN_EMAIL, A_PASSWORD);
 
     // then
-    assertThat(sessionDto.token).isEqualTo(A_TOKEN.getTokenValue());
+    assertThat(sessionDto.getToken()).isEqualTo(A_TOKEN.getTokenValue());
   }
 
   private RegisterUserDto createRegisterUserDto() {
-    RegisterUserDto registerUserDto = new RegisterUserDto();
-    registerUserDto.email = AN_EMAIL;
-    registerUserDto.password = A_PASSWORD;
-    return registerUserDto;
+    return new RegisterUserDto(A_FIELD, A_FIELD, A_FIELD, AN_EMAIL, A_PASSWORD);
   }
 
   private SessionDto createSessionDto() {
-    SessionDto sessionDto = new SessionDto();
-    sessionDto.token = A_TOKEN.getTokenValue();
-    return sessionDto;
+    return new SessionDto(A_TOKEN.getTokenValue());
   }
 }

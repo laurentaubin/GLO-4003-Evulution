@@ -1,5 +1,11 @@
 package ca.ulaval.glo4003.ws.domain.assembly.strategy;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.assembly.battery.strategy.BatteryAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.model.strategy.ModelAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
@@ -7,20 +13,13 @@ import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.assembly.vehicle.strategy.VehicleAssemblyLineStrategy;
 import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class LinearAssemblyStrategyTest {

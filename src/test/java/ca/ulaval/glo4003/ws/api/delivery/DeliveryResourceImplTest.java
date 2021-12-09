@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.ws.api.delivery;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -181,10 +180,7 @@ class DeliveryResourceImplTest {
   }
 
   private DeliveryLocationDto createDeliveryLocationRequestDto() {
-    DeliveryLocationDto request = new DeliveryLocationDto();
-    request.mode = A_MODE;
-    request.location = A_LOCATION;
-    return request;
+    return new DeliveryLocationDto(A_MODE, A_LOCATION);
   }
 
   private DeliveryLocationRequest createInvalidDeliveryLocationRequest() {

@@ -31,8 +31,8 @@ class DeliveryDtoAssemblerTest {
     DeliveryLocationDto result = deliveryDtoAssembler.assemble(request);
 
     // then
-    assertThat(result.mode).matches(A_MODE);
-    assertThat(result.location).matches(A_LOCATION);
+    assertThat(result.getMode()).matches(A_MODE);
+    assertThat(result.getLocation()).matches(A_LOCATION);
   }
 
   @Test
@@ -56,9 +56,6 @@ class DeliveryDtoAssemblerTest {
   }
 
   private CompletedDeliveryDto createCompletedDeliveryDto() {
-    CompletedDeliveryDto completedDeliveryResponse = new CompletedDeliveryDto();
-    completedDeliveryResponse.paymentsLeft = PAYMENTS_LEFT;
-    completedDeliveryResponse.paymentTaken = PAYMENTS_TAKEN;
-    return completedDeliveryResponse;
+    return new CompletedDeliveryDto(PAYMENTS_TAKEN, PAYMENTS_LEFT);
   }
 }

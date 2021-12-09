@@ -27,10 +27,14 @@ public class UserAssembler {
 
   public User assemble(RegisterUserDto registerUserDto) {
     try {
-      birthDateValidator.validate(registerUserDto.birthDate);
-      LocalDate localBirthDate = dateParser.parse(registerUserDto.birthDate);
+      birthDateValidator.validate(registerUserDto.getBirthDate());
+      LocalDate localBirthDate = dateParser.parse(registerUserDto.getBirthDate());
       BirthDate birthDate = new BirthDate(localBirthDate);
-      return new User(registerUserDto.name, birthDate, registerUserDto.sex, registerUserDto.email);
+      return new User(
+          registerUserDto.getName(),
+          birthDate,
+          registerUserDto.getSex(),
+          registerUserDto.getEmail());
     } catch (InvalidDateFormatException invalidDateFormatException) {
       throw new InvalidFormatException(invalidDateFormatException.getDescription());
     }

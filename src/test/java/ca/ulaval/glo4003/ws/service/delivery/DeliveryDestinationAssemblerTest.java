@@ -35,9 +35,6 @@ class DeliveryDestinationAssemblerTest {
   }
 
   private DeliveryLocationDto createDeliveryLocationDto() {
-    DeliveryLocationDto request = new DeliveryLocationDto();
-    request.mode = A_MODE;
-    request.location = A_LOCATION;
-    return request;
+    return new DeliveryLocationDto(A_MODE, A_LOCATION);
   }
 }

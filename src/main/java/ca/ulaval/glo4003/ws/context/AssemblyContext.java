@@ -154,7 +154,8 @@ public class AssemblyContext implements Context {
     modelAssemblyLineStrategy.register(serviceLocator.resolve(NotificationService.class));
     accumulateModelAssemblyLineStrategy.register(
         serviceLocator.resolve(LinearAssemblyStrategy.class));
-    justInTimeModelAssemblyLineStrategy.register(serviceLocator.resolve(LinearAssemblyStrategy.class));
+    justInTimeModelAssemblyLineStrategy.register(
+        serviceLocator.resolve(LinearAssemblyStrategy.class));
   }
 
   private void registerBatteryAssemblyObservers() {
@@ -199,7 +200,8 @@ public class AssemblyContext implements Context {
     JustInTimeModelAssemblyLineStrategy justInTimeModelAssemblyLineStrategy =
         new JustInTimeModelAssemblyLineStrategy(
             modelAssemblyLineAdapter, modelInventory, modelAssemblyOrder);
-    serviceLocator.register(JustInTimeModelAssemblyLineStrategy.class, justInTimeModelAssemblyLineStrategy);
+    serviceLocator.register(
+        JustInTimeModelAssemblyLineStrategy.class, justInTimeModelAssemblyLineStrategy);
   }
 
   private List<ModelOrder> createModelAssemblyOrder() {

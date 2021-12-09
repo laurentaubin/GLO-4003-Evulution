@@ -52,6 +52,7 @@ class DeliveryServiceTest {
 
   @Mock private Delivery delivery;
   @Mock private Order order;
+  @Mock private DeliveryLocationDto deliveryLocationDto;
 
   private DeliveryService deliveryService;
 
@@ -103,7 +104,7 @@ class DeliveryServiceTest {
     given(deliveryRepository.find(DELIVERY_ID)).willReturn(delivery);
 
     // when
-    deliveryService.addDeliveryLocation(DELIVERY_ID, new DeliveryLocationDto());
+    deliveryService.addDeliveryLocation(DELIVERY_ID, deliveryLocationDto);
 
     // then
     verify(deliveryRepository).update(delivery);

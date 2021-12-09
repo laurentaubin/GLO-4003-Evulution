@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.ws.fixture;
 
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogEntry;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
-
 import java.time.LocalDate;
 
 public class TransactionLogFixture {

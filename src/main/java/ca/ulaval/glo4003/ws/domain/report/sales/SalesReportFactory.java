@@ -4,7 +4,6 @@ import ca.ulaval.glo4003.ws.domain.report.sales.exception.NoSalesInTimeFrameExce
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogEntry;
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogFinder;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;

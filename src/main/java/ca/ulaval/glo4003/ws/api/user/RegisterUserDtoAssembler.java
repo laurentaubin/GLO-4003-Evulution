@@ -6,12 +6,11 @@ import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 public class RegisterUserDtoAssembler {
 
   public RegisterUserDto assemble(RegisterUserRequest request) {
-    var registerUserDto = new RegisterUserDto();
-    registerUserDto.name = request.getName();
-    registerUserDto.birthDate = request.getBirthDate();
-    registerUserDto.email = request.getEmail();
-    registerUserDto.password = request.getPassword();
-    registerUserDto.sex = request.getSex();
-    return registerUserDto;
+    return new RegisterUserDto(
+        request.getName(),
+        request.getBirthDate(),
+        request.getSex(),
+        request.getEmail(),
+        request.getPassword());
   }
 }

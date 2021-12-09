@@ -5,7 +5,6 @@ import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
-
 import java.time.LocalDate;
 import java.util.UUID;
 

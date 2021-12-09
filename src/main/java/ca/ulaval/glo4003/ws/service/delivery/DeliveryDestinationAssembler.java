@@ -9,7 +9,7 @@ public class DeliveryDestinationAssembler {
 
   public DeliveryDestination assemble(DeliveryLocationDto deliveryLocationRequest) {
     return new DeliveryDestination(
-        DeliveryMode.fromString(deliveryLocationRequest.mode),
-        Location.fromString(deliveryLocationRequest.location));
+        DeliveryMode.fromString(deliveryLocationRequest.getMode()),
+        Location.fromString(deliveryLocationRequest.getLocation()));
   }
 }

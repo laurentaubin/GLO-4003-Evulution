@@ -1,14 +1,13 @@
 package ca.ulaval.glo4003.ws.infrastructure.transaction.log;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogEntry;
 import ca.ulaval.glo4003.ws.fixture.TransactionLogFixture;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class TransactionLogEntryDtoAssemblerTest {
   private final TransactionLogFixture transactionLogFixture = new TransactionLogFixture();

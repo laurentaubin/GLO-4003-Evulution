@@ -1,5 +1,11 @@
 package ca.ulaval.glo4003.ws.api.user;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
@@ -8,7 +14,6 @@ import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 import ca.ulaval.glo4003.ws.api.user.response.LoginResponse;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
 import ca.ulaval.glo4003.ws.fixture.LoginResponseBuilder;
-import ca.ulaval.glo4003.ws.fixture.LoginResponseDtoBuilder;
 import ca.ulaval.glo4003.ws.fixture.LoginUserRequestBuilder;
 import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestBuilder;
 import ca.ulaval.glo4003.ws.service.user.UserService;
@@ -22,14 +27,9 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class UserResourceImplTest {
+  private static final String A_TOKEN = "token";
 
   @Mock private UserService userService;
   @Mock private RequestValidator registerUserDtoValidator;
@@ -91,7 +91,7 @@ class UserResourceImplTest {
   public void givenSuccessfulLogin_whenLogin_thenReturn200WithLoginToken() {
     // given
     LoginUserRequest request = new LoginUserRequestBuilder().build();
-    SessionDto sessionDto = new LoginResponseDtoBuilder().build();
+    SessionDto sessionDto = new SessionDto(A_TOKEN);
     LoginResponse loginResponse = new LoginResponseBuilder().build();
     given(userService.login(request.getEmail(), request.getPassword())).willReturn(sessionDto);
     given(loginUserDtoAssembler.assemble(sessionDto)).willReturn(loginResponse);
