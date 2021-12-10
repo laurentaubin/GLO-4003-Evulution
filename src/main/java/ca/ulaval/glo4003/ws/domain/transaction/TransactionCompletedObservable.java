@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
 import ca.ulaval.glo4003.ws.domain.warehouse.TransactionCompletedObserver;
+
 import java.util.ArrayList;
 import java.util.List;
 

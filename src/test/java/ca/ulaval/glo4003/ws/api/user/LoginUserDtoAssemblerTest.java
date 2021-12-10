@@ -1,11 +1,11 @@
 package ca.ulaval.glo4003.ws.api.user;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.user.response.LoginResponse;
 import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class LoginUserDtoAssemblerTest {
   private static final String A_TOKEN = "token";

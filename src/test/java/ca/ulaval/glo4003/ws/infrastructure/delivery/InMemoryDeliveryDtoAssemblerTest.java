@@ -1,14 +1,10 @@
 package ca.ulaval.glo4003.ws.infrastructure.delivery;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryMode;
-import ca.ulaval.glo4003.ws.domain.delivery.Location;
+import ca.ulaval.glo4003.ws.domain.delivery.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class InMemoryDeliveryDtoAssemblerTest {
   private static final DeliveryDestination A_DELIVERY_LOCATION =

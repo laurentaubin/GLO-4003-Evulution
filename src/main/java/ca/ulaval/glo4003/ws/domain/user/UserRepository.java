@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.user;
 
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+
 import java.util.List;
 
 public interface UserRepository {

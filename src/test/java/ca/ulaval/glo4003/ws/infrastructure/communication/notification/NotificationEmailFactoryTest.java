@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
+
 import ca.ulaval.glo4003.ws.infrastructure.communication.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.communication.email.Email;
 import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailContent;

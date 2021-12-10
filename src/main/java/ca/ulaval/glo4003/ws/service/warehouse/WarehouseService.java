@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.ws.service.warehouse;
 
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import ca.ulaval.glo4003.ws.domain.warehouse.OrderDelayObservable;
@@ -15,6 +16,9 @@ import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.warehouse.strategy.LinearWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.strategy.WarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTimeFactory;
+import ca.ulaval.glo4003.ws.service.user.UserService;
+
+import java.util.List;
 
 public class WarehouseService extends OrderDelayObservable implements TransactionCompletedObserver {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -40,8 +44,8 @@ public class WarehouseService extends OrderDelayObservable implements Transactio
       ModelOrderFactory modelOrderFactory,
       BatteryOrderFactory batteryOrderFactory,
       AssemblyTimeFactory assemblyTimeFactory) {
-    this.warehouseStrategy = warehouseStrategy;
-    this.orderFactory = orderFactory;
+      this.warehouseStrategy = warehouseStrategy;
+      this.orderFactory = orderFactory;
     this.modelOrderFactory = modelOrderFactory;
     this.batteryOrderFactory = batteryOrderFactory;
     this.assemblyTimeFactory = assemblyTimeFactory;

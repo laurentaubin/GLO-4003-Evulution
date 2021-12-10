@@ -1,11 +1,12 @@
 package ca.ulaval.glo4003.ws.infrastructure.user;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.infrastructure.user.credentials.InMemoryPasswordRegistry;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class InMemoryPasswordRegistryTest {
   private static final String EMAIL = "anEmail@email.com";

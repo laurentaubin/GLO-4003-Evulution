@@ -1,8 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.transaction.log;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.fixture.TransactionFixture;
 import ca.ulaval.glo4003.ws.fixture.TransactionLogFixture;
@@ -11,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionLogServiceTest {

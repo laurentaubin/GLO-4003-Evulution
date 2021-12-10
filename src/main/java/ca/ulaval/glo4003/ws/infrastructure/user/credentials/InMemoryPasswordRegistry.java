@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.user.credentials;
 
 import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordRegistry;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

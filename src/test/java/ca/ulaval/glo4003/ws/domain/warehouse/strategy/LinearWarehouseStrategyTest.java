@@ -1,9 +1,5 @@
 package ca.ulaval.glo4003.ws.domain.warehouse.strategy;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.notification.OrderDelayObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.strategy.BatteryWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.strategy.ModelWarehouseStrategy;
@@ -12,7 +8,6 @@ import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.strategy.VehicleWarehouseStrategy;
 import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +15,12 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class LinearWarehouseStrategyTest {

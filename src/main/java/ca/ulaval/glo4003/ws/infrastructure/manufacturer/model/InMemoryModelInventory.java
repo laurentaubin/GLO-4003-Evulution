@@ -2,10 +2,11 @@ package ca.ulaval.glo4003.ws.infrastructure.manufacturer.model;
 
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.NotAvailableModelException;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InMemoryModelInventory implements ModelInventory {
   private static final Logger LOGGER = LogManager.getLogger();

@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.ws.domain.warehouse;
 
 import ca.ulaval.glo4003.ws.domain.notification.OrderDelayObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
+
 import java.util.ArrayList;
 import java.util.List;
 

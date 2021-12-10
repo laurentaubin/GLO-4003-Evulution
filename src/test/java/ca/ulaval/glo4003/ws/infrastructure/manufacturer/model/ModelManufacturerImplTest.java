@@ -1,11 +1,5 @@
 package ca.ulaval.glo4003.ws.infrastructure.manufacturer.model;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mockingDetails;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
@@ -18,6 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ModelManufacturerImplTest {

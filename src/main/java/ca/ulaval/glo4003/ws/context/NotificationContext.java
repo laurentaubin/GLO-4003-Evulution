@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.context;
 import ca.ulaval.glo4003.ws.context.exception.CouldNotLoadPropertiesFileException;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationIssuer;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
+
 import ca.ulaval.glo4003.ws.infrastructure.communication.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailContent;
 import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailServer;

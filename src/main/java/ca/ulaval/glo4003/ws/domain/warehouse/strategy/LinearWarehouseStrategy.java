@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.VehicleInventoryObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.strategy.VehicleWarehouseStrategy;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.context;
 
-import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
+import ca.ulaval.glo4003.ws.api.transaction.TokenDtoAssembler;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
 import ca.ulaval.glo4003.ws.domain.auth.SessionFactory;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
@@ -9,19 +9,12 @@ import ca.ulaval.glo4003.ws.domain.auth.SessionTokenGenerator;
 import ca.ulaval.glo4003.ws.domain.shared.DateParser;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateWrapper;
-import ca.ulaval.glo4003.ws.domain.user.BirthDate;
-import ca.ulaval.glo4003.ws.domain.user.BirthDateValidator;
-import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.domain.user.UserFinder;
-import ca.ulaval.glo4003.ws.domain.user.UserRepository;
+import ca.ulaval.glo4003.ws.domain.user.*;
 import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordAdministrator;
 import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordRegistry;
 import ca.ulaval.glo4003.ws.infrastructure.auth.InMemorySessionRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.InMemoryUserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.user.credentials.InMemoryPasswordRegistry;
-import ca.ulaval.glo4003.ws.service.authentication.AuthenticationService;
 import ca.ulaval.glo4003.ws.service.user.SessionDtoAssembler;
 import ca.ulaval.glo4003.ws.service.user.UserAssembler;
 import ca.ulaval.glo4003.ws.service.user.UserService;
@@ -60,12 +53,10 @@ public class UserContext implements Context {
 
   private void registerSessionServices() {
     serviceLocator.register(SessionTokenGenerator.class, new SessionTokenGenerator());
-    serviceLocator.register(TokenExtractor.class, new TokenExtractor(AUTHENTICATION_HEADER_NAME));
+    serviceLocator.register(TokenExtractor.class, new TokenExtractor(AUTHENTICATION_HEADER_NAME, new TokenDtoAssembler()));
     serviceLocator.register(SessionFactory.class, new SessionFactory());
     serviceLocator.register(SessionAdministrator.class, new SessionAdministrator());
-    serviceLocator.register(RoleHandler.class, new RoleHandler());
-    serviceLocator.register(OwnershipHandler.class, new OwnershipHandler());
-    serviceLocator.register(AuthenticationService.class, new AuthenticationService());
+    serviceLocator.register(OwnershipDomainService.class, new OwnershipDomainService());
   }
 
   private void registerUserServices() {

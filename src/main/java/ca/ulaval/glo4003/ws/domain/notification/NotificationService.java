@@ -6,6 +6,7 @@ import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
 import ca.ulaval.glo4003.ws.domain.warehouse.DelayType;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

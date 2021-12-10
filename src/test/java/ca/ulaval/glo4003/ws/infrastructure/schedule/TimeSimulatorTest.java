@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.infrastructure.schedule;
 
+
 import ca.ulaval.glo4003.ws.domain.report.ReportsService;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;

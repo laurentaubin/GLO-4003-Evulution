@@ -1,12 +1,13 @@
 package ca.ulaval.glo4003.ws.domain.transaction;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
-import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class ReceiptTest {
   private static final Price A_PRICE = new Price(new BigDecimal(72000));

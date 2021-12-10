@@ -2,14 +2,13 @@ package ca.ulaval.glo4003.ws.api.delivery;
 
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
+import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
-import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
-import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotFoundException;
-import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.service.authentication.AuthenticationService;
 import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
+import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryDto;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
+import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -20,6 +19,9 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,15 +38,14 @@ class DeliveryResourceImplTest {
   private static final String A_MODE = "At campus";
   private static final String A_LOCATION = "Vachon";
   private static final String INVALID_MODE = "invalid mode";
-  private static final List<Role> ROLES =
-      new ArrayList<>(List.of(Role.BASE, Role.PRODUCTION_MANAGER));
 
   @Mock private DeliveryService deliveryService;
-  @Mock private AuthenticationService authenticationService;
   @Mock private DeliveryRequestValidator deliveryRequestValidator;
   @Mock private DeliveryDtoAssembler deliveryDtoAssembler;
   @Mock private ContainerRequestContext containerRequestContext;
-  @Mock private Session aSession;
+  @Mock private TokenExtractor tokenExtractor;
+  @Mock private TokenDto tokenDto;
+  @Mock private CompletedDeliveryDto completedDeliveryDto;
 
   private DeliveryResource deliveryResource;
 
@@ -52,11 +53,11 @@ class DeliveryResourceImplTest {
   void setUp() {
     deliveryResource =
         new DeliveryResourceImpl(
-            deliveryService, authenticationService, deliveryRequestValidator, deliveryDtoAssembler);
+            deliveryService, deliveryRequestValidator, deliveryDtoAssembler, tokenExtractor);
   }
 
   @Test
-  void givenDeliveryLocationRequest_whenAddLocation_thenValidateRequest() {
+  public void givenDeliveryLocationRequest_whenAddLocation_thenValidateRequest() {
     // given
     DeliveryLocationRequest request = createDeliveryLocationRequest();
 
@@ -68,17 +69,18 @@ class DeliveryResourceImplTest {
   }
 
   @Test
-  void givenDeliveryLocationRequest_whenAddLocation_thenServiceAddsDeliveryLocation() {
+  public void givenDeliveryLocationRequest_whenAddLocation_thenServiceAddsDeliveryLocation() {
     // given
     DeliveryLocationRequest request = createDeliveryLocationRequest();
     DeliveryLocationDto requestDto = createDeliveryLocationRequestDto();
     given(deliveryDtoAssembler.assemble(request)).willReturn(requestDto);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
     deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
-    verify(deliveryService).addDeliveryLocation(AN_ID, requestDto);
+    verify(deliveryService).addDeliveryLocation(tokenDto, AN_ID, requestDto);
   }
 
   @Test
@@ -109,8 +111,7 @@ class DeliveryResourceImplTest {
     assertThat(response.getStatus()).isEqualTo(Status.ACCEPTED.getStatusCode());
   }
 
-  @Test
-  public void whenAddDeliveryLocation_thenRolesAreValidated() {
+  @Test public void whenAddDeliveryLocation_thenExtractToken() {
     // given
     DeliveryLocationRequest request = createDeliveryLocationRequest();
 
@@ -118,63 +119,46 @@ class DeliveryResourceImplTest {
     deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
 
     // then
-    verify(authenticationService)
-        .validateDeliveryOwnership(
-            containerRequestContext,
-            AN_ID,
-            new ArrayList<>(List.of(Role.BASE, Role.PRODUCTION_MANAGER)));
+    verify(tokenExtractor).extract(containerRequestContext);
   }
 
-  @Test
-  public void whenAddDeliveryLocation_thenValidateDeliveryOwnership() {
-    // given
-    DeliveryLocationRequest request = createDeliveryLocationRequest();
-
+  @Test public void whenCompleteDelivery_thenExtractToken() {
     // when
-    deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
+    deliveryResource.completeDelivery(containerRequestContext, AN_ID);
 
     // then
-    verify(authenticationService).validateDeliveryOwnership(containerRequestContext, AN_ID, ROLES);
+    verify(tokenExtractor).extract(containerRequestContext);
   }
 
-  @Test
-  public void
-      givenWrongOwnerException_whenAddDeliveryLocation_thenThrowDeliveryNotFoundException() {
+  @Test public void whenCompleteDelivery_thenCompleteDelivery() {
     // given
-    DeliveryLocationRequest request = createDeliveryLocationRequest();
-    doThrow(DeliveryNotFoundException.class)
-        .when(authenticationService)
-        .validateDeliveryOwnership(any(), any(), any());
-
-    // when
-    Executable addingDeliveryLocation =
-        () -> deliveryResource.addDeliveryLocation(containerRequestContext, AN_ID, request);
-
-    // then
-    assertThrows(DeliveryNotFoundException.class, addingDeliveryLocation);
-  }
-
-  @Test
-  void givenSession_whenCompleteDelivery_thenRetrieveTransactionIdFromSessionCalled() {
-    // given
-    given(authenticationService.retrieveSession(any(), any())).willReturn(aSession);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
     deliveryResource.completeDelivery(containerRequestContext, AN_ID);
 
     // then
-    verify(authenticationService).retrieveTransactionIdFromSession(aSession, AN_ID);
+    verify(deliveryService).completeDelivery(tokenDto, AN_ID);
   }
 
-  @Test
-  void whenCompleteDelivery_thenRolesAreValidated() {
+  @Test public void whenCompleteDelivery_thenAssembleResponse() {
+    // given
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
+    given(deliveryService.completeDelivery(tokenDto, AN_ID)).willReturn(completedDeliveryDto);
+
     // when
     deliveryResource.completeDelivery(containerRequestContext, AN_ID);
 
     // then
-    verify(authenticationService)
-        .retrieveSession(
-            containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.PRODUCTION_MANAGER)));
+    verify(deliveryDtoAssembler).assemble(completedDeliveryDto);
+  }
+
+  @Test public void givenValidCompleteDeliveryRequest_whenCompleteDelivery_thenReturn200() {
+    // when
+    Response response = deliveryResource.completeDelivery(containerRequestContext, AN_ID);
+
+    // then
+    assertThat(response.getStatus()).isEqualTo(Status.OK.getStatusCode());
   }
 
   private DeliveryLocationRequest createDeliveryLocationRequest() {

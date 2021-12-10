@@ -1,28 +1,26 @@
 package ca.ulaval.glo4003.ws.service.delivery;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
-import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryFactory;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryMode;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryRepository;
-import ca.ulaval.glo4003.ws.domain.delivery.Location;
+import ca.ulaval.glo4003.ws.domain.delivery.*;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderRepository;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
-import java.util.List;
+import ca.ulaval.glo4003.ws.service.user.UserService;
+import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
@@ -31,6 +29,7 @@ class DeliveryServiceTest {
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("id");
   private static final DeliveryMode A_DELIVERY_MODE = DeliveryMode.CAMPUS;
   private static final Location A_LOCATION = Location.VACHON;
+  private static final List<Role> PRIVILEGED_ROLES = List.of(Role.CUSTOMER);
 
   @Mock private CompletedDeliveryDtoAssembler deliveryResponseAssembler;
   @Mock private DeliveryDestinationAssembler deliveryDestinationAssembler;
@@ -40,6 +39,8 @@ class DeliveryServiceTest {
   @Mock private PaymentService paymentService;
   @Mock private DeliveryFactory deliveryFactory;
   @Mock private OrderRepository orderRepository;
+  @Mock private TokenDto tokenDto;
+  @Mock private UserService userService;
 
   @Mock private Delivery delivery;
   @Mock private Order order;
@@ -56,7 +57,8 @@ class DeliveryServiceTest {
             deliveryFactory,
             deliveryRepository,
             paymentService,
-            orderRepository);
+            orderRepository,
+                userService);
   }
 
   @Test
@@ -95,7 +97,7 @@ class DeliveryServiceTest {
     given(deliveryRepository.find(DELIVERY_ID)).willReturn(delivery);
 
     // when
-    deliveryService.addDeliveryLocation(DELIVERY_ID, deliveryLocationDto);
+    deliveryService.addDeliveryLocation(tokenDto, DELIVERY_ID, deliveryLocationDto);
 
     // then
     verify(deliveryRepository).update(delivery);
@@ -109,10 +111,38 @@ class DeliveryServiceTest {
         .willReturn(deliveryDestination);
 
     // when
-    deliveryService.addDeliveryLocation(A_DELIVERY_ID, deliveryLocationRequest);
+    deliveryService.addDeliveryLocation(tokenDto, A_DELIVERY_ID, deliveryLocationRequest);
 
     // then
     verify(delivery).setDeliveryLocation(deliveryDestination);
+  }
+
+  @Test
+  public void whenAddDeliveryDestination_thenVerifyIfUserIsAllowed() {
+    // given
+    given(deliveryRepository.find(A_DELIVERY_ID)).willReturn(delivery);
+    given(deliveryDestinationAssembler.assemble(deliveryLocationRequest))
+            .willReturn(deliveryDestination);
+
+    // when
+    deliveryService.addDeliveryLocation(tokenDto, A_DELIVERY_ID, deliveryLocationRequest);
+
+    // then
+    verify(userService).isAllowed(tokenDto, PRIVILEGED_ROLES);
+  }
+
+  @Test
+  public void whenAddDeliveryDestination_thenValidateDeliveryOwnership() {
+    // given
+    given(deliveryRepository.find(A_DELIVERY_ID)).willReturn(delivery);
+    given(deliveryDestinationAssembler.assemble(deliveryLocationRequest))
+            .willReturn(deliveryDestination);
+
+    // when
+    deliveryService.addDeliveryLocation(tokenDto, A_DELIVERY_ID, deliveryLocationRequest);
+
+    // then
+    verify(userService).validateDeliveryOwnership(tokenDto, A_DELIVERY_ID, PRIVILEGED_ROLES);
   }
 
   @Test
@@ -120,12 +150,41 @@ class DeliveryServiceTest {
     // given
     given(order.isRelatedToTransaction(A_TRANSACTION_ID)).willReturn(true);
     given(orderRepository.findAllCompletedOrders()).willReturn(List.of(order));
+    given(userService.getTransactionIdFromDeliveryId(tokenDto, A_DELIVERY_ID)).willReturn(A_TRANSACTION_ID);
 
     // when
-    deliveryService.completeDelivery(A_TRANSACTION_ID);
+    deliveryService.completeDelivery(tokenDto, A_DELIVERY_ID);
 
     // then
     verify(paymentService).generateReceipt(A_TRANSACTION_ID);
+  }
+
+  @Test
+  public void whenCompleteDelivery_thenVerifyIfUserIsAllowed() {
+    // given
+    given(order.isRelatedToTransaction(A_TRANSACTION_ID)).willReturn(true);
+    given(orderRepository.findAllCompletedOrders()).willReturn(List.of(order));
+    given(userService.getTransactionIdFromDeliveryId(tokenDto, A_DELIVERY_ID)).willReturn(A_TRANSACTION_ID);
+
+    // when
+    deliveryService.completeDelivery(tokenDto, A_DELIVERY_ID);
+
+    // then
+    verify(userService).isAllowed(tokenDto, PRIVILEGED_ROLES);
+  }
+
+  @Test
+  public void whenCompleteDelivery_thenValidateDeliveryOwnership() {
+    // given
+    given(order.isRelatedToTransaction(A_TRANSACTION_ID)).willReturn(true);
+    given(orderRepository.findAllCompletedOrders()).willReturn(List.of(order));
+    given(userService.getTransactionIdFromDeliveryId(tokenDto, A_DELIVERY_ID)).willReturn(A_TRANSACTION_ID);
+
+    // when
+    deliveryService.completeDelivery(tokenDto, A_DELIVERY_ID);
+
+    // then
+    verify(userService).validateDeliveryOwnership(tokenDto, A_DELIVERY_ID, PRIVILEGED_ROLES);
   }
 
   private DeliveryDestination givenADeliveryDestination() {

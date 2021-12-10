@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.report.sales;
 
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
+
 import java.time.LocalDate;
 
 public class SalesReport {

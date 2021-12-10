@@ -5,9 +5,13 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.ReceiptFactory;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.infrastructure.delivery.InMemoryDeliveryRepository;
 import ca.ulaval.glo4003.ws.infrastructure.transaction.InMemoryTransactionRepository;
 import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeliveryContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();

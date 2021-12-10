@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionRepository;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
+
 import java.util.HashMap;
 import java.util.Map;
 

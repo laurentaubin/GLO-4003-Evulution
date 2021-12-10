@@ -3,9 +3,10 @@ package ca.ulaval.glo4003.ws.infrastructure.schedule;
 import ca.ulaval.glo4003.ws.domain.report.ReportsService;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
-import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.TimerTask;
 
 public class WeeklyTaskExecutor extends TimerTask {
   private static final Logger LOGGER = LogManager.getLogger();

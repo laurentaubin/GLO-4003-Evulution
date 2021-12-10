@@ -1,11 +1,11 @@
 package ca.ulaval.glo4003.ws.domain.vehicle;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.InvalidVehicleColorException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ColorTest {
   private static final String VALID_COLOR_STRING = "white";

@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.warehouse.time;
 
 import ca.ulaval.glo4003.ws.domain.warehouse.exception.InvalidAssemblyTimeOperationException;
+
 import java.time.Period;
 
 public class AssemblyTime {

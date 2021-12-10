@@ -7,6 +7,7 @@ import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.ws.domain.warehouse.battery;
 
 import ca.ulaval.glo4003.ws.domain.notification.BatteryOrderDelayObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
+
 import java.util.ArrayList;
 import java.util.List;
 

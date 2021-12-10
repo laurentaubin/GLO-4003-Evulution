@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
+
 import java.time.LocalDate;
 
 public class Order {

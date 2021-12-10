@@ -1,21 +1,22 @@
 package ca.ulaval.glo4003.ws.domain.warehouse.vehicle;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleAssemblyProductionTime;
 import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.strategy.DefaultVehicleWarehouseStrategy;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultVehicleWarehouseStrategyTest {

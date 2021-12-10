@@ -5,6 +5,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
+
 import java.util.HashMap;
 import java.util.Map;
 

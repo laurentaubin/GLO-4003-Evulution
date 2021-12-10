@@ -1,10 +1,10 @@
 package ca.ulaval.glo4003.ws.domain.warehouse.order;
 
+import org.junit.jupiter.api.Test;
+
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 class OrderIdTest {
   private static final String AN_ID = "hg7e2d";

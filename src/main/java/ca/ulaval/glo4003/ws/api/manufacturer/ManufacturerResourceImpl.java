@@ -1,50 +1,41 @@
 package ca.ulaval.glo4003.ws.api.manufacturer;
 
-import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
+import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
-import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
+import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ManufacturerResourceImpl implements ManufacturerResource {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
-  private static final List<Role> PRIVILEGED_ROLES =
-      new ArrayList<>(List.of(Role.PRODUCTION_MANAGER));
+  private final TokenExtractor tokenExtractor;
 
   private final ManufacturerService manufacturerService;
-  private final RoleHandler roleHandler;
 
   public ManufacturerResourceImpl() {
     this(
         serviceLocator.resolve(ManufacturerService.class),
-        serviceLocator.resolve(RoleHandler.class));
+            serviceLocator.resolve(TokenExtractor.class));
   }
 
   public ManufacturerResourceImpl(
-      ManufacturerService manufacturerService, RoleHandler roleHandler) {
+      ManufacturerService manufacturerService, TokenExtractor tokenExtractor) {
     this.manufacturerService = manufacturerService;
-    this.roleHandler = roleHandler;
+    this.tokenExtractor = tokenExtractor;
   }
 
   @Override
   public Response shutdown(ContainerRequestContext containerRequestContext) {
-    validateRole(containerRequestContext);
-    manufacturerService.shutdown();
+    TokenDto tokenDto = tokenExtractor.extract(containerRequestContext);
+    manufacturerService.shutdown(tokenDto);
     return Response.ok().build();
   }
 
   @Override
   public Response reactivate(ContainerRequestContext containerRequestContext) {
-    validateRole(containerRequestContext);
-    manufacturerService.reactivate();
+    TokenDto tokenDto = tokenExtractor.extract(containerRequestContext);
+    manufacturerService.reactivate(tokenDto);
     return Response.ok().build();
-  }
-
-  private void validateRole(ContainerRequestContext containerRequestContext) {
-    roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
   }
 }

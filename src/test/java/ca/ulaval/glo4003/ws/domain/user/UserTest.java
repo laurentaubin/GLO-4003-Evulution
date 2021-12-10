@@ -1,19 +1,20 @@
 package ca.ulaval.glo4003.ws.domain.user;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.exception.NoTransactionLinkedToDeliveryException;
 import ca.ulaval.glo4003.ws.fixture.UserBuilder;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class UserTest {
@@ -33,7 +34,7 @@ class UserTest {
 
   @Test
   public void whenCreate_thenUserOnlyHasBaseRole() {
-    assertThat(user.getRoles()).contains(Role.BASE);
+    assertThat(user.getRoles()).contains(Role.CUSTOMER);
     assertThat(user.getRoles()).hasSize(1);
   }
 
@@ -74,8 +75,8 @@ class UserTest {
   @Test
   void givenUserPossessRequestedRole_whenIsAllowed_thenUserIsAllowed() {
     // given
-    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
-    List<Role> requestedRoles = List.of(Role.BASE, Role.PRODUCTION_MANAGER);
+    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.CUSTOMER)).build();
+    List<Role> requestedRoles = List.of(Role.CUSTOMER, Role.PRODUCTION_MANAGER);
 
     // when
     boolean isAllowed = userWithRequestedRoles.isAllowed(requestedRoles);
@@ -117,8 +118,8 @@ class UserTest {
   @Test
   void givenUserWithoutRequestedRole_whenIsAllowed_thenUserIsNotAllowed() {
     // given
-    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
-    List<Role> requestedRoles = List.of(Role.PRODUCTION_MANAGER);
+    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.PRODUCTION_MANAGER)).build();
+    List<Role> requestedRoles = List.of(Role.CUSTOMER);
 
     // when
     boolean isAllowed = userWithRequestedRoles.isAllowed(requestedRoles);

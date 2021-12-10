@@ -1,10 +1,10 @@
 package ca.ulaval.glo4003.ws.api.transaction.response;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.service.transaction.dto.TransactionCreationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class TransactionCreationResponseAssemblerTest {
   private static final String A_TRANSACTION_ID = "an id";

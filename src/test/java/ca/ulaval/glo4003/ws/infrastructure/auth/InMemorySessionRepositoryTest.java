@@ -1,11 +1,11 @@
 package ca.ulaval.glo4003.ws.infrastructure.auth;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class InMemorySessionRepositoryTest {
   private static final SessionToken A_TOKEN = new SessionToken("dsoadjas");

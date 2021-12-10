@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.infrastructure.communication.email.jakarta;
 
+
 import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailContent;
 import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailServer;
 import org.apache.logging.log4j.LogManager;

@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.report.ReportsService;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
+
 import java.util.Timer;
 
 public class TimeSimulator {

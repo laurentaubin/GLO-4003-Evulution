@@ -1,13 +1,14 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidDeliveryModeException;
 import jakarta.ws.rs.core.Response;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class CatchInvalidDeliveryModeExceptionMapperTest {
   private static final Set<String> DELIVERY_MODES = Set.of("At campus");

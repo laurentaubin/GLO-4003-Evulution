@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.manufacturer.model;
 
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
+
 import java.util.ArrayList;
 import java.util.List;
 

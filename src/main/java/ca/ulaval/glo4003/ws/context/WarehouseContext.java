@@ -35,11 +35,8 @@ import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.ModelAssemblyLineA
 import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.ModelManufacturerImpl;
 import ca.ulaval.glo4003.ws.infrastructure.warehouse.CommandIdFactory;
 import ca.ulaval.glo4003.ws.service.warehouse.WarehouseService;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
 
 public class WarehouseContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();

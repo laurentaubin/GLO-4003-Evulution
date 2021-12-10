@@ -1,20 +1,21 @@
 package ca.ulaval.glo4003.ws.infrastructure.user;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.fixture.UserBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class UserDtoAssemblerTest {
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("xyz");
@@ -101,13 +102,13 @@ class UserDtoAssemblerTest {
   @Test
   public void givenUserDtoWithBaseAndAdminRole_whenAssemble_thenReturnUserWithSameRoles() {
     // given
-    UserDto userDto = givenUserDtoWithRoles(Set.of(Role.BASE, Role.PRODUCTION_MANAGER));
+    UserDto userDto = givenUserDtoWithRoles(Set.of(Role.CUSTOMER, Role.PRODUCTION_MANAGER));
 
     // when
     User user = assembler.assemble(userDto);
 
     // then
-    assertThat(user.getRoles()).contains(Role.BASE);
+    assertThat(user.getRoles()).contains(Role.CUSTOMER);
     assertThat(user.getRoles()).contains(Role.PRODUCTION_MANAGER);
   }
 
