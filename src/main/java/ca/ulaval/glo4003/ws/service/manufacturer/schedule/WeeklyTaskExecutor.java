@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.infrastructure.schedule;
+package ca.ulaval.glo4003.ws.service.manufacturer.schedule;
 
 import ca.ulaval.glo4003.ws.domain.report.ReportsService;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
