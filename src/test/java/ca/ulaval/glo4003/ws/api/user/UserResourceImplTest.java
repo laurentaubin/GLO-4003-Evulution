@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.ws.api.user.request.LoginUserRequest;
 import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 import ca.ulaval.glo4003.ws.api.user.response.LoginResponse;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
-import ca.ulaval.glo4003.ws.fixture.LoginResponseFixture;
+import ca.ulaval.glo4003.ws.fixture.LoginResponseBuilder;
 import ca.ulaval.glo4003.ws.fixture.LoginUserRequestFixture;
 import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestFixture;
 import ca.ulaval.glo4003.ws.service.user.UserService;
@@ -92,7 +92,7 @@ class UserResourceImplTest {
     // given
     LoginUserRequest request = new LoginUserRequestFixture().build();
     SessionDto sessionDto = new SessionDto(A_TOKEN);
-    LoginResponse loginResponse = new LoginResponseFixture().build();
+    LoginResponse loginResponse = new LoginResponseBuilder().build();
     given(userService.login(request.getEmail(), request.getPassword())).willReturn(sessionDto);
     given(loginUserDtoAssembler.assemble(sessionDto)).willReturn(loginResponse);
 
