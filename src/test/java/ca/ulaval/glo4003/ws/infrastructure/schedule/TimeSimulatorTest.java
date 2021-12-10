@@ -5,7 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.service.assembly.AssemblyLineService;
+import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
 import java.util.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,13 +19,13 @@ class TimeSimulatorTest {
 
   private TimeSimulator timeSimulator;
 
-  @Mock private AssemblyLineService assemblyLine;
+  @Mock private ManufacturerService manufacturerService;
   @Mock private Timer timer;
   @Mock private LocalDateProvider localDateProvider;
 
   @BeforeEach
   public void setUp() {
-    timeSimulator = new TimeSimulator(assemblyLine, timer, localDateProvider);
+    timeSimulator = new TimeSimulator(manufacturerService, timer, localDateProvider);
   }
 
   @Test

@@ -1,8 +1,6 @@
 package ca.ulaval.glo4003.ws.service.delivery;
 
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
-import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryFactory;
@@ -12,6 +10,8 @@ import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotReadyException;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderRepository;
 import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryDto;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 import java.util.List;

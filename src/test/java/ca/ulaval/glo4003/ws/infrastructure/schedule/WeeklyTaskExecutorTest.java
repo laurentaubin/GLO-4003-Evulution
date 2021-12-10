@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.service.assembly.AssemblyLineService;
+import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,12 +19,12 @@ class WeeklyTaskExecutorTest {
 
   private WeeklyTaskExecutor weeklyTaskExecutor;
 
-  @Mock private AssemblyLineService assemblyLine;
+  @Mock private ManufacturerService manufacturerService;
   @Mock private LocalDateProvider localDateProvider;
 
   @BeforeEach
   public void setUp() {
-    weeklyTaskExecutor = new WeeklyTaskExecutor(assemblyLine, localDateProvider);
+    weeklyTaskExecutor = new WeeklyTaskExecutor(manufacturerService, localDateProvider);
   }
 
   @Test
@@ -32,7 +32,7 @@ class WeeklyTaskExecutorTest {
     // when
     weeklyTaskExecutor.run();
 
-    verify(assemblyLine, times(1)).advance();
+    verify(manufacturerService, times(1)).advanceTime();
   }
 
   @Test
@@ -46,7 +46,7 @@ class WeeklyTaskExecutorTest {
   @Test
   public void givenAdvanceThrowsException_whenRun_thenDoNotThrowExceptionAndKeepGoing() {
     // given
-    doThrow(new RuntimeException()).when(assemblyLine).advance();
+    doThrow(new RuntimeException()).when(manufacturerService).advanceTime();
 
     // when
     Executable running = () -> weeklyTaskExecutor.run();

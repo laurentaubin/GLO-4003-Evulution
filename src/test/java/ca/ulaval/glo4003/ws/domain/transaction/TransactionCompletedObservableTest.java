@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.domain.transaction;
 
 import static org.mockito.Mockito.verify;
 
-import ca.ulaval.glo4003.ws.domain.assembly.TransactionObserver;
+import ca.ulaval.glo4003.ws.domain.warehouse.TransactionCompletedObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TransactionCompletedObservableTest {
 
-  @Mock private TransactionObserver anObserver;
-  @Mock private TransactionObserver anotherObserver;
+  @Mock private TransactionCompletedObserver anObserver;
+  @Mock private TransactionCompletedObserver anotherObserver;
   @Mock private Transaction transaction;
 
   private TransactionCompletedObservable transactionCompletedObservable;

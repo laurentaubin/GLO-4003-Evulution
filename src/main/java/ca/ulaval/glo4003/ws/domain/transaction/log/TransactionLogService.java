@@ -1,9 +1,9 @@
 package ca.ulaval.glo4003.ws.domain.transaction.log;
 
-import ca.ulaval.glo4003.ws.domain.assembly.TransactionObserver;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.domain.warehouse.TransactionCompletedObserver;
 
-public class TransactionLogService implements TransactionObserver {
+public class TransactionLogService implements TransactionCompletedObserver {
   private final TransactionLogFactory transactionLogFactory;
   private final TransactionLogSink transactionLogSink;
 

@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.schedule;
 
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.service.assembly.AssemblyLineService;
+import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
 import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,17 +9,18 @@ import org.apache.logging.log4j.Logger;
 public class WeeklyTaskExecutor extends TimerTask {
   private static final Logger LOGGER = LogManager.getLogger();
 
-  private final AssemblyLineService assemblyLine;
+  private final ManufacturerService manufacturerService;
   private final LocalDateProvider localDateProvider;
 
-  public WeeklyTaskExecutor(AssemblyLineService assemblyLine, LocalDateProvider localDateProvider) {
-    this.assemblyLine = assemblyLine;
+  public WeeklyTaskExecutor(
+      ManufacturerService manufacturerService, LocalDateProvider localDateProvider) {
+    this.manufacturerService = manufacturerService;
     this.localDateProvider = localDateProvider;
   }
 
   public void run() {
     try {
-      assemblyLine.advance();
+      manufacturerService.advanceTime();
       localDateProvider.advance();
     } catch (Exception exception) {
       LOGGER.error(
