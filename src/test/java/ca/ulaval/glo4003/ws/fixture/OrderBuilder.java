@@ -1,10 +1,11 @@
 package ca.ulaval.glo4003.ws.fixture;
 
-import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
-import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
-import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
+import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
+import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
+
 import java.time.LocalDate;
 import java.util.UUID;
 

@@ -1,13 +1,13 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.delivery.dto.CompletedDeliveryResponse;
 import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryDto;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class DeliveryDtoAssemblerTest {
   private static final Integer PAYMENTS_TAKEN = 6;

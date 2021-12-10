@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.infrastructure.battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.exception.InvalidBatteryException;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;

@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.infrastructure.model;
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.ModelNotFoundException;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.ModelRepository;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;

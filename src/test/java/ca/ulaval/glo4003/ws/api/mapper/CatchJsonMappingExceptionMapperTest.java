@@ -1,8 +1,5 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import jakarta.ws.rs.core.Response;
@@ -10,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class CatchJsonMappingExceptionMapperTest {

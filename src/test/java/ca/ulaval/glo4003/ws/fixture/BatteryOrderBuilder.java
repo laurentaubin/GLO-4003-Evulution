@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.ws.fixture;
 
-import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
+import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 
 public class BatteryOrderBuilder {
   private OrderId orderId = new OrderId("anOrderId");
@@ -14,8 +14,8 @@ public class BatteryOrderBuilder {
     return this;
   }
 
-  public BatteryOrderBuilder withModelName(String modelName) {
-    this.batteryType = modelName;
+  public BatteryOrderBuilder withBatteryType(String batteryType) {
+    this.batteryType = batteryType;
     return this;
   }
 

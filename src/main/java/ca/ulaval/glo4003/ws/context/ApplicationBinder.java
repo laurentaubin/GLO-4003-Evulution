@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.api.delivery.DeliveryResource;
 import ca.ulaval.glo4003.ws.api.delivery.DeliveryResourceImpl;
-import ca.ulaval.glo4003.ws.api.production.ProductionLineResource;
-import ca.ulaval.glo4003.ws.api.production.ProductionLineResourceImpl;
+import ca.ulaval.glo4003.ws.api.manufacturer.ManufacturerResource;
+import ca.ulaval.glo4003.ws.api.manufacturer.ManufacturerResourceImpl;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResource;
 import ca.ulaval.glo4003.ws.api.transaction.TransactionResourceImpl;
 import ca.ulaval.glo4003.ws.api.user.UserResource;
@@ -16,6 +16,6 @@ public class ApplicationBinder extends AbstractBinder {
     bind(new UserResourceImpl()).to(UserResource.class);
     bind(new TransactionResourceImpl()).to(TransactionResource.class);
     bind(new DeliveryResourceImpl()).to(DeliveryResource.class);
-    bind(new ProductionLineResourceImpl()).to(ProductionLineResource.class);
+    bind(new ManufacturerResourceImpl()).to(ManufacturerResource.class);
   }
 }

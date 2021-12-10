@@ -1,12 +1,12 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.handler.exception.UnauthorizedUserException;
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class CatchUnauthorizedUserExceptionMapperTest {
   private static final int EXPECTED_STATUS_CODE = Response.Status.FORBIDDEN.getStatusCode();

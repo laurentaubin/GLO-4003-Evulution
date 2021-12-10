@@ -1,13 +1,14 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.vehicle.exception.ModelNotFoundException;
 import jakarta.ws.rs.core.Response;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class CatchModelNotFoundExceptionMapperTest {
   private static final Set<String> SOME_MODELS = Set.of("Vandry", "Pouliot");

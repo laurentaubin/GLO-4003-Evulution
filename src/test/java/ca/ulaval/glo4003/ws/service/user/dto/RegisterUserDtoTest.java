@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class RegisterUserDtoTest {
+class RegisterUserRequestTest {
 
   public Validator validator;
 

@@ -5,9 +5,11 @@ import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.shared.DateParser;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.BirthDateValidator;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.exception.InvalidDateFormatException;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
+
 import java.time.LocalDate;
 
 public class UserAssembler {
@@ -30,11 +32,13 @@ public class UserAssembler {
       birthDateValidator.validate(registerUserDto.getBirthDate());
       LocalDate localBirthDate = dateParser.parse(registerUserDto.getBirthDate());
       BirthDate birthDate = new BirthDate(localBirthDate);
-      return new User(
+      User user = new User(
           registerUserDto.getName(),
           birthDate,
           registerUserDto.getSex(),
           registerUserDto.getEmail());
+      user.addRole(Role.CUSTOMER);
+      return user;
     } catch (InvalidDateFormatException invalidDateFormatException) {
       throw new InvalidFormatException(invalidDateFormatException.getDescription());
     }

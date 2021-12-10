@@ -3,13 +3,8 @@ package ca.ulaval.glo4003.ws.domain.user;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.exception.NoTransactionLinkedToDeliveryException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 
 public class User {
   private final String name;
@@ -24,7 +19,7 @@ public class User {
     this.birthDate = birthDate;
     this.sex = sex;
     this.email = email;
-    this.roles = new HashSet<>(List.of(Role.BASE));
+    this.roles = new HashSet<>();
     this.transactionIdToDeliveryId = new HashMap<>();
   }
 
@@ -58,7 +53,13 @@ public class User {
   }
 
   public boolean isAllowed(List<Role> requestedRoles) {
-    return !Collections.disjoint(roles, requestedRoles);
+    for (Role role: requestedRoles) {
+      if (roles.contains(role)) {
+        return true;
+      }
+    }
+    return false;
+
   }
 
   public void addTransactionDelivery(TransactionId transactionId, DeliveryId deliveryId) {

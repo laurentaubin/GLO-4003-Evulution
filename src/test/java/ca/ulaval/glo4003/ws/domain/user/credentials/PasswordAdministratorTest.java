@@ -1,15 +1,16 @@
 package ca.ulaval.glo4003.ws.domain.user.credentials;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PasswordAdministratorTest {

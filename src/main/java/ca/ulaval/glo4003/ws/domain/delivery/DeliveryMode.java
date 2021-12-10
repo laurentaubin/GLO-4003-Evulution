@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
 import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidDeliveryModeException;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 

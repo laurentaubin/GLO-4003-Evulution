@@ -1,15 +1,16 @@
 package ca.ulaval.glo4003.ws.infrastructure.transaction.log;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogEntry;
 import ca.ulaval.glo4003.ws.fixture.TransactionLogFixture;
-import java.time.LocalDate;
-import java.util.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.Collection;
+
+import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class InMemoryTransactionLogRepositoryTest {

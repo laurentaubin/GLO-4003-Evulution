@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.ws.fixture;
 
-import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
-import ca.ulaval.glo4003.ws.domain.assembly.time.AssemblyTime;
+import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
+import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 
 public class ModelOrderBuilder {
   private OrderId orderId = new OrderId("anOrderId");

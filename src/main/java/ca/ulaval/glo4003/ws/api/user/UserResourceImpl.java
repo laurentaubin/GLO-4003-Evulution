@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.ws.service.user.UserService;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 import jakarta.ws.rs.core.Response;
+
 import java.net.URI;
 
 public class UserResourceImpl implements UserResource {

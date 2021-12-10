@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.infrastructure.transaction.log;
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogEntry;
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogFinder;
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogSink;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;

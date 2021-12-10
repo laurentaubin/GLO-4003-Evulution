@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.domain.shared.DateParser;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.BirthDateValidator;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.exception.InvalidDateFormatException;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
@@ -68,5 +69,16 @@ class UserAssemblerTest {
 
   private RegisterUserDto createRegisterUserDto() {
     return new RegisterUserDto(A_FIELD, A_FIELD, A_FIELD, A_FIELD, A_FIELD);
+  }
+
+  @Test public void whenAssembleUser_thenUserHasCustomerRole() {
+    // given
+    RegisterUserDto registerUserDto = createRegisterUserDto();
+
+    // when
+    User user = userAssembler.assemble(registerUserDto);
+
+    // then
+    assertThat(user.getRoles()).containsExactly(Role.CUSTOMER);
   }
 }

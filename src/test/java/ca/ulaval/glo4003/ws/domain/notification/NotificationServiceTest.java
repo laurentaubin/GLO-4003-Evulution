@@ -1,21 +1,22 @@
 package ca.ulaval.glo4003.ws.domain.notification;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
-import ca.ulaval.glo4003.ws.domain.assembly.DelayType;
-import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
-import ca.ulaval.glo4003.ws.domain.assembly.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
-import java.util.ArrayList;
-import java.util.List;
+import ca.ulaval.glo4003.ws.domain.warehouse.DelayType;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
+import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
@@ -43,7 +44,7 @@ class NotificationServiceTest {
     given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
-    notificationService.listenVehicleAssemblyDelay(order);
+    notificationService.listenVehicleOrderDelay(order);
 
     // then
     verify(notificationIssuer).issueDelayNotification(user, order, DelayType.VEHICLE_ASSEMBLY);
@@ -56,7 +57,7 @@ class NotificationServiceTest {
     given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
-    notificationService.listenModelAssemblyDelay(order);
+    notificationService.listenModelOrderDelay(order);
 
     // then
     verify(notificationIssuer).issueDelayNotification(user, order, DelayType.MODEL_ASSEMBLY);
@@ -69,7 +70,7 @@ class NotificationServiceTest {
     given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
-    notificationService.listenBatteryAssemblyDelay(order);
+    notificationService.listenBatteryOrderDelay(order);
 
     // then
     verify(notificationIssuer).issueDelayNotification(user, order, DelayType.BATTERY_ASSEMBLY);
@@ -82,7 +83,7 @@ class NotificationServiceTest {
     given(userFinder.findUserByTransactionId(AN_ID)).willReturn(user);
 
     // when
-    notificationService.listenProductionLineShutdown(new ArrayList<>(List.of(order)));
+    notificationService.listenToOrderDelay(new ArrayList<>(List.of(order)));
 
     // then
     verify(notificationIssuer).issueDelayNotification(user, order, DelayType.PRODUCTION_SHUTDOWN);

@@ -1,13 +1,13 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.domain.delivery.exception.DeliveryNotReadyException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class CatchDeliveryNotReadyExceptionMapperTest {
   private static final int EXPECTED_STATUS_CODE = Status.BAD_REQUEST.getStatusCode();

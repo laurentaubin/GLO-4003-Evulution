@@ -1,11 +1,12 @@
 package ca.ulaval.glo4003.ws.api.transaction.response;
 
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class BatteryConfigurationResponseAssemblerTest {
   private static final BigDecimal AN_ESTIMATED_RANGE = BigDecimal.valueOf(10.999);

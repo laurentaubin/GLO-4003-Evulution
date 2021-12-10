@@ -1,23 +1,24 @@
 package ca.ulaval.glo4003.ws.domain.report.sales;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-
 import ca.ulaval.glo4003.ws.domain.report.sales.exception.NoSalesInTimeFrameException;
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogEntry;
 import ca.ulaval.glo4003.ws.domain.transaction.log.TransactionLogFinder;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class SalesReportFactoryTest {

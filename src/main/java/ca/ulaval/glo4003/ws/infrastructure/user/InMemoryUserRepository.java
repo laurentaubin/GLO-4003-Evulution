@@ -1,10 +1,12 @@
 package ca.ulaval.glo4003.ws.infrastructure.user;
 
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserFinder;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +58,15 @@ public class InMemoryUserRepository implements UserRepository, UserFinder {
         .filter(user -> user.ownsTransaction(transactionId))
         .findFirst()
         .get();
+  }
+
+  @Override
+  public List<User> findUsersWithRole(Role role) {
+    List<User> mappedUsers =
+        users.values().stream().map(userDtoAssembler::assemble).collect(Collectors.toList());
+    return mappedUsers.stream()
+        .filter(user -> user.getRoles().contains(role))
+        .collect(Collectors.toList());
   }
 
   @Override

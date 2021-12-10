@@ -5,6 +5,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.*;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentFactory;
+import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
@@ -13,6 +14,8 @@ import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureBatteryDto;
 import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigurePaymentDto;
 import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureVehicleDto;
+import ca.ulaval.glo4003.ws.service.user.UserService;
+import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,9 +38,11 @@ class TransactionServiceTest {
   private static final String A_BATTERY_TYPE = "type";
   private static final BigDecimal A_RANGE = BigDecimal.TEN;
   private static final String A_MODEL = "model";
-  private static final String A_WHITE_COLOR = "White";
+  private static final String WHITE = "White";
+  private static final List<Role> PRIVILEGED_ROLES = new ArrayList<>(List.of(Role.CUSTOMER));
 
   @Mock private DeliveryService deliveryService;
+  @Mock private UserService userService;
   @Mock private VehicleFactory vehicleFactory;
   @Mock private TransactionRepository transactionRepository;
   @Mock private TransactionFactory transactionFactory;
@@ -53,6 +60,7 @@ class TransactionServiceTest {
   @Mock private ConfigureVehicleDto configureVehicleDto;
   @Mock private ConfigureBatteryDto configureBatteryDto;
   @Mock private ConfigurePaymentDto configurePaymentDto;
+  @Mock private TokenDto tokenDto;
 
   private TransactionService transactionService;
 
@@ -68,7 +76,8 @@ class TransactionServiceTest {
             transactionCompletedObservable,
             batteryConfigurationDtoAssembler,
             paymentFactory,
-            transactionCreationDtoAssembler);
+            transactionCreationDtoAssembler,
+                userService);
   }
 
   @Test
@@ -78,7 +87,7 @@ class TransactionServiceTest {
     given(deliveryService.createDelivery()).willReturn(delivery);
 
     // when
-    transactionService.createTransaction();
+    transactionService.createTransaction(tokenDto);
 
     // then
     verify(transactionFactory).createTransaction();
@@ -91,7 +100,7 @@ class TransactionServiceTest {
     given(deliveryService.createDelivery()).willReturn(delivery);
 
     // when
-    transactionService.createTransaction();
+    transactionService.createTransaction(tokenDto);
 
     // then
     verify(deliveryService).createDelivery();
@@ -104,7 +113,7 @@ class TransactionServiceTest {
     given(deliveryService.createDelivery()).willReturn(delivery);
 
     // when
-    transactionService.createTransaction();
+    transactionService.createTransaction(tokenDto);
 
     // then
     verify(transactionRepository).save(transaction);
@@ -118,10 +127,24 @@ class TransactionServiceTest {
     given(deliveryService.createDelivery()).willReturn(delivery);
 
     // when
-    transactionService.createTransaction();
+    transactionService.createTransaction(tokenDto);
 
     // then
     verify(transactionCreationDtoAssembler).assemble(transaction.getId(), delivery.getDeliveryId());
+  }
+
+  @Test
+  public void
+  whenCreateTransaction_thenVerifyIfUserIsAllowed() {
+    // given
+    given(transactionFactory.createTransaction()).willReturn(transaction);
+    given(deliveryService.createDelivery()).willReturn(delivery);
+
+    // when
+    transactionService.createTransaction(tokenDto);
+
+    // then
+    verify(userService).isAllowed(tokenDto, PRIVILEGED_ROLES);
   }
 
   @Test
@@ -133,7 +156,7 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.configureVehicle(AN_ID, configureVehicleDto);
+    transactionService.configureVehicle(AN_ID, configureVehicleDto, tokenDto);
 
     // then
     verify(vehicleFactory).create(A_MODEL, A_WHITE_COLOR);
@@ -147,7 +170,7 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.configureVehicle(AN_ID, configureVehicleDto);
+    transactionService.configureVehicle(AN_ID, configureVehicleDto, tokenDto);
 
     // then
     verify(transaction).addVehicle(vehicle);
@@ -161,7 +184,7 @@ class TransactionServiceTest {
     given(vehicleFactory.create(any(), any())).willReturn(vehicle);
 
     // when
-    transactionService.configureVehicle(AN_ID, configureVehicleDto);
+    transactionService.configureVehicle(AN_ID, configureVehicleDto, tokenDto);
 
     // then
     verify(transactionRepository).update(transaction);
@@ -173,10 +196,24 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
-    Executable action = () -> transactionService.configureVehicle(AN_ID, configureVehicleDto);
+    Executable action = () -> transactionService.configureVehicle(AN_ID, configureVehicleDto, tokenDto);
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
+  }
+
+  @Test
+  void whenConfigureVehicle_thenValidateTransactionOwnership() {
+    // given
+    given(configureVehicleDto.getModelName()).willReturn(A_MODEL);
+    given(configureVehicleDto.getColor()).willReturn(WHITE);
+    given(transactionRepository.find(AN_ID)).willReturn(transaction);
+
+    // when
+    transactionService.configureVehicle(AN_ID, configureVehicleDto, tokenDto);
+
+    // then
+    verify(userService).validateTransactionOwnership(tokenDto, AN_ID, PRIVILEGED_ROLES);
   }
 
   @Test
@@ -187,7 +224,7 @@ class TransactionServiceTest {
     given(configureBatteryDto.getTypeName()).willReturn(A_BATTERY_TYPE);
 
     // when
-    transactionService.configureBattery(AN_ID, configureBatteryDto);
+    transactionService.configureBattery(AN_ID, configureBatteryDto, tokenDto);
 
     // then
     verify(batteryRepository).findByType(A_BATTERY_TYPE);
@@ -200,11 +237,25 @@ class TransactionServiceTest {
     given(batteryRepository.findByType(any())).willReturn(battery);
 
     // when
-    transactionService.configureBattery(AN_ID, configureBatteryDto);
+    transactionService.configureBattery(AN_ID, configureBatteryDto, tokenDto);
 
     // then
     verify(transaction).addBattery(battery);
   }
+
+  @Test
+  public void whenConfigureBattery_thenValidateTransactionOwnership() {
+    // given
+    given(transactionRepository.find(AN_ID)).willReturn(transaction);
+    given(batteryRepository.findByType(any())).willReturn(battery);
+
+    // when
+    transactionService.configureBattery(AN_ID, configureBatteryDto, tokenDto);
+
+    // then
+    verify(userService).validateTransactionOwnership(tokenDto, AN_ID, PRIVILEGED_ROLES);
+  }
+
 
   @Test
   void
@@ -213,19 +264,19 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.configureBattery(AN_ID, configureBatteryDto);
+    transactionService.configureBattery(AN_ID, configureBatteryDto, tokenDto);
 
     // then
     verify(transactionRepository).update(transaction);
   }
 
   @Test
-  void givenNotExistingTransactionId_whenAddBattery_thenThrowTransactionNotFoundException() {
+  void givenNotExistingTransactionId_whenConfigureBattery_thenThrowTransactionNotFoundException() {
     // given
     given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
-    Executable action = () -> transactionService.configureBattery(AN_ID, configureBatteryDto);
+    Executable action = () -> transactionService.configureBattery(AN_ID, configureBatteryDto, tokenDto);
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
@@ -239,7 +290,7 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.configureBattery(AN_ID, configureBatteryDto);
+    transactionService.configureBattery(AN_ID, configureBatteryDto, tokenDto);
 
     // then
     verify(batteryConfigurationDtoAssembler).assemble(A_RANGE);
@@ -253,10 +304,24 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.completeTransaction(AN_ID, configurePaymentDto);
+    transactionService.completeTransaction(AN_ID, configurePaymentDto, tokenDto);
 
     // then
     verify(transaction).addPayment(payment);
+  }
+
+  @Test
+  public void
+  whenCompleteTransaction_thenValidateTransactionOwnership() {
+    // given
+    given(paymentFactory.create(any(), any(), any())).willReturn(payment);
+    given(transactionRepository.find(AN_ID)).willReturn(transaction);
+
+    // when
+    transactionService.completeTransaction(AN_ID, configurePaymentDto, tokenDto);
+
+    // then
+    verify(userService).validateTransactionOwnership(tokenDto, AN_ID, PRIVILEGED_ROLES);
   }
 
   @Test
@@ -267,7 +332,7 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.completeTransaction(AN_ID, configurePaymentDto);
+    transactionService.completeTransaction(AN_ID, configurePaymentDto, tokenDto);
 
     // then
     verify(transactionRepository).update(transaction);
@@ -279,7 +344,7 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willThrow(TransactionNotFoundException.class);
 
     // when
-    Executable action = () -> transactionService.completeTransaction(AN_ID, configurePaymentDto);
+    Executable action = () -> transactionService.completeTransaction(AN_ID, configurePaymentDto, tokenDto);
 
     // then
     assertThrows(TransactionNotFoundException.class, action);
@@ -292,7 +357,7 @@ class TransactionServiceTest {
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
-    transactionService.completeTransaction(AN_ID, configurePaymentDto);
+    transactionService.completeTransaction(AN_ID, configurePaymentDto, tokenDto);
 
     // then
     verify(transactionCompletedObservable).notifyTransactionCompleted(transaction);

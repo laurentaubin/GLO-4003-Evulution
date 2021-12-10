@@ -4,12 +4,13 @@ import ca.ulaval.glo4003.ws.context.ApiContext;
 import ca.ulaval.glo4003.ws.context.ApplicationBinder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+
+import java.net.URI;
 
 /** RESTApi setup without using DI or spring */
 @SuppressWarnings("all")
