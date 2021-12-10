@@ -6,8 +6,8 @@ import ca.ulaval.glo4003.ws.domain.warehouse.battery.strategy.OnDemandBatteryWar
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.fixture.BatteryOrderBuilder;
-import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
+import ca.ulaval.glo4003.ws.fixture.BatteryOrderFixture;
+import ca.ulaval.glo4003.ws.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,8 +69,8 @@ class OnDemandBatteryWarehouseStrategyTest {
   public void
       givenBatteryOrderAssembled_whenListenToBatteryAssembled_thenObserversNotifyBatteryInventoryObserver() {
     // given
-    BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
-    Order order = new OrderBuilder().withBatteryOrder(batteryOrder).build();
+    BatteryOrder batteryOrder = new BatteryOrderFixture().build();
+    Order order = new OrderFixture().withBatteryOrder(batteryOrder).build();
     onDemandBatteryWarehouseStrategy.addOrder(order);
 
     // when
@@ -83,8 +83,8 @@ class OnDemandBatteryWarehouseStrategyTest {
   @Test
   public void givenNoQueuedOrder_whenAddOrder_thenDoNotNotifyAssemblyDelay() {
     // given
-    BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
-    Order order = new OrderBuilder().withBatteryOrder(batteryOrder).build();
+    BatteryOrder batteryOrder = new BatteryOrderFixture().build();
+    Order order = new OrderFixture().withBatteryOrder(batteryOrder).build();
 
     // when
     onDemandBatteryWarehouseStrategy.addOrder(order);
@@ -96,10 +96,10 @@ class OnDemandBatteryWarehouseStrategyTest {
   @Test
   public void givenQueuedOrders_whenAddOrder_thenNotifyAssemblyDelayForAddedOrder() {
     // given
-    BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
-    Order order = new OrderBuilder().withBatteryOrder(batteryOrder).build();
-    BatteryOrder anotherBatteryOrder = new BatteryOrderBuilder().build();
-    Order anotherOrder = new OrderBuilder().withBatteryOrder(anotherBatteryOrder).build();
+    BatteryOrder batteryOrder = new BatteryOrderFixture().build();
+    Order order = new OrderFixture().withBatteryOrder(batteryOrder).build();
+    BatteryOrder anotherBatteryOrder = new BatteryOrderFixture().build();
+    Order anotherOrder = new OrderFixture().withBatteryOrder(anotherBatteryOrder).build();
     given(
             batteryManufacturer.computeRemainingTimeToProduceNextBatteryType(
                 batteryOrder.getBatteryType()))
@@ -171,7 +171,7 @@ class OnDemandBatteryWarehouseStrategyTest {
   }
 
   private Order createOrder(OrderId id) {
-    BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
-    return new OrderBuilder().withOrderId(id).withBatteryOrder(batteryOrder).build();
+    BatteryOrder batteryOrder = new BatteryOrderFixture().build();
+    return new OrderFixture().withOrderId(id).withBatteryOrder(batteryOrder).build();
   }
 }

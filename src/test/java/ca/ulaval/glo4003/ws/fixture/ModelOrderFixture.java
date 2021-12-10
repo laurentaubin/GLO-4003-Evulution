@@ -4,22 +4,22 @@ import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 
-public class ModelOrderBuilder {
+public class ModelOrderFixture {
   private OrderId orderId = new OrderId("anOrderId");
   private String modelName = "a name";
   private AssemblyTime assemblyTime = new AssemblyTime(1);
 
-  public ModelOrderBuilder withOrderId(OrderId orderId) {
+  public ModelOrderFixture withOrderId(OrderId orderId) {
     this.orderId = orderId;
     return this;
   }
 
-  public ModelOrderBuilder withModelName(String modelName) {
+  public ModelOrderFixture withModelName(String modelName) {
     this.modelName = modelName;
     return this;
   }
 
-  public ModelOrderBuilder withAssemblyTime(AssemblyTime assemblyTime) {
+  public ModelOrderFixture withAssemblyTime(AssemblyTime assemblyTime) {
     this.assemblyTime = assemblyTime;
     return this;
   }

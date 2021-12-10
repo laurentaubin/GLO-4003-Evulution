@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.fixture;
 
 import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 
-public class RegisterUserRequestBuilder {
+public class RegisterUserRequestFixture {
   private String name = "a name";
   private String birthDate = "1999-05-05";
   private String email = "an@email.com";
@@ -20,27 +20,27 @@ public class RegisterUserRequestBuilder {
     return registerUserDto;
   }
 
-  public RegisterUserRequestBuilder withName(String name) {
+  public RegisterUserRequestFixture withName(String name) {
     this.name = name;
     return this;
   }
 
-  public RegisterUserRequestBuilder withBirthDate(String birthDate) {
+  public RegisterUserRequestFixture withBirthDate(String birthDate) {
     this.birthDate = birthDate;
     return this;
   }
 
-  public RegisterUserRequestBuilder withEmail(String email) {
+  public RegisterUserRequestFixture withEmail(String email) {
     this.email = email;
     return this;
   }
 
-  public RegisterUserRequestBuilder withPassword(String password) {
+  public RegisterUserRequestFixture withPassword(String password) {
     this.password = password;
     return this;
   }
 
-  public RegisterUserRequestBuilder withSex(String sex) {
+  public RegisterUserRequestFixture withSex(String sex) {
     this.sex = sex;
     return this;
   }

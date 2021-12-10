@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserBuilder {
+public class UserFixture {
   private String name = "a name";
   private BirthDate birthDate = new BirthDate(LocalDate.of(4584, 7, 18));
   private String email = "an@email.com";
@@ -20,27 +20,27 @@ public class UserBuilder {
   private List<Role> roles = new ArrayList<>(List.of(Role.CUSTOMER));
   private final Map<TransactionId, DeliveryId> transactionDeliveries = new HashMap<>();
 
-  public UserBuilder withName(String name) {
+  public UserFixture withName(String name) {
     this.name = name;
     return this;
   }
 
-  public UserBuilder withBirthDate(BirthDate birthDate) {
+  public UserFixture withBirthDate(BirthDate birthDate) {
     this.birthDate = birthDate;
     return this;
   }
 
-  public UserBuilder withEmail(String email) {
+  public UserFixture withEmail(String email) {
     this.email = email;
     return this;
   }
 
-  public UserBuilder withSex(String sex) {
+  public UserFixture withSex(String sex) {
     this.sex = sex;
     return this;
   }
 
-  public UserBuilder withRoles(List<Role> roles) {
+  public UserFixture withRoles(List<Role> roles) {
     this.roles = roles;
     return this;
   }

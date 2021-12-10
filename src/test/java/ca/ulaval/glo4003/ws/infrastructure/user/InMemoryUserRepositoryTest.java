@@ -4,7 +4,7 @@ import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.fixture.UserBuilder;
+import ca.ulaval.glo4003.ws.fixture.UserFixture;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class InMemoryUserRepositoryTest {
   @Test
   void whenRegisterUser_thenUserIsStored() {
     // given
-    User aUser = new UserBuilder().build();
+    User aUser = new UserFixture().build();
 
     // when
     userRepository.registerUser(aUser);
@@ -63,9 +63,9 @@ class InMemoryUserRepositoryTest {
   @Test
   public void givenUserExists_whenUpdate_thenUpdateUser() {
     // given
-    User aUser = new UserBuilder().build();
+    User aUser = new UserFixture().build();
     userRepository.registerUser(aUser);
-    User anotherUser = new UserBuilder().withName(ANOTHER_NAME).build();
+    User anotherUser = new UserFixture().withName(ANOTHER_NAME).build();
 
     // when
     userRepository.update(anotherUser);
@@ -78,7 +78,7 @@ class InMemoryUserRepositoryTest {
   @Test
   public void givenUserExists_whenDoesUserExist_thenReturnTrue() {
     // given
-    User aUser = new UserBuilder().withEmail(AN_EMAIL).build();
+    User aUser = new UserFixture().withEmail(AN_EMAIL).build();
     userRepository.registerUser(aUser);
 
     // when
@@ -100,7 +100,7 @@ class InMemoryUserRepositoryTest {
   @Test
   public void givenUserSaved_whenAddRoleToOriginalUser_thenSavedUserIsNotUpdated() {
     // given
-    User user = new UserBuilder().withRoles(List.of(Role.CUSTOMER)).build();
+    User user = new UserFixture().withRoles(List.of(Role.CUSTOMER)).build();
     userRepository.registerUser(user);
 
     // when
@@ -130,8 +130,8 @@ class InMemoryUserRepositoryTest {
   @Test
   public void givenUsersSaved_whenFindAll_thenReturnAllUsers() {
     // given
-    User aUser = new UserBuilder().withEmail(AN_EMAIL).build();
-    User anotherUser = new UserBuilder().withEmail(ANOTHER_EMAIL).build();
+    User aUser = new UserFixture().withEmail(AN_EMAIL).build();
+    User anotherUser = new UserFixture().withEmail(ANOTHER_EMAIL).build();
     userRepository.registerUser(aUser);
     userRepository.registerUser(anotherUser);
 
@@ -148,9 +148,9 @@ class InMemoryUserRepositoryTest {
   public void givenUsersSaved_whenFindUsersWithRole_thenReturnUsersWithRightRole() {
     // given
     User aUser =
-        new UserBuilder().withEmail(AN_EMAIL).withRoles(List.of(Role.ADMINISTRATOR)).build();
+        new UserFixture().withEmail(AN_EMAIL).withRoles(List.of(Role.ADMINISTRATOR)).build();
     User anotherUser =
-        new UserBuilder().withEmail(ANOTHER_EMAIL).withRoles(List.of(Role.ADMINISTRATOR)).build();
+        new UserFixture().withEmail(ANOTHER_EMAIL).withRoles(List.of(Role.ADMINISTRATOR)).build();
     userRepository.registerUser(aUser);
     userRepository.registerUser(anotherUser);
 

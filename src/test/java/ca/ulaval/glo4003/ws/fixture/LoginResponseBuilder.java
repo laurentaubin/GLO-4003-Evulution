@@ -2,10 +2,10 @@ package ca.ulaval.glo4003.ws.fixture;
 
 import ca.ulaval.glo4003.ws.api.user.response.LoginResponse;
 
-public class LoginResponseBuilder {
+public class LoginResponseFixture {
   private String token = "token132";
 
-  public LoginResponseBuilder withToken(String token) {
+  public LoginResponseFixture withToken(String token) {
     this.token = token;
     return this;
   }
