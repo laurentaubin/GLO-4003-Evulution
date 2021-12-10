@@ -1,13 +1,5 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
 import ca.ulaval.glo4003.ws.api.transaction.request.ConfigureBatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.request.ConfigurePaymentRequest;
@@ -31,9 +23,6 @@ import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureVehicleDto;
 import ca.ulaval.glo4003.ws.service.transaction.dto.TransactionCreationDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,11 +30,24 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class TransactionResourceImplTest {
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("id");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("id");
-  private static final List<Role> ROLES = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
+  private static final List<Role> ROLES =
+      new ArrayList<>(List.of(Role.BASE, Role.PRODUCTION_MANAGER));
   private static final BigDecimal A_RANGE = BigDecimal.valueOf(424332);
 
   @Mock private TransactionService transactionService;

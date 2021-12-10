@@ -25,6 +25,7 @@ import ca.ulaval.glo4003.ws.service.authentication.AuthenticationService;
 import ca.ulaval.glo4003.ws.service.user.SessionDtoAssembler;
 import ca.ulaval.glo4003.ws.service.user.UserAssembler;
 import ca.ulaval.glo4003.ws.service.user.UserService;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -75,6 +76,7 @@ public class UserContext implements Context {
     serviceLocator.register(UserService.class, new UserService());
 
     createAccountForCatherine();
+    createAccountForGuy();
   }
 
   private void registerPasswordAdministrator() {
@@ -86,8 +88,17 @@ public class UserContext implements Context {
   private static void createAccountForCatherine() {
     String email = "catherineleuf@evul.ulaval.ca";
     String password = "RoulezVert2021!";
-    var adminUser = new User("Catherine", new BirthDate(LocalDate.of(1997, 7, 31)), "F", email);
-    adminUser.addRole(Role.ADMIN);
+    var managerUser = new User("Catherine", new BirthDate(LocalDate.of(1997, 7, 31)), "F", email);
+    managerUser.addRole(Role.PRODUCTION_MANAGER);
+    serviceLocator.resolve(UserRepository.class).registerUser(managerUser);
+    serviceLocator.resolve(PasswordAdministrator.class).register(email, password);
+  }
+
+  private static void createAccountForGuy() {
+    String email = "guy.m@evul.ulaval.ca";
+    String password = "veryStrongPassword123";
+    var adminUser = new User("Guy", new BirthDate(LocalDate.of(1997, 7, 31)), "M", email);
+    adminUser.addRole(Role.ADMINISTRATOR);
     serviceLocator.resolve(UserRepository.class).registerUser(adminUser);
     serviceLocator.resolve(PasswordAdministrator.class).register(email, password);
   }

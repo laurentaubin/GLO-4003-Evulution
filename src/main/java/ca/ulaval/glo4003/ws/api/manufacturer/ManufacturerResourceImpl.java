@@ -6,12 +6,14 @@ import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ManufacturerResourceImpl implements ManufacturerResource {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
-  private static final List<Role> PRIVILEGED_ROLES = new ArrayList<>(List.of(Role.ADMIN));
+  private static final List<Role> PRIVILEGED_ROLES =
+      new ArrayList<>(List.of(Role.PRODUCTION_MANAGER));
 
   private final ManufacturerService manufacturerService;
   private final RoleHandler roleHandler;

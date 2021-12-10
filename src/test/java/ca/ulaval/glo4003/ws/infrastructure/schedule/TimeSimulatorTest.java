@@ -1,17 +1,19 @@
 package ca.ulaval.glo4003.ws.infrastructure.schedule;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import ca.ulaval.glo4003.ws.domain.report.ReportsService;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
-import java.util.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Timer;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TimeSimulatorTest {
@@ -19,13 +21,15 @@ class TimeSimulatorTest {
 
   private TimeSimulator timeSimulator;
 
+  @Mock private ReportsService reportsService;
   @Mock private ManufacturerService manufacturerService;
   @Mock private Timer timer;
   @Mock private LocalDateProvider localDateProvider;
 
   @BeforeEach
   public void setUp() {
-    timeSimulator = new TimeSimulator(manufacturerService, timer, localDateProvider);
+    timeSimulator =
+        new TimeSimulator(reportsService, manufacturerService, timer, localDateProvider);
   }
 
   @Test

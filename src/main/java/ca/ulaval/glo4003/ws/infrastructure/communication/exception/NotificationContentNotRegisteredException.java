@@ -1,6 +1,6 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification.exception;
+package ca.ulaval.glo4003.ws.infrastructure.communication.exception;
 
-import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
+import ca.ulaval.glo4003.ws.infrastructure.communication.NotificationType;
 
 public class NotificationContentNotRegisteredException extends RuntimeException {
   public NotificationContentNotRegisteredException(NotificationType notificationType) {

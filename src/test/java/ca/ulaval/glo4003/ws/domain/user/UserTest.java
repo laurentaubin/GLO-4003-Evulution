@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class UserTest {
-  private static final Role A_ROLE = Role.ADMIN;
+  private static final Role A_ROLE = Role.PRODUCTION_MANAGER;
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("1234");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("abcd");
 
@@ -75,7 +75,7 @@ class UserTest {
   void givenUserPossessRequestedRole_whenIsAllowed_thenUserIsAllowed() {
     // given
     User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
-    List<Role> requestedRoles = List.of(Role.BASE, Role.ADMIN);
+    List<Role> requestedRoles = List.of(Role.BASE, Role.PRODUCTION_MANAGER);
 
     // when
     boolean isAllowed = userWithRequestedRoles.isAllowed(requestedRoles);
@@ -118,7 +118,7 @@ class UserTest {
   void givenUserWithoutRequestedRole_whenIsAllowed_thenUserIsNotAllowed() {
     // given
     User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
-    List<Role> requestedRoles = List.of(Role.ADMIN);
+    List<Role> requestedRoles = List.of(Role.PRODUCTION_MANAGER);
 
     // when
     boolean isAllowed = userWithRequestedRoles.isAllowed(requestedRoles);

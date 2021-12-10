@@ -1,25 +1,29 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification.email;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+package ca.ulaval.glo4003.ws.infrastructure.communication.notification;
 
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
-import ca.ulaval.glo4003.ws.infrastructure.notification.exception.NotificationContentNotRegisteredException;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import ca.ulaval.glo4003.ws.infrastructure.communication.NotificationType;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.Email;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailContent;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailServer;
+import ca.ulaval.glo4003.ws.infrastructure.communication.exception.NotificationContentNotRegisteredException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationEmailFactoryTest {

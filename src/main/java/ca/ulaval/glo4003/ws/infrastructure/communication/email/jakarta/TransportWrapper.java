@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta;
+package ca.ulaval.glo4003.ws.infrastructure.communication.email.jakarta;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;

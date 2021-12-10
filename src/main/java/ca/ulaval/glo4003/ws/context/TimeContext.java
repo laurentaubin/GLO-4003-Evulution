@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.context;
 
+import ca.ulaval.glo4003.ws.domain.report.ReportsService;
 import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
 import ca.ulaval.glo4003.ws.infrastructure.schedule.TimeSimulator;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
@@ -18,9 +19,13 @@ public class TimeContext implements Context {
 
   private void registerTimeSimulator() {
     ManufacturerService manufacturerService = serviceLocator.resolve(ManufacturerService.class);
+    ReportsService reportsService = serviceLocator.resolve(ReportsService.class);
     TimeSimulator timeSimulator =
         new TimeSimulator(
-            manufacturerService, new Timer(), serviceLocator.resolve(LocalDateProvider.class));
+            reportsService,
+            manufacturerService,
+            new Timer(),
+            serviceLocator.resolve(LocalDateProvider.class));
 
     timeSimulator.schedule(getSecondsPerWeekFromArgs());
     serviceLocator.register(TimeSimulator.class, timeSimulator);

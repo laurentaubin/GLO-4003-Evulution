@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification;
+package ca.ulaval.glo4003.ws.infrastructure.communication;
 
 public enum NotificationType {
   MODEL_ASSEMBLY_DELAY,

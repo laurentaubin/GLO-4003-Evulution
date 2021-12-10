@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryDto;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class DeliveryResourceImpl implements DeliveryResource {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
   private static final List<Role> PRIVILEGED_ROLES =
-      new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
+      new ArrayList<>(List.of(Role.BASE, Role.PRODUCTION_MANAGER));
 
   private final DeliveryService deliveryService;
   private final AuthenticationService authenticationService;

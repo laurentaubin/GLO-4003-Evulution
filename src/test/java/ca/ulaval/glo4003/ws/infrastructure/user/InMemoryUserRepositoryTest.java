@@ -103,7 +103,7 @@ class InMemoryUserRepositoryTest {
     userRepository.registerUser(user);
 
     // when
-    user.addRole(Role.ADMIN);
+    user.addRole(Role.PRODUCTION_MANAGER);
     User originalUser = userRepository.findUser(user.getEmail());
 
     // then
@@ -139,5 +139,35 @@ class InMemoryUserRepositoryTest {
 
     // then
     assertThat(foundUsers).hasSize(2);
+    assertThat(foundUsers.get(0).getEmail()).matches(aUser.getEmail());
+    assertThat(foundUsers.get(1).getEmail()).matches(anotherUser.getEmail());
+  }
+
+  @Test
+  public void givenUsersSaved_whenFindUsersWithRole_thenReturnUsersWithRightRole() {
+    // given
+    User aUser =
+        new UserBuilder().withEmail(AN_EMAIL).withRoles(List.of(Role.ADMINISTRATOR)).build();
+    User anotherUser =
+        new UserBuilder().withEmail(ANOTHER_EMAIL).withRoles(List.of(Role.ADMINISTRATOR)).build();
+    userRepository.registerUser(aUser);
+    userRepository.registerUser(anotherUser);
+
+    // when
+    List<User> foundUsers = userRepository.findUsersWithRole(Role.ADMINISTRATOR);
+
+    // then
+    assertThat(foundUsers).hasSize(2);
+    assertThat(foundUsers.get(0).getEmail()).matches(aUser.getEmail());
+    assertThat(foundUsers.get(1).getEmail()).matches(anotherUser.getEmail());
+  }
+
+  @Test
+  public void givenNoUsersSaved_whenFindUsersWithRole_thenReturnEmptyList() {
+    // when
+    List<User> foundUsers = userRepository.findUsersWithRole(Role.ADMINISTRATOR);
+
+    // then
+    assertThat(foundUsers).isEmpty();
   }
 }

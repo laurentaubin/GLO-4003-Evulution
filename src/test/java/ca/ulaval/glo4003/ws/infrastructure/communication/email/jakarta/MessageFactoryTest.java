@@ -1,16 +1,17 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta;
+package ca.ulaval.glo4003.ws.infrastructure.communication.email.jakarta;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContent;
-import java.io.IOException;
-import java.util.Arrays;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailContent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import java.io.IOException;
+import java.util.Arrays;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class MessageFactoryTest {
   private static final String A_SENDER_EMAIL = "sender@email.com";

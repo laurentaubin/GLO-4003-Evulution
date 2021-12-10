@@ -69,7 +69,7 @@ class RoleHandlerTest {
   public void givenANotAllowedUser_whenRetrieveSession_thenAccessShouldNotBeGranted() {
     // given
     givenRepositories();
-    List<Role> rolesThatTheUserDoesNotHave = List.of(Role.ADMIN);
+    List<Role> rolesThatTheUserDoesNotHave = List.of(Role.PRODUCTION_MANAGER);
 
     // when
     Executable validateRoles =

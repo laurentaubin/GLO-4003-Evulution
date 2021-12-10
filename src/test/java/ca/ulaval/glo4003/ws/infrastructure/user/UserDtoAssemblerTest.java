@@ -50,10 +50,10 @@ class UserDtoAssemblerTest {
     UserDto userDto = assembler.assemble(user);
 
     // when
-    user.addRole(Role.ADMIN);
+    user.addRole(Role.PRODUCTION_MANAGER);
 
     // then
-    assertThat(userDto.getRoles()).doesNotContain(Role.ADMIN);
+    assertThat(userDto.getRoles()).doesNotContain(Role.PRODUCTION_MANAGER);
   }
 
   @Test
@@ -101,14 +101,14 @@ class UserDtoAssemblerTest {
   @Test
   public void givenUserDtoWithBaseAndAdminRole_whenAssemble_thenReturnUserWithSameRoles() {
     // given
-    UserDto userDto = givenUserDtoWithRoles(Set.of(Role.BASE, Role.ADMIN));
+    UserDto userDto = givenUserDtoWithRoles(Set.of(Role.BASE, Role.PRODUCTION_MANAGER));
 
     // when
     User user = assembler.assemble(userDto);
 
     // then
     assertThat(user.getRoles()).contains(Role.BASE);
-    assertThat(user.getRoles()).contains(Role.ADMIN);
+    assertThat(user.getRoles()).contains(Role.PRODUCTION_MANAGER);
   }
 
   @Test

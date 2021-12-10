@@ -1,8 +1,8 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification.email;
-
-import static com.google.common.truth.Truth.assertThat;
+package ca.ulaval.glo4003.ws.infrastructure.communication.email;
 
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class EmailContentTest {
 

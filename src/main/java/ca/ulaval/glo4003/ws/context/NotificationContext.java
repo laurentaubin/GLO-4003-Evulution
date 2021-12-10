@@ -3,21 +3,22 @@ package ca.ulaval.glo4003.ws.context;
 import ca.ulaval.glo4003.ws.context.exception.CouldNotLoadPropertiesFileException;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationIssuer;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
-import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailContent;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailNotificationIssuer;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.EmailServer;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.NotificationEmailFactory;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.JakartaEmailServer;
-import ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.MessageFactory;
+import ca.ulaval.glo4003.ws.infrastructure.communication.NotificationType;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailContent;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailServer;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.jakarta.JakartaEmailServer;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.jakarta.MessageFactory;
+import ca.ulaval.glo4003.ws.infrastructure.communication.notification.EmailNotificationIssuer;
+import ca.ulaval.glo4003.ws.infrastructure.communication.notification.NotificationEmailFactory;
+
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 
 public class NotificationContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();

@@ -19,6 +19,7 @@ import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureVehicleDto;
 import ca.ulaval.glo4003.ws.service.transaction.dto.TransactionCreationDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 public class TransactionResourceImpl implements TransactionResource {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final List<Role> PRIVILEGED_ROLES =
-      new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
+      new ArrayList<>(List.of(Role.BASE, Role.PRODUCTION_MANAGER));
 
   private final TransactionService transactionService;
   private final AuthenticationService authenticationService;

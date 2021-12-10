@@ -1,10 +1,14 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification.email;
+package ca.ulaval.glo4003.ws.infrastructure.communication.notification;
 
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
-import ca.ulaval.glo4003.ws.infrastructure.notification.NotificationType;
-import ca.ulaval.glo4003.ws.infrastructure.notification.exception.NotificationContentNotRegisteredException;
+import ca.ulaval.glo4003.ws.infrastructure.communication.NotificationType;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.Email;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailContent;
+import ca.ulaval.glo4003.ws.infrastructure.communication.email.EmailServer;
+import ca.ulaval.glo4003.ws.infrastructure.communication.exception.NotificationContentNotRegisteredException;
+
 import java.util.Map;
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.infrastructure.notification.email;
+package ca.ulaval.glo4003.ws.infrastructure.communication.email;
 
 public class EmailContent {
   private final String subjectTemplate;
