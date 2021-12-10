@@ -23,7 +23,7 @@ class CatchTransactionNotFoundExceptionMapperTest {
   }
 
   @Test
-  public void givenTransactionNotFoundException_whenToResponse_thenReturnRightResponse() {
+  public void givenTransactionNotFoundException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     TransactionNotFoundException exception = new TransactionNotFoundException(AN_ID);
 

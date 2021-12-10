@@ -18,11 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class DefaultVehicleAssemblyLineTest {
   private static final OrderId AN_ID = new OrderId("id");
 
-  private static final AssemblyTime NORMAL = VehicleAssemblyProductionTime.NORMAL.getAssemblyTime();
-  private static final AssemblyTime DELAYED =
+  private static final AssemblyTime A_NORMAL_ASSEMBLY_TIME = VehicleAssemblyProductionTime.NORMAL.getAssemblyTime();
+  private static final AssemblyTime A_DELAYED_ASSEMBLY_TIME =
       VehicleAssemblyProductionTime.DELAYED.getAssemblyTime();
 
-  @Mock private Order anOrder;
+  @Mock private Order order;
   @Mock private Order anotherOrder;
   @Mock private VehicleAssemblyPlanner vehicleAssemblyPlanner;
   @Mock private VehicleAssembledObserver vehicleAssembledObserver;
@@ -37,13 +37,13 @@ class DefaultVehicleAssemblyLineTest {
   @Test
   public void givenOrder_whenAssemblingVehicle_thenShouldSetRemainingTimeToOrder() {
     // given
-    given(vehicleAssemblyPlanner.getAssemblyTime(anOrder)).willReturn(DELAYED);
+    given(vehicleAssemblyPlanner.getAssemblyTime(order)).willReturn(A_DELAYED_ASSEMBLY_TIME);
 
     // when
-    vehicleAssemblyLine.assembleVehicle(anOrder);
+    vehicleAssemblyLine.assembleVehicle(order);
 
     // then
-    verify(anOrder).setRemainingAssemblyTime(DELAYED);
+    verify(order).setRemainingAssemblyTime(A_DELAYED_ASSEMBLY_TIME);
   }
 
   @Test
@@ -55,44 +55,44 @@ class DefaultVehicleAssemblyLineTest {
     vehicleAssemblyLine.advance();
 
     // then
-    verify(anOrder).advance();
+    verify(order).advance();
     verify(anotherOrder).advance();
   }
 
   @Test
   public void givenOrderFinishedAssembling_whenAdvance_thenShouldRemoveOrder() {
     // given
-    given(vehicleAssemblyPlanner.getAssemblyTime(anOrder)).willReturn(DELAYED);
-    vehicleAssemblyLine.assembleVehicle(anOrder);
-    given(anOrder.isOver()).willReturn(true);
+    given(vehicleAssemblyPlanner.getAssemblyTime(order)).willReturn(A_DELAYED_ASSEMBLY_TIME);
+    vehicleAssemblyLine.assembleVehicle(order);
+    given(order.isOver()).willReturn(true);
 
     // when
     vehicleAssemblyLine.advance();
 
     // then
-    assertThat(vehicleAssemblyLine.getActiveOrders()).doesNotContain(anOrder);
+    assertThat(vehicleAssemblyLine.getActiveOrders()).doesNotContain(order);
   }
 
   @Test
   public void givenOrder_whenComputeRemainingTimeToProduce_thenReturnRemainingTime() {
     // given
-    given(vehicleAssemblyPlanner.getAssemblyTime(anOrder)).willReturn(DELAYED);
-    given(anOrder.getRemainingAssemblyTime()).willReturn(DELAYED);
-    given(anOrder.getId()).willReturn(AN_ID);
+    given(vehicleAssemblyPlanner.getAssemblyTime(order)).willReturn(A_DELAYED_ASSEMBLY_TIME);
+    given(order.getRemainingAssemblyTime()).willReturn(A_DELAYED_ASSEMBLY_TIME);
+    given(order.getId()).willReturn(AN_ID);
 
-    vehicleAssemblyLine.assembleVehicle(anOrder);
+    vehicleAssemblyLine.assembleVehicle(order);
 
     // when
     AssemblyTime actualAssemblyTime = vehicleAssemblyLine.computeRemainingTimeToProduce(AN_ID);
 
     // then
-    assertThat(actualAssemblyTime).isEqualTo(DELAYED);
+    assertThat(actualAssemblyTime).isEqualTo(A_DELAYED_ASSEMBLY_TIME);
   }
 
   @Test
   public void givenOrdersAssembling_whenShutdown_thenRemoveAllOrders() {
     // given
-    vehicleAssemblyLine.assembleVehicle(anOrder);
+    vehicleAssemblyLine.assembleVehicle(order);
 
     // when
     vehicleAssemblyLine.shutdown();
@@ -104,23 +104,23 @@ class DefaultVehicleAssemblyLineTest {
   @Test
   public void givenVehicleAssembled_whenAdvance_thenNotifyObservers() {
     // given
-    given(vehicleAssemblyPlanner.getAssemblyTime(anOrder)).willReturn(NORMAL);
-    vehicleAssemblyLine.assembleVehicle(anOrder);
-    given(anOrder.isOver()).willReturn(true);
+    given(vehicleAssemblyPlanner.getAssemblyTime(order)).willReturn(A_NORMAL_ASSEMBLY_TIME);
+    vehicleAssemblyLine.assembleVehicle(order);
+    given(order.isOver()).willReturn(true);
     vehicleAssemblyLine.register(vehicleAssembledObserver);
 
     // when
     vehicleAssemblyLine.advance();
 
     // then
-    verify(vehicleAssembledObserver).listenToVehicleAssembled(anOrder);
+    verify(vehicleAssembledObserver).listenToVehicleAssembled(order);
   }
 
   private void setUpOrders() {
-    given(vehicleAssemblyPlanner.getAssemblyTime(anOrder)).willReturn(DELAYED);
-    given(vehicleAssemblyPlanner.getAssemblyTime(anotherOrder)).willReturn(NORMAL);
+    given(vehicleAssemblyPlanner.getAssemblyTime(order)).willReturn(A_DELAYED_ASSEMBLY_TIME);
+    given(vehicleAssemblyPlanner.getAssemblyTime(anotherOrder)).willReturn(A_NORMAL_ASSEMBLY_TIME);
 
-    vehicleAssemblyLine.assembleVehicle(anOrder);
+    vehicleAssemblyLine.assembleVehicle(order);
     vehicleAssemblyLine.assembleVehicle(anotherOrder);
   }
 }

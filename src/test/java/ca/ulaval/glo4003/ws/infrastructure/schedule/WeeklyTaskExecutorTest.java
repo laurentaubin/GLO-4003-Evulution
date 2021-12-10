@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class WeeklyTaskExecutorTest {
-
   private WeeklyTaskExecutor weeklyTaskExecutor;
 
   @Mock private AssemblyLineService assemblyLine;

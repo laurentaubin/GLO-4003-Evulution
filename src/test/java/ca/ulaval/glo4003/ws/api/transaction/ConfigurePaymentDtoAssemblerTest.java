@@ -8,9 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ConfigurePaymentDtoAssemblerTest {
-  private static final String BANK_NUMBER = "43242";
-  private static final String ACCOUNT_NUMBER = "65321";
-  private static final String FREQUENCY = "monthly";
+  private static final String A_BANK_NUMBER = "43242";
+  private static final String AN_ACCOUNT_NUMBER = "65321";
+  private static final String A_FREQUENCY = "monthly";
 
   private ConfigurePaymentDtoAssembler configurePaymentDtoAssembler;
 
@@ -24,15 +24,15 @@ class ConfigurePaymentDtoAssemblerTest {
       givenAConfigurePaymentRequest_whenAssemble_thenConfigurePaymentDtoIsCorrectlyAssembled() {
     // given
     ConfigurePaymentRequest configurePaymentRequest =
-        new ConfigurePaymentRequest(BANK_NUMBER, ACCOUNT_NUMBER, FREQUENCY);
+        new ConfigurePaymentRequest(A_BANK_NUMBER, AN_ACCOUNT_NUMBER, A_FREQUENCY);
 
     // when
     ConfigurePaymentDto configurePaymentDto =
         configurePaymentDtoAssembler.assemble(configurePaymentRequest);
 
     // then
-    assertThat(configurePaymentDto.getBankNumber()).isEqualTo(BANK_NUMBER);
-    assertThat(configurePaymentDto.getAccountNumber()).isEqualTo(ACCOUNT_NUMBER);
-    assertThat(configurePaymentDto.getFrequency()).isEqualTo(FREQUENCY);
+    assertThat(configurePaymentDto.getBankNumber()).isEqualTo(A_BANK_NUMBER);
+    assertThat(configurePaymentDto.getAccountNumber()).isEqualTo(AN_ACCOUNT_NUMBER);
+    assertThat(configurePaymentDto.getFrequency()).isEqualTo(A_FREQUENCY);
   }
 }

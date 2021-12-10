@@ -9,10 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CatchEmailAlreadyInUseExceptionMapperTest {
-  private CatchEmailAlreadyInUseExceptionMapper exceptionMapper;
   private static final int EXPECTED_STATUS_CODE = Response.Status.CONFLICT.getStatusCode();
   private static final String EXPECTED_ERROR = "REGISTER_FAILED";
   private static final String EXPECTED_DESCRIPTION = "The email address is already is use.";
+
+  private CatchEmailAlreadyInUseExceptionMapper exceptionMapper;
 
   @BeforeEach
   void setUp() {

@@ -40,8 +40,8 @@ class RoleHandlerTest {
   @Mock private UserRepository userRepository;
   @Mock private SessionRepository sessionRepository;
   @Mock private SessionTokenGenerator sessionTokenGenerator;
-  @Mock private ContainerRequestContext aContainerRequest;
-  @Mock private Session aSession;
+  @Mock private ContainerRequestContext containerRequest;
+  @Mock private Session session;
 
   private final TokenExtractor tokenExtractor = new TokenExtractor(A_AUTH_HEADER_NAME);
   private RoleHandler roleHandler;
@@ -50,7 +50,7 @@ class RoleHandlerTest {
   public void setUpRoleValidator() {
     roleHandler =
         new RoleHandler(userRepository, sessionRepository, sessionTokenGenerator, tokenExtractor);
-    given(aContainerRequest.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_AUTH_HEADER);
+    given(containerRequest.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_AUTH_HEADER);
   }
 
   @Test
@@ -59,10 +59,10 @@ class RoleHandlerTest {
     givenRepositories();
 
     // when
-    Session actualSession = roleHandler.retrieveSession(aContainerRequest, SOME_ROLES);
+    Session actualSession = roleHandler.retrieveSession(containerRequest, SOME_ROLES);
 
     // then
-    assertThat(actualSession).isEqualTo(aSession);
+    assertThat(actualSession).isEqualTo(session);
   }
 
   @Test
@@ -73,7 +73,7 @@ class RoleHandlerTest {
 
     // when
     Executable validateRoles =
-        () -> roleHandler.retrieveSession(aContainerRequest, rolesThatTheUserDoesNotHave);
+        () -> roleHandler.retrieveSession(containerRequest, rolesThatTheUserDoesNotHave);
 
     // then
     assertThrows(UnauthorizedUserException.class, validateRoles);
@@ -85,7 +85,7 @@ class RoleHandlerTest {
     givenInvalidSessionRepositories();
 
     // when
-    Executable validateRoles = () -> roleHandler.retrieveSession(aContainerRequest, SOME_ROLES);
+    Executable validateRoles = () -> roleHandler.retrieveSession(containerRequest, SOME_ROLES);
 
     // then
     assertThrows(SessionDoesNotExistException.class, validateRoles);
@@ -97,7 +97,7 @@ class RoleHandlerTest {
     givenInvalidUserRepositories();
 
     // when
-    Executable validateRoles = () -> roleHandler.retrieveSession(aContainerRequest, SOME_ROLES);
+    Executable validateRoles = () -> roleHandler.retrieveSession(containerRequest, SOME_ROLES);
 
     // then
     assertThrows(UserNotFoundException.class, validateRoles);
@@ -106,9 +106,9 @@ class RoleHandlerTest {
   private void givenRepositories() {
     given(sessionTokenGenerator.generate(A_AUTH_TOKEN_VALUE)).willReturn(A_AUTH_TOKEN);
     given(sessionRepository.doesSessionExist(A_AUTH_TOKEN)).willReturn(true);
-    given(aSession.getEmail()).willReturn(AN_EMAIL);
+    given(session.getEmail()).willReturn(AN_EMAIL);
     given(userRepository.findUser(AN_EMAIL)).willReturn(A_USER);
-    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(aSession);
+    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(session);
   }
 
   private void givenInvalidSessionRepositories() {
@@ -116,9 +116,9 @@ class RoleHandlerTest {
   }
 
   private void givenInvalidUserRepositories() {
-    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(aSession);
+    given(sessionRepository.find(A_AUTH_TOKEN)).willReturn(session);
     given(sessionTokenGenerator.generate(A_AUTH_TOKEN_VALUE)).willReturn(A_AUTH_TOKEN);
-    given(aSession.getEmail()).willReturn(AN_EMAIL);
+    given(session.getEmail()).willReturn(AN_EMAIL);
     given(sessionRepository.doesSessionExist(A_AUTH_TOKEN)).willReturn(true);
     given(userRepository.findUser(AN_EMAIL)).willThrow(UserNotFoundException.class);
   }

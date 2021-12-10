@@ -22,10 +22,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class BatteryAssemblyLineAdapterTest {
   private static final String A_BATTERY_TYPE = "battery type";
 
-  @Mock private OrderId anOrderId;
-  @Mock private Order anOrder;
+  @Mock private OrderId orderId;
+  @Mock private Order order;
   @Mock private BatteryOrder batteryOrder;
-  @Mock private CommandID aCommandId;
+  @Mock private CommandID commandID;
   @Mock private BatteryAssemblyLine batteryAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
 
@@ -40,11 +40,11 @@ class BatteryAssemblyLineAdapterTest {
   @Test
   public void givenAnAssembledOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(batteryAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.ASSEMBLED);
 
     // when
-    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.ASSEMBLED);
@@ -53,11 +53,11 @@ class BatteryAssemblyLineAdapterTest {
   @Test
   public void givenAnInProgressOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(batteryAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.IN_PROGRESS);
 
     // when
-    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.IN_PROGRESS);
@@ -66,11 +66,11 @@ class BatteryAssemblyLineAdapterTest {
   @Test
   public void givenAReceivedOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.RECEIVED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(batteryAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.RECEIVED);
 
     // when
-    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.RECEIVED);
@@ -79,16 +79,16 @@ class BatteryAssemblyLineAdapterTest {
   @Test
   public void givenAnOrder_whenAddOrder_thenOrderIsSentToBeAssembled() {
     // given
-    given(anOrder.getId()).willReturn(anOrderId);
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(anOrder.getBatteryOrder()).willReturn(batteryOrder);
+    given(order.getId()).willReturn(orderId);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(order.getBatteryOrder()).willReturn(batteryOrder);
     given(batteryOrder.getBatteryType()).willReturn(A_BATTERY_TYPE);
 
     // when
-    batteryAssemblyLineAdapter.addOrder(anOrder);
+    batteryAssemblyLineAdapter.addOrder(order);
 
     // then
-    verify(batteryAssemblyLine).newBatteryCommand(aCommandId, A_BATTERY_TYPE);
+    verify(batteryAssemblyLine).newBatteryCommand(commandID, A_BATTERY_TYPE);
   }
 
   @Test

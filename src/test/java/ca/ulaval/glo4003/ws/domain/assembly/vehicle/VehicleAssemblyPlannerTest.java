@@ -18,8 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class VehicleAssemblyPlannerTest {
-  private static final VehicleAssemblyProductionTime NORMAL = VehicleAssemblyProductionTime.NORMAL;
-  private static final VehicleAssemblyProductionTime DELAYED =
+  private static final VehicleAssemblyProductionTime A_NORMAL_ASSEMBLY_TIME = VehicleAssemblyProductionTime.NORMAL;
+  private static final VehicleAssemblyProductionTime A_DELAYED_ASSEMBLY_TIME =
       VehicleAssemblyProductionTime.DELAYED;
 
   @Mock private VehicleAssemblyDelayObserver observer;
@@ -44,7 +44,7 @@ class VehicleAssemblyPlannerTest {
     var productionTime = vehicleAssemblyPlanner.getAssemblyTime(delayedOrder);
 
     // then
-    assertThat(productionTime).isEqualTo(DELAYED.getAssemblyTime());
+    assertThat(productionTime).isEqualTo(A_DELAYED_ASSEMBLY_TIME.getAssemblyTime());
   }
 
   @Test
@@ -68,14 +68,14 @@ class VehicleAssemblyPlannerTest {
     var productionTime = vehicleAssemblyPlanner.getAssemblyTime(order);
 
     // then
-    assertThat(productionTime).isEqualTo(NORMAL.getAssemblyTime());
+    assertThat(productionTime).isEqualTo(A_NORMAL_ASSEMBLY_TIME.getAssemblyTime());
   }
 
   @Test
   public void givenDelayInProduction_whenGetProductionTime_shouldAddDelayToOrder() {
     // given
     given(randomProvider.nextBoolean()).willReturn(true);
-    AssemblyTime expectedDelay = DELAYED.getAssemblyTime().subtract(NORMAL.getAssemblyTime());
+    AssemblyTime expectedDelay = A_DELAYED_ASSEMBLY_TIME.getAssemblyTime().subtract(A_NORMAL_ASSEMBLY_TIME.getAssemblyTime());
 
     // when
     vehicleAssemblyPlanner.getAssemblyTime(delayedOrder);

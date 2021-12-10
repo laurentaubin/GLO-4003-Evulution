@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 class ProductionTimeTest {
-
   @Test
   void givenAProductionTime_whenInWeeks_thenReturnAmountOfWeeks() {
     // given

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class BankAccountFactoryTest {
-
   private static final String A_VALID_BANK_NUMBER = "003";
   private static final String A_VALID_ACCOUNT_NUMBER = "0099999";
 

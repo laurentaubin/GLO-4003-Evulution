@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 class LocalDateWrapperTest {
-
   @Test
   public void whenToday_thenReturnLocalDate() {
     // given

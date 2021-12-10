@@ -21,7 +21,7 @@ class CatchInvalidFormatExceptionMapperTest {
   }
 
   @Test
-  void givenInvalidFormatException_whenToResponse_thenReturnRightResponse() {
+  void givenInvalidFormatException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     InvalidFormatException exception = new InvalidFormatException(A_PROPERTY);
 

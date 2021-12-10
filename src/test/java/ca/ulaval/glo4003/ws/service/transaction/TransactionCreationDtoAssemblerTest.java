@@ -1,12 +1,12 @@
 package ca.ulaval.glo4003.ws.service.transaction;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.service.transaction.dto.TransactionCreationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class TransactionCreationDtoAssemblerTest {
   private static final String ANOTHER_ID = "another id";

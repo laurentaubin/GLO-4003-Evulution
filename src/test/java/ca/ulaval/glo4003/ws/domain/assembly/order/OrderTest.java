@@ -23,7 +23,7 @@ class OrderTest {
 
   @Mock private BatteryOrder batteryOrder;
   @Mock private ModelOrder modelOrder;
-  @Mock private AssemblyTime aAssemblyTime;
+  @Mock private AssemblyTime assemblyTime;
 
   private Order order;
 
@@ -51,8 +51,8 @@ class OrderTest {
   @Test
   public void givenAssemblyTimeOver_whenIsOver_thenReturnTrue() {
     // given
-    given(aAssemblyTime.isOver()).willReturn(true);
-    order.setRemainingAssemblyTime(aAssemblyTime);
+    given(assemblyTime.isOver()).willReturn(true);
+    order.setRemainingAssemblyTime(assemblyTime);
 
     // when
     boolean isOrderOver = order.isOver();
@@ -64,8 +64,8 @@ class OrderTest {
   @Test
   public void givenAssemblyTimeOver_whenIsOver_thenReturnFalse() {
     // given
-    given(aAssemblyTime.isOver()).willReturn(false);
-    order.setRemainingAssemblyTime(aAssemblyTime);
+    given(assemblyTime.isOver()).willReturn(false);
+    order.setRemainingAssemblyTime(assemblyTime);
 
     // when
     boolean isOrderOver = order.isOver();

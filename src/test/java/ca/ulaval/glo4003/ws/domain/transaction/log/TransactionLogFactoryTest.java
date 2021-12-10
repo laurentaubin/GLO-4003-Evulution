@@ -16,13 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionLogFactoryTest {
-  private static final LocalDate TODAY = LocalDate.of(1, 1, 1);
-
+  private static final LocalDate A_PRESENT_DATE = LocalDate.of(1, 1, 1);
   private final TransactionFixture transactionFixture = new TransactionFixture();
 
   @Mock LocalDateProvider localDateProvider;
 
-  TransactionLogFactory transactionLogFactory;
+  private TransactionLogFactory transactionLogFactory;
 
   @BeforeEach
   public void setUp() {
@@ -32,14 +31,14 @@ class TransactionLogFactoryTest {
   @Test
   public void givenTransaction_whenCreate_thenTimestampIsCurrentDate() {
     // given
-    given(localDateProvider.today()).willReturn(TODAY);
+    given(localDateProvider.today()).willReturn(A_PRESENT_DATE);
     Transaction transaction = transactionFixture.givenACompleteTransaction();
 
     // when
     TransactionLogEntry transactionLogEntry = transactionLogFactory.create(transaction);
 
     // then
-    assertThat(transactionLogEntry.getCreationDate()).isEquivalentAccordingToCompareTo(TODAY);
+    assertThat(transactionLogEntry.getCreationDate()).isEquivalentAccordingToCompareTo(A_PRESENT_DATE);
   }
 
   @Test

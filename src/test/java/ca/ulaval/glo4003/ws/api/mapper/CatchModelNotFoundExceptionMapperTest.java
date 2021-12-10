@@ -10,11 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CatchModelNotFoundExceptionMapperTest {
-  private static final Set<String> MODELS = Set.of("Vandry", "Pouliot");
+  private static final Set<String> SOME_MODELS = Set.of("Vandry", "Pouliot");
   private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String EXPECTED_ERROR = "INVALID_MODEL";
   private static final String EXPECTED_DESCRIPTION =
-      String.format("Model must be one of the following type: {%s}.", MODELS);
+      String.format("Model must be one of the following type: {%s}.", SOME_MODELS);
 
   private CatchModelNotFoundExceptionMapper mapper;
 
@@ -24,9 +24,9 @@ class CatchModelNotFoundExceptionMapperTest {
   }
 
   @Test
-  public void givenModelNotFoundException_whenToResponse_thenReturnRightResponse() {
+  public void givenModelNotFoundException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
-    ModelNotFoundException exception = new ModelNotFoundException(MODELS);
+    ModelNotFoundException exception = new ModelNotFoundException(SOME_MODELS);
 
     // when
     Response response = mapper.toResponse(exception);

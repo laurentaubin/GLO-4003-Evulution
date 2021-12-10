@@ -21,7 +21,7 @@ public class CatchUserNotFoundExceptionMapperTest {
   }
 
   @Test
-  public void givenUserNotFoundException_whenToResponse_thenReturnRightResponse() {
+  public void givenUserNotFoundException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     UserNotFoundException exception = new UserNotFoundException();
 

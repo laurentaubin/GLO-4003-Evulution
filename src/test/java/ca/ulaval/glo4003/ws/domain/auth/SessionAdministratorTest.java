@@ -21,22 +21,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class SessionAdministratorTest {
   private static final String AN_EMAIL = "an@email.com";
   private static final String A_PASSWORD = "pass123";
-  private static final String INVALID_PASSWORD = "invalidPassword";
+  private static final String AN_INVALID_PASSWORD = "invalidPassword";
 
   @Mock private UserFinder userFinder;
   @Mock private SessionRepository sessionRepository;
   @Mock private SessionFactory sessionFactory;
-  @Mock private Session aSession;
+  @Mock private Session session;
   @Mock private SessionToken sessionToken;
   @Mock private PasswordAdministrator passwordAdministrator;
 
-  private User aUser;
-
+  private User user;
   private SessionAdministrator sessionAdministrator;
 
   @BeforeEach
   public void setUp() {
-    aUser = new UserBuilder().withEmail(AN_EMAIL).build();
+    user = new UserBuilder().withEmail(AN_EMAIL).build();
 
     sessionAdministrator =
         new SessionAdministrator(
@@ -59,11 +58,11 @@ class SessionAdministratorTest {
   public void givenUserExistsButPasswordDoesNotMatch_whenLogin_thenThrowLoginFailedException() {
     // given
     given(userFinder.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(passwordAdministrator.areCredentialsValid(AN_EMAIL, INVALID_PASSWORD)).willReturn(false);
+    given(passwordAdministrator.areCredentialsValid(AN_EMAIL, AN_INVALID_PASSWORD)).willReturn(false);
 
     // when
     Executable checkingCredentials =
-        () -> sessionAdministrator.login(aUser.getEmail(), INVALID_PASSWORD);
+        () -> sessionAdministrator.login(user.getEmail(), AN_INVALID_PASSWORD);
 
     // then
     assertThrows(InvalidCredentialsException.class, checkingCredentials);
@@ -74,27 +73,27 @@ class SessionAdministratorTest {
     // given
     given(userFinder.doesUserExist(AN_EMAIL)).willReturn(true);
     given(passwordAdministrator.areCredentialsValid(AN_EMAIL, A_PASSWORD)).willReturn(true);
-    given(sessionFactory.create(AN_EMAIL)).willReturn(aSession);
+    given(sessionFactory.create(AN_EMAIL)).willReturn(session);
 
     // when
     sessionAdministrator.login(AN_EMAIL, A_PASSWORD);
 
     // then
-    verify(sessionRepository).save(aSession);
+    verify(sessionRepository).save(session);
   }
 
   @Test
   public void givenTokenCreatedByFactory_whenLogin_thenReturnToken() {
     // given
     given(userFinder.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(sessionFactory.create(AN_EMAIL)).willReturn(aSession);
+    given(sessionFactory.create(AN_EMAIL)).willReturn(session);
     given(passwordAdministrator.areCredentialsValid(AN_EMAIL, A_PASSWORD)).willReturn(true);
 
     // when
     Session actualSession = sessionAdministrator.login(AN_EMAIL, A_PASSWORD);
 
     // then
-    assertThat(actualSession).isEqualTo(aSession);
+    assertThat(actualSession).isEqualTo(session);
   }
 
   @Test

@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
-  private static final OrderId ORDER_ID = new OrderId("id");
+  private static final OrderId AN_ORDER_ID = new OrderId("id");
   private static final TransactionId AN_ID = TransactionId.fromString("id");
 
   @Mock private Order order;
@@ -33,7 +33,7 @@ class NotificationServiceTest {
   void setUp() {
     notificationService = new NotificationService(notificationIssuer, userFinder);
 
-    given(order.getId()).willReturn(ORDER_ID);
+    given(order.getId()).willReturn(AN_ORDER_ID);
   }
 
   @Test

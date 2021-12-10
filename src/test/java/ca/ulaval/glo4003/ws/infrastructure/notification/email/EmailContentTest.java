@@ -5,7 +5,6 @@ import static com.google.common.truth.Truth.assertThat;
 import org.junit.jupiter.api.Test;
 
 class EmailContentTest {
-
   @Test
   public void givenValues_whenFormatBodyMessage_thenBodyMessageIsFormatted() {
     // given

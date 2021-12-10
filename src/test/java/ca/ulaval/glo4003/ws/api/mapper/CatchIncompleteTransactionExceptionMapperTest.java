@@ -23,7 +23,7 @@ class CatchIncompleteTransactionExceptionMapperTest {
   }
 
   @Test
-  public void givenIncompleteTransactionException_whenToResponse_thenReturnRightResponse() {
+  public void givenIncompleteTransactionException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     IncompleteTransactionException incompleteTransactionException =
         new IncompleteTransactionException();

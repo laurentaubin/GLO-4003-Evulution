@@ -10,11 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class CatchInvalidBatteryExceptionMapperTest {
-  private static final Set<String> BATTERY_TYPES = Set.of("SHORT_RANGE", "LONG_RANGE");
+  private static final Set<String> SOME_BATTERY_TYPES = Set.of("SHORT_RANGE", "LONG_RANGE");
   private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String EXPECTED_ERROR = "INVALID_BATTERY_TYPE";
   private static final String EXPECTED_DESCRIPTION =
-      String.format("Battery must be one of the following type: {%s}.", BATTERY_TYPES);
+      String.format("Battery must be one of the following type: {%s}.", SOME_BATTERY_TYPES);
 
   private CatchInvalidBatteryExceptionMapper exceptionMapper;
 
@@ -26,7 +26,7 @@ class CatchInvalidBatteryExceptionMapperTest {
   @Test
   void givenInvalidBatteryException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
-    InvalidBatteryException exception = new InvalidBatteryException(BATTERY_TYPES);
+    InvalidBatteryException exception = new InvalidBatteryException(SOME_BATTERY_TYPES);
 
     // when
     Response response = exceptionMapper.toResponse(exception);

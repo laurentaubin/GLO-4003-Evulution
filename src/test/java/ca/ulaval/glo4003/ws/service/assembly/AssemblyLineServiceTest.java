@@ -1,10 +1,5 @@
 package ca.ulaval.glo4003.ws.service.assembly;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.assembly.battery.BatteryOrderFactory;
 import ca.ulaval.glo4003.ws.domain.assembly.model.ModelOrder;
@@ -24,25 +19,31 @@ import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
 import ca.ulaval.glo4003.ws.fixture.BatteryBuilder;
 import ca.ulaval.glo4003.ws.fixture.ModelBuilder;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class AssemblyLineServiceTest {
   private static final String AN_ID = "an id";
-  private static final TransactionId TRANSACTION_ID = new TransactionId(AN_ID);
-  private static final Model MODEL =
+  private static final TransactionId A_TRANSACTION_ID = new TransactionId(AN_ID);
+  private static final Model A_MODEL =
       new ModelBuilder().withProductionTime(new ProductionTime(1)).build();
-  private static final Battery BATTERY =
+  private static final Battery A_BATTERY =
       new BatteryBuilder().withProductionTime(new ProductionTime(2)).build();
 
   @Mock private OrderFactory orderFactory;
-  @Mock private Order anOrder;
+  @Mock private Order order;
   @Mock private AssemblyStrategy assemblyStrategy;
   @Mock private ModelOrderFactory modelOrderFactory;
   @Mock private BatteryOrderFactory batteryOrderFactory;
@@ -59,8 +60,8 @@ class AssemblyLineServiceTest {
 
   @BeforeEach
   public void setUp() {
-    vehicle = new Vehicle(MODEL, Color.WHITE);
-    vehicle.addBattery(BATTERY);
+    vehicle = new Vehicle(A_MODEL, Color.WHITE);
+    vehicle.addBattery(A_BATTERY);
 
     assemblyLine =
         new AssemblyLineService(
@@ -75,22 +76,22 @@ class AssemblyLineServiceTest {
   @Test
   public void whenListenToTransactionCompleted_thenOrderIsSent() {
     // given
-    given(transaction.getId()).willReturn(TRANSACTION_ID);
+    given(transaction.getId()).willReturn(A_TRANSACTION_ID);
     given(transaction.getVehicle()).willReturn(vehicle);
-    given(assemblyTimeFactory.create(MODEL.getProductionTime().inWeeks()))
+    given(assemblyTimeFactory.create(A_MODEL.getProductionTime().inWeeks()))
         .willReturn(modelAssemblyTime);
-    given(assemblyTimeFactory.create(BATTERY.getProductionTime().inWeeks()))
+    given(assemblyTimeFactory.create(A_BATTERY.getProductionTime().inWeeks()))
         .willReturn(batteryAssemblyTime);
-    given(modelOrderFactory.create(MODEL.getName(), modelAssemblyTime)).willReturn(modelOrder);
-    given(batteryOrderFactory.create(BATTERY.getType(), batteryAssemblyTime))
+    given(modelOrderFactory.create(A_MODEL.getName(), modelAssemblyTime)).willReturn(modelOrder);
+    given(batteryOrderFactory.create(A_BATTERY.getType(), batteryAssemblyTime))
         .willReturn(batteryOrder);
-    given(orderFactory.create(AN_ID, modelOrder, batteryOrder)).willReturn(anOrder);
+    given(orderFactory.create(AN_ID, modelOrder, batteryOrder)).willReturn(order);
 
     // when
     assemblyLine.listenToTransactionCompleted(transaction);
 
     // then
-    verify(assemblyStrategy).addOrder(anOrder);
+    verify(assemblyStrategy).addOrder(order);
   }
 
   @Test
@@ -123,7 +124,7 @@ class AssemblyLineServiceTest {
   @Test
   public void givenActiveOrdersInAssembly_whenGetActiveOrders_thenShouldReturnActiveOrders() {
     // given
-    var expectedOrders = new ArrayList<>(List.of(anOrder));
+    var expectedOrders = new ArrayList<>(List.of(order));
     given(assemblyStrategy.getActiveOrders()).willReturn(expectedOrders);
 
     // when
@@ -136,7 +137,7 @@ class AssemblyLineServiceTest {
   @Test
   public void givenActiveOrders_whenShutdown_thenNotifyObserversWithOrders() {
     // given
-    var activeOrders = List.of(anOrder);
+    var activeOrders = List.of(order);
     when(assemblyStrategy.getActiveOrders()).thenReturn(activeOrders);
 
     // when

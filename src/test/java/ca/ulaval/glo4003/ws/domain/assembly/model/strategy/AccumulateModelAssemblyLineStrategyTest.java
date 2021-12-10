@@ -27,48 +27,48 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class AccumulateModelAssemblyLineStrategyTest {
-  private static final AssemblyTime ASSEMBLY_TIME_OF_ONE_WEEK = new AssemblyTime(1);
-  private static final AssemblyTime ASSEMBLY_TIME_OF_TWO_WEEKS = new AssemblyTime(2);
-  private static final String FIRST_MODEL_TYPE = "first type";
-  private static final ModelOrder FIRST_MODEL_IN_CYCLE =
+  private static final AssemblyTime AN_ASSEMBLY_TIME_OF_ONE_WEEK = new AssemblyTime(1);
+  private static final AssemblyTime AN_ASSEMBLY_TIME_OF_TWO_WEEKS = new AssemblyTime(2);
+  private static final String A_FIRST_MODEL_TYPE = "first type";
+  private static final ModelOrder A_FIRST_MODEL_IN_CYCLE =
       new ModelOrderBuilder()
-          .withModelName(FIRST_MODEL_TYPE)
-          .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
+          .withModelName(A_FIRST_MODEL_TYPE)
+          .withAssemblyTime(AN_ASSEMBLY_TIME_OF_ONE_WEEK)
           .build();
-  private static final String SECOND_MODEL_TYPE = "second type";
-  private static final ModelOrder SECOND_MODEL_IN_CYCLE =
+  private static final String A_SECOND_MODEL_TYPE = "second type";
+  private static final ModelOrder A_SECOND_MODEL_IN_CYCLE =
       new ModelOrderBuilder()
-          .withModelName(SECOND_MODEL_TYPE)
-          .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
+          .withModelName(A_SECOND_MODEL_TYPE)
+          .withAssemblyTime(AN_ASSEMBLY_TIME_OF_ONE_WEEK)
           .build();
-  private static final String THIRD_MODEL_TYPE = "third type";
-  private static final ModelOrder THIRD_MODEL_IN_CYCLE =
+  private static final String A_THIRD_MODEL_TYPE = "third type";
+  private static final ModelOrder A_THIRD_MODEL_IN_CYCLE =
       new ModelOrderBuilder()
-          .withModelName(THIRD_MODEL_TYPE)
-          .withAssemblyTime(ASSEMBLY_TIME_OF_TWO_WEEKS)
+          .withModelName(A_THIRD_MODEL_TYPE)
+          .withAssemblyTime(AN_ASSEMBLY_TIME_OF_TWO_WEEKS)
           .build();
-  private static final List<ModelOrder> MODEL_ASSEMBLY_ORDER =
-      List.of(FIRST_MODEL_IN_CYCLE, SECOND_MODEL_IN_CYCLE, THIRD_MODEL_IN_CYCLE);
-  private static final OrderId FIRST_ORDER_ID = new OrderId("firstOrderId");
-  private static final ModelOrder FIRST_MODEL_ORDER =
+  private static final List<ModelOrder> A_MODEL_ASSEMBLY_ORDER =
+      List.of(A_FIRST_MODEL_IN_CYCLE, A_SECOND_MODEL_IN_CYCLE, A_THIRD_MODEL_IN_CYCLE);
+  private static final OrderId A_FIRST_ORDER_ID = new OrderId("firstOrderId");
+  private static final ModelOrder A_FIRST_MODEL_ORDER =
       new ModelOrderBuilder()
-          .withOrderId(FIRST_ORDER_ID)
-          .withModelName(FIRST_MODEL_TYPE)
-          .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
+          .withOrderId(A_FIRST_ORDER_ID)
+          .withModelName(A_FIRST_MODEL_TYPE)
+          .withAssemblyTime(AN_ASSEMBLY_TIME_OF_ONE_WEEK)
           .build();
-  private static final OrderId SECOND_ORDER_ID = new OrderId("secondOrderId");
-  private static final ModelOrder SECOND_MODEL_ORDER =
+  private static final OrderId A_SECOND_ORDER_ID = new OrderId("secondOrderId");
+  private static final ModelOrder A_SECOND_MODEL_ORDER =
       new ModelOrderBuilder()
-          .withOrderId(SECOND_ORDER_ID)
-          .withModelName(SECOND_MODEL_TYPE)
-          .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
+          .withOrderId(A_SECOND_ORDER_ID)
+          .withModelName(A_SECOND_MODEL_TYPE)
+          .withAssemblyTime(AN_ASSEMBLY_TIME_OF_ONE_WEEK)
           .build();
-  private static final OrderId THIRD_ORDER_ID = new OrderId("thirdOrderId");
-  private static final ModelOrder THIRD_MODEL_ORDER =
+  private static final OrderId A_THIRD_ORDER_ID = new OrderId("thirdOrderId");
+  private static final ModelOrder A_THIRD_MODEL_ORDER =
       new ModelOrderBuilder()
-          .withOrderId(THIRD_ORDER_ID)
-          .withModelName(THIRD_MODEL_TYPE)
-          .withAssemblyTime(ASSEMBLY_TIME_OF_TWO_WEEKS)
+          .withOrderId(A_THIRD_ORDER_ID)
+          .withModelName(A_THIRD_MODEL_TYPE)
+          .withAssemblyTime(AN_ASSEMBLY_TIME_OF_TWO_WEEKS)
           .build();
 
   @Mock private ModelAssemblyLineAdapter assemblyLineAdapter;
@@ -82,52 +82,52 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void setUp() {
     assemblyLineStrategy =
         new AccumulateModelAssemblyLineStrategy(
-            MODEL_ASSEMBLY_ORDER, assemblyLineAdapter, modelInventory);
+                A_MODEL_ASSEMBLY_ORDER, assemblyLineAdapter, modelInventory);
   }
 
   @Test
   public void whenAddOrder_thenCheckIfModelIsInStock() {
     // given
-    Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
+    Order anOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
 
     // when
     assemblyLineStrategy.addOrder(anOrder);
 
     // then
-    verify(modelInventory).isInStock(FIRST_MODEL_TYPE);
+    verify(modelInventory).isInStock(A_FIRST_MODEL_TYPE);
   }
 
   @Test
   public void givenModelIsInStock_whenAddOrder_thenModelIsTakenFromInventory() {
     // given
-    Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(true);
+    Order anOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(A_FIRST_MODEL_TYPE)).willReturn(true);
 
     // when
     assemblyLineStrategy.addOrder(anOrder);
 
     // then
-    verify(modelInventory).removeOne(FIRST_MODEL_TYPE);
+    verify(modelInventory).removeOne(A_FIRST_MODEL_TYPE);
   }
 
   @Test
   public void givenModelIsNotInStock_whenAddOrder_thenModelIsNotTakenFromInventory() {
     // given
-    Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
+    Order anOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(A_FIRST_MODEL_TYPE)).willReturn(false);
 
     // when
     assemblyLineStrategy.addOrder(anOrder);
 
     // then
-    verify(modelInventory, never()).removeOne(FIRST_MODEL_TYPE);
+    verify(modelInventory, never()).removeOne(A_FIRST_MODEL_TYPE);
   }
 
   @Test
   public void givenModelIsInStock_whenAddOrder_thenNotifyAllModelAssembledObservers() {
     // given
-    Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(true);
+    Order anOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(A_FIRST_MODEL_TYPE)).willReturn(true);
     assemblyLineStrategy.register(modelAssembledObserver);
     assemblyLineStrategy.register(anotherModelAssembledObserver);
 
@@ -142,8 +142,8 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void givenModelIsNotInStock_whenAddOrder_thenModelAssembledObserversAreNotNotify() {
     // given
-    Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
+    Order anOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(A_FIRST_MODEL_TYPE)).willReturn(false);
     assemblyLineStrategy.register(modelAssembledObserver);
     assemblyLineStrategy.register(anotherModelAssembledObserver);
 
@@ -167,7 +167,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void whenCreate_thenSendFirstModelInModelOrderToBeAssembled() {
     // then
-    verify(assemblyLineAdapter).addOrder(FIRST_MODEL_IN_CYCLE);
+    verify(assemblyLineAdapter).addOrder(A_FIRST_MODEL_IN_CYCLE);
   }
 
   @Test
@@ -176,7 +176,7 @@ class AccumulateModelAssemblyLineStrategyTest {
     assemblyLineStrategy.advance();
 
     // then
-    verify(assemblyLineAdapter).getAssemblyStatus(FIRST_MODEL_IN_CYCLE.getOrderId());
+    verify(assemblyLineAdapter).getAssemblyStatus(A_FIRST_MODEL_IN_CYCLE.getOrderId());
   }
 
   @Test
@@ -189,17 +189,17 @@ class AccumulateModelAssemblyLineStrategyTest {
     assemblyLineStrategy.advance();
 
     // then
-    verify(assemblyLineAdapter, never()).addOrder(SECOND_MODEL_IN_CYCLE);
+    verify(assemblyLineAdapter, never()).addOrder(A_SECOND_MODEL_IN_CYCLE);
   }
 
   @Test
   public void givenModelAssemblyOrder_whenAdvance_thenModelsAreAssembledInGivenOrderAndInLoop() {
     // given
-    given(assemblyLineAdapter.getAssemblyStatus(FIRST_MODEL_IN_CYCLE.getOrderId()))
+    given(assemblyLineAdapter.getAssemblyStatus(A_FIRST_MODEL_IN_CYCLE.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
-    given(assemblyLineAdapter.getAssemblyStatus(SECOND_MODEL_IN_CYCLE.getOrderId()))
+    given(assemblyLineAdapter.getAssemblyStatus(A_SECOND_MODEL_IN_CYCLE.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
-    given(assemblyLineAdapter.getAssemblyStatus(THIRD_MODEL_IN_CYCLE.getOrderId()))
+    given(assemblyLineAdapter.getAssemblyStatus(A_THIRD_MODEL_IN_CYCLE.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
 
     // when
@@ -209,10 +209,10 @@ class AccumulateModelAssemblyLineStrategyTest {
 
     // then
     InOrder assemblyLineAdapterCallOrder = inOrder(assemblyLineAdapter);
-    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(FIRST_MODEL_IN_CYCLE);
-    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(SECOND_MODEL_IN_CYCLE);
-    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(THIRD_MODEL_IN_CYCLE);
-    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(FIRST_MODEL_IN_CYCLE);
+    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(A_FIRST_MODEL_IN_CYCLE);
+    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(A_SECOND_MODEL_IN_CYCLE);
+    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(A_THIRD_MODEL_IN_CYCLE);
+    assemblyLineAdapterCallOrder.verify(assemblyLineAdapter).addOrder(A_FIRST_MODEL_IN_CYCLE);
   }
 
   @Test
@@ -224,17 +224,17 @@ class AccumulateModelAssemblyLineStrategyTest {
     assemblyLineStrategy.advance();
 
     // then
-    verify(modelInventory, never()).addOne(FIRST_MODEL_TYPE);
+    verify(modelInventory, never()).addOne(A_FIRST_MODEL_TYPE);
   }
 
   @Test
   public void
       givenModelAssembledAndManyOrderWaitingForModel_whenAdvance_thenOnlyNotifyFirstAddedOrder() {
     // given
-    Order firstOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    Order secondOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
-    given(assemblyLineAdapter.getAssemblyStatus(FIRST_MODEL_IN_CYCLE.getOrderId()))
+    Order firstOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    Order secondOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(A_FIRST_MODEL_TYPE)).willReturn(false);
+    given(assemblyLineAdapter.getAssemblyStatus(A_FIRST_MODEL_IN_CYCLE.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
     addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
     assemblyLineStrategy.register(modelAssembledObserver);
@@ -251,9 +251,9 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenModelIsAssembledAndNoPendingOrderNeedIt_whenAdvance_thenModelIsAddedToInventory() {
     // given
-    Order firstOrder = createAnOrderWithModelType(SECOND_MODEL_TYPE);
-    Order secondOrder = createAnOrderWithModelType(THIRD_MODEL_TYPE);
-    given(assemblyLineAdapter.getAssemblyStatus(FIRST_MODEL_IN_CYCLE.getOrderId()))
+    Order firstOrder = createAnOrderWithModelType(A_SECOND_MODEL_TYPE);
+    Order secondOrder = createAnOrderWithModelType(A_THIRD_MODEL_TYPE);
+    given(assemblyLineAdapter.getAssemblyStatus(A_FIRST_MODEL_IN_CYCLE.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
     addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
 
@@ -261,18 +261,18 @@ class AccumulateModelAssemblyLineStrategyTest {
     assemblyLineStrategy.advance();
 
     // then
-    verify(modelInventory).addOne(FIRST_MODEL_TYPE);
+    verify(modelInventory).addOne(A_FIRST_MODEL_TYPE);
   }
 
   @Test
   public void
       givenManyOrdersWaitingForTheSameModelAndModelIsAssembled_whenAdvance_thenNotifyOrdersInOrder() {
     // given
-    Order firstOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    Order secondOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    given(assemblyLineAdapter.getAssemblyStatus(FIRST_MODEL_IN_CYCLE.getOrderId()))
+    Order firstOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    Order secondOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    given(assemblyLineAdapter.getAssemblyStatus(A_FIRST_MODEL_IN_CYCLE.getOrderId()))
         .willReturn(AssemblyStatus.ASSEMBLED);
-    List<ModelOrder> modelAssemblyOrder = List.of(FIRST_MODEL_IN_CYCLE);
+    List<ModelOrder> modelAssemblyOrder = List.of(A_FIRST_MODEL_IN_CYCLE);
     assemblyLineStrategy = createAccumulateModelAssemblyLineStrategy(modelAssemblyOrder);
     addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
     assemblyLineStrategy.register(modelAssembledObserver);
@@ -297,7 +297,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenOrderAddedWithModelNotInStock_whenComputeRemainingTimeToProduce_thenReturnModelOrderAssemblyTime() {
     // given
-    Order order = createAnOrderWithModel(FIRST_MODEL_ORDER);
+    Order order = createAnOrderWithModel(A_FIRST_MODEL_ORDER);
     assemblyLineStrategy.addOrder(order);
     AssemblyTime expectedAssemblyTime = order.getModelOrder().getAssemblyTime();
 
@@ -312,8 +312,8 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void givenOrderAddedWithModelInStock_whenComputeRemainingTimeToProduce_thenReturnZero() {
     // given
-    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(true);
-    Order order = createAnOrderWithModel(FIRST_MODEL_ORDER);
+    given(modelInventory.isInStock(A_FIRST_MODEL_TYPE)).willReturn(true);
+    Order order = createAnOrderWithModel(A_FIRST_MODEL_ORDER);
     assemblyLineStrategy.addOrder(order);
     AssemblyTime expectedAssemblyTime = new AssemblyTime(0);
 
@@ -329,11 +329,11 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenTwoOrdersAddedWithModelsFollowingCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelAssemblyTimes() {
     // given
-    Order firstOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
-    Order secondOrder = createAnOrderWithModel(SECOND_MODEL_ORDER);
+    Order firstOrder = createAnOrderWithModel(A_FIRST_MODEL_ORDER);
+    Order secondOrder = createAnOrderWithModel(A_SECOND_MODEL_ORDER);
     addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
     AssemblyTime expectedAssemblyTime =
-        FIRST_MODEL_IN_CYCLE.getAssemblyTime().add(SECOND_MODEL_IN_CYCLE.getAssemblyTime());
+        A_FIRST_MODEL_IN_CYCLE.getAssemblyTime().add(A_SECOND_MODEL_IN_CYCLE.getAssemblyTime());
 
     // when
     AssemblyTime actualAssemblyTime =
@@ -347,14 +347,14 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenTwoOrdersAddedWithFirstAndThirdModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfFirstSecondAndThirdModelsAssemblyTime() {
     // given
-    Order firstOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
-    Order secondOrder = createAnOrderWithModel(THIRD_MODEL_ORDER);
+    Order firstOrder = createAnOrderWithModel(A_FIRST_MODEL_ORDER);
+    Order secondOrder = createAnOrderWithModel(A_THIRD_MODEL_ORDER);
     addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
     AssemblyTime expectedAssemblyTime =
-        FIRST_MODEL_IN_CYCLE
+        A_FIRST_MODEL_IN_CYCLE
             .getAssemblyTime()
-            .add(SECOND_MODEL_IN_CYCLE.getAssemblyTime())
-            .add(THIRD_MODEL_IN_CYCLE.getAssemblyTime());
+            .add(A_SECOND_MODEL_IN_CYCLE.getAssemblyTime())
+            .add(A_THIRD_MODEL_IN_CYCLE.getAssemblyTime());
 
     // when
     AssemblyTime actualAssemblyTime =
@@ -368,15 +368,15 @@ class AccumulateModelAssemblyLineStrategyTest {
   public void
       givenTwoOrdersAddedWithFirstModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelAndWholeCycleAssemblyTime() {
     // given
-    Order firstOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
-    Order secondOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
+    Order firstOrder = createAnOrderWithModel(A_FIRST_MODEL_ORDER);
+    Order secondOrder = createAnOrderWithModel(A_FIRST_MODEL_ORDER);
     addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
     AssemblyTime expectedAssemblyTime =
-        FIRST_MODEL_IN_CYCLE
+        A_FIRST_MODEL_IN_CYCLE
             .getAssemblyTime()
-            .add(SECOND_MODEL_IN_CYCLE.getAssemblyTime())
+            .add(A_SECOND_MODEL_IN_CYCLE.getAssemblyTime())
             .add(
-                THIRD_MODEL_IN_CYCLE.getAssemblyTime().add(FIRST_MODEL_IN_CYCLE.getAssemblyTime()));
+                A_THIRD_MODEL_IN_CYCLE.getAssemblyTime().add(A_FIRST_MODEL_IN_CYCLE.getAssemblyTime()));
 
     // when
     AssemblyTime actualAssemblyTime =
@@ -389,9 +389,9 @@ class AccumulateModelAssemblyLineStrategyTest {
   @Test
   public void givenOrdersInQueue_whenGetActiveOrders_thenReturnOrders() {
     // given
-    Order firstOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    Order secondOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
+    Order firstOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    Order secondOrder = createAnOrderWithModelType(A_FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(A_FIRST_MODEL_TYPE)).willReturn(false);
     addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
 
     // when
@@ -417,7 +417,7 @@ class AccumulateModelAssemblyLineStrategyTest {
   }
 
   private void setUpFirstModelOrderStillInProgress() {
-    given(assemblyLineAdapter.getAssemblyStatus(FIRST_MODEL_IN_CYCLE.getOrderId()))
+    given(assemblyLineAdapter.getAssemblyStatus(A_FIRST_MODEL_IN_CYCLE.getOrderId()))
         .willReturn(AssemblyStatus.IN_PROGRESS);
   }
 

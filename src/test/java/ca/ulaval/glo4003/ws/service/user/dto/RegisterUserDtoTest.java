@@ -1,17 +1,18 @@
 package ca.ulaval.glo4003.ws.service.user.dto;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestBuilder;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RegisterUserRequestTest {
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
+
+class RegisterUserDtoTest {
 
   public Validator validator;
 

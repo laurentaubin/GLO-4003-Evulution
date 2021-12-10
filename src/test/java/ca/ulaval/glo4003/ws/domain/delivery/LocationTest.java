@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 class LocationTest {
-
   @Test
   void givenValidLocation_whenFromString_thenMatchesCorrectLocation() {
     // given

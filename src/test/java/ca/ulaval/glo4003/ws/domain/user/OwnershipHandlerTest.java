@@ -27,9 +27,9 @@ class OwnershipHandlerTest {
   private static final Session A_SESSION = new Session(new SessionToken("t0k3nV41u3"), AN_EMAIL);
 
   @Mock private UserRepository userRepository;
-  @Mock private User aUser;
-  @Mock private TransactionId aTransactionId;
-  @Mock private DeliveryId aDeliveryId;
+  @Mock private User user;
+  @Mock private TransactionId transactionId;
+  @Mock private DeliveryId deliveryId;
 
   private OwnershipHandler ownershipHandler;
 
@@ -41,36 +41,36 @@ class OwnershipHandlerTest {
   @Test
   void givenUserExists_whenMapDeliveryIdToTransactionId_thenMapsDeliveryToTransaction() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
-    ownershipHandler.mapDeliveryIdToTransactionId(A_SESSION, aTransactionId, aDeliveryId);
+    ownershipHandler.mapDeliveryIdToTransactionId(A_SESSION, transactionId, deliveryId);
 
     // then
-    verify(aUser).addTransactionDelivery(aTransactionId, aDeliveryId);
+    verify(user).addTransactionDelivery(transactionId, deliveryId);
   }
 
   @Test
   public void givenTransactionAddedToUser_whenAddTransactionOwnership_thenUserIsUpdated() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
-    ownershipHandler.mapDeliveryIdToTransactionId(A_SESSION, aTransactionId, aDeliveryId);
+    ownershipHandler.mapDeliveryIdToTransactionId(A_SESSION, transactionId, deliveryId);
 
     // then
-    verify(userRepository).update(aUser);
+    verify(userRepository).update(user);
   }
 
   @Test
   void givenUserIsOwnerOfTransaction_whenValidateTransactionOwnership_thenDoNothing() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.ownsTransaction(aTransactionId)).willReturn(true);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
+    given(user.ownsTransaction(transactionId)).willReturn(true);
 
     // when
     Executable validatingOwnership =
-        () -> ownershipHandler.validateTransactionOwnership(A_SESSION, aTransactionId);
+        () -> ownershipHandler.validateTransactionOwnership(A_SESSION, transactionId);
 
     // then
     assertDoesNotThrow(validatingOwnership);
@@ -79,12 +79,12 @@ class OwnershipHandlerTest {
   @Test
   void givenUserIsOwnerOfDelivery_whenValidateDeliveryOwnership_thenDoNothing() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.ownDelivery(aDeliveryId)).willReturn(true);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
+    given(user.ownDelivery(deliveryId)).willReturn(true);
 
     // when
     Executable validatingOwnership =
-        () -> ownershipHandler.validateDeliveryOwnership(A_SESSION, aDeliveryId);
+        () -> ownershipHandler.validateDeliveryOwnership(A_SESSION, deliveryId);
 
     // then
     assertDoesNotThrow(validatingOwnership);
@@ -94,12 +94,12 @@ class OwnershipHandlerTest {
   void
       givenUserIsNotOwnerOfTransaction_whenValidateTransactionOwnership_thenThrowWrongOwnerException() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.ownsTransaction(aTransactionId)).willReturn(false);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
+    given(user.ownsTransaction(transactionId)).willReturn(false);
 
     // when
     Executable validatingOwnership =
-        () -> ownershipHandler.validateTransactionOwnership(A_SESSION, aTransactionId);
+        () -> ownershipHandler.validateTransactionOwnership(A_SESSION, transactionId);
 
     // then
     assertThrows(WrongOwnerException.class, validatingOwnership);
@@ -108,12 +108,12 @@ class OwnershipHandlerTest {
   @Test
   void givenUserIsNotOwnerOfDelivery_whenValidateDeliveryOwnership_thenThrowWrongOwnerException() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
-    given(aUser.ownDelivery(aDeliveryId)).willReturn(false);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
+    given(user.ownDelivery(deliveryId)).willReturn(false);
 
     // when
     Executable validatingOwnership =
-        () -> ownershipHandler.validateDeliveryOwnership(A_SESSION, aDeliveryId);
+        () -> ownershipHandler.validateDeliveryOwnership(A_SESSION, deliveryId);
 
     // then
     assertThrows(WrongOwnerException.class, validatingOwnership);
@@ -122,10 +122,10 @@ class OwnershipHandlerTest {
   @Test
   void whenGetTransactionIdFromDeliveryId_thenUserRepositoryFindUser() {
     // given
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
-    ownershipHandler.retrieveTransactionId(A_SESSION, aDeliveryId);
+    ownershipHandler.retrieveTransactionId(A_SESSION, deliveryId);
 
     // then
     verify(userRepository).findUser(A_SESSION.getEmail());

@@ -45,7 +45,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TransactionResourceImplTest {
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("id");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("id");
-  private static final List<Role> ROLES = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
+  private static final List<Role> SOME_ROLES = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
   private static final BigDecimal A_RANGE = BigDecimal.valueOf(424332);
 
   @Mock private TransactionService transactionService;
@@ -61,13 +61,12 @@ class TransactionResourceImplTest {
   @Mock private BatteryConfigurationResponseAssembler configureBatteryResponseAssembler;
   @Mock private TransactionCreationResponseAssembler transactionCreationResponseAssembler;
 
-  @Mock private Session aSession;
+  @Mock private Session session;
   @Mock private ConfigureVehicleDto configureVehicleDto;
   @Mock private ConfigureBatteryDto configureBatteryDto;
   @Mock private ConfigurePaymentDto configurePaymentDto;
   @Mock private TransactionCreationDto transactionCreationDto;
   @Mock private BatteryConfigurationDto batteryConfigurationDto;
-  @Mock private TransactionCreationResponse transactionCreationResponse;
 
   private TransactionResource transactionResource;
 
@@ -90,7 +89,7 @@ class TransactionResourceImplTest {
     // given
     given(transactionCreationDto.getTransactionId()).willReturn(A_TRANSACTION_ID.getId());
     given(transactionCreationDto.getDeliveryId()).willReturn(A_DELIVERY_ID.getDeliveryId());
-    given(authenticationService.retrieveSession(any(), any())).willReturn(aSession);
+    given(authenticationService.retrieveSession(any(), any())).willReturn(session);
     given(transactionService.createTransaction()).willReturn(transactionCreationDto);
     TransactionCreationResponse transactionCreationResponse =
         new TransactionCreationResponse(A_TRANSACTION_ID.getId(), A_DELIVERY_ID.getDeliveryId());
@@ -110,7 +109,7 @@ class TransactionResourceImplTest {
     // given
     given(transactionCreationDto.getTransactionId()).willReturn(A_TRANSACTION_ID.getId());
     given(transactionCreationDto.getDeliveryId()).willReturn(A_DELIVERY_ID.getDeliveryId());
-    given(authenticationService.retrieveSession(any(), any())).willReturn(aSession);
+    given(authenticationService.retrieveSession(any(), any())).willReturn(session);
     given(transactionService.createTransaction()).willReturn(transactionCreationDto);
 
     // when
@@ -119,7 +118,7 @@ class TransactionResourceImplTest {
     // then
     verify(authenticationService)
         .mapDeliveryIdToTransactionId(
-            aSession, A_TRANSACTION_ID.getId(), A_DELIVERY_ID.getDeliveryId());
+                session, A_TRANSACTION_ID.getId(), A_DELIVERY_ID.getDeliveryId());
   }
 
   @Test
@@ -204,7 +203,7 @@ class TransactionResourceImplTest {
 
     // then
     verify(authenticationService)
-        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, ROLES);
+        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, SOME_ROLES);
   }
 
   @Test
@@ -257,7 +256,7 @@ class TransactionResourceImplTest {
 
     // then
     verify(authenticationService)
-        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, ROLES);
+        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, SOME_ROLES);
   }
 
   @Test
@@ -311,7 +310,7 @@ class TransactionResourceImplTest {
 
     // then
     verify(authenticationService)
-        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, ROLES);
+        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, SOME_ROLES);
   }
 
   @Test
@@ -322,6 +321,6 @@ class TransactionResourceImplTest {
 
     // then
     verify(authenticationService)
-        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, ROLES);
+        .validateTransactionOwnership(containerRequestContext, A_TRANSACTION_ID, SOME_ROLES);
   }
 }

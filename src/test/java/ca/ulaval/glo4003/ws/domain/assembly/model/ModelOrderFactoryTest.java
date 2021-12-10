@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 class ModelOrderFactoryTest {
   private final String A_MODEL_TYPE = "a model";
   private final AssemblyTime AN_ASSEMBLY_TIME = new AssemblyTime(1);
+
   private ModelOrderFactory modelOrderFactory;
 
   @BeforeEach

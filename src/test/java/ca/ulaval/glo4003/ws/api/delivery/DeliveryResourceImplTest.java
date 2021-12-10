@@ -34,7 +34,7 @@ class DeliveryResourceImplTest {
   private static final DeliveryId AN_ID = new DeliveryId("id");
   private static final String A_MODE = "At campus";
   private static final String A_LOCATION = "Vachon";
-  private static final String INVALID_MODE = "invalid mode";
+  private static final String AN_INVALID_MODE = "invalid mode";
   private static final List<Role> ROLES = new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
 
   @Mock private DeliveryService deliveryService;
@@ -42,7 +42,7 @@ class DeliveryResourceImplTest {
   @Mock private DeliveryRequestValidator deliveryRequestValidator;
   @Mock private DeliveryDtoAssembler deliveryDtoAssembler;
   @Mock private ContainerRequestContext containerRequestContext;
-  @Mock private Session aSession;
+  @Mock private Session session;
 
   private DeliveryResource deliveryResource;
 
@@ -153,13 +153,13 @@ class DeliveryResourceImplTest {
   @Test
   void givenSession_whenCompleteDelivery_thenRetrieveTransactionIdFromSessionCalled() {
     // given
-    given(authenticationService.retrieveSession(any(), any())).willReturn(aSession);
+    given(authenticationService.retrieveSession(any(), any())).willReturn(session);
 
     // when
     deliveryResource.completeDelivery(containerRequestContext, AN_ID);
 
     // then
-    verify(authenticationService).retrieveTransactionIdFromSession(aSession, AN_ID);
+    verify(authenticationService).retrieveTransactionIdFromSession(session, AN_ID);
   }
 
   @Test
@@ -185,7 +185,7 @@ class DeliveryResourceImplTest {
 
   private DeliveryLocationRequest createInvalidDeliveryLocationRequest() {
     DeliveryLocationRequest request = new DeliveryLocationRequest();
-    request.setMode(INVALID_MODE);
+    request.setMode(AN_INVALID_MODE);
     request.setLocation(A_LOCATION);
     return request;
   }

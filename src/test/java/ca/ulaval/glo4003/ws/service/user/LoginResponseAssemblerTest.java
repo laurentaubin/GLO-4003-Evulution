@@ -1,12 +1,12 @@
 package ca.ulaval.glo4003.ws.service.user;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
 import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class LoginResponseAssemblerTest {
   private static final String AN_EMAIL = "anEmail@mail.com";

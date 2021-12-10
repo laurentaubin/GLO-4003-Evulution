@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class EmailNotificationIssuerTest {
-  private static final String SENDER_EMAIL_ADDRESS = "SIKETHATSTHEWRONGNUMBER@outlook.fr";
+  private static final String A_SENDER_EMAIL_ADDRESS = "SIKETHATSTHEWRONGNUMBER@outlook.fr";
   private static final DelayType A_DELAY_TYPE = DelayType.VEHICLE_ASSEMBLY;
 
   @Mock private Email email;
@@ -32,7 +32,7 @@ class EmailNotificationIssuerTest {
   @BeforeEach
   public void setUp() {
     emailNotificationIssuer =
-        new EmailNotificationIssuer(SENDER_EMAIL_ADDRESS, notificationEmailFactory);
+        new EmailNotificationIssuer(A_SENDER_EMAIL_ADDRESS, notificationEmailFactory);
   }
 
   @Test
@@ -42,7 +42,7 @@ class EmailNotificationIssuerTest {
     User user = new UserBuilder().build();
     given(
             notificationEmailFactory.createDelayNotificationEmail(
-                NotificationType.MODEL_ASSEMBLY_DELAY, order, SENDER_EMAIL_ADDRESS, user))
+                NotificationType.MODEL_ASSEMBLY_DELAY, order, A_SENDER_EMAIL_ADDRESS, user))
         .willReturn(email);
 
     // when
@@ -59,7 +59,7 @@ class EmailNotificationIssuerTest {
     User user = new UserBuilder().build();
     given(
             notificationEmailFactory.createDelayNotificationEmail(
-                NotificationType.BATTERY_ASSEMBLY_DELAY, order, SENDER_EMAIL_ADDRESS, user))
+                NotificationType.BATTERY_ASSEMBLY_DELAY, order, A_SENDER_EMAIL_ADDRESS, user))
         .willReturn(email);
 
     // when
@@ -76,7 +76,7 @@ class EmailNotificationIssuerTest {
     User user = new UserBuilder().build();
     given(
             notificationEmailFactory.createDelayNotificationEmail(
-                NotificationType.VEHICLE_ASSEMBLY_DELAY, order, SENDER_EMAIL_ADDRESS, user))
+                NotificationType.VEHICLE_ASSEMBLY_DELAY, order, A_SENDER_EMAIL_ADDRESS, user))
         .willReturn(email);
 
     // when

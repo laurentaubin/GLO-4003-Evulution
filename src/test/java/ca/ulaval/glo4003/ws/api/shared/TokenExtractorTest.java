@@ -11,7 +11,7 @@ class TokenExtractorTest {
   private static final String A_AUTH_HEADER_NAME = "Bearer";
   private static final String A_AUTH_TOKEN = "some_token_value";
   private static final String A_AUTH_HEADER = A_AUTH_HEADER_NAME + " " + A_AUTH_TOKEN;
-  private static final String ABSENT_AUTH_HEADER = null;
+  private static final String AN_ABSENT_AUTH_HEADER = null;
 
   @Test
   public void whenExtract_thenTokenIsExtractedFromHeader() {
@@ -31,7 +31,7 @@ class TokenExtractorTest {
     TokenExtractor tokenExtractor = new TokenExtractor(A_AUTH_HEADER_NAME);
 
     // when
-    Executable execution = () -> tokenExtractor.extract(ABSENT_AUTH_HEADER);
+    Executable execution = () -> tokenExtractor.extract(AN_ABSENT_AUTH_HEADER);
 
     // then
     assertThrows(EmptyTokenHeaderException.class, execution);

@@ -14,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionLogServiceTest {
-  TransactionFixture transactionFixture = new TransactionFixture();
-  TransactionLogFixture transactionLogFixture = new TransactionLogFixture();
+  private TransactionFixture transactionFixture = new TransactionFixture();
+  private TransactionLogFixture transactionLogFixture = new TransactionLogFixture();
 
   @Mock TransactionLogFactory transactionLogFactory;
   @Mock TransactionLogSink transactionLogSink;

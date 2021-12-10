@@ -1,11 +1,5 @@
 package ca.ulaval.glo4003.ws.service.user;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
 import ca.ulaval.glo4003.ws.domain.auth.Session;
 import ca.ulaval.glo4003.ws.domain.auth.SessionAdministrator;
@@ -25,6 +19,12 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
   private static final String AN_EMAIL = "an@email.com";
@@ -38,7 +38,7 @@ class UserServiceTest {
   @Mock private SessionDtoAssembler sessionDtoAssembler;
   @Mock private PasswordAdministrator passwordAdministrator;
 
-  @Mock private User aUser;
+  @Mock private User user;
 
   private UserService userService;
   private RegisterUserDto registerUserDto;
@@ -58,9 +58,9 @@ class UserServiceTest {
   @Test
   public void givenUserAlreadyExists_whenRegisterUser_thenThrowEmailAlreadyInUseException() {
     // given
-    given(aUser.getEmail()).willReturn(AN_EMAIL);
+    given(user.getEmail()).willReturn(AN_EMAIL);
     given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(userAssembler.assemble(registerUserDto)).willReturn(aUser);
+    given(userAssembler.assemble(registerUserDto)).willReturn(user);
 
     // when
     Executable registeringUser = () -> userService.registerUser(registerUserDto);
@@ -85,7 +85,7 @@ class UserServiceTest {
   @Test
   public void whenRegisterUser_thenCredentialsAreRegistered() {
     // given
-    given(userAssembler.assemble(registerUserDto)).willReturn(aUser);
+    given(userAssembler.assemble(registerUserDto)).willReturn(user);
 
     // when
     userService.registerUser(registerUserDto);

@@ -23,7 +23,7 @@ class CatchCannotAddBatteryBeforeVehicleExceptionMapperTest {
 
   @Test
   public void
-      givenCannotAddBatteryBeforeVehicleException_whenToResponse_thenReturnCorrectResponse() {
+      givenCannotAddBatteryBeforeVehicleException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     CannotAddBatteryBeforeVehicleException exception = new CannotAddBatteryBeforeVehicleException();
 

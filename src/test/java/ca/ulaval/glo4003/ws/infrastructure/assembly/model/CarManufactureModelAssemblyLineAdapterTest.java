@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class CarManufactureModelAssemblyLineAdapterTest {
-  private final BuildStatus ASSEMBLED_BUILD_STATUS = BuildStatus.ASSEMBLED;
+  private final BuildStatus AN_ASSEMBLED_BUILD_STATUS = BuildStatus.ASSEMBLED;
   private final BuildStatus AN_INVALID_BUILD_STATUS = null;
 
   @Mock private CommandID commandId;
@@ -71,7 +71,7 @@ class CarManufactureModelAssemblyLineAdapterTest {
   void givenAValidStatus_whenGetAssemblyStatus_thenReturnExpectedAssemblyStatus() {
     // given
     given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
-    given(vehicleAssemblyLine.getBuildStatus(commandId)).willReturn(ASSEMBLED_BUILD_STATUS);
+    given(vehicleAssemblyLine.getBuildStatus(commandId)).willReturn(AN_ASSEMBLED_BUILD_STATUS);
 
     // when
     AssemblyStatus assemblyStatus =

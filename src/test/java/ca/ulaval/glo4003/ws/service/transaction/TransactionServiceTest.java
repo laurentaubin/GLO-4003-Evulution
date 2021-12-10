@@ -1,16 +1,7 @@
 package ca.ulaval.glo4003.ws.service.transaction;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionCompletedObservable;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionFactory;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionRepository;
+import ca.ulaval.glo4003.ws.domain.transaction.*;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentFactory;
@@ -22,7 +13,6 @@ import ca.ulaval.glo4003.ws.service.delivery.DeliveryService;
 import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureBatteryDto;
 import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigurePaymentDto;
 import ca.ulaval.glo4003.ws.service.transaction.dto.ConfigureVehicleDto;
-import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,13 +20,20 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
   private static final TransactionId AN_ID = TransactionId.fromString("id");
-  private static final String BATTERY_TYPE = "type";
+  private static final String A_BATTERY_TYPE = "type";
   private static final BigDecimal A_RANGE = BigDecimal.TEN;
   private static final String A_MODEL = "model";
-  private static final String WHITE = "White";
+  private static final String A_WHITE_COLOR = "White";
 
   @Mock private DeliveryService deliveryService;
   @Mock private VehicleFactory vehicleFactory;
@@ -132,14 +129,14 @@ class TransactionServiceTest {
       givenATransactionIdAndAConfigureVehicleDto_whenConfigureVehicle_thenVehicleIsCreatedFromDto() {
     // given
     given(configureVehicleDto.getModelName()).willReturn(A_MODEL);
-    given(configureVehicleDto.getColor()).willReturn(WHITE);
+    given(configureVehicleDto.getColor()).willReturn(A_WHITE_COLOR);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
     transactionService.configureVehicle(AN_ID, configureVehicleDto);
 
     // then
-    verify(vehicleFactory).create(A_MODEL, WHITE);
+    verify(vehicleFactory).create(A_MODEL, A_WHITE_COLOR);
   }
 
   @Test
@@ -187,13 +184,13 @@ class TransactionServiceTest {
       givenConfigureBatteryDtoAndATransactionId_whenConfigureBattery_thenDesiredBatteryIsFetch() {
     // given
     given(transactionRepository.find(any())).willReturn(transaction);
-    given(configureBatteryDto.getTypeName()).willReturn(BATTERY_TYPE);
+    given(configureBatteryDto.getTypeName()).willReturn(A_BATTERY_TYPE);
 
     // when
     transactionService.configureBattery(AN_ID, configureBatteryDto);
 
     // then
-    verify(batteryRepository).findByType(BATTERY_TYPE);
+    verify(batteryRepository).findByType(A_BATTERY_TYPE);
   }
 
   @Test

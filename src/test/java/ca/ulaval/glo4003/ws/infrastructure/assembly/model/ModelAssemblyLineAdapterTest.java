@@ -22,10 +22,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ModelAssemblyLineAdapterTest {
   private static final String A_MODEL_NAME = "model name";
 
-  @Mock private OrderId anOrderId;
-  @Mock private Order anOrder;
+  @Mock private OrderId orderId;
+  @Mock private Order order;
   @Mock private ModelOrder modelOrder;
-  @Mock private CommandID aCommandId;
+  @Mock private CommandID commandID;
   @Mock private VehicleAssemblyLine vehicleAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
 
@@ -40,11 +40,11 @@ class ModelAssemblyLineAdapterTest {
   @Test
   public void givenAnAssembledOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(vehicleAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.ASSEMBLED);
 
     // when
-    AssemblyStatus assemblyStatus = modelAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = modelAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.ASSEMBLED);
@@ -53,11 +53,11 @@ class ModelAssemblyLineAdapterTest {
   @Test
   public void givenAnInProgressOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(vehicleAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.IN_PROGRESS);
 
     // when
-    AssemblyStatus assemblyStatus = modelAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = modelAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.IN_PROGRESS);
@@ -66,11 +66,11 @@ class ModelAssemblyLineAdapterTest {
   @Test
   public void givenAReceivedOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(vehicleAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.RECEIVED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(vehicleAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.RECEIVED);
 
     // when
-    AssemblyStatus assemblyStatus = modelAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = modelAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.RECEIVED);
@@ -79,16 +79,16 @@ class ModelAssemblyLineAdapterTest {
   @Test
   public void givenAnOrder_whenAddOrder_thenOrderIsSentToBeAssembled() {
     // given
-    given(anOrder.getId()).willReturn(anOrderId);
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(anOrder.getModelOrder()).willReturn(modelOrder);
+    given(order.getId()).willReturn(orderId);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
+    given(order.getModelOrder()).willReturn(modelOrder);
     given(modelOrder.getModelType()).willReturn(A_MODEL_NAME);
 
     // when
-    modelAssemblyLineAdapter.addOrder(anOrder);
+    modelAssemblyLineAdapter.addOrder(order);
 
     // then
-    verify(vehicleAssemblyLine).newCarCommand(aCommandId, A_MODEL_NAME);
+    verify(vehicleAssemblyLine).newCarCommand(commandID, A_MODEL_NAME);
   }
 
   @Test

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 class BankAccountValidatorTest {
-
   private static final String A_VALID_BANK_NUMBER = "003";
   private static final String A_VALID_ACCOUNT_NUMBER = "0099999";
   private static final String AN_INVALID_BANK_NUMBER = "10";

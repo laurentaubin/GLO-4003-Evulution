@@ -22,7 +22,7 @@ class CatchIncompleteVehicleExceptionMapperTest {
   }
 
   @Test
-  public void givenIncompleteVehicleException_whenToResponse_thenReturnRightResponse() {
+  public void givenIncompleteVehicleException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     IncompleteVehicleException exception =
         new IncompleteVehicleException("Vehicle must be complete to calculate price.");

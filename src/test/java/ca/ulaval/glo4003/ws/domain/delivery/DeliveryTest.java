@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryTest {
-
   @Mock private DeliveryId deliveryId;
   @Mock private DeliveryId anotherDeliveryId;
   @Mock private DeliveryDestination destination;

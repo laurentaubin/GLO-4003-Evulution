@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 class FrequencyTest {
-
   @Test
   void givenValidFrequencyString_whenFromString_thenReturnCorrectFrequency() {
     // given

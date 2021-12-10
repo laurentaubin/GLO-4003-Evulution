@@ -32,13 +32,13 @@ class LinearAssemblyStrategyTest {
   private final Order OTHER_ORDER = new OrderBuilder().withOrderId(OTHER_ORDER_ID).build();
   private final Order YET_ANOTHER_ODER =
       new OrderBuilder().withOrderId(YET_ANOTHER_ORDER_ID).build();
-  private static final boolean COMPLETED = true;
-  private static final boolean NOT_COMPLETED = false;
+  private static final boolean IS_COMPLETED = true;
+  private static final boolean IS_NOT_COMPLETED = false;
 
   @Mock private ModelAssemblyLineStrategy modelAssemblyLineStrategy;
   @Mock private BatteryAssemblyLineStrategy batteryAssemblyLineStrategy;
   @Mock private VehicleAssemblyLineStrategy vehicleAssemblyLineStrategy;
-  @Mock private Order anOrder;
+  @Mock private Order order;
   @Mock private Order anotherOrder;
   @Mock private OrderRepository orderRepository;
 
@@ -57,19 +57,19 @@ class LinearAssemblyStrategyTest {
   @Test
   public void givenAnOrder_whenAddOrder_thenOrderIsSentToTheModelAssemblyLine() {
     // when
-    linearAssemblyStrategy.addOrder(anOrder);
+    linearAssemblyStrategy.addOrder(order);
 
     // then
-    verify(modelAssemblyLineStrategy).addOrder(anOrder);
+    verify(modelAssemblyLineStrategy).addOrder(order);
   }
 
   @Test
   public void whenListenToModelAssembled_thenOrderedBatteryIsSentToBeAssembled() {
     // when
-    linearAssemblyStrategy.listenToModelAssembled(anOrder);
+    linearAssemblyStrategy.listenToModelAssembled(order);
 
     // then
-    verify(batteryAssemblyLineStrategy).addOrder(anOrder);
+    verify(batteryAssemblyLineStrategy).addOrder(order);
   }
 
   @Test
@@ -86,19 +86,19 @@ class LinearAssemblyStrategyTest {
   @Test
   public void givenOrder_whenListenToModelAssembled_thenAssembleBatteryForOrder() {
     // when
-    linearAssemblyStrategy.listenToModelAssembled(anOrder);
+    linearAssemblyStrategy.listenToModelAssembled(order);
 
     // then
-    verify(batteryAssemblyLineStrategy).addOrder(anOrder);
+    verify(batteryAssemblyLineStrategy).addOrder(order);
   }
 
   @Test
   public void givenOrder_whenListenToBatteryAssembled_thenAssembleVehicleForOrder() {
     // when
-    linearAssemblyStrategy.listenToBatteryAssembled(anOrder);
+    linearAssemblyStrategy.listenToBatteryAssembled(order);
 
     // then
-    verify(vehicleAssemblyLineStrategy).assembleVehicle(anOrder);
+    verify(vehicleAssemblyLineStrategy).assembleVehicle(order);
   }
 
   @Test
@@ -120,7 +120,7 @@ class LinearAssemblyStrategyTest {
     linearAssemblyStrategy.reactivate();
 
     // then
-    verify(batteryAssemblyLineStrategy, never()).addOrder(anOrder);
+    verify(batteryAssemblyLineStrategy, never()).addOrder(order);
   }
 
   @Test
@@ -145,45 +145,45 @@ class LinearAssemblyStrategyTest {
   @Test
   public void givenCompletedOrders_whenShutdown_thenCompletedOrdersAreSetAsNotReadyAnymore() {
     // given
-    given(orderRepository.findAllCompletedOrders()).willReturn(List.of(anOrder, anotherOrder));
+    given(orderRepository.findAllCompletedOrders()).willReturn(List.of(order, anotherOrder));
 
     // when
     linearAssemblyStrategy.shutdown();
 
     // then
-    verify(anOrder).setIsReadyForDelivery(NOT_COMPLETED);
-    verify(anotherOrder).setIsReadyForDelivery(NOT_COMPLETED);
+    verify(order).setIsReadyForDelivery(IS_NOT_COMPLETED);
+    verify(anotherOrder).setIsReadyForDelivery(IS_NOT_COMPLETED);
   }
 
   @Test
   public void givenCompletedOrders_whenShutdown_thenUpdatedCompletedOrdersAreSaved() {
     // given
-    given(orderRepository.findAllCompletedOrders()).willReturn(List.of(anOrder, anotherOrder));
+    given(orderRepository.findAllCompletedOrders()).willReturn(List.of(order, anotherOrder));
 
     // when
     linearAssemblyStrategy.shutdown();
 
     // then
-    verify(orderRepository).save(anOrder);
+    verify(orderRepository).save(order);
     verify(orderRepository).save(anotherOrder);
   }
 
   @Test
   public void givenAnOrder_whenListenToVehicleAssembled_thenOrderIsSetAsCompleted() {
     // when
-    linearAssemblyStrategy.listenToModelAssembled(anOrder);
+    linearAssemblyStrategy.listenToModelAssembled(order);
 
     // then
-    anOrder.setIsReadyForDelivery(COMPLETED);
+    order.setIsReadyForDelivery(IS_COMPLETED);
   }
 
   @Test
   public void givenAnOrder_whenListenToVehicleAssembled_thenOrderIsSaved() {
     // when
-    linearAssemblyStrategy.listenToVehicleAssembled(anOrder);
+    linearAssemblyStrategy.listenToVehicleAssembled(order);
 
     // then
-    verify(orderRepository).save(anOrder);
+    verify(orderRepository).save(order);
   }
 
   @Test

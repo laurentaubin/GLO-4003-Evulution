@@ -11,8 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionCompletedObservableTest {
-
-  @Mock private TransactionObserver anObserver;
+  @Mock private TransactionObserver observer;
   @Mock private TransactionObserver anotherObserver;
   @Mock private Transaction transaction;
 
@@ -27,14 +26,14 @@ class TransactionCompletedObservableTest {
   void
       givenAnObservers_whenNotifyTransactionCompleted_thenObserversAreNotifiedWithTransactionInformation() {
     // given
-    transactionCompletedObservable.register(anObserver);
+    transactionCompletedObservable.register(observer);
     transactionCompletedObservable.register(anotherObserver);
 
     // when
     transactionCompletedObservable.notifyTransactionCompleted(transaction);
 
     // then
-    verify(anObserver).listenToTransactionCompleted(transaction);
+    verify(observer).listenToTransactionCompleted(transaction);
     verify(anotherObserver).listenToTransactionCompleted(transaction);
   }
 }

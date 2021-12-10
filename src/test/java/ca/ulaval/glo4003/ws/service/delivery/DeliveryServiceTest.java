@@ -1,41 +1,27 @@
 package ca.ulaval.glo4003.ws.service.delivery;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
 import ca.ulaval.glo4003.ws.domain.assembly.order.Order;
 import ca.ulaval.glo4003.ws.domain.assembly.order.OrderRepository;
-import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryFactory;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryMode;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryRepository;
-import ca.ulaval.glo4003.ws.domain.delivery.Location;
+import ca.ulaval.glo4003.ws.domain.delivery.*;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.payment.Frequency;
 import ca.ulaval.glo4003.ws.domain.transaction.payment.PaymentService;
-import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
-import ca.ulaval.glo4003.ws.domain.transaction.payment.Receipt;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
-import java.math.BigDecimal;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
-  private static final TransactionId TRANSACTION_ID = TransactionId.fromString("ID");
   private static final DeliveryId DELIVERY_ID = new DeliveryId("ID");
-  private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
-  private static final Price A_PRICE = new Price(new BigDecimal(1200));
-  private static final Receipt A_RECEIPT =
-      new Receipt(A_PRICE, Frequency.MONTHLY, AMOUNT_OF_YEARS_TO_PAY_OVER);
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("tx id");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("id");
   private static final DeliveryMode A_DELIVERY_MODE = DeliveryMode.CAMPUS;
@@ -49,7 +35,6 @@ class DeliveryServiceTest {
   @Mock private PaymentService paymentService;
   @Mock private DeliveryFactory deliveryFactory;
   @Mock private OrderRepository orderRepository;
-
   @Mock private Delivery delivery;
   @Mock private Order order;
   @Mock private DeliveryLocationDto deliveryLocationDto;
