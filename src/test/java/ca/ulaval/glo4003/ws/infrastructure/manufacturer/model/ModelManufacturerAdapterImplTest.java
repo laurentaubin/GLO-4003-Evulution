@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
-import ca.ulaval.glo4003.ws.fixture.ModelOrderFixture;
+import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
 import ca.ulaval.glo4003.ws.infrastructure.warehouse.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,6 +98,6 @@ class ModelManufacturerAdapterImplTest {
   }
 
   private ModelOrder createAModelOrder() {
-    return new ModelOrderFixture().withOrderId(orderId).build();
+    return new ModelOrderBuilder().withOrderId(orderId).build();
   }
 }

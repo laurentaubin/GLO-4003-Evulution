@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.fixture.ModelOrderFixture;
+import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ class ModelManufacturerImplTest {
   private static final AssemblyTime AN_ASSEMBLY_TIME = new AssemblyTime(5);
   private static final String A_MODEL_TYPE = "modelType";
   private static final ModelOrder A_MODEL_ORDER =
-      new ModelOrderFixture()
+      new ModelOrderBuilder()
           .withOrderId(AN_ID)
           .withAssemblyTime(AN_ASSEMBLY_TIME)
           .withModelName(A_MODEL_TYPE)
@@ -34,7 +34,7 @@ class ModelManufacturerImplTest {
   private static final AssemblyTime ANOTHER_ASSEMBLY_TIME = new AssemblyTime(10);
   private static final String ANOTHER_MODEL_TYPE = "anotherModelType";
   private static final ModelOrder ANOTHER_MODEL_ORDER =
-      new ModelOrderFixture()
+      new ModelOrderBuilder()
           .withModelName(ANOTHER_MODEL_TYPE)
           .withOrderId(ANOTHER_ID)
           .withAssemblyTime(ANOTHER_ASSEMBLY_TIME)

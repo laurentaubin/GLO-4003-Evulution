@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.ws.infrastructure.warehouse.order;
 
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.exception.OrderNotFoundException;
-import ca.ulaval.glo4003.ws.fixture.OrderFixture;
+import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,7 +70,7 @@ class InMemoryOrderRepositoryTest {
   }
 
   private Order createCompletedOrder() {
-    Order order = new OrderFixture().build();
+    Order order = new OrderBuilder().build();
     order.setIsReadyForDelivery(true);
     return order;
   }

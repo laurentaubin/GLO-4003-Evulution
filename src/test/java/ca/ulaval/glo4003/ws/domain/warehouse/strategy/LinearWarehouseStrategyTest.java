@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.strategy.VehicleWarehouseStrategy;
-import ca.ulaval.glo4003.ws.fixture.OrderFixture;
+import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,11 +28,11 @@ class LinearWarehouseStrategyTest {
   private static final OrderId ANOTHER_ORDER_ID = new OrderId("anotherOrderId");
   private static final OrderId OTHER_ORDER_ID = new OrderId("otherOrderId");
   private static final OrderId YET_ANOTHER_ORDER_ID = new OrderId("yetAnotherOrderId");
-  private final Order AN_ORDER = new OrderFixture().withOrderId(AN_ORDER_ID).build();
-  private final Order ANOTHER_ORDER = new OrderFixture().withOrderId(ANOTHER_ORDER_ID).build();
-  private final Order OTHER_ORDER = new OrderFixture().withOrderId(OTHER_ORDER_ID).build();
+  private final Order AN_ORDER = new OrderBuilder().withOrderId(AN_ORDER_ID).build();
+  private final Order ANOTHER_ORDER = new OrderBuilder().withOrderId(ANOTHER_ORDER_ID).build();
+  private final Order OTHER_ORDER = new OrderBuilder().withOrderId(OTHER_ORDER_ID).build();
   private final Order YET_ANOTHER_ORDER =
-      new OrderFixture().withOrderId(YET_ANOTHER_ORDER_ID).build();
+      new OrderBuilder().withOrderId(YET_ANOTHER_ORDER_ID).build();
   private static final boolean COMPLETED = true;
 
   @Mock private ModelWarehouseStrategy modelWarehouseStrategy;

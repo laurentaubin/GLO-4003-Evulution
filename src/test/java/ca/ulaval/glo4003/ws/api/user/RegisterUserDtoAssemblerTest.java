@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.api.user;
 
 import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
-import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestFixture;
+import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestBuilder;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class RegisterUserDtoAssemblerTest {
   @Test
   void givenRegisterUserRequest_whenAssemble_thenReturnCorrectRegisterUserDto() {
     // given
-    RegisterUserRequest request = new RegisterUserRequestFixture().build();
+    RegisterUserRequest request = new RegisterUserRequestBuilder().build();
 
     // when
     RegisterUserDto registerUserDto = registerUserDtoAssembler.assemble(request);

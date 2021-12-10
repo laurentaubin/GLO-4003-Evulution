@@ -7,8 +7,8 @@ import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.fixture.ModelOrderFixture;
-import ca.ulaval.glo4003.ws.fixture.OrderFixture;
+import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
+import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,19 +30,19 @@ class AccumulateModelWarehouseStrategyTest {
   private static final AssemblyTime ASSEMBLY_TIME_OF_TWO_WEEKS = new AssemblyTime(2);
   private static final String FIRST_MODEL_TYPE = "first type";
   private static final ModelOrder FIRST_MODEL_IN_CYCLE =
-      new ModelOrderFixture()
+      new ModelOrderBuilder()
           .withModelName(FIRST_MODEL_TYPE)
           .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
           .build();
   private static final String SECOND_MODEL_TYPE = "second type";
   private static final ModelOrder SECOND_MODEL_IN_CYCLE =
-      new ModelOrderFixture()
+      new ModelOrderBuilder()
           .withModelName(SECOND_MODEL_TYPE)
           .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
           .build();
   private static final String THIRD_MODEL_TYPE = "third type";
   private static final ModelOrder THIRD_MODEL_IN_CYCLE =
-      new ModelOrderFixture()
+      new ModelOrderBuilder()
           .withModelName(THIRD_MODEL_TYPE)
           .withAssemblyTime(ASSEMBLY_TIME_OF_TWO_WEEKS)
           .build();
@@ -50,7 +50,7 @@ class AccumulateModelWarehouseStrategyTest {
       List.of(FIRST_MODEL_IN_CYCLE, SECOND_MODEL_IN_CYCLE, THIRD_MODEL_IN_CYCLE);
   private static final OrderId FIRST_ORDER_ID = new OrderId("firstOrderId");
   private static final ModelOrder FIRST_MODEL_ORDER =
-      new ModelOrderFixture()
+      new ModelOrderBuilder()
           .withOrderId(FIRST_ORDER_ID)
           .withModelName(FIRST_MODEL_TYPE)
           .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
@@ -175,8 +175,8 @@ class AccumulateModelWarehouseStrategyTest {
       givenAnOrderWaitingForModel__whenListenToModelAssembled_thenModelIsNotAddedToInventory() {
     // given
     ModelOrder modelOrder =
-        new ModelOrderFixture().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
-    Order order = new OrderFixture().withModelOrder(modelOrder).build();
+        new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
+    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
     accumulateModelWarehouseStrategy.addOrder(order);
 
     // when
@@ -191,8 +191,8 @@ class AccumulateModelWarehouseStrategyTest {
       givenAnOrderWaitingForModel_whenListenToModelAssembled_thenNotifyBatteryOrderIsInStockForOrder() {
     // given
     ModelOrder modelOrder =
-        new ModelOrderFixture().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
-    Order order = new OrderFixture().withModelOrder(modelOrder).build();
+        new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
+    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
     accumulateModelWarehouseStrategy.addOrder(order);
 
     // when
@@ -207,9 +207,9 @@ class AccumulateModelWarehouseStrategyTest {
       givenManyOrdersWaitingForModelAndManyModelsAssembled_whenListenToModelAssembled_thenNotifyOrdersWaitingForBatteryInOrder() {
     // given
     ModelOrder modelOrder =
-        new ModelOrderFixture().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
-    Order order = new OrderFixture().withModelOrder(modelOrder).build();
-    Order anotherOrder = new OrderFixture().withModelOrder(modelOrder).build();
+        new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
+    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
+    Order anotherOrder = new OrderBuilder().withModelOrder(modelOrder).build();
     accumulateModelWarehouseStrategy.addOrder(order);
     accumulateModelWarehouseStrategy.addOrder(anotherOrder);
 
@@ -228,9 +228,9 @@ class AccumulateModelWarehouseStrategyTest {
       givenManyOrdersWaitingForModel_whenListenToModelAssembled_thenOnlyNotifyFirstOrderWaitingForBatteryOrder() {
     // given
     ModelOrder modelOrder =
-        new ModelOrderFixture().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
-    Order order = new OrderFixture().withModelOrder(modelOrder).build();
-    Order anotherOrder = new OrderFixture().withModelOrder(modelOrder).build();
+        new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
+    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
+    Order anotherOrder = new OrderBuilder().withModelOrder(modelOrder).build();
     accumulateModelWarehouseStrategy.addOrder(order);
     accumulateModelWarehouseStrategy.addOrder(anotherOrder);
 
@@ -356,12 +356,12 @@ class AccumulateModelWarehouseStrategyTest {
   //  }
 
   private Order createAnOrderWithModelType(String modelType) {
-    ModelOrder aModelOrder = new ModelOrderFixture().withModelName(modelType).build();
-    return new OrderFixture().withModelOrder(aModelOrder).build();
+    ModelOrder aModelOrder = new ModelOrderBuilder().withModelName(modelType).build();
+    return new OrderBuilder().withModelOrder(aModelOrder).build();
   }
 
   private Order createAnOrderWithModel(ModelOrder modelOrder) {
-    return new OrderFixture().withModelOrder(modelOrder).build();
+    return new OrderBuilder().withModelOrder(modelOrder).build();
   }
 
   private void addOrdersToAssemblyLine(List<Order> orders) {

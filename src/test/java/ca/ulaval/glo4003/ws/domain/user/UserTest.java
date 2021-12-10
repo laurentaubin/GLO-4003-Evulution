@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.domain.user;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.exception.NoTransactionLinkedToDeliveryException;
-import ca.ulaval.glo4003.ws.fixture.UserFixture;
+import ca.ulaval.glo4003.ws.fixture.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ class UserTest {
 
   @BeforeEach
   public void setUp() {
-    user = new UserFixture().build();
+    user = new UserBuilder().build();
   }
 
   @Test
@@ -75,7 +75,7 @@ class UserTest {
   @Test
   void givenUserPossessRequestedRole_whenIsAllowed_thenUserIsAllowed() {
     // given
-    User userWithRequestedRoles = new UserFixture().withRoles(List.of(Role.CUSTOMER)).build();
+    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.CUSTOMER)).build();
     List<Role> requestedRoles = List.of(Role.CUSTOMER, Role.PRODUCTION_MANAGER);
 
     // when
@@ -89,7 +89,7 @@ class UserTest {
   void
       givenValidDeliveryId_whenGettingTransactionIdFromDeliveryId_thenReturnCorrespondingTransactionId() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     user.addTransactionDelivery(A_TRANSACTION_ID, A_DELIVERY_ID);
 
     // when
@@ -103,7 +103,7 @@ class UserTest {
   void
       givenAnInvalidDeliveryId_whenGettingTransactionIdFromDeliveryId_thenThrowsNoTransactionLinkedToDeliveryException() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     user.addTransactionDelivery(A_TRANSACTION_ID, A_DELIVERY_ID);
     DeliveryId aDifferentDeliveryId = new DeliveryId("a different id");
 
@@ -118,7 +118,7 @@ class UserTest {
   @Test
   void givenUserWithoutRequestedRole_whenIsAllowed_thenUserIsNotAllowed() {
     // given
-    User userWithRequestedRoles = new UserFixture().withRoles(List.of(Role.PRODUCTION_MANAGER)).build();
+    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.PRODUCTION_MANAGER)).build();
     List<Role> requestedRoles = List.of(Role.CUSTOMER);
 
     // when

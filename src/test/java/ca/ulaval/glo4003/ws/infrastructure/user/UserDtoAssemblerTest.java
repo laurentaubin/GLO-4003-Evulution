@@ -5,7 +5,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.fixture.UserFixture;
+import ca.ulaval.glo4003.ws.fixture.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ class UserDtoAssemblerTest {
   @Test
   public void givenUser_whenAssemble_thenReturnUserDtoWithSameAttributes() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
 
     // when
     UserDto userDto = assembler.assemble(user);
@@ -48,7 +48,7 @@ class UserDtoAssemblerTest {
   @Test
   public void givenAssembledUserDto_whenAddingRoleToUser_thenUserDtoIsNotAffected() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     UserDto userDto = assembler.assemble(user);
 
     // when
@@ -61,7 +61,7 @@ class UserDtoAssemblerTest {
   @Test
   public void givenAssembledUserDto_whenAddingTransactionToUser_thenUserDtoIsNotAffected() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     UserDto userDto = assembler.assemble(user);
 
     // when
@@ -74,7 +74,7 @@ class UserDtoAssemblerTest {
   @Test
   public void givenAssembledUserDto_whenAddingDeliveryToUser_thenUserDtoIsNotAffected() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     UserDto userDto = assembler.assemble(user);
 
     // when

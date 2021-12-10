@@ -9,7 +9,7 @@ import ca.ulaval.glo4003.ws.domain.user.OwnershipDomainService;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
-import ca.ulaval.glo4003.ws.fixture.UserFixture;
+import ca.ulaval.glo4003.ws.fixture.UserBuilder;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
@@ -64,7 +64,7 @@ class UserServiceTest {
   @Test
   public void whenRegisterUser_thenUserIsRegistered() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     given(userAssembler.assemble(registerUserDto)).willReturn(user);
 
     // when
