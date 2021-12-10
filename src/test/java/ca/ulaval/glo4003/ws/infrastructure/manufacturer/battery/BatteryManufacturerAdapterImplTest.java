@@ -63,8 +63,8 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenAnAssembledOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
-    given(batteryAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.ASSEMBLED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
+    given(batteryAssemblyLine.getBuildStatus(commandId)).willReturn(BuildStatus.ASSEMBLED);
 
     // when
     AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
@@ -76,8 +76,8 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenAnInProgressOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
-    given(batteryAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.IN_PROGRESS);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
+    given(batteryAssemblyLine.getBuildStatus(commandId)).willReturn(BuildStatus.IN_PROGRESS);
 
     // when
     AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
@@ -89,8 +89,8 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenAReceivedOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandID);
-    given(batteryAssemblyLine.getBuildStatus(commandID)).willReturn(BuildStatus.RECEIVED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
+    given(batteryAssemblyLine.getBuildStatus(commandId)).willReturn(BuildStatus.RECEIVED);
 
     // when
     AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);

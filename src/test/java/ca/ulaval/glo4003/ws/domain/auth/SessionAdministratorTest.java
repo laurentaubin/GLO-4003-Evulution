@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 class SessionAdministratorTest {
   private static final String AN_EMAIL = "an@email.com";
   private static final String A_PASSWORD = "pass123";
-  private static final String INVALID_PASSWORD = "invalidPassword";
+  private static final String AN_INVALID_PASSWORD = "invalidPassword";
   private static final String A_TOKEN_STRING = "a_token";
   private static final List<Role> USER_ROLES = List.of(Role.CUSTOMER);
   private static final List<Role> ROLES_THE_USER_DOESNT_HAVE = List.of(Role.PRODUCTION_MANAGER);
@@ -47,7 +47,7 @@ class SessionAdministratorTest {
 
   @BeforeEach
   public void setUp() {
-    aUser = new UserBuilder().withEmail(AN_EMAIL).withRoles(USER_ROLES).build();
+    user = new UserBuilder().withEmail(AN_EMAIL).withRoles(USER_ROLES).build();
 
     sessionAdministrator =
         new SessionAdministrator(
@@ -70,7 +70,7 @@ class SessionAdministratorTest {
   public void givenUserExistsButPasswordDoesNotMatch_whenLogin_thenThrowLoginFailedException() {
     // given
     given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(passwordAdministrator.areCredentialsValid(AN_EMAIL, INVALID_PASSWORD)).willReturn(false);
+    given(passwordAdministrator.areCredentialsValid(AN_EMAIL, AN_INVALID_PASSWORD)).willReturn(false);
 
     // when
     Executable checkingCredentials =
@@ -98,7 +98,7 @@ class SessionAdministratorTest {
   public void givenTokenCreatedByFactory_whenLogin_thenReturnToken() {
     // given
     given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
-    given(sessionFactory.create(AN_EMAIL)).willReturn(aSession);
+    given(sessionFactory.create(AN_EMAIL)).willReturn(session);
     given(passwordAdministrator.areCredentialsValid(AN_EMAIL, A_PASSWORD)).willReturn(true);
 
     // when
@@ -134,10 +134,10 @@ class SessionAdministratorTest {
 
   @Test public void whenRegisterUser_thenRegisterAUser() {
     // when
-    sessionAdministrator.registerUser(aUser, A_PASSWORD);
+    sessionAdministrator.registerUser(user, A_PASSWORD);
 
     // then
-    verify(userRepository).registerUser(aUser);
+    verify(userRepository).registerUser(user);
     verify(passwordAdministrator).register(AN_EMAIL, A_PASSWORD);
   }
 
@@ -146,7 +146,7 @@ class SessionAdministratorTest {
     given(userRepository.doesUserExist(AN_EMAIL)).willReturn(true);
 
     // when
-    Executable registeringUser = () -> sessionAdministrator.registerUser(aUser, A_PASSWORD);
+    Executable registeringUser = () -> sessionAdministrator.registerUser(user, A_PASSWORD);
 
     // then
     assertThrows(EmailAlreadyInUseException.class, registeringUser);
@@ -154,12 +154,12 @@ class SessionAdministratorTest {
 
   @Test public void givenUnallowedUser_whenValidatePermissions_thenThrowUnauthorizedUserException() {
     // given
-    given(aSession.getEmail()).willReturn(AN_EMAIL);
+    given(session.getEmail()).willReturn(AN_EMAIL);
     given(tokenDto.getToken()).willReturn(A_TOKEN_STRING);
     given(sessionTokenGenerator.generate(A_TOKEN_STRING)).willReturn(sessionToken);
     given(sessionRepository.doesSessionExist(sessionToken)).willReturn(true);
-    given(sessionRepository.find(sessionToken)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(sessionRepository.find(sessionToken)).willReturn(session);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     Executable authorizingUser = () -> sessionAdministrator.validatePermissions(tokenDto, ROLES_THE_USER_DOESNT_HAVE);
@@ -175,13 +175,13 @@ class SessionAdministratorTest {
     given(tokenDto.getToken()).willReturn(A_TOKEN_STRING);
     given(sessionTokenGenerator.generate(A_TOKEN_STRING)).willReturn(sessionToken);
     given(sessionRepository.doesSessionExist(sessionToken)).willReturn(true);
-    given(sessionRepository.find(sessionToken)).willReturn(aSession);
+    given(sessionRepository.find(sessionToken)).willReturn(session);
 
     // when
     Session session = sessionAdministrator.retrieveSession(tokenDto);
 
     // then
-    assertThat(session).isEqualTo(aSession);
+    assertThat(session).isEqualTo(session);
   }
 
   @Test public void givenSessionDoesNotExists_whenRetrieveSession_thenThrowSessionDoesNotExist() {

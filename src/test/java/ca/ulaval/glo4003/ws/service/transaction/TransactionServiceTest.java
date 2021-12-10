@@ -38,7 +38,7 @@ class TransactionServiceTest {
   private static final String A_BATTERY_TYPE = "type";
   private static final BigDecimal A_RANGE = BigDecimal.TEN;
   private static final String A_MODEL = "model";
-  private static final String WHITE = "White";
+  private static final String A_WHITE_COLOR = "White";
   private static final List<Role> PRIVILEGED_ROLES = new ArrayList<>(List.of(Role.CUSTOMER));
 
   @Mock private DeliveryService deliveryService;
@@ -206,7 +206,7 @@ class TransactionServiceTest {
   void whenConfigureVehicle_thenValidateTransactionOwnership() {
     // given
     given(configureVehicleDto.getModelName()).willReturn(A_MODEL);
-    given(configureVehicleDto.getColor()).willReturn(WHITE);
+    given(configureVehicleDto.getColor()).willReturn(A_WHITE_COLOR);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
