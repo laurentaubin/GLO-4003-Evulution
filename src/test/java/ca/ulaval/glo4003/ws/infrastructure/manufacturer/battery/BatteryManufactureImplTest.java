@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.fixture.BatteryOrderBuilder;
+import ca.ulaval.glo4003.ws.fixture.BatteryOrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ public class BatteryManufactureImplTest {
   private static final AssemblyTime AN_ASSEMBLY_TIME = new AssemblyTime(5);
   private static final String A_BATTERY_TYPE = "batteryType";
   private static final BatteryOrder A_BATTERY_ORDER =
-      new BatteryOrderBuilder()
+      new BatteryOrderFixture()
           .withOrderId(AN_ID)
           .withAssemblyTime(AN_ASSEMBLY_TIME)
           .withBatteryType(A_BATTERY_TYPE)
@@ -34,7 +34,7 @@ public class BatteryManufactureImplTest {
   private static final AssemblyTime ANOTHER_ASSEMBLY_TIME = new AssemblyTime(10);
   private static final String ANOTHER_BATTERY_TYPE = "anotherBatteryType";
   private static final BatteryOrder ANOTHER_BATTERY_ORDER =
-      new BatteryOrderBuilder()
+      new BatteryOrderFixture()
           .withBatteryType(ANOTHER_BATTERY_TYPE)
           .withOrderId(ANOTHER_ID)
           .withAssemblyTime(ANOTHER_ASSEMBLY_TIME)

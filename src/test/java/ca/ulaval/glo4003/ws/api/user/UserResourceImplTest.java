@@ -8,8 +8,8 @@ import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
 import ca.ulaval.glo4003.ws.api.user.response.LoginResponse;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
 import ca.ulaval.glo4003.ws.fixture.LoginResponseBuilder;
-import ca.ulaval.glo4003.ws.fixture.LoginUserRequestBuilder;
-import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestBuilder;
+import ca.ulaval.glo4003.ws.fixture.LoginUserRequestFixture;
+import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestFixture;
 import ca.ulaval.glo4003.ws.service.user.UserService;
 import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
@@ -49,7 +49,7 @@ class UserResourceImplTest {
   @Test
   public void givenValidRegisterUserDto_whenRegisterUser_thenUserIsRegistered() {
     // given
-    RegisterUserRequest request = new RegisterUserRequestBuilder().build();
+    RegisterUserRequest request = new RegisterUserRequestFixture().build();
     given(registerUserDtoAssembler.assemble(request)).willReturn(registerUserDto);
 
     // when
@@ -62,7 +62,7 @@ class UserResourceImplTest {
   @Test
   public void givenInvalidRegisterUserDto_whenRegisterUser_thenThrowInvalidFormatException() {
     // given
-    RegisterUserRequest request = new RegisterUserRequestBuilder().build();
+    RegisterUserRequest request = new RegisterUserRequestFixture().build();
     doThrow(InvalidFormatException.class).when(registerUserDtoValidator).validate(request);
 
     // when
@@ -76,7 +76,7 @@ class UserResourceImplTest {
   public void
       givenEmailAlreadyAssociatedToUser_whenRegisterUser_thenThrowEmailAlreadyInUseException() {
     // given
-    RegisterUserRequest request = new RegisterUserRequestBuilder().build();
+    RegisterUserRequest request = new RegisterUserRequestFixture().build();
     given(registerUserDtoAssembler.assemble(request)).willReturn(registerUserDto);
     doThrow(EmailAlreadyInUseException.class).when(userService).registerUser(registerUserDto);
 
@@ -90,7 +90,7 @@ class UserResourceImplTest {
   @Test
   public void givenSuccessfulLogin_whenLogin_thenReturn200WithLoginToken() {
     // given
-    LoginUserRequest request = new LoginUserRequestBuilder().build();
+    LoginUserRequest request = new LoginUserRequestFixture().build();
     SessionDto sessionDto = new SessionDto(A_TOKEN);
     LoginResponse loginResponse = new LoginResponseBuilder().build();
     given(userService.login(request.getEmail(), request.getPassword())).willReturn(sessionDto);
@@ -108,7 +108,7 @@ class UserResourceImplTest {
   @Test
   public void givenWrongEmailPasswordCombination_whenLogin_thenThrowLoginFailedException() {
     // given
-    LoginUserRequest request = new LoginUserRequestBuilder().build();
+    LoginUserRequest request = new LoginUserRequestFixture().build();
     given(userService.login(request.getEmail(), request.getPassword()))
         .willThrow(new LoginFailedException());
 

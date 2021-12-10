@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.user.UserRepository;
 import ca.ulaval.glo4003.ws.domain.user.credentials.PasswordAdministrator;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
-import ca.ulaval.glo4003.ws.fixture.UserBuilder;
+import ca.ulaval.glo4003.ws.fixture.UserFixture;
 import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
 import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +47,7 @@ class SessionAdministratorTest {
 
   @BeforeEach
   public void setUp() {
-    user = new UserBuilder().withEmail(AN_EMAIL).withRoles(USER_ROLES).build();
+    user = new UserFixture().withEmail(AN_EMAIL).withRoles(USER_ROLES).build();
 
     sessionAdministrator =
         new SessionAdministrator(

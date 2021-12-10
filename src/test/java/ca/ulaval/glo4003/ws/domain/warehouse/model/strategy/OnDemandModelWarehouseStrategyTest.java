@@ -7,8 +7,8 @@ import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
-import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
+import ca.ulaval.glo4003.ws.fixture.ModelOrderFixture;
+import ca.ulaval.glo4003.ws.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,8 +68,8 @@ class OnDemandModelWarehouseStrategyTest {
   public void
       givenModelOrderAssembled_whenListenToModelAssembled_thenObserversNotifyModelInventoryObserver() {
     // given
-    ModelOrder modelOrder = new ModelOrderBuilder().build();
-    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
+    ModelOrder modelOrder = new ModelOrderFixture().build();
+    Order order = new OrderFixture().withModelOrder(modelOrder).build();
     onDemandModelWarehouseStrategy.addOrder(order);
 
     // when
@@ -82,8 +82,8 @@ class OnDemandModelWarehouseStrategyTest {
   @Test
   public void givenNoQueuedOrder_whenAddOrder_thenNotifyAssemblyDelayEventIsNeverCalled() {
     // given
-    ModelOrder modelOrder = new ModelOrderBuilder().build();
-    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
+    ModelOrder modelOrder = new ModelOrderFixture().build();
+    Order order = new OrderFixture().withModelOrder(modelOrder).build();
 
     // when
     onDemandModelWarehouseStrategy.addOrder(order);
@@ -95,10 +95,10 @@ class OnDemandModelWarehouseStrategyTest {
   @Test
   public void givenQueuedOrders_whenAddOrder_thenNotifyAssemblyDelayForAddedOrder() {
     // given
-    ModelOrder modelOrder = new ModelOrderBuilder().build();
-    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
-    ModelOrder anotherModelOrder = new ModelOrderBuilder().build();
-    Order anotherOrder = new OrderBuilder().withModelOrder(anotherModelOrder).build();
+    ModelOrder modelOrder = new ModelOrderFixture().build();
+    Order order = new OrderFixture().withModelOrder(modelOrder).build();
+    ModelOrder anotherModelOrder = new ModelOrderFixture().build();
+    Order anotherOrder = new OrderFixture().withModelOrder(anotherModelOrder).build();
     given(modelManufacturer.computeRemainingTimeToProduceNextModelType(modelOrder.getModelType()))
         .willReturn(modelOrder.getAssemblyTime());
     onDemandModelWarehouseStrategy.addOrder(order);
@@ -141,7 +141,7 @@ class OnDemandModelWarehouseStrategyTest {
   }
 
   private Order createOrder(OrderId id) {
-    ModelOrder modelOrder = new ModelOrderBuilder().build();
-    return new OrderBuilder().withOrderId(id).withModelOrder(modelOrder).build();
+    ModelOrder modelOrder = new ModelOrderFixture().build();
+    return new OrderFixture().withOrderId(id).withModelOrder(modelOrder).build();
   }
 }

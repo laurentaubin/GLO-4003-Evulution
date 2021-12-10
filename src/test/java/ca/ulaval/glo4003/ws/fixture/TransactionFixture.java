@@ -22,7 +22,7 @@ public class TransactionFixture {
 
   private class TransactionBuilder {
     private TransactionId transactionId = new TransactionId(UUID.randomUUID().toString());
-    private Vehicle vehicle = new Vehicle(new ModelBuilder().build(), Color.WHITE);
+    private Vehicle vehicle = new Vehicle(new ModelFixture().build(), Color.WHITE);
     private Battery battery = new Battery("type", 100, 100, new Price(100), new ProductionTime(0));
     private Payment payment = new Payment(new BankAccount("123", "12345"), Frequency.MONTHLY);
 
