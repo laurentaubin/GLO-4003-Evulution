@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.infrastructure.communication.notification;
 import ca.ulaval.glo4003.ws.domain.user.User;
 import ca.ulaval.glo4003.ws.domain.warehouse.DelayType;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
-import ca.ulaval.glo4003.ws.fixture.UserFixture;
+import ca.ulaval.glo4003.ws.fixture.UserBuilder;
 import ca.ulaval.glo4003.ws.infrastructure.communication.NotificationType;
 import ca.ulaval.glo4003.ws.infrastructure.communication.email.Email;
 import ca.ulaval.glo4003.ws.infrastructure.communication.exception.NotificationContentNotRegisteredException;
@@ -40,7 +40,7 @@ class EmailNotificationIssuerTest {
   public void
       givenModelAssemblyDelayType_whenIssueDelayNotification_thenCreateEmailWithModelAssemblyDelayNotificationType() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     given(
             notificationEmailFactory.createDelayNotificationEmail(
                 NotificationType.MODEL_ASSEMBLY_DELAY, order, A_SENDER_EMAIL_ADDRESS, user))
@@ -57,7 +57,7 @@ class EmailNotificationIssuerTest {
   public void
       givenBatteryAssemblyDelayType_whenIssueDelayNotification_thenCreateEmailWithBatteryAssemblyDelayNotificationType() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     given(
             notificationEmailFactory.createDelayNotificationEmail(
                 NotificationType.BATTERY_ASSEMBLY_DELAY, order, A_SENDER_EMAIL_ADDRESS, user))
@@ -74,7 +74,7 @@ class EmailNotificationIssuerTest {
   public void
       givenVehicleAssemblyDelayType_whenIssueDelayNotification_thenCreateEmailWithVehicleAssemblyDelayNotificationType() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     given(
             notificationEmailFactory.createDelayNotificationEmail(
                 NotificationType.VEHICLE_ASSEMBLY_DELAY, order, A_SENDER_EMAIL_ADDRESS, user))
@@ -90,7 +90,7 @@ class EmailNotificationIssuerTest {
   @Test
   public void givenNotificationContentNotRegistered_whenIssueDelayNotification_thenDoNotThrow() {
     // given
-    User user = new UserFixture().build();
+    User user = new UserBuilder().build();
     given(notificationEmailFactory.createDelayNotificationEmail(any(), any(), any(), any()))
         .willThrow(NotificationContentNotRegisteredException.class);
 

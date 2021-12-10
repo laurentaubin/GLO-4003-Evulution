@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
-import ca.ulaval.glo4003.ws.fixture.BatteryOrderFixture;
+import ca.ulaval.glo4003.ws.fixture.BatteryOrderBuilder;
 import ca.ulaval.glo4003.ws.infrastructure.warehouse.CommandIdFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenABatteryOrder_whenAddOrder_thenCommandIdCreatedFromOrderId() {
     // given
-    BatteryOrder batteryOrder = new BatteryOrderFixture().build();
+    BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
 
     // when
     batteryAssemblyLineAdapter.addOrder(batteryOrder);
@@ -50,7 +50,7 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenABatteryOrder_whenAddOrder_thenSendBatteryOrderToAssemblyLine() {
     // given
-    BatteryOrder batteryOrder = new BatteryOrderFixture().build();
+    BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
     given(commandIdFactory.getOrCreateFromOrderId(any())).willReturn(commandId);
 
     // when

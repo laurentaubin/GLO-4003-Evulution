@@ -9,34 +9,34 @@ import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class OrderFixture {
+public class OrderBuilder {
   private OrderId orderId = new OrderId(UUID.randomUUID().toString());
-  private ModelOrder modelOrder = new ModelOrderFixture().build();
-  private BatteryOrder batteryOrder = new BatteryOrderFixture().build();
+  private ModelOrder modelOrder = new ModelOrderBuilder().build();
+  private BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
   private LocalDate createdAt = LocalDate.now();
   private AssemblyTime initialAssemblyTime = new AssemblyTime(3);
 
-  public OrderFixture withOrderId(OrderId orderId) {
+  public OrderBuilder withOrderId(OrderId orderId) {
     this.orderId = orderId;
     return this;
   }
 
-  public OrderFixture withModelOrder(ModelOrder modelOrder) {
+  public OrderBuilder withModelOrder(ModelOrder modelOrder) {
     this.modelOrder = modelOrder;
     return this;
   }
 
-  public OrderFixture withBatteryOrder(BatteryOrder batteryOrder) {
+  public OrderBuilder withBatteryOrder(BatteryOrder batteryOrder) {
     this.batteryOrder = batteryOrder;
     return this;
   }
 
-  public OrderFixture withCreatedAt(LocalDate createdAt) {
+  public OrderBuilder withCreatedAt(LocalDate createdAt) {
     this.createdAt = createdAt;
     return this;
   }
 
-  public OrderFixture withInitialAssemblyTime(AssemblyTime initialAssemblyTime) {
+  public OrderBuilder withInitialAssemblyTime(AssemblyTime initialAssemblyTime) {
     this.initialAssemblyTime = initialAssemblyTime;
     return this;
   }

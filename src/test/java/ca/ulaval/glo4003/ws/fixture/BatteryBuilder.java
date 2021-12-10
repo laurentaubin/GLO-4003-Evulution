@@ -4,34 +4,34 @@ import ca.ulaval.glo4003.ws.domain.transaction.payment.Price;
 import ca.ulaval.glo4003.ws.domain.vehicle.ProductionTime;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 
-public class BatteryFixture {
+public class BatteryBuilder {
   private String type = "a type";
   private int baseNRCANRange = 423;
   private int capacity = 5643;
   private Price price = new Price(200092);
   private ProductionTime productionTime = new ProductionTime(1);
 
-  public BatteryFixture withType(String type) {
+  public BatteryBuilder withType(String type) {
     this.type = type;
     return this;
   }
 
-  public BatteryFixture withBaseNRCANRange(int baseNRCANRange) {
+  public BatteryBuilder withBaseNRCANRange(int baseNRCANRange) {
     this.baseNRCANRange = baseNRCANRange;
     return this;
   }
 
-  public BatteryFixture withCapacity(int capacity) {
+  public BatteryBuilder withCapacity(int capacity) {
     this.capacity = capacity;
     return this;
   }
 
-  public BatteryFixture withPrice(Price price) {
+  public BatteryBuilder withPrice(Price price) {
     this.price = price;
     return this;
   }
 
-  public BatteryFixture withProductionTime(ProductionTime productionTime) {
+  public BatteryBuilder withProductionTime(ProductionTime productionTime) {
     this.productionTime = productionTime;
     return this;
   }

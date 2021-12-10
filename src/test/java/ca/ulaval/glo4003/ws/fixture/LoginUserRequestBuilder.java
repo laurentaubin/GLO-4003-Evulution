@@ -2,16 +2,16 @@ package ca.ulaval.glo4003.ws.fixture;
 
 import ca.ulaval.glo4003.ws.api.user.request.LoginUserRequest;
 
-public class LoginUserRequestFixture {
+public class LoginUserRequestBuilder {
   private String email = "email@email.com";
   private String password = "2312";
 
-  public LoginUserRequestFixture withEmail(String email) {
+  public LoginUserRequestBuilder withEmail(String email) {
     this.email = email;
     return this;
   }
 
-  public LoginUserRequestFixture withPassword(String password) {
+  public LoginUserRequestBuilder withPassword(String password) {
     this.password = password;
     return this;
   }
