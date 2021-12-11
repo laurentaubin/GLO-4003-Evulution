@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.manufacturer.model;
 
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.manufacturer.PeriodicManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class ModelManufacturerImpl extends ModelAssembledObservable
     implements ModelManufacturer, PeriodicManufacturer {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final AssemblyTime ONE_WEEK = new AssemblyTime(1);
 
   List<ModelOrder> modelOrders = new ArrayList<>();
@@ -17,6 +19,10 @@ public class ModelManufacturerImpl extends ModelAssembledObservable
   private ModelOrder currentModelOrder;
   private AssemblyTime currentModelRemainingAssemblyTime;
   private final ModelAssemblyLineAdapter modelAssemblyLineAdapter;
+
+  public ModelManufacturerImpl() {
+    this(serviceLocator.resolve(ModelAssemblyLineAdapter.class));
+  }
 
   public ModelManufacturerImpl(ModelAssemblyLineAdapter modelAssemblyLineAdapter) {
     this.modelAssemblyLineAdapter = modelAssemblyLineAdapter;

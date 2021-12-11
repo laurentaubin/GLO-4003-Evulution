@@ -11,8 +11,6 @@ import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturerImpl;
 import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleAssemblyPlanner;
 import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleManufacturerImpl;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
-import ca.ulaval.glo4003.ws.domain.shared.LocalDateProvider;
-import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.Battery;
 import ca.ulaval.glo4003.ws.domain.vehicle.battery.BatteryRepository;
 import ca.ulaval.glo4003.ws.domain.vehicle.model.Model;
@@ -33,13 +31,11 @@ import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.strategy.DefaultVehicleWare
 import ca.ulaval.glo4003.ws.infrastructure.manufacturer.battery.BatteryAssemblyLineAdapterImpl;
 import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.InMemoryModelInventory;
 import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.ModelAssemblyLineAdapterImpl;
-import ca.ulaval.glo4003.ws.infrastructure.warehouse.CommandIdFactory;
 import ca.ulaval.glo4003.ws.service.warehouse.WarehouseService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class WarehouseContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -54,16 +50,16 @@ public class WarehouseContext implements Context {
   }
 
   private void registerServices() {
-    VehicleAssemblyPlanner vehicleAssemblyPlanner =
-        new VehicleAssemblyPlanner(new RandomProvider(new Random()));
-    serviceLocator.register(VehicleAssemblyPlanner.class, vehicleAssemblyPlanner);
+    serviceLocator.register(VehicleAssemblyPlanner.class, new VehicleAssemblyPlanner());
+
     BatteryManufacturerImpl batteryManufacturer = createBatteryManufacturer();
     ModelManufacturerImpl modelManufacturer = createModelManufacturer();
-    VehicleManufacturerImpl vehicleManufacturer = createVehicleManufacturer();
+    VehicleManufacturerImpl vehicleManufacturer = new VehicleManufacturerImpl();
     serviceLocator.register(ModelManufacturerImpl.class, modelManufacturer);
     serviceLocator.register(BatteryManufacturerImpl.class, batteryManufacturer);
     serviceLocator.register(VehicleManufacturerImpl.class, vehicleManufacturer);
 
+    registerModelInventory();
     registerModelWarehouseStrategy(modelManufacturer);
     registerBatteryWarehouseStrategy(batteryManufacturer);
     registerVehicleWarehouseStrategy(vehicleManufacturer);
@@ -83,9 +79,11 @@ public class WarehouseContext implements Context {
         createBatteryAssemblyLineConfiguration();
     BatteryAssemblyLine batteryAssemblyLine = new BasicBatteryAssemblyLine();
     batteryAssemblyLine.configureAssemblyLine(batteryAssemblyLineConfiguration);
-    BatteryAssemblyLineAdapter batteryAssemblyLineAdapter =
-        new BatteryAssemblyLineAdapterImpl(batteryAssemblyLine, new CommandIdFactory());
-    return new BatteryManufacturerImpl(batteryAssemblyLineAdapter);
+
+    serviceLocator.register(BatteryAssemblyLine.class, batteryAssemblyLine);
+    serviceLocator.register(BatteryAssemblyLineAdapter.class, new BatteryAssemblyLineAdapterImpl());
+
+    return new BatteryManufacturerImpl();
   }
 
   private ModelManufacturerImpl createModelManufacturer() {
@@ -93,13 +91,11 @@ public class WarehouseContext implements Context {
         createVehicleAssemblyLineConfiguration();
     VehicleAssemblyLine vehicleAssemblyLine = new BasicVehicleAssemblyLine();
     vehicleAssemblyLine.configureAssemblyLine(vehicleAssemblyLineConfiguration);
-    ModelAssemblyLineAdapter modelAssemblyLineAdapter =
-        new ModelAssemblyLineAdapterImpl(vehicleAssemblyLine, new CommandIdFactory());
-    return new ModelManufacturerImpl(modelAssemblyLineAdapter);
-  }
 
-  private VehicleManufacturerImpl createVehicleManufacturer() {
-    return new VehicleManufacturerImpl(serviceLocator.resolve(VehicleAssemblyPlanner.class));
+    serviceLocator.register(VehicleAssemblyLine.class, vehicleAssemblyLine);
+    serviceLocator.register(ModelAssemblyLineAdapter.class, new ModelAssemblyLineAdapterImpl());
+
+    return new ModelManufacturerImpl();
   }
 
   private void registerModelWarehouseStrategy(ModelManufacturerImpl modelManufacturer) {
@@ -145,11 +141,7 @@ public class WarehouseContext implements Context {
   }
 
   private void registerWarehouse() {
-    serviceLocator.register(
-        OrderFactory.class,
-        new OrderFactory(
-            serviceLocator.resolve(LocalDateProvider.class),
-            serviceLocator.resolve(VehicleAssemblyPlanner.class)));
+    serviceLocator.register(OrderFactory.class, new OrderFactory());
     serviceLocator.register(WarehouseService.class, new WarehouseService());
   }
 
@@ -229,9 +221,8 @@ public class WarehouseContext implements Context {
   private void registerAccumulateModelAssemblyLineStrategy(
       ModelManufacturerImpl modelManufacturer) {
     List<ModelOrder> modelAssemblyOrder = createModelAssemblyOrder();
-    ModelInventory modelInventory = new InMemoryModelInventory();
     AccumulateModelWarehouseStrategy accumulateModelAssemblyLineStrategy =
-        new AccumulateModelWarehouseStrategy(modelAssemblyOrder, modelManufacturer, modelInventory);
+        new AccumulateModelWarehouseStrategy(modelAssemblyOrder, modelManufacturer);
     serviceLocator.register(
         AccumulateModelWarehouseStrategy.class, accumulateModelAssemblyLineStrategy);
   }
@@ -239,11 +230,14 @@ public class WarehouseContext implements Context {
   private void registerJustInTimeModelAssemblyLineStrategy(
       ModelManufacturerImpl modelManufacturer) {
     List<ModelOrder> modelAssemblyOrder = createModelAssemblyOrder();
-    ModelInventory modelInventory = new InMemoryModelInventory();
     JustInTimeModelWarehouseStrategy justInTimeModelAssemblyLineStrategy =
-        new JustInTimeModelWarehouseStrategy(modelManufacturer, modelInventory, modelAssemblyOrder);
+        new JustInTimeModelWarehouseStrategy(modelManufacturer, modelAssemblyOrder);
     serviceLocator.register(
         JustInTimeModelWarehouseStrategy.class, justInTimeModelAssemblyLineStrategy);
+  }
+
+  private void registerModelInventory() {
+    serviceLocator.register(ModelInventory.class, new InMemoryModelInventory());
   }
 
   private List<ModelOrder> createModelAssemblyOrder() {

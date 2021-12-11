@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.warehouse.model.strategy;
 
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventory;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 public class AccumulateModelWarehouseStrategy extends ModelInventoryObservable
     implements ModelWarehouseStrategy, ModelAssembledObserver {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final List<ModelOrder> modelAssemblyCycle;
@@ -29,6 +31,11 @@ public class AccumulateModelWarehouseStrategy extends ModelInventoryObservable
   private final List<Order> orderQueue = new ArrayList<>();
 
   private String currentModelTypeBeingAssembled;
+
+  public AccumulateModelWarehouseStrategy(
+      List<ModelOrder> modelAssemblyCycle, ModelManufacturer modelManufacturer) {
+    this(modelAssemblyCycle, modelManufacturer, serviceLocator.resolve(ModelInventory.class));
+  }
 
   public AccumulateModelWarehouseStrategy(
       List<ModelOrder> modelAssemblyCycle,

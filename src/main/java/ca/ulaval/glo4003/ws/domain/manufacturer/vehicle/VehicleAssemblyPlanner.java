@@ -6,10 +6,16 @@ import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Random;
+
 public class VehicleAssemblyPlanner {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final RandomProvider randomProvider;
+
+  public VehicleAssemblyPlanner() {
+    this(new RandomProvider(new Random()));
+  }
 
   public VehicleAssemblyPlanner(RandomProvider randomProvider) {
     this.randomProvider = randomProvider;

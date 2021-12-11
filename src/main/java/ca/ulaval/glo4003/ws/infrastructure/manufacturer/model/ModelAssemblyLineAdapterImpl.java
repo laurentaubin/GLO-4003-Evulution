@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.ws.infrastructure.manufacturer.model;
 import ca.ulaval.glo4003.evulution.car_manufacture.BuildStatus;
 import ca.ulaval.glo4003.evulution.car_manufacture.CommandID;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
@@ -10,8 +11,14 @@ import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.infrastructure.warehouse.CommandIdFactory;
 
 public class ModelAssemblyLineAdapterImpl implements ModelAssemblyLineAdapter {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
+
   private final VehicleAssemblyLine vehicleAssemblyLine;
   private final CommandIdFactory commandIdFactory;
+
+  public ModelAssemblyLineAdapterImpl() {
+    this(serviceLocator.resolve(VehicleAssemblyLine.class), new CommandIdFactory());
+  }
 
   public ModelAssemblyLineAdapterImpl(
       VehicleAssemblyLine vehicleAssemblyLine, CommandIdFactory commandIdFactory) {

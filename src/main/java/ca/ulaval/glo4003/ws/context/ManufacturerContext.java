@@ -1,9 +1,6 @@
 package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.domain.manufacturer.ManufacturerScheduler;
-import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryManufacturerImpl;
-import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturerImpl;
-import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleManufacturerImpl;
 import ca.ulaval.glo4003.ws.domain.warehouse.strategy.LinearWarehouseStrategy;
 import ca.ulaval.glo4003.ws.service.manufacturer.ManufacturerService;
 import ca.ulaval.glo4003.ws.service.user.UserService;
@@ -13,13 +10,7 @@ public class ManufacturerContext implements Context {
 
   @Override
   public void registerContext() {
-    ModelManufacturerImpl modelManufacturer = serviceLocator.resolve(ModelManufacturerImpl.class);
-    BatteryManufacturerImpl batteryManufacturer =
-        serviceLocator.resolve(BatteryManufacturerImpl.class);
-    VehicleManufacturerImpl vehicleManufacturer =
-        serviceLocator.resolve(VehicleManufacturerImpl.class);
-    ManufacturerScheduler manufacturerScheduler =
-        new ManufacturerScheduler(modelManufacturer, batteryManufacturer, vehicleManufacturer);
+    ManufacturerScheduler manufacturerScheduler = new ManufacturerScheduler();
 
     manufacturerScheduler.registerShutdownObserver(
         serviceLocator.resolve(LinearWarehouseStrategy.class));

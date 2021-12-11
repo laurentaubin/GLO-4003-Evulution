@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.manufacturer.vehicle;
 
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.manufacturer.PeriodicManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
@@ -13,10 +14,15 @@ import java.util.stream.Collectors;
 
 public class VehicleManufacturerImpl extends VehicleAssembledObservable
     implements VehicleManufacturer, PeriodicManufacturer {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final Logger LOGGER = LogManager.getLogger();
 
   private List<Order> orders = new ArrayList<>();
   private final VehicleAssemblyPlanner vehicleAssemblyPlanner;
+
+  public VehicleManufacturerImpl() {
+    this(serviceLocator.resolve(VehicleAssemblyPlanner.class));
+  }
 
   public VehicleManufacturerImpl(VehicleAssemblyPlanner vehicleAssemblyPlanner) {
     this.vehicleAssemblyPlanner = vehicleAssemblyPlanner;

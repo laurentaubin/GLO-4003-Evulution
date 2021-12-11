@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.ws.domain.manufacturer.battery;
 
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.manufacturer.PeriodicManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class BatteryManufacturerImpl extends BatteryAssembledObservable
     implements BatteryManufacturer, PeriodicManufacturer {
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private static final AssemblyTime ONE_WEEK = new AssemblyTime(1);
 
   private final List<BatteryOrder> batteryOrders = new ArrayList<>();
@@ -16,6 +18,10 @@ public class BatteryManufacturerImpl extends BatteryAssembledObservable
   private BatteryOrder currentBatteryOrder;
   private AssemblyTime currentBatteryRemainingAssemblyTime;
   private final BatteryAssemblyLineAdapter batteryAssemblyLineAdapter;
+
+  public BatteryManufacturerImpl() {
+    this(serviceLocator.resolve(BatteryAssemblyLineAdapter.class));
+  }
 
   public BatteryManufacturerImpl(BatteryAssemblyLineAdapter batteryAssemblyLineAdapter) {
     this.batteryAssemblyLineAdapter = batteryAssemblyLineAdapter;
