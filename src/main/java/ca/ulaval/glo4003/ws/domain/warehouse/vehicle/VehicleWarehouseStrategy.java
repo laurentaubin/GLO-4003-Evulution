@@ -1,12 +1,12 @@
-package ca.ulaval.glo4003.ws.domain.warehouse.battery.strategy;
+package ca.ulaval.glo4003.ws.domain.warehouse.vehicle;
 
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-
 import java.util.List;
 
-public interface BatteryWarehouseStrategy {
+public interface VehicleWarehouseStrategy {
+
   void addOrder(Order order);
 
   AssemblyTime computeRemainingTimeToProduce(OrderId orderId);

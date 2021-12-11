@@ -1,9 +1,6 @@
-package ca.ulaval.glo4003.ws.infrastructure.manufacturer.model;
+package ca.ulaval.glo4003.ws.domain.manufacturer.model;
 
 import ca.ulaval.glo4003.ws.domain.manufacturer.PeriodicManufacturer;
-import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssembledObservable;
-import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssemblyLineAdapter;
-import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;

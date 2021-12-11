@@ -4,14 +4,14 @@ import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryAssembledObserver
 import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryInventoryObservable;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
+import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class OnDemandBatteryWarehouseStrategy extends BatteryInventoryObservable
     implements BatteryWarehouseStrategy, BatteryAssembledObserver {

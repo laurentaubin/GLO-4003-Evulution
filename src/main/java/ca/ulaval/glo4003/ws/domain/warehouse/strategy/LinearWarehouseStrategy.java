@@ -4,14 +4,13 @@ import ca.ulaval.glo4003.ws.domain.manufacturer.ReactivateObserver;
 import ca.ulaval.glo4003.ws.domain.manufacturer.ShutdownObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.OrderDelayObservable;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryInventoryObserver;
-import ca.ulaval.glo4003.ws.domain.warehouse.battery.strategy.BatteryWarehouseStrategy;
+import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventoryObserver;
-import ca.ulaval.glo4003.ws.domain.warehouse.model.strategy.ModelWarehouseStrategy;
+import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderRepository;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.VehicleInventoryObserver;
-import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.strategy.VehicleWarehouseStrategy;
-
+import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.VehicleWarehouseStrategy;
 import java.util.ArrayList;
 import java.util.List;
 

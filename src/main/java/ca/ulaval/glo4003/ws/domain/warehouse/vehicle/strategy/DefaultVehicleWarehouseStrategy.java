@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.VehicleInventoryObservable;
-
+import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.VehicleWarehouseStrategy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

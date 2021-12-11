@@ -5,7 +5,9 @@ import ca.ulaval.glo4003.evulution.car_manufacture.BasicVehicleAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.BatteryAssemblyLine;
 import ca.ulaval.glo4003.evulution.car_manufacture.VehicleAssemblyLine;
 import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryAssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryManufacturerImpl;
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssemblyLineAdapter;
+import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturerImpl;
 import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleAssemblyPlanner;
 import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleManufacturerImpl;
 import ca.ulaval.glo4003.ws.domain.notification.NotificationService;
@@ -19,9 +21,9 @@ import ca.ulaval.glo4003.ws.domain.warehouse.battery.strategy.OnDemandBatteryWar
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrderFactory;
+import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.strategy.AccumulateModelWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.strategy.JustInTimeModelWarehouseStrategy;
-import ca.ulaval.glo4003.ws.domain.warehouse.model.strategy.ModelWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.strategy.OnDemandModelWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderFactory;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderRepository;
@@ -29,14 +31,15 @@ import ca.ulaval.glo4003.ws.domain.warehouse.strategy.LinearWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.domain.warehouse.vehicle.strategy.DefaultVehicleWarehouseStrategy;
 import ca.ulaval.glo4003.ws.infrastructure.manufacturer.battery.BatteryAssemblyLineAdapterImpl;
-import ca.ulaval.glo4003.ws.infrastructure.manufacturer.battery.BatteryManufacturerImpl;
 import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.InMemoryModelInventory;
 import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.ModelAssemblyLineAdapterImpl;
-import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.ModelManufacturerImpl;
 import ca.ulaval.glo4003.ws.infrastructure.warehouse.CommandIdFactory;
 import ca.ulaval.glo4003.ws.service.warehouse.WarehouseService;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class WarehouseContext implements Context {
   private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();

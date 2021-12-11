@@ -342,7 +342,7 @@ class JustInTimeModelWarehouseStrategyTest {
   public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotNotifyDelay() {
     // given
     given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
-      .willThrow(new InvalidModelQuantityInQueueException());
+        .willThrow(new InvalidModelQuantityInQueueException());
     Order anOrder = new OrderBuilder().withModelType("a type").build();
 
     // when
@@ -353,10 +353,11 @@ class JustInTimeModelWarehouseStrategyTest {
   }
 
   @Test
-  public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotAddDelayToOrder() {
+  public void
+      givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotAddDelayToOrder() {
     // given
     given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
-      .willThrow(new InvalidModelQuantityInQueueException());
+        .willThrow(new InvalidModelQuantityInQueueException());
     Order anOrder = new OrderBuilder().withModelType("a type").build();
     AssemblyTime noDelay = new AssemblyTime(0);
 

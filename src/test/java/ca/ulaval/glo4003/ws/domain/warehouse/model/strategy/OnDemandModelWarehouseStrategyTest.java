@@ -1,5 +1,11 @@
 package ca.ulaval.glo4003.ws.domain.warehouse.model.strategy;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturer;
 import ca.ulaval.glo4003.ws.domain.notification.ModelOrderDelayObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventoryObserver;
@@ -15,12 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class OnDemandModelWarehouseStrategyTest {
@@ -181,7 +181,7 @@ class OnDemandModelWarehouseStrategyTest {
   public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotNotifyDelay() {
     // given
     given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
-      .willThrow(new InvalidModelQuantityInQueueException());
+        .willThrow(new InvalidModelQuantityInQueueException());
     Order anOrder = new OrderBuilder().withModelType("a type").build();
 
     // when
@@ -192,10 +192,11 @@ class OnDemandModelWarehouseStrategyTest {
   }
 
   @Test
-  public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotAddDelayToOrder() {
+  public void
+      givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotAddDelayToOrder() {
     // given
     given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
-      .willThrow(new InvalidModelQuantityInQueueException());
+        .willThrow(new InvalidModelQuantityInQueueException());
     Order anOrder = new OrderBuilder().withModelType("a type").build();
     AssemblyTime noDelay = new AssemblyTime(0);
 
@@ -205,7 +206,6 @@ class OnDemandModelWarehouseStrategyTest {
     // then
     assertThat(anOrder.getAssemblyDelay()).isEqualTo(noDelay);
   }
-
 
   private Order createOrder(OrderId id) {
     ModelOrder modelOrder = new ModelOrderBuilder().build();

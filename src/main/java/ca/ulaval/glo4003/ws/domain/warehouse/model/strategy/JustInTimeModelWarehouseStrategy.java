@@ -5,6 +5,7 @@ import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventoryObservable;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
+import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelWarehouseStrategy;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;

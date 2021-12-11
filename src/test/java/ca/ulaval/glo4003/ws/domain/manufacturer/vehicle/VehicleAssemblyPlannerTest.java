@@ -1,7 +1,11 @@
-package ca.ulaval.glo4003.ws.domain.warehouse.vehicle;
+package ca.ulaval.glo4003.ws.domain.manufacturer.vehicle;
 
-import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleAssemblyPlanner;
-import ca.ulaval.glo4003.ws.domain.manufacturer.vehicle.VehicleAssemblyProductionTime;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.shared.RandomProvider;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
@@ -11,15 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class VehicleAssemblyPlannerTest {
-  private static final VehicleAssemblyProductionTime A_NORMAL_ASSEMBLY_TIME = VehicleAssemblyProductionTime.NORMAL;
+  private static final VehicleAssemblyProductionTime A_NORMAL_ASSEMBLY_TIME =
+      VehicleAssemblyProductionTime.NORMAL;
   private static final VehicleAssemblyProductionTime A_DELAYED_ASSEMBLY_TIME =
       VehicleAssemblyProductionTime.DELAYED;
 
@@ -62,7 +61,10 @@ class VehicleAssemblyPlannerTest {
   public void givenDelayInProduction_whenGetProductionTime_shouldAddDelayToOrder() {
     // given
     given(randomProvider.nextBoolean()).willReturn(true);
-    AssemblyTime expectedDelay = A_DELAYED_ASSEMBLY_TIME.getAssemblyTime().subtract(A_NORMAL_ASSEMBLY_TIME.getAssemblyTime());
+    AssemblyTime expectedDelay =
+        A_DELAYED_ASSEMBLY_TIME
+            .getAssemblyTime()
+            .subtract(A_NORMAL_ASSEMBLY_TIME.getAssemblyTime());
 
     // when
     vehicleAssemblyPlanner.getAssemblyTime(delayedOrder);

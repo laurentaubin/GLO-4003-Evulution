@@ -1,7 +1,6 @@
-package ca.ulaval.glo4003.ws.domain.warehouse.model.strategy;
+package ca.ulaval.glo4003.ws.domain.warehouse.model;
 
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
-
 import java.util.List;
 
 public interface ModelWarehouseStrategy {

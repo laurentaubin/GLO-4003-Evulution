@@ -1,13 +1,9 @@
-package ca.ulaval.glo4003.ws.infrastructure.manufacturer.battery;
+package ca.ulaval.glo4003.ws.domain.manufacturer.battery;
 
 import ca.ulaval.glo4003.ws.domain.manufacturer.PeriodicManufacturer;
-import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryAssembledObservable;
-import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryAssemblyLineAdapter;
-import ca.ulaval.glo4003.ws.domain.manufacturer.battery.BatteryManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.battery.BatteryOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
