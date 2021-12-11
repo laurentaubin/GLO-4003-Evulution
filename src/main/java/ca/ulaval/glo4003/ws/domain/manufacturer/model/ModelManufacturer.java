@@ -7,4 +7,6 @@ public interface ModelManufacturer {
   void addOrder(ModelOrder modelOrder);
 
   AssemblyTime computeRemainingTimeToProduceNextModelType(String modelType);
+
+  AssemblyTime computeTimeToProduceQuantityOfModel(Integer quantity, String modelType);
 }

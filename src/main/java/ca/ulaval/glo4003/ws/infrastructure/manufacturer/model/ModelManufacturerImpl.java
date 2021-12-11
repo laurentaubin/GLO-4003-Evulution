@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturer;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-
+import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.exception.InvalidModelQuantityInQueueException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +67,31 @@ public class ModelManufacturerImpl extends ModelAssembledObservable
       }
     }
     return remainingAssemblyTime;
+  }
+
+  @Override
+  public AssemblyTime computeTimeToProduceQuantityOfModel(Integer quantity, String modelType) {
+    AssemblyTime totalAssemblyTime = currentModelRemainingAssemblyTime;
+    int numberOfModelsEncountered = 0;
+    if (modelType.equals(currentModelOrder.getModelType())) {
+      if (quantity == 1) {
+        return totalAssemblyTime;
+      }
+      numberOfModelsEncountered++;
+    }
+
+    for (ModelOrder modelOrder : modelOrders) {
+      totalAssemblyTime = totalAssemblyTime.add(modelOrder.getAssemblyTime());
+      if (modelOrder.getModelType().equals(modelType)) {
+        numberOfModelsEncountered++;
+      }
+    }
+
+    if (numberOfModelsEncountered != quantity) {
+      throw new InvalidModelQuantityInQueueException();
+    }
+
+    return totalAssemblyTime;
   }
 
   private void processCurrentOrder() {

@@ -1,5 +1,12 @@
 package ca.ulaval.glo4003.ws.infrastructure.manufacturer.model;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssembledObserver;
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelAssemblyLineAdapter;
 import ca.ulaval.glo4003.ws.domain.warehouse.AssemblyStatus;
@@ -7,15 +14,13 @@ import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
+import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.exception.InvalidModelQuantityInQueueException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ModelManufacturerImplTest {
@@ -166,6 +171,103 @@ class ModelManufacturerImplTest {
 
     // then
     assertThat(assemblyTime.inWeeks()).isEqualTo(expectedAssemblyTime.inWeeks());
+  }
+
+  @Test
+  public void
+      givenADesiredModelTypeJustReceivedForAssembly_whenComputeTimeToProduceQuantityOfModel_thenReturnRemainingAssemblyTimeOfCurrentModelOrderBeingAssembled() {
+    // given
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+
+    // when
+    AssemblyTime assemblyTime =
+        modelManufacturer.computeTimeToProduceQuantityOfModel(1, A_MODEL_ORDER.getModelType());
+
+    // then
+    assertThat(assemblyTime).isEqualTo(A_MODEL_ORDER.getAssemblyTime());
+  }
+
+  @Test
+  public void
+      givenADesiredModelTypeIsInProgressAfterSomeTime_whenComputeTimeToProduceOneOfModel_thenReturnRemainingAssemblyTimeOfCurrentModelOrderBeingAssembled() {
+    // given
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+    advanceMultipleTimes(THREE_WEEKS);
+    AssemblyTime expectedAssemblyTime = AN_ASSEMBLY_TIME.subtract(new AssemblyTime(THREE_WEEKS));
+
+    // when
+    AssemblyTime assemblyTime =
+        modelManufacturer.computeTimeToProduceQuantityOfModel(1, A_MODEL_ORDER.getModelType());
+
+    // then
+    assertThat(assemblyTime).isEqualTo(expectedAssemblyTime);
+  }
+
+  @Test
+  public void
+      givenTwoOrdersWithDifferentTypes_whenComputeTimeToProduceOneOfSecondModel_thenReturnTimeToProduceBothModels() {
+    // given
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+    modelManufacturer.addOrder(ANOTHER_MODEL_ORDER);
+    AssemblyTime expectedAssemblyTime =
+        ANOTHER_MODEL_ORDER.getAssemblyTime().add(A_MODEL_ORDER.getAssemblyTime());
+
+    // when
+    AssemblyTime assemblyTime =
+        modelManufacturer.computeTimeToProduceQuantityOfModel(
+            1, ANOTHER_MODEL_ORDER.getModelType());
+
+    // then
+    assertThat(assemblyTime.inWeeks()).isEqualTo(expectedAssemblyTime.inWeeks());
+  }
+
+  @Test
+  public void
+      givenTwoOrdersWithSameType_whenComputeTimeToProduceTwoOfModel_thenReturnTimeToProduceBothModels() {
+    // given
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+    AssemblyTime expectedAssemblyTime =
+        A_MODEL_ORDER.getAssemblyTime().add(A_MODEL_ORDER.getAssemblyTime());
+
+    // when
+    AssemblyTime assemblyTime =
+        modelManufacturer.computeTimeToProduceQuantityOfModel(2, A_MODEL_ORDER.getModelType());
+
+    // then
+    assertThat(assemblyTime.inWeeks()).isEqualTo(expectedAssemblyTime.inWeeks());
+  }
+
+  @Test
+  public void
+      givenTwoOrdersWithSameType_whenComputeTimeToProduceOneOfModel_thenReturnTimeToProduceOneModel() {
+    // given
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+    AssemblyTime expectedAssemblyTime = A_MODEL_ORDER.getAssemblyTime();
+
+    // when
+    AssemblyTime assemblyTime =
+        modelManufacturer.computeTimeToProduceQuantityOfModel(1, A_MODEL_ORDER.getModelType());
+
+    // then
+    assertThat(assemblyTime.inWeeks()).isEqualTo(expectedAssemblyTime.inWeeks());
+  }
+
+  @Test
+  public void
+      givenTwoOrdersInQueue_whenComputeTimeToProduceThreeOfModel_thenThrowInvalidModelQuantityInQueueException() {
+    // given
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+    modelManufacturer.addOrder(A_MODEL_ORDER);
+
+    // when
+    Executable computingTimeToProduceThreeOfModel =
+        () ->
+            modelManufacturer.computeTimeToProduceQuantityOfModel(3, A_MODEL_ORDER.getModelType());
+
+    // then
+    assertThrows(InvalidModelQuantityInQueueException.class, computingTimeToProduceThreeOfModel);
   }
 
   private void advanceMultipleTimes(int numberOfAdvance) {

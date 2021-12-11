@@ -8,14 +8,14 @@ import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.exception.InvalidModelQuantityInQueueException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class JustInTimeModelWarehouseStrategy extends ModelInventoryObservable
     implements ModelWarehouseStrategy, ModelAssembledObserver {
@@ -50,30 +50,30 @@ public class JustInTimeModelWarehouseStrategy extends ModelInventoryObservable
           String.format(
               "Model for order %s not in stock, adding to order to queue", order.getId()));
       orderQueue.add(order);
+      try {
+        order.addAssemblyDelay(computeRemainingTimeToProduce(order.getId()));
+        notifyModelDelay(order);
+      } catch (InvalidModelQuantityInQueueException exception) {
+        LOGGER.error(
+            "Tried to compute order remaining time with wrong model type quantity", exception);
+      }
     }
     LOGGER.info(
         String.format("Model %s added to model orders", order.getModelOrder().getModelType()));
     modelManufacturer.addOrder(order.getModelOrder());
-    //    modelOrders.add(order.getModelOrder());
   }
 
-  @Override
-  public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
-    return null;
-    //    Optional<Order> optionalRequestedOrder = fetchOrder(orderId);
-    //    if (optionalRequestedOrder.isEmpty()) {
-    //      return new AssemblyTime(0);
-    //    }
-    //    Order order = optionalRequestedOrder.get();
-    //    String modelType = order.getModelOrder().getModelType();
-    //
-    //    Integer positionInQueue = getPositionInQueueOfOrder(order);
-    //
-    //    if (orderIsBeingAssembled(modelType, positionInQueue)) {
-    //      return currentOrderRemainingTimeToProduce;
-    //    }
-    //
-    //    return timeUntilPositionInQueueIsProduced(positionInQueue, modelType);
+  private AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
+    Optional<Order> optionalRequestedOrder = fetchOrder(orderId);
+    if (optionalRequestedOrder.isEmpty()) {
+      return new AssemblyTime(0);
+    }
+    Order order = optionalRequestedOrder.get();
+
+    Integer positionInQueue = getPositionInQueueOfOrder(order);
+    String modelType = order.getModelOrder().getModelType();
+
+    return modelManufacturer.computeTimeToProduceQuantityOfModel(positionInQueue + 1, modelType);
   }
 
   @Override
@@ -121,28 +121,6 @@ public class JustInTimeModelWarehouseStrategy extends ModelInventoryObservable
 
   private Optional<Order> fetchOrder(OrderId orderId) {
     return orderQueue.stream().filter(order -> order.getId() == orderId).findFirst();
-  }
-
-  private AssemblyTime timeUntilPositionInQueueIsProduced(
-      Integer positionInQueue, String modelType) {
-    return null;
-    //    AssemblyTime remainingTime = new AssemblyTime(0);
-    //    Integer modelOrdersOfTypeRequestedOrderType = 0;
-    //    if (currentModelBeingAssembled.getModelType().equals(modelType)) {
-    //      remainingTime = new AssemblyTime(currentOrderRemainingTimeToProduce.inWeeks());
-    //      modelOrdersOfTypeRequestedOrderType = 1;
-    //    }
-    //    for (ModelOrder modelOrder : modelOrders) {
-    //      remainingTime = remainingTime.add(modelOrder.getAssemblyTime());
-    //      if (modelOrder.getModelType().equals(modelType)) {
-    //        if (modelOrdersOfTypeRequestedOrderType.equals(positionInQueue)) {
-    //          return remainingTime;
-    //        } else {
-    //          modelOrdersOfTypeRequestedOrderType += 1;
-    //        }
-    //      }
-    //    }
-    //    return remainingTime;
   }
 
   private Integer getPositionInQueueOfOrder(Order order) {

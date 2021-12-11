@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
 import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
+import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.exception.InvalidModelQuantityInQueueException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class OnDemandModelWarehouseStrategyTest {
   private static final String AN_ID = "fdsnj9203";
+  private static final AssemblyTime AN_ASSEMBLY_TIME = new AssemblyTime(23);
+
   @Mock private ModelManufacturer modelManufacturer;
   @Mock private ModelInventoryObserver modelAssembledObserver;
   @Mock private ModelOrderDelayObserver modelOrderDelayObserver;
@@ -41,6 +44,8 @@ class OnDemandModelWarehouseStrategyTest {
   public void givenAnOrder_whenAddOrder_thenOrderIsSentToBeAssembled() {
     // given
     Order order = createOrder(new OrderId(AN_ID));
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(order.getModelOrder().getAssemblyTime()));
 
     // when
     onDemandModelWarehouseStrategy.addOrder(order);
@@ -51,25 +56,12 @@ class OnDemandModelWarehouseStrategyTest {
 
   @Test
   public void
-      givenAnOrderSentToBeAssembledAndNoDelay_whenComputeEstimatedTime_thenReturnTheModelRemainingTimeToProduce() {
-    // given
-    Order order = createOrder(new OrderId(AN_ID));
-    onDemandModelWarehouseStrategy.addOrder(order);
-
-    // when
-    AssemblyTime delay =
-        onDemandModelWarehouseStrategy.computeRemainingTimeToProduce(order.getId());
-
-    // then
-    assertThat(delay.inWeeks()).isEqualTo(0);
-  }
-
-  @Test
-  public void
       givenModelOrderAssembled_whenListenToModelAssembled_thenObserversNotifyModelInventoryObserver() {
     // given
     ModelOrder modelOrder = new ModelOrderBuilder().build();
     Order order = new OrderBuilder().withModelOrder(modelOrder).build();
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(modelOrder.getAssemblyTime()));
     onDemandModelWarehouseStrategy.addOrder(order);
 
     // when
@@ -84,6 +76,8 @@ class OnDemandModelWarehouseStrategyTest {
     // given
     ModelOrder modelOrder = new ModelOrderBuilder().build();
     Order order = new OrderBuilder().withModelOrder(modelOrder).build();
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(modelOrder.getAssemblyTime());
 
     // when
     onDemandModelWarehouseStrategy.addOrder(order);
@@ -93,52 +87,125 @@ class OnDemandModelWarehouseStrategyTest {
   }
 
   @Test
-  public void givenQueuedOrders_whenAddOrder_thenNotifyAssemblyDelayForAddedOrder() {
+  public void givenManufacturerHasModelsInQueue_whenAddOrder_thenOrderRemainingAssemblyTimeIsSet() {
     // given
-    ModelOrder modelOrder = new ModelOrderBuilder().build();
-    Order order = new OrderBuilder().withModelOrder(modelOrder).build();
-    ModelOrder anotherModelOrder = new ModelOrderBuilder().build();
-    Order anotherOrder = new OrderBuilder().withModelOrder(anotherModelOrder).build();
-    given(modelManufacturer.computeRemainingTimeToProduceNextModelType(modelOrder.getModelType()))
-        .willReturn(modelOrder.getAssemblyTime());
-    onDemandModelWarehouseStrategy.addOrder(order);
+    Order anOrder = createOrder(new OrderId(AN_ID));
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(123));
+
+    // when
+    onDemandModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    assertThat(anOrder.getAssemblyDelay().inWeeks()).isGreaterThan(0);
+  }
+
+  @Test
+  public void givenManufacturerHasModelsInQueue_whenAddOrder_thenNotifyModelOrderDelay() {
+    // given
+    Order anOrder = createOrder(new OrderId(AN_ID));
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(123));
+
+    // when
+    onDemandModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    verify(modelOrderDelayObserver).listenModelOrderDelay(anOrder);
+  }
+
+  @Test
+  public void givenNoOrderInQueue_whenAddOrder_thenOrderHasNoDelay() {
+    // given
+    Order anOrder = new OrderBuilder().build();
+    given(
+            modelManufacturer.computeTimeToProduceQuantityOfModel(
+                1, anOrder.getModelOrder().getModelType()))
+        .willReturn(new AssemblyTime(anOrder.getModelOrder().getAssemblyTime()));
+    AssemblyTime expectedDelay = new AssemblyTime(0);
+
+    // when
+    onDemandModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    assertThat(anOrder.getAssemblyDelay()).isEqualTo(expectedDelay);
+  }
+
+  @Test
+  public void
+      givenTwoOrdersOfDifferentTypeInQueue_whenAddOrder_thenOrderHasDelayEqualToPreviousOrderAssemblyTime() {
+    // given
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(anOrder.getModelOrder().getAssemblyTime()));
+    onDemandModelWarehouseStrategy.addOrder(anOrder);
+    Order anotherOrder = new OrderBuilder().withModelType("another type").build();
+    String modelType = anotherOrder.getModelOrder().getModelType();
+    onDemandModelWarehouseStrategy.addOrder(anotherOrder);
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(1, modelType))
+        .willReturn(AN_ASSEMBLY_TIME);
+    AssemblyTime expectedDelay =
+        AN_ASSEMBLY_TIME.subtract(anotherOrder.getModelOrder().getAssemblyTime());
 
     // when
     onDemandModelWarehouseStrategy.addOrder(anotherOrder);
 
     // then
-    verify(modelOrderDelayObserver).listenModelOrderDelay(anotherOrder);
+    assertThat(anotherOrder.getAssemblyDelay()).isEqualTo(expectedDelay);
   }
 
   @Test
-  public void givenQueuedOrder_whenAddOrder_thenComputedDelayIsAddedToQueuedOrder() {
+  public void
+      givenTwoOrdersOfSameTypeInQueue_whenAddOrder_thenOrderHasDelayEqualToPreviousOrderAssemblyTime() {
     // given
-    OrderId id = new OrderId("id");
-    Order firstOrder = createOrder(id);
-    OrderId secondId = new OrderId("secondId");
-    Order secondOrder = createOrder(secondId);
-    OrderId thirdId = new OrderId("thirdId");
-    Order thirdOrder = createOrder(thirdId);
-    given(
-            modelManufacturer.computeRemainingTimeToProduceNextModelType(
-                firstOrder.getModelOrder().getModelType()))
-        .willReturn(firstOrder.getModelOrder().getAssemblyTime());
-    onDemandModelWarehouseStrategy.addOrder(firstOrder);
-    onDemandModelWarehouseStrategy.addOrder(secondOrder);
-    onDemandModelWarehouseStrategy.addOrder(thirdOrder);
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(anOrder.getModelOrder().getAssemblyTime()));
+    onDemandModelWarehouseStrategy.addOrder(anOrder);
+    Order anotherOrder = new OrderBuilder().withModelType("a type").build();
+    String modelType = anotherOrder.getModelOrder().getModelType();
+    onDemandModelWarehouseStrategy.addOrder(anotherOrder);
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(2, modelType))
+        .willReturn(AN_ASSEMBLY_TIME);
     AssemblyTime expectedDelay =
-        firstOrder
-            .getModelOrder()
-            .getAssemblyTime()
-            .add(secondOrder.getModelOrder().getAssemblyTime());
+        AN_ASSEMBLY_TIME.subtract(anotherOrder.getModelOrder().getAssemblyTime());
 
     // when
-    AssemblyTime assemblyTime =
-        onDemandModelWarehouseStrategy.computeRemainingTimeToProduce(thirdId);
+    onDemandModelWarehouseStrategy.addOrder(anotherOrder);
 
     // then
-    assertThat(assemblyTime.inWeeks()).isEqualTo(expectedDelay.inWeeks());
+    assertThat(anotherOrder.getAssemblyDelay()).isEqualTo(expectedDelay);
   }
+
+  @Test
+  public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotNotifyDelay() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+      .willThrow(new InvalidModelQuantityInQueueException());
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+
+    // when
+    onDemandModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    verify(modelOrderDelayObserver, never()).listenModelOrderDelay(anOrder);
+  }
+
+  @Test
+  public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotAddDelayToOrder() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+      .willThrow(new InvalidModelQuantityInQueueException());
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+    AssemblyTime noDelay = new AssemblyTime(0);
+
+    // when
+    onDemandModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    assertThat(anOrder.getAssemblyDelay()).isEqualTo(noDelay);
+  }
+
 
   private Order createOrder(OrderId id) {
     ModelOrder modelOrder = new ModelOrderBuilder().build();

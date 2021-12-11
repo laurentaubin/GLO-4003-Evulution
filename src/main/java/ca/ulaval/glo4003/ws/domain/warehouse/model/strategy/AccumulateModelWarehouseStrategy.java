@@ -8,13 +8,15 @@ import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.exception.InvalidModelQuantityInQueueException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AccumulateModelWarehouseStrategy extends ModelInventoryObservable
     implements ModelWarehouseStrategy, ModelAssembledObserver {
@@ -53,21 +55,40 @@ public class AccumulateModelWarehouseStrategy extends ModelInventoryObservable
           String.format(
               "Model for order %s not in stock, adding to order to queue", order.getId()));
       orderQueue.add(order);
+
+      try {
+        order.addAssemblyDelay(computeRemainingTimeToProduce(order.getId()));
+        notifyModelDelay(order);
+      } catch (InvalidModelQuantityInQueueException exception) {
+        LOGGER.error(
+            "Tried to compute order remaining time with wrong model type quantity", exception);
+      }
     }
   }
 
-  @Override
-  public AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
-    return new AssemblyTime(1);
-    //    Optional<Order> fetchedOrder = fetchOrder(orderId);
-    //    if (fetchedOrder.isEmpty()) {
-    //      return new AssemblyTime(0);
-    //    }
-    //    ModelOrder fetchedModel = fetchedOrder.get().getModelOrder();
-    //    String orderModelType = fetchedModel.getModelType();
-    //
-    //    int numberOfModelsOfTypeInQueue = computeNumberOfModelsOfTypesInQueue(orderModelType);
-    //    return timeBeforeAssemblingModelType(numberOfModelsOfTypeInQueue, fetchedModel);
+  private AssemblyTime computeRemainingTimeToProduce(OrderId orderId) {
+    Optional<Order> optionalRequestedOrder = fetchOrder(orderId);
+    if (optionalRequestedOrder.isEmpty()) {
+      return new AssemblyTime(0);
+    }
+    Order order = optionalRequestedOrder.get();
+
+    Integer positionInQueue = getPositionInQueueOfOrder(order);
+    String modelType = order.getModelOrder().getModelType();
+
+    return modelManufacturer.computeTimeToProduceQuantityOfModel(positionInQueue + 1, modelType);
+  }
+
+  private Integer getPositionInQueueOfOrder(Order order) {
+    List<Order> ordersOfRequestedTypeInQueue =
+        orderQueue.stream()
+            .filter(
+                orderInQueue ->
+                    Objects.equals(
+                        orderInQueue.getModelOrder().getModelType(),
+                        order.getModelOrder().getModelType()))
+            .collect(Collectors.toList());
+    return ordersOfRequestedTypeInQueue.indexOf(order);
   }
 
   @Override
@@ -80,45 +101,6 @@ public class AccumulateModelWarehouseStrategy extends ModelInventoryObservable
       modelInventory.addOne(assembledModelType);
     }
     sendNextModelToBeAssembled();
-  }
-
-  private int computeNumberOfModelsOfTypesInQueue(String orderModelType) {
-    int count = 0;
-    for (Order order : orderQueue) {
-      if (order.getModelOrder().getModelType().equals(orderModelType)) {
-        count++;
-      }
-    }
-
-    return count;
-  }
-
-  private AssemblyTime timeUntilModelTypeIsOnTopAndAssembled(String orderModelType) {
-    return new AssemblyTime(1);
-    //    if (orderModelType.equals(currentModelTypeBeingAssembled.getModelType())) {
-    //      return currentModelRemainingAssemblyTime;
-    //    }
-    //
-    //    AssemblyTime timeRemainingBeforeAssemblingModel = currentModelRemainingAssemblyTime;
-    //    ModelOrder nextModelOrderInLine =
-    //        computeNextModelTypeToBeAssembled(currentModelTypeBeingAssembled.getModelType());
-    //    while (!nextModelOrderInLine.getModelType().equals(orderModelType)) {
-    //      timeRemainingBeforeAssemblingModel =
-    //          timeRemainingBeforeAssemblingModel.add(nextModelOrderInLine.getAssemblyTime());
-    //      nextModelOrderInLine =
-    // computeNextModelTypeToBeAssembled(nextModelOrderInLine.getModelType());
-    //    }
-    //
-    //    return timeRemainingBeforeAssemblingModel;
-  }
-
-  private AssemblyTime computeTimeToAssembleEntireCycle() {
-    AssemblyTime timeToAssemblyEntireCycle = new AssemblyTime(0);
-    for (ModelOrder modelOrder : modelAssemblyCycle) {
-      timeToAssemblyEntireCycle = timeToAssemblyEntireCycle.add(modelOrder.getAssemblyTime());
-    }
-
-    return timeToAssemblyEntireCycle;
   }
 
   @Override
@@ -177,29 +159,6 @@ public class AccumulateModelWarehouseStrategy extends ModelInventoryObservable
 
   private boolean isLastModel(int modelPositionInModelAssemblyOrder) {
     return modelPositionInModelAssemblyOrder == modelAssemblyCycle.size() - 1;
-  }
-
-  private AssemblyTime timeBeforeAssemblingModelType(
-      Integer numberOfModelsOfTypeInQueue, ModelOrder modelOrder) {
-    return null;
-    //    String orderModelType = modelOrder.getModelType();
-    //
-    //    AssemblyTime timeBeforeAssemblingModelType =
-    //        timeUntilModelTypeIsOnTopAndAssembled(orderModelType);
-    //    AssemblyTime timeToAssembleFullCycles =
-    //        new AssemblyTime(
-    //            computeTimeToAssembleEntireCycle().inWeeks() * (numberOfModelsOfTypeInQueue - 1));
-    //
-    //    if (currentModelTypeBeingAssembled.getModelType().equals(orderModelType)) {
-    //      if (numberOfModelsOfTypeInQueue == 1) {
-    //        return currentModelRemainingAssemblyTime;
-    //      }
-    //      return timeBeforeAssemblingModelType.add(timeToAssembleFullCycles);
-    //    }
-    //
-    //    return timeBeforeAssemblingModelType
-    //        .add(timeToAssembleFullCycles)
-    //        .add(modelOrder.getAssemblyTime());
   }
 
   private Optional<Order> fetchOrder(OrderId orderId) {

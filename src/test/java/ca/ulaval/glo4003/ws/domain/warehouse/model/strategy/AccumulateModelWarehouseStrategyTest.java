@@ -1,14 +1,22 @@
 package ca.ulaval.glo4003.ws.domain.warehouse.model.strategy;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import ca.ulaval.glo4003.ws.domain.manufacturer.model.ModelManufacturer;
+import ca.ulaval.glo4003.ws.domain.notification.ModelOrderDelayObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventory;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelInventoryObserver;
 import ca.ulaval.glo4003.ws.domain.warehouse.model.ModelOrder;
 import ca.ulaval.glo4003.ws.domain.warehouse.order.Order;
-import ca.ulaval.glo4003.ws.domain.warehouse.order.OrderId;
 import ca.ulaval.glo4003.ws.domain.warehouse.time.AssemblyTime;
 import ca.ulaval.glo4003.ws.fixture.ModelOrderBuilder;
 import ca.ulaval.glo4003.ws.fixture.OrderBuilder;
+import ca.ulaval.glo4003.ws.infrastructure.manufacturer.model.exception.InvalidModelQuantityInQueueException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,17 +25,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class AccumulateModelWarehouseStrategyTest {
   private static final AssemblyTime ASSEMBLY_TIME_OF_ONE_WEEK = new AssemblyTime(1);
   private static final AssemblyTime ASSEMBLY_TIME_OF_TWO_WEEKS = new AssemblyTime(2);
+  private static final AssemblyTime AN_ASSEMBLY_TIME = new AssemblyTime(23);
   private static final String FIRST_MODEL_TYPE = "first type";
   private static final ModelOrder FIRST_MODEL_IN_CYCLE =
       new ModelOrderBuilder()
@@ -48,18 +50,12 @@ class AccumulateModelWarehouseStrategyTest {
           .build();
   private static final List<ModelOrder> MODEL_ASSEMBLY_ORDER =
       List.of(FIRST_MODEL_IN_CYCLE, SECOND_MODEL_IN_CYCLE, THIRD_MODEL_IN_CYCLE);
-  private static final OrderId FIRST_ORDER_ID = new OrderId("firstOrderId");
-  private static final ModelOrder FIRST_MODEL_ORDER =
-      new ModelOrderBuilder()
-          .withOrderId(FIRST_ORDER_ID)
-          .withModelName(FIRST_MODEL_TYPE)
-          .withAssemblyTime(ASSEMBLY_TIME_OF_ONE_WEEK)
-          .build();
 
   @Mock private ModelManufacturer modelManufacturer;
   @Mock private ModelInventory modelInventory;
   @Mock private ModelInventoryObserver modelInventoryObserver;
   @Mock private ModelInventoryObserver anotherModelAssembledObserver;
+  @Mock private ModelOrderDelayObserver modelOrderDelayObserver;
 
   private AccumulateModelWarehouseStrategy accumulateModelWarehouseStrategy;
 
@@ -70,11 +66,14 @@ class AccumulateModelWarehouseStrategyTest {
             MODEL_ASSEMBLY_ORDER, modelManufacturer, modelInventory);
     accumulateModelWarehouseStrategy.register(modelInventoryObserver);
     accumulateModelWarehouseStrategy.register(anotherModelAssembledObserver);
+    accumulateModelWarehouseStrategy.register(modelOrderDelayObserver);
   }
 
   @Test
   public void whenAddOrder_thenCheckIfModelIsInStock() {
     // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
     Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
 
     // when
@@ -100,6 +99,8 @@ class AccumulateModelWarehouseStrategyTest {
   @Test
   public void givenModelIsNotInStock_whenAddOrder_thenModelIsNotTakenFromInventory() {
     // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
     Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
     given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
 
@@ -127,6 +128,8 @@ class AccumulateModelWarehouseStrategyTest {
   @Test
   public void givenModelIsNotInStock_whenAddOrder_thenModelAssembledObserversAreNotNotify() {
     // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
     Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
     given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
     accumulateModelWarehouseStrategy.register(modelInventoryObserver);
@@ -138,6 +141,36 @@ class AccumulateModelWarehouseStrategyTest {
     // then
     verify(modelInventoryObserver, never()).listenToModelInStock(anOrder);
     verify(anotherModelAssembledObserver, never()).listenToModelInStock(anOrder);
+  }
+
+  @Test
+  public void givenModelNotInStock_whenAddOrder_thenOrderRemainingAssemblyTimeIsSet() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(123));
+    Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
+
+    // when
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    assertThat(anOrder.getAssemblyDelay().inWeeks()).isGreaterThan(0);
+  }
+
+  @Test
+  public void givenModelNotInStock_whenAddOrder_thenNotifyModelOrderDelay() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
+    Order anOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
+    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
+
+    // when
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    verify(modelOrderDelayObserver).listenModelOrderDelay(anOrder);
   }
 
   @Test
@@ -172,8 +205,10 @@ class AccumulateModelWarehouseStrategyTest {
 
   @Test
   public void
-      givenAnOrderWaitingForModel__whenListenToModelAssembled_thenModelIsNotAddedToInventory() {
+      givenAnOrderWaitingForModel_whenListenToModelAssembled_thenModelIsNotAddedToInventory() {
     // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
     ModelOrder modelOrder =
         new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
     Order order = new OrderBuilder().withModelOrder(modelOrder).build();
@@ -190,6 +225,8 @@ class AccumulateModelWarehouseStrategyTest {
   public void
       givenAnOrderWaitingForModel_whenListenToModelAssembled_thenNotifyBatteryOrderIsInStockForOrder() {
     // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
     ModelOrder modelOrder =
         new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
     Order order = new OrderBuilder().withModelOrder(modelOrder).build();
@@ -206,6 +243,8 @@ class AccumulateModelWarehouseStrategyTest {
   public void
       givenManyOrdersWaitingForModelAndManyModelsAssembled_whenListenToModelAssembled_thenNotifyOrdersWaitingForBatteryInOrder() {
     // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
     ModelOrder modelOrder =
         new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
     Order order = new OrderBuilder().withModelOrder(modelOrder).build();
@@ -227,6 +266,8 @@ class AccumulateModelWarehouseStrategyTest {
   public void
       givenManyOrdersWaitingForModel_whenListenToModelAssembled_thenOnlyNotifyFirstOrderWaitingForBatteryOrder() {
     // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
     ModelOrder modelOrder =
         new ModelOrderBuilder().withModelName(FIRST_MODEL_IN_CYCLE.getModelType()).build();
     Order order = new OrderBuilder().withModelOrder(modelOrder).build();
@@ -243,130 +284,113 @@ class AccumulateModelWarehouseStrategyTest {
   }
 
   @Test
-  public void
-      givenOrderAddedWithModelNotInStock_whenComputeRemainingTimeToProduce_thenReturnModelOrderAssemblyTime() {
+  public void givenNoOrderInQueue_whenAddOrder_thenOrderHasDelayEqualToAssemblyTime() {
     // given
-    Order order = createAnOrderWithModel(FIRST_MODEL_ORDER);
-    accumulateModelWarehouseStrategy.addOrder(order);
-    AssemblyTime expectedAssemblyTime = order.getModelOrder().getAssemblyTime();
+    Order anOrder = new OrderBuilder().build();
+    AssemblyTime expectedTimeToProduce = AN_ASSEMBLY_TIME;
+    given(
+            modelManufacturer.computeTimeToProduceQuantityOfModel(
+                1, anOrder.getModelOrder().getModelType()))
+        .willReturn(expectedTimeToProduce);
 
     // when
-    AssemblyTime actualAssemblyTime =
-        accumulateModelWarehouseStrategy.computeRemainingTimeToProduce(order.getId());
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
 
     // then
-    assertThat(actualAssemblyTime).isEqualTo(expectedAssemblyTime);
+    assertThat(anOrder.getAssemblyDelay()).isEqualTo(expectedTimeToProduce);
   }
 
-  //  @Test
-  //  public void givenOrderAndModelIsInStock_whenComputeRemainingTimeToProduce_thenReturnNoDelay()
-  // {
-  //    // given
-  //    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(true);
-  //    Order order = createAnOrderWithModel(FIRST_MODEL_ORDER);
-  //    accumulateModelWarehouseStrategy.addOrder(order);
-  //    AssemblyTime expectedAssemblyTime = new AssemblyTime(0);
-  //
-  //    // when
-  //    AssemblyTime actualAssemblyTime =
-  //        accumulateModelWarehouseStrategy.computeRemainingTimeToProduce(order.getId());
-  //
-  //    // then
-  //    assertThat(actualAssemblyTime).isEqualTo(expectedAssemblyTime);
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenTwoOrdersAddedWithModelsFollowingCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelAssemblyTimes() {
-  //    // given
-  //    Order firstOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
-  //    Order secondOrder = createAnOrderWithModel(SECOND_MODEL_ORDER);
-  //    addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
-  //    AssemblyTime expectedAssemblyTime =
-  //        FIRST_MODEL_IN_CYCLE.getAssemblyTime().add(SECOND_MODEL_IN_CYCLE.getAssemblyTime());
-  //
-  //    // when
-  //    AssemblyTime actualAssemblyTime =
-  //        accumulateModelWarehouseStrategy.computeRemainingTimeToProduce(secondOrder.getId());
-  //
-  //    // then
-  //    assertThat(actualAssemblyTime).isEqualTo(expectedAssemblyTime);
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenTwoOrdersAddedWithFirstAndThirdModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfFirstSecondAndThirdModelsAssemblyTime() {
-  //    // given
-  //    Order firstOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
-  //    Order secondOrder = createAnOrderWithModel(THIRD_MODEL_ORDER);
-  //    addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
-  //    AssemblyTime expectedAssemblyTime =
-  //        FIRST_MODEL_IN_CYCLE
-  //            .getAssemblyTime()
-  //            .add(SECOND_MODEL_IN_CYCLE.getAssemblyTime())
-  //            .add(THIRD_MODEL_IN_CYCLE.getAssemblyTime());
-  //
-  //    // when
-  //    AssemblyTime actualAssemblyTime =
-  //        accumulateModelWarehouseStrategy.computeRemainingTimeToProduce(secondOrder.getId());
-  //
-  //    // then
-  //    assertThat(actualAssemblyTime).isEqualTo(expectedAssemblyTime);
-  //  }
-  //
-  //  @Test
-  //  public void
-  //
-  // givenTwoOrdersAddedWithFirstModelsOfCycle_whenComputeRemainingTimeToProduceOfSecondOrder_thenReturnSumOfModelAndWholeCycleAssemblyTime() {
-  //    // given
-  //    Order firstOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
-  //    Order secondOrder = createAnOrderWithModel(FIRST_MODEL_ORDER);
-  //    addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
-  //    AssemblyTime expectedAssemblyTime =
-  //        FIRST_MODEL_IN_CYCLE
-  //            .getAssemblyTime()
-  //            .add(SECOND_MODEL_IN_CYCLE.getAssemblyTime())
-  //            .add(
-  //
-  // THIRD_MODEL_IN_CYCLE.getAssemblyTime().add(FIRST_MODEL_IN_CYCLE.getAssemblyTime()));
-  //
-  //    // when
-  //    AssemblyTime actualAssemblyTime =
-  //        accumulateModelWarehouseStrategy.computeRemainingTimeToProduce(secondOrder.getId());
-  //
-  //    // then
-  //    assertThat(actualAssemblyTime).isEqualTo(expectedAssemblyTime);
-  //  }
-  //
-  //  @Test
-  //  public void givenOrdersInQueue_whenGetActiveOrders_thenReturnOrders() {
-  //    // given
-  //    Order firstOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-  //    Order secondOrder = createAnOrderWithModelType(FIRST_MODEL_TYPE);
-  //    given(modelInventory.isInStock(FIRST_MODEL_TYPE)).willReturn(false);
-  //    addOrdersToAssemblyLine(List.of(firstOrder, secondOrder));
-  //
-  //    // when
-  //    List<Order> ordersInQueue = accumulateModelWarehouseStrategy.getActiveOrders();
-  //
-  //    // then
-  //    assertThat(ordersInQueue).containsExactly(firstOrder, secondOrder);
-  //  }
+  @Test
+  public void givenOneOrderInQueue_whenAddNewOrder_thenOrderHasDelayOfTotalAssemblyTime() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
+    Order anOrder = new OrderBuilder().build();
+    String modelType = anOrder.getModelOrder().getModelType();
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(1, modelType))
+        .willReturn(AN_ASSEMBLY_TIME);
+
+    // when
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    assertThat(anOrder.getAssemblyDelay()).isEqualTo(AN_ASSEMBLY_TIME);
+  }
+
+  @Test
+  public void
+      givenTwoOrdersOfDifferentTypeInQueue_whenAddNewOrder_thenOrderHasDelayOfTotalAssemblyTime() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+    Order anotherOrder = new OrderBuilder().withModelType("another type").build();
+    String modelType = anotherOrder.getModelOrder().getModelType();
+    accumulateModelWarehouseStrategy.addOrder(anotherOrder);
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(1, modelType))
+        .willReturn(AN_ASSEMBLY_TIME);
+
+    // when
+    accumulateModelWarehouseStrategy.addOrder(anotherOrder);
+
+    // then
+    assertThat(anotherOrder.getAssemblyDelay()).isEqualTo(AN_ASSEMBLY_TIME);
+  }
+
+  @Test
+  public void
+      givenTwoOrdersOfSameTypeInQueue_whenAddNewOrder_thenOrderHasDelayOfTotalAssemblyTime() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+        .willReturn(new AssemblyTime(0));
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+    Order anotherOrder = new OrderBuilder().withModelType("a type").build();
+    String modelType = anotherOrder.getModelOrder().getModelType();
+    accumulateModelWarehouseStrategy.addOrder(anotherOrder);
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(2, modelType))
+        .willReturn(AN_ASSEMBLY_TIME);
+
+    // when
+    accumulateModelWarehouseStrategy.addOrder(anotherOrder);
+
+    // then
+    assertThat(anotherOrder.getAssemblyDelay()).isEqualTo(AN_ASSEMBLY_TIME);
+  }
+
+  @Test
+  public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotNotifyDelay() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+      .willThrow(new InvalidModelQuantityInQueueException());
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+
+    // when
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    verify(modelOrderDelayObserver, never()).listenModelOrderDelay(anOrder);
+  }
+
+  @Test
+  public void givenComputeRemainingTimeWithWrongModelQuantity_whenAddOrder_thenDoNotAddDelayToOrder() {
+    // given
+    given(modelManufacturer.computeTimeToProduceQuantityOfModel(any(), any()))
+      .willThrow(new InvalidModelQuantityInQueueException());
+    Order anOrder = new OrderBuilder().withModelType("a type").build();
+    AssemblyTime noDelay = new AssemblyTime(0);
+
+    // when
+    accumulateModelWarehouseStrategy.addOrder(anOrder);
+
+    // then
+    assertThat(anOrder.getAssemblyDelay()).isEqualTo(noDelay);
+  }
 
   private Order createAnOrderWithModelType(String modelType) {
     ModelOrder aModelOrder = new ModelOrderBuilder().withModelName(modelType).build();
     return new OrderBuilder().withModelOrder(aModelOrder).build();
-  }
-
-  private Order createAnOrderWithModel(ModelOrder modelOrder) {
-    return new OrderBuilder().withModelOrder(modelOrder).build();
-  }
-
-  private void addOrdersToAssemblyLine(List<Order> orders) {
-    for (Order order : orders) {
-      accumulateModelWarehouseStrategy.addOrder(order);
-    }
   }
 }

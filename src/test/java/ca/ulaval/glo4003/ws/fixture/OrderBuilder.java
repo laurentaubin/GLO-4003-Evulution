@@ -41,6 +41,11 @@ public class OrderBuilder {
     return this;
   }
 
+  public OrderBuilder withModelType(String modelType) {
+    modelOrder = new ModelOrder(modelOrder.getOrderId(), modelType, modelOrder.getAssemblyTime());
+    return this;
+  }
+
   public Order build() {
     return new Order(orderId, modelOrder, batteryOrder, createdAt, initialAssemblyTime);
   }
