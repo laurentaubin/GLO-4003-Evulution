@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
-import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.api.delivery.request.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.ContainerRequestContext;

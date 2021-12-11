@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
-import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
-import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
+import ca.ulaval.glo4003.ws.api.delivery.request.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.api.delivery.request.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
@@ -22,12 +22,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;

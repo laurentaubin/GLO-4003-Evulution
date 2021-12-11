@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
-import ca.ulaval.glo4003.ws.api.delivery.dto.CompletedDeliveryResponse;
-import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.api.delivery.response.CompletedDeliveryResponse;
+import ca.ulaval.glo4003.ws.api.delivery.request.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.service.delivery.dto.CompletedDeliveryDto;
 import ca.ulaval.glo4003.ws.service.delivery.dto.DeliveryLocationDto;
 

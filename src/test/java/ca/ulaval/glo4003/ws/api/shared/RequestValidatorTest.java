@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.ws.api.shared;
 
-import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.api.delivery.request.DeliveryLocationRequest;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import ca.ulaval.glo4003.ws.api.transaction.request.ConfigureBatteryRequest;
 import ca.ulaval.glo4003.ws.api.transaction.request.ConfigurePaymentRequest;

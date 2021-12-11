@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.ws.api.delivery.dto;
+package ca.ulaval.glo4003.ws.api.delivery.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

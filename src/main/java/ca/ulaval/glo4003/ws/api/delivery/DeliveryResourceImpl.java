@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.ws.api.delivery;
 
-import ca.ulaval.glo4003.ws.api.delivery.dto.CompletedDeliveryResponse;
-import ca.ulaval.glo4003.ws.api.delivery.dto.DeliveryLocationRequest;
-import ca.ulaval.glo4003.ws.api.delivery.dto.validator.DeliveryRequestValidator;
+import ca.ulaval.glo4003.ws.api.delivery.response.CompletedDeliveryResponse;
+import ca.ulaval.glo4003.ws.api.delivery.request.DeliveryLocationRequest;
+import ca.ulaval.glo4003.ws.api.delivery.request.DeliveryRequestValidator;
 import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
 import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
