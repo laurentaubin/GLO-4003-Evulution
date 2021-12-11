@@ -1,8 +1,5 @@
 package ca.ulaval.glo4003.ws.infrastructure.transaction;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
@@ -15,16 +12,19 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @ExtendWith(MockitoExtension.class)
 class InMemoryTransactionRepositoryTest {
   private static final TransactionId AN_ID = new TransactionId("id");
 
   private final TransactionAssembler transactionAssembler = new TransactionAssembler();
-  private Transaction transaction;
 
-  @Mock private Vehicle aVehicle;
+  @Mock private Vehicle vehicle;
 
   private InMemoryTransactionRepository transactionRepository;
+  private Transaction transaction;
 
   @BeforeEach
   public void setUp() {
@@ -70,7 +70,7 @@ class InMemoryTransactionRepositoryTest {
   public void givenTransactionInRepository_whenUpdate_thenUpdateTransaction() {
     // given
     Transaction updatedTransaction = createTransactionGivenId(AN_ID);
-    updatedTransaction.addVehicle(aVehicle);
+    updatedTransaction.addVehicle(vehicle);
     transactionRepository.save(transaction);
 
     // when
@@ -78,7 +78,7 @@ class InMemoryTransactionRepositoryTest {
 
     // then
     Transaction actualTransaction = transactionRepository.find(AN_ID);
-    assertThat(actualTransaction.getVehicle()).isEqualTo(aVehicle);
+    assertThat(actualTransaction.getVehicle()).isEqualTo(vehicle);
   }
 
   @Test
@@ -101,11 +101,11 @@ class InMemoryTransactionRepositoryTest {
     transactionRepository.save(transaction);
 
     // when
-    transaction.addVehicle(aVehicle);
+    transaction.addVehicle(vehicle);
     Transaction originalTransaction = transactionRepository.find(AN_ID);
 
     // then
-    assertThat(originalTransaction.getVehicle()).isNotEqualTo(aVehicle);
+    assertThat(originalTransaction.getVehicle()).isNotEqualTo(vehicle);
   }
 
   private Transaction createTransactionGivenId(TransactionId id) {

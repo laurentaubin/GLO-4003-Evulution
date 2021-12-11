@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ca.ulaval.glo4003</groupId>
@@ -321,125 +321,7 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>jacoco-check</id>
-                        <phase>verify</phase>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>CLASS</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>INSTRUCTION</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>${jacoco.coverage.ratio.minimum}</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>METHOD</counter>
-                                            <value>MISSEDCOUNT</value>
-                                            <maximum>${jacoco.method.miss.maximum}</maximum>
-                                        </limit>
-                                    </limits>
-                                    <excludes>
-                                        <exclude>ca.ulaval.glo4003.EvulutionMain</exclude>
-                                        <exclude>ca.ulaval.glo4003.EvulutionMain.1</exclude>
-                                        <exclude>ca.ulaval.glo4003.EvulutionMain.2</exclude>
-                                        <exclude>ca.ulaval.glo4003.EvulutionMain.3</exclude>
-                                        <exclude>ca.ulaval.glo4003.EvulutionMain.4</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.http.CorsResponseFilter
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.context.*</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.domain.auth.Session</exclude>
-
-                                        <!-- API -->
-                                        <exclude>ca.ulaval.glo4003.ws.api.shared.ExceptionResponse
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.api.user.exception.InvalidFormatException
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.api.mock.MockResourceImpl
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.api.filter.allowed.*</exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.api.shared.exception.InvalidRequestException
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.api.shared.RequestValidator
-                                        </exclude>
-
-                                        <!-- DOMAIN -->
-                                        <exclude>ca.ulaval.glo4003.ws.domain.delivery.DeliveryId
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.transaction.TransactionId
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.transaction.Transaction
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.delivery.DeliveryDestination
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidLocationException
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.transaction.exception.CannotAddBatteryBeforeVehicleException:
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.domain.vehicle.Color</exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.domain.vehicle.model.Model
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.vehicle.exception.IncompleteVehicleException
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.shared.RandomProvider
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.exception.AssemblyStrategyNotRegisteredException
-                                        </exclude>
-
-                                        <!-- INFRA -->
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.infrastructure.delivery.InMemoryDeliveryDto
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.model.ModelDto
-                                        </exclude>
-                                        <exclude>ca.ulaval.glo4003.ws.infrastructure.model.ModelDto
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.infrastructure.notification.email.jakarta.TransportWrapper
-                                        </exclude>
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.user.exception.NoTransactionLinkedToDeliveryException
-                                        </exclude>
-
-                                        <exclude>ca.ulaval.glo4003.EvulutionMain</exclude>
-
-                                        <!-- EXTERNAL API -->
-                                        <exclude>ca.ulaval.glo4003.evulution.car_manufacture.*
-                                        </exclude>
-
-                                        <!-- To be tested -->
-                                        <exclude>
-                                            ca.ulaval.glo4003.ws.domain.assembly.strategy.AssemblyStrategyType
-                                        </exclude>
-                                    </excludes>
-                                </rule>
-                            </rules>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
+                        <id>report</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>report</goal>

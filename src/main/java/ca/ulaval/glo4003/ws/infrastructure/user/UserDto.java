@@ -13,7 +13,6 @@ public class UserDto {
   private final BirthDate birthDate;
   private final String sex;
   private final String email;
-  private final String password;
   private final Set<Role> roles;
   private final Map<TransactionId, DeliveryId> transactionDeliveries;
 
@@ -22,14 +21,12 @@ public class UserDto {
       BirthDate birthDate,
       String sex,
       String email,
-      String password,
       Set<Role> roles,
       Map<TransactionId, DeliveryId> transactionDeliveries) {
     this.name = name;
     this.birthDate = birthDate;
     this.sex = sex;
     this.email = email;
-    this.password = password;
     this.roles = roles;
     this.transactionDeliveries = transactionDeliveries;
   }
@@ -48,10 +45,6 @@ public class UserDto {
 
   public String getEmail() {
     return email;
-  }
-
-  public String getPassword() {
-    return password;
   }
 
   public Set<Role> getRoles() {

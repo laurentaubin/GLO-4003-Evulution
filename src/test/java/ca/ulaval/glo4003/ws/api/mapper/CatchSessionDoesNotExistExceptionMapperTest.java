@@ -1,12 +1,12 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.infrastructure.exception.SessionDoesNotExistException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class CatchSessionDoesNotExistExceptionMapperTest {
   private static final int EXPECTED_STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
@@ -21,7 +21,7 @@ public class CatchSessionDoesNotExistExceptionMapperTest {
   }
 
   @Test
-  public void givenSessionDoesNotExistException_whenToResponse_thenReturnRightResponse() {
+  public void givenSessionDoesNotExistException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     SessionDoesNotExistException exception = new SessionDoesNotExistException();
 

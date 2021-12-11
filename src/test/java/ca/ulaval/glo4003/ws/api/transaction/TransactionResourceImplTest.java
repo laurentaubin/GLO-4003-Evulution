@@ -1,355 +1,229 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
-import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.transaction.dto.BatteryRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.PaymentRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.VehicleRequest;
-import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
-import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
-import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
-import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
+import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
+import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
+import ca.ulaval.glo4003.ws.api.transaction.request.ConfigureBatteryRequest;
+import ca.ulaval.glo4003.ws.api.transaction.request.ConfigurePaymentRequest;
+import ca.ulaval.glo4003.ws.api.transaction.request.ConfigureVehicleRequest;
+import ca.ulaval.glo4003.ws.api.transaction.response.BatteryConfigurationResponseAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.response.TransactionCreationResponse;
+import ca.ulaval.glo4003.ws.api.transaction.response.TransactionCreationResponseAssembler;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.delivery.exception.DuplicateDeliveryException;
-import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
-import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.transaction.exception.DuplicateTransactionException;
-import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
-import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
-import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
-import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
+import ca.ulaval.glo4003.ws.service.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.service.transaction.dto.*;
+import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionResourceImplTest {
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("id");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("id");
+  private static final BigDecimal A_RANGE = BigDecimal.valueOf(424332);
 
-  private final TransactionService transactionService =
-      mock(TransactionService.class, RETURNS_DEEP_STUBS);
-  @Mock private CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
-  @Mock private VehicleRequestValidator vehicleRequestValidator;
-  @Mock private RoleHandler roleHandler;
+  @Mock private TransactionService transactionService;
   @Mock private ContainerRequestContext containerRequestContext;
-  @Mock private BatteryRequestValidator batteryRequestValidator;
-  @Mock private PaymentRequestAssembler paymentRequestAssembler;
-  @Mock private PaymentRequestValidator paymentRequestValidator;
-  @Mock private VehicleRequest vehicleRequest;
-  @Mock private BatteryRequest batteryRequest;
-  @Mock private PaymentRequest paymentRequest;
-  @Mock private Payment payment;
-  @Mock private DeliveryService deliveryService;
-  @Mock private OwnershipHandler ownershipHandler;
-  @Mock private Session aSession;
-  @Mock private VehicleFactory vehicleFactory;
-  @Mock private Vehicle aVehicle;
+  @Mock private ConfigureVehicleRequest configureVehicleRequest;
+  @Mock private ConfigureBatteryRequest configureBatteryRequest;
+  @Mock private ConfigurePaymentRequest configurePaymentRequest;
+  @Mock private RequestValidator requestValidator;
+  @Mock private TokenExtractor tokenExtractor;
+  @Mock private ConfigureVehicleDtoAssembler configureVehicleDtoAssembler;
+  @Mock private ConfigureBatteryDtoAssembler configureBatteryDtoAssembler;
+  @Mock private ConfigurePaymentDtoAssembler configurePaymentDtoAssembler;
+  @Mock private BatteryConfigurationResponseAssembler configureBatteryResponseAssembler;
+  @Mock private TransactionCreationResponseAssembler transactionCreationResponseAssembler;
 
-  private Transaction transaction;
-  private Delivery delivery;
+  @Mock private ConfigureVehicleDto configureVehicleDto;
+  @Mock private ConfigureBatteryDto configureBatteryDto;
+  @Mock private ConfigurePaymentDto configurePaymentDto;
+  @Mock private TransactionCreationDto transactionCreationDto;
+  @Mock private BatteryConfigurationDto batteryConfigurationDto;
+  @Mock private TokenDto tokenDto;
+
   private TransactionResource transactionResource;
 
   @BeforeEach
   void setUp() {
-    transaction = createTransaction(A_TRANSACTION_ID);
-    delivery = createDelivery(A_DELIVERY_ID);
     transactionResource =
         new TransactionResourceImpl(
             transactionService,
-            deliveryService,
-            ownershipHandler,
-            createdTransactionResponseAssembler,
-            vehicleRequestValidator,
-            roleHandler,
-            batteryRequestValidator,
-            paymentRequestAssembler,
-            paymentRequestValidator,
-            vehicleFactory);
+            configureVehicleDtoAssembler,
+            configureBatteryDtoAssembler,
+            configureBatteryResponseAssembler,
+            configurePaymentDtoAssembler,
+            requestValidator,
+            transactionCreationResponseAssembler,
+                tokenExtractor);
   }
 
   @Test
-  public void givenTransaction_whenCreateTransaction_thenCreateTransactionResponse() {
+  public void whenCreateTransaction_thenReturnValidResponse() {
     // given
-    given(transactionService.createTransaction()).willReturn(transaction);
-    given(deliveryService.createDelivery()).willReturn(delivery);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
+    given(transactionService.createTransaction(tokenDto)).willReturn(transactionCreationDto);
+    TransactionCreationResponse transactionCreationResponse =
+        new TransactionCreationResponse(A_TRANSACTION_ID.getId(), A_DELIVERY_ID.getDeliveryId());
+    given(transactionCreationResponseAssembler.assemble(transactionCreationDto))
+        .willReturn(transactionCreationResponse);
+
+    // when
+    Response response = transactionResource.createTransaction(containerRequestContext);
+
+    // then
+    assertThat(response.getEntity()).isEqualTo(transactionCreationResponse);
+  }
+
+  @Test public void whenCreateTransaction_thenTransactionServiceIsCalledCorrectly() {
+    // given
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
+    given(transactionService.createTransaction(tokenDto)).willReturn(transactionCreationDto);
 
     // when
     transactionResource.createTransaction(containerRequestContext);
 
     // then
-    verify(createdTransactionResponseAssembler).assemble(transaction, delivery);
+    verify(transactionService).createTransaction(tokenDto);
   }
 
-  @Test
-  public void whenCreateTransaction_thenRolesAreValidated() {
-    // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
-
-    // then
-    verify(roleHandler)
-        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
-  }
-
-  @Test
-  public void
-      givenTransactionCreatedSuccessfully_whenCreateTransaction_thenAddTransactionOwnershipToUser() {
+  @Test public void whenCreateTransaction_thenTokenIsExtracted() {
     // given
-    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
-    given(transactionService.createTransaction()).willReturn(transaction);
-    given(deliveryService.createDelivery()).willReturn(delivery);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
+    given(transactionService.createTransaction(tokenDto)).willReturn(transactionCreationDto);
 
     // when
     transactionResource.createTransaction(containerRequestContext);
 
     // then
-    verify(ownershipHandler)
-        .mapDeliveryIdToTransactionId(aSession, A_TRANSACTION_ID, A_DELIVERY_ID);
+    verify(tokenExtractor).extract(containerRequestContext);
   }
 
   @Test
-  public void
-      givenTransactionNotCreatedSuccessfully_whenCreateTransaction_thenDoNotAddTransactionOwnershipToUser() {
+  public void givenConfigureVehicleRequest_whenConfigureVehicle_thenValidateRequest() {
+    // when
+    transactionResource.configureVehicle(
+        containerRequestContext, A_TRANSACTION_ID, configureVehicleRequest);
+
+    // then
+    verify(requestValidator).validate(configureVehicleRequest);
+  }
+
+  @Test public void whenConfigureVehicle_thenTokenIsExtracted() {
     // given
-    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
-    given(transactionService.createTransaction())
-        .willThrow(new DuplicateTransactionException(A_TRANSACTION_ID));
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
-    Executable creatingTransaction =
-        () -> transactionResource.createTransaction(containerRequestContext);
+    transactionResource.configureVehicle(containerRequestContext, A_TRANSACTION_ID, configureVehicleRequest);
 
     // then
-    assertThrows(DuplicateTransactionException.class, creatingTransaction);
-    verify(ownershipHandler, times(0))
-        .mapDeliveryIdToTransactionId(aSession, A_TRANSACTION_ID, A_DELIVERY_ID);
+    verify(tokenExtractor).extract(containerRequestContext);
   }
 
   @Test
-  public void
-      givenDeliveryNotCreatedSuccessfully_whenCreateTransaction_thenDoNotAddTransactionOwnershipToUser() {
+  public void givenTransactionIsOwnedByUser_whenConfigureVehicle_thenVehicleIsConfigured() {
     // given
-    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
-    given(transactionService.createTransaction()).willReturn(transaction);
-    given(deliveryService.createDelivery())
-        .willThrow(new DuplicateDeliveryException(A_DELIVERY_ID));
+    given(configureVehicleDtoAssembler.assemble(configureVehicleRequest))
+        .willReturn(configureVehicleDto);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
-    Executable creatingTransaction =
-        () -> transactionResource.createTransaction(containerRequestContext);
+    transactionResource.configureVehicle(
+        containerRequestContext, A_TRANSACTION_ID, configureVehicleRequest);
 
     // then
-    assertThrows(DuplicateDeliveryException.class, creatingTransaction);
-    verify(ownershipHandler, times(0))
-        .mapDeliveryIdToTransactionId(aSession, A_TRANSACTION_ID, A_DELIVERY_ID);
+    verify(transactionService).configureVehicle(A_TRANSACTION_ID, configureVehicleDto, tokenDto);
   }
 
   @Test
-  public void whenAddVehicle_thenRolesAreValidated() {
-    // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
-
-    // then
-    verify(roleHandler)
-        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
-  }
-
-  @Test
-  public void givenVehicleRequest_whenAddVehicle_thenValidateRequest() {
-    // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
-
-    // then
-    verify(vehicleRequestValidator).validate(vehicleRequest);
-  }
-
-  @Test
-  public void givenTransactionIsOwnedByUser_whenAddVehicle_thenAddVehicle() {
+  public void givenAConfigureBatteryRequest_whenConfigureBattery_thenRequestIsValidated() {
     // given
-    given(vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()))
-        .willReturn(aVehicle);
+    given(configureBatteryDtoAssembler.assemble(configureBatteryRequest))
+        .willReturn(configureBatteryDto);
+    given(batteryConfigurationDto.getEstimatedRange()).willReturn(A_RANGE);
+    given(transactionService.configureBattery(A_TRANSACTION_ID, configureBatteryDto, tokenDto))
+        .willReturn(batteryConfigurationDto);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+    transactionResource.configureBattery(
+        containerRequestContext, A_TRANSACTION_ID, configureBatteryRequest);
 
     // then
-    verify(transactionService).addVehicle(A_TRANSACTION_ID, aVehicle);
+    verify(requestValidator).validate(configureBatteryRequest);
   }
 
-  @Test
-  public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddVehicle() {
+  @Test public void whenConfigureBattery_thenTokenIsExtracted() {
     // given
-    doThrow(new WrongOwnerException())
-        .when(ownershipHandler)
-        .validateTransactionOwnership(any(), any());
+    given(configureBatteryDtoAssembler.assemble(configureBatteryRequest))
+            .willReturn(configureBatteryDto);
+    given(batteryConfigurationDto.getEstimatedRange()).willReturn(A_RANGE);
+    given(transactionService.configureBattery(A_TRANSACTION_ID, configureBatteryDto, tokenDto))
+            .willReturn(batteryConfigurationDto);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
-    Executable addingBattery =
-        () ->
-            transactionResource.addVehicle(
-                containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+    transactionResource.configureBattery(containerRequestContext, A_TRANSACTION_ID, configureBatteryRequest);
 
     // then
-    assertThrows(TransactionNotFoundException.class, addingBattery);
-    verify(transactionService, times(0)).addVehicle(any(), any());
+    verify(tokenExtractor).extract(containerRequestContext);
   }
 
   @Test
-  public void whenAddVehicle_thenValidateTransactionOwnership() {
-    // given
-    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
-
+  void whenCompleteTransaction_thenValidatePaymentRequest() {
     // when
-    transactionResource.addVehicle(
-        containerRequestContext, A_TRANSACTION_ID.toString(), vehicleRequest);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
-    // then
-    verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);
-  }
-
-  @Test
-  public void givenTransactionIsOwnedByUser_whenAddBattery_thenBatteryIsAdded() {
-    // when
-    transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
-
-    // then
-    verify(batteryRequestValidator).validate(batteryRequest);
-  }
-
-  @Test
-  public void givenTransactionIsNotOwnedByUser_whenAddBattery_thenDoNotAddBattery() {
-    // given
-    doThrow(new WrongOwnerException())
-        .when(ownershipHandler)
-        .validateTransactionOwnership(any(), any());
-
-    // when
-    Executable addingBattery =
-        () ->
-            transactionResource.addBattery(
-                containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
-
-    // then
-    assertThrows(TransactionNotFoundException.class, addingBattery);
-    verify(transactionService, times(0)).addBattery(any(), any());
-  }
-
-  @Test
-  public void whenAddBattery_thenRolesAreValidated() {
-    // when
-    transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
-
-    // then
-    verify(roleHandler)
-        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
-  }
-
-  @Test
-  public void whenAddBattery_thenValidateTransactionOwnership() {
-    // given
-    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
-
-    // when
-    transactionResource.addBattery(
-        containerRequestContext, A_TRANSACTION_ID.toString(), batteryRequest);
-
-    // then
-    verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);
-  }
-
-  @Test
-  void whenAddPayment_thenValidatePaymentRequest() {
-    // when
     transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+        containerRequestContext, A_TRANSACTION_ID, configurePaymentRequest);
 
     // then
-    verify(paymentRequestValidator).validate(paymentRequest);
+    verify(requestValidator).validate(configurePaymentRequest);
   }
 
   @Test
-  public void givenTransactionIsOwnedByUser_whenCompletePayment_thenAddPayment() {
+  public void whenCompleteTransaction_thenCompleteTransactionCalled() {
     // given
-    given(paymentRequestAssembler.create(paymentRequest)).willReturn(payment);
+    given(configurePaymentDtoAssembler.assemble(configurePaymentRequest))
+        .willReturn(configurePaymentDto);
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
     transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+        containerRequestContext, A_TRANSACTION_ID, configurePaymentRequest);
 
     // then
-    verify(transactionService).addPayment(A_TRANSACTION_ID, payment);
+    verify(transactionService).completeTransaction(A_TRANSACTION_ID, configurePaymentDto, tokenDto);
   }
 
-  @Test
-  public void givenTransactionIsNotOwnedByUser_whenCompletePayment_thenDoNotAddPayment() {
+  @Test public void whenCompleteTransaction_thenTokenIsExtracted() {
     // given
-    doThrow(new WrongOwnerException())
-        .when(ownershipHandler)
-        .validateTransactionOwnership(any(), any());
+    given(tokenExtractor.extract(containerRequestContext)).willReturn(tokenDto);
 
     // when
-    Executable completingTransaction =
-        () ->
-            transactionResource.completeTransaction(
-                containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
+    transactionResource.completeTransaction(containerRequestContext, A_TRANSACTION_ID, configurePaymentRequest);
 
     // then
-    assertThrows(TransactionNotFoundException.class, completingTransaction);
-    verify(transactionService, times(0)).addPayment(any(), any());
-  }
-
-  @Test
-  public void whenCompleteTransaction_thenRolesAreValidated() {
-    // when
-    transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
-
-    // then
-    verify(roleHandler)
-        .retrieveSession(containerRequestContext, new ArrayList<>(List.of(Role.BASE, Role.ADMIN)));
-  }
-
-  @Test
-  public void whenCompleteTransaction_thenValidateTransactionOwnership() {
-    // given
-    given(roleHandler.retrieveSession(any(), any())).willReturn(aSession);
-
-    // when
-    transactionResource.completeTransaction(
-        containerRequestContext, A_TRANSACTION_ID.toString(), paymentRequest);
-
-    // then
-    verify(ownershipHandler).validateTransactionOwnership(aSession, A_TRANSACTION_ID);
-  }
-
-  private Transaction createTransaction(TransactionId id) {
-    return new Transaction(id);
-  }
-
-  private Delivery createDelivery(DeliveryId id) {
-    return new Delivery(id);
+    verify(tokenExtractor).extract(containerRequestContext);
   }
 }

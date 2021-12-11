@@ -1,141 +1,125 @@
 package ca.ulaval.glo4003.ws.api.transaction;
 
-import ca.ulaval.glo4003.ws.api.handler.RoleHandler;
-import ca.ulaval.glo4003.ws.api.transaction.dto.*;
-import ca.ulaval.glo4003.ws.api.transaction.dto.validators.BatteryRequestValidator;
-import ca.ulaval.glo4003.ws.api.transaction.dto.validators.PaymentRequestValidator;
-import ca.ulaval.glo4003.ws.api.transaction.dto.validators.VehicleRequestValidator;
-import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.delivery.Delivery;
-import ca.ulaval.glo4003.ws.domain.delivery.DeliveryService;
-import ca.ulaval.glo4003.ws.domain.exception.WrongOwnerException;
-import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
+import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
+import ca.ulaval.glo4003.ws.api.shared.TokenExtractor;
+import ca.ulaval.glo4003.ws.api.transaction.request.ConfigureBatteryRequest;
+import ca.ulaval.glo4003.ws.api.transaction.request.ConfigurePaymentRequest;
+import ca.ulaval.glo4003.ws.api.transaction.request.ConfigureVehicleRequest;
+import ca.ulaval.glo4003.ws.api.transaction.response.BatteryConfigurationResponseAssembler;
+import ca.ulaval.glo4003.ws.api.transaction.response.TransactionCreationResponseAssembler;
+import ca.ulaval.glo4003.ws.context.ServiceLocator;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
-import ca.ulaval.glo4003.ws.domain.transaction.TransactionService;
-import ca.ulaval.glo4003.ws.domain.transaction.exception.TransactionNotFoundException;
-import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
-import ca.ulaval.glo4003.ws.domain.user.OwnershipHandler;
-import ca.ulaval.glo4003.ws.domain.user.Role;
-import ca.ulaval.glo4003.ws.domain.vehicle.VehicleFactory;
+import ca.ulaval.glo4003.ws.service.transaction.TransactionService;
+import ca.ulaval.glo4003.ws.service.transaction.dto.*;
+import ca.ulaval.glo4003.ws.service.user.dto.TokenDto;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TransactionResourceImpl implements TransactionResource {
-  private static final List<Role> PRIVILEGED_ROLES =
-      new ArrayList<>(List.of(Role.BASE, Role.ADMIN));
-
+  private static final ServiceLocator serviceLocator = ServiceLocator.getInstance();
   private final TransactionService transactionService;
-  private final DeliveryService deliveryService;
-  private final RoleHandler roleHandler;
-  private final OwnershipHandler ownershipHandler;
-  private final CreatedTransactionResponseAssembler createdTransactionResponseAssembler;
-  private final VehicleRequestValidator vehicleRequestValidator;
-  private final BatteryRequestValidator batteryRequestValidator;
-  private final PaymentRequestAssembler paymentRequestAssembler;
-  private final PaymentRequestValidator paymentRequestValidator;
-  private final VehicleFactory vehicleFactory;
+  private final ConfigureVehicleDtoAssembler vehicleConfigurationDtoAssembler;
+  private final ConfigureBatteryDtoAssembler batteryConfigurationDtoAssembler;
+  private final BatteryConfigurationResponseAssembler configureBatteryResponseAssembler;
+  private final ConfigurePaymentDtoAssembler configurePaymentDtoAssembler;
+  private final RequestValidator requestValidator;
+  private final TransactionCreationResponseAssembler transactionCreationResponseAssembler;
+  private final TokenExtractor tokenExtractor;
+
+  public TransactionResourceImpl() {
+    this(
+        serviceLocator.resolve(TransactionService.class),
+        new ConfigureVehicleDtoAssembler(),
+        new ConfigureBatteryDtoAssembler(),
+        new BatteryConfigurationResponseAssembler(),
+        new ConfigurePaymentDtoAssembler(),
+        new RequestValidator(),
+        new TransactionCreationResponseAssembler(),
+            serviceLocator.resolve(TokenExtractor.class));
+  }
 
   public TransactionResourceImpl(
       TransactionService transactionService,
-      DeliveryService deliveryService,
-      OwnershipHandler ownershipHandler,
-      CreatedTransactionResponseAssembler createdTransactionResponseAssembler,
-      VehicleRequestValidator vehicleRequestValidator,
-      RoleHandler roleHandler,
-      BatteryRequestValidator batteryRequestValidator,
-      PaymentRequestAssembler paymentRequestAssembler,
-      PaymentRequestValidator paymentRequestValidator,
-      VehicleFactory vehicleFactory) {
+      ConfigureVehicleDtoAssembler vehicleConfigurationDtoAssembler,
+      ConfigureBatteryDtoAssembler batteryConfigurationDtoAssembler,
+      BatteryConfigurationResponseAssembler batteryConfigurationResponseAssembler,
+      ConfigurePaymentDtoAssembler configurePaymentDtoAssembler,
+      RequestValidator requestValidator,
+      TransactionCreationResponseAssembler transactionCreationResponseAssembler,
+      TokenExtractor tokenExtractor) {
     this.transactionService = transactionService;
-    this.deliveryService = deliveryService;
-    this.ownershipHandler = ownershipHandler;
-    this.createdTransactionResponseAssembler = createdTransactionResponseAssembler;
-    this.vehicleRequestValidator = vehicleRequestValidator;
-    this.roleHandler = roleHandler;
-    this.batteryRequestValidator = batteryRequestValidator;
-    this.paymentRequestAssembler = paymentRequestAssembler;
-    this.paymentRequestValidator = paymentRequestValidator;
-    this.vehicleFactory = vehicleFactory;
+    this.vehicleConfigurationDtoAssembler = vehicleConfigurationDtoAssembler;
+    this.batteryConfigurationDtoAssembler = batteryConfigurationDtoAssembler;
+    this.configureBatteryResponseAssembler = batteryConfigurationResponseAssembler;
+    this.configurePaymentDtoAssembler = configurePaymentDtoAssembler;
+    this.requestValidator = requestValidator;
+    this.transactionCreationResponseAssembler = transactionCreationResponseAssembler;
+    this.tokenExtractor = tokenExtractor;
   }
 
   @Override
   public Response createTransaction(ContainerRequestContext containerRequestContext) {
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
-    Transaction createdTransaction = transactionService.createTransaction();
-    Delivery createdDelivery = createDelivery(userSession, createdTransaction.getId());
+    TokenDto tokenDto = tokenExtractor.extract(containerRequestContext);
 
-    CreatedTransactionResponse createdTransactionResponse =
-        createdTransactionResponseAssembler.assemble(createdTransaction, createdDelivery);
+    TransactionCreationDto transactionCreationDto = transactionService.createTransaction(tokenDto);
 
-    URI transactionUri = URI.create(String.format("/sales/%s", createdTransaction.getId()));
-    return Response.created(transactionUri).entity(createdTransactionResponse).build();
+    URI transactionUri =
+        URI.create(String.format("/sales/%s", transactionCreationDto.getTransactionId()));
+    return Response.created(transactionUri)
+        .entity(transactionCreationResponseAssembler.assemble(transactionCreationDto))
+        .build();
   }
 
   @Override
-  public Response addVehicle(
+  public Response configureVehicle(
       ContainerRequestContext containerRequestContext,
-      String transactionId,
-      VehicleRequest vehicleRequest) {
-    vehicleRequestValidator.validate(vehicleRequest);
+      TransactionId transactionId,
+      ConfigureVehicleRequest vehicleConfigurationRequest) {
+    TokenDto tokenDto = tokenExtractor.extract(containerRequestContext);
 
-    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
-    transactionService.addVehicle(
-        TransactionId.fromString(transactionId),
-        vehicleFactory.create(vehicleRequest.getModel(), vehicleRequest.getColor()));
+    requestValidator.validate(vehicleConfigurationRequest);
+    ConfigureVehicleDto vehicleConfigurationDto =
+        vehicleConfigurationDtoAssembler.assemble(vehicleConfigurationRequest);
+
+    transactionService.configureVehicle(transactionId, vehicleConfigurationDto, tokenDto);
+
     return Response.accepted().build();
   }
 
   @Override
-  public Response addBattery(
+  public Response configureBattery(
       ContainerRequestContext containerRequestContext,
-      String transactionId,
-      BatteryRequest batteryRequest) {
-    batteryRequestValidator.validate(batteryRequest);
-    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
+      TransactionId transactionId,
+      ConfigureBatteryRequest batteryConfigurationRequest) {
+    TokenDto tokenDto = tokenExtractor.extract(containerRequestContext);
+    requestValidator.validate(batteryConfigurationRequest);
+    ConfigureBatteryDto configureBatteryDto =
+        batteryConfigurationDtoAssembler.assemble(batteryConfigurationRequest);
 
-    Transaction transaction =
-        transactionService.addBattery(
-            TransactionId.fromString(transactionId), batteryRequest.getType());
-    BigDecimal batteryEstimatedRange =
-        transaction.computeEstimatedVehicleRange().setScale(2, RoundingMode.HALF_UP);
-    AddedBatteryResponse batteryResponse = new AddedBatteryResponse(batteryEstimatedRange);
-    return Response.accepted().entity(batteryResponse).build();
+    BatteryConfigurationDto batteryConfigurationDto =
+        transactionService.configureBattery(transactionId, configureBatteryDto, tokenDto);
+
+    return Response.accepted()
+        .entity(
+            configureBatteryResponseAssembler.assemble(batteryConfigurationDto.getEstimatedRange()))
+        .build();
   }
 
   @Override
   public Response completeTransaction(
       ContainerRequestContext containerRequestContext,
-      String transactionId,
-      PaymentRequest paymentRequest) {
-    paymentRequestValidator.validate(paymentRequest);
-    validateTransactionOwnership(containerRequestContext, new TransactionId(transactionId));
+      TransactionId transactionId,
+      ConfigurePaymentRequest configurePaymentRequest) {
+    TokenDto tokenDto = tokenExtractor.extract(containerRequestContext);
+    requestValidator.validate(configurePaymentRequest);
 
-    Payment payment = paymentRequestAssembler.create(paymentRequest);
-    transactionService.addPayment(TransactionId.fromString(transactionId), payment);
+    ConfigurePaymentDto configurePaymentDto =
+        configurePaymentDtoAssembler.assemble(configurePaymentRequest);
+
+    transactionService.completeTransaction(transactionId, configurePaymentDto, tokenDto);
+
     return Response.ok().build();
-  }
-
-  private Delivery createDelivery(Session userSession, TransactionId transactionId) {
-    Delivery createdDelivery = deliveryService.createDelivery();
-    ownershipHandler.mapDeliveryIdToTransactionId(
-        userSession, transactionId, createdDelivery.getDeliveryId());
-    return createdDelivery;
-  }
-
-  private void validateTransactionOwnership(
-      ContainerRequestContext containerRequestContext, TransactionId transactionId) {
-    Session userSession = roleHandler.retrieveSession(containerRequestContext, PRIVILEGED_ROLES);
-    try {
-      ownershipHandler.validateTransactionOwnership(userSession, transactionId);
-
-    } catch (WrongOwnerException ignored) {
-      throw new TransactionNotFoundException(transactionId);
-    }
   }
 }

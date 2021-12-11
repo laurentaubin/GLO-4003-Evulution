@@ -1,17 +1,16 @@
 package ca.ulaval.glo4003.ws.domain.auth;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+
 @ExtendWith(MockitoExtension.class)
 class SessionFactoryTest {
-
   private static final String AN_EMAIL = "ANEMAIL@ASD.com";
   private static final SessionToken A_TOKEN = new SessionToken("a token");
 

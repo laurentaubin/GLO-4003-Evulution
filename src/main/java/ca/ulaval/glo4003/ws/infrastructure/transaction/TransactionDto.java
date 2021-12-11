@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.ws.infrastructure.transaction;
 
-import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 
 public class TransactionDto {

@@ -5,7 +5,7 @@ import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.BirthDate;
 import ca.ulaval.glo4003.ws.domain.user.Role;
 import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
+import ca.ulaval.glo4003.ws.fixture.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 class UserDtoAssemblerTest {
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("xyz");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("abc");
+
   private UserDtoAssembler assembler;
 
   @BeforeEach
@@ -40,7 +41,6 @@ class UserDtoAssemblerTest {
     assertThat(userDto.getBirthDate()).isEqualTo(user.getBirthDate());
     assertThat(userDto.getSex()).isEqualTo(user.getSex());
     assertThat(userDto.getEmail()).isEqualTo(user.getEmail());
-    assertThat(userDto.getPassword()).isEqualTo(user.getPassword());
     assertThat(userDto.getRoles()).containsExactly(user.getRoles().toArray());
     assertThat(userDto.getTransactionDeliveries()).isEqualTo(user.getTransactionIdToDeliveryId());
   }
@@ -52,10 +52,10 @@ class UserDtoAssemblerTest {
     UserDto userDto = assembler.assemble(user);
 
     // when
-    user.addRole(Role.ADMIN);
+    user.addRole(Role.PRODUCTION_MANAGER);
 
     // then
-    assertThat(userDto.getRoles()).doesNotContain(Role.ADMIN);
+    assertThat(userDto.getRoles()).doesNotContain(Role.PRODUCTION_MANAGER);
   }
 
   @Test
@@ -98,20 +98,19 @@ class UserDtoAssemblerTest {
     assertThat(user.getBirthDate()).isEqualTo(userDto.getBirthDate());
     assertThat(user.getSex()).isEqualTo(userDto.getSex());
     assertThat(user.getEmail()).isEqualTo(userDto.getEmail());
-    assertThat(user.getPassword()).isEqualTo(userDto.getPassword());
   }
 
   @Test
   public void givenUserDtoWithBaseAndAdminRole_whenAssemble_thenReturnUserWithSameRoles() {
     // given
-    UserDto userDto = givenUserDtoWithRoles(Set.of(Role.BASE, Role.ADMIN));
+    UserDto userDto = givenUserDtoWithRoles(Set.of(Role.CUSTOMER, Role.PRODUCTION_MANAGER));
 
     // when
     User user = assembler.assemble(userDto);
 
     // then
-    assertThat(user.getRoles()).contains(Role.BASE);
-    assertThat(user.getRoles()).contains(Role.ADMIN);
+    assertThat(user.getRoles()).contains(Role.CUSTOMER);
+    assertThat(user.getRoles()).contains(Role.PRODUCTION_MANAGER);
   }
 
   @Test
@@ -124,7 +123,7 @@ class UserDtoAssemblerTest {
     User user = assembler.assemble(userDto);
 
     // then
-    assertThat(user.doesOwnTransaction(A_TRANSACTION_ID)).isTrue();
+    assertThat(user.ownsTransaction(A_TRANSACTION_ID)).isTrue();
   }
 
   @Test
@@ -151,7 +150,7 @@ class UserDtoAssemblerTest {
     User user = assembler.assemble(userDto);
 
     // then
-    assertThat(user.doesOwnDelivery(A_DELIVERY_ID)).isTrue();
+    assertThat(user.ownDelivery(A_DELIVERY_ID)).isTrue();
   }
 
   private UserDto givenUserDto() {
@@ -172,13 +171,7 @@ class UserDtoAssemblerTest {
   private UserDto givenUserDtoWithRolesAndTransactionDeliveries(
       Set<Role> roles, Map<TransactionId, DeliveryId> transactionDeliveries) {
     return new UserDto(
-        "aName",
-        new BirthDate(LocalDate.now()),
-        "aSex",
-        "anEmail",
-        "aPassword",
-        roles,
-        transactionDeliveries);
+        "aName", new BirthDate(LocalDate.now()), "aSex", "anEmail", roles, transactionDeliveries);
   }
 
   private Map<TransactionId, DeliveryId> createTransactionDeliveries() {

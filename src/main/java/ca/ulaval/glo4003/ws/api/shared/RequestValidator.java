@@ -2,11 +2,16 @@ package ca.ulaval.glo4003.ws.api.shared;
 
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
-public abstract class RequestValidator {
+public class RequestValidator {
 
   protected final Validator requestValidator;
+
+  public RequestValidator() {
+    this(Validation.buildDefaultValidatorFactory().getValidator());
+  }
 
   public RequestValidator(Validator validator) {
     this.requestValidator = validator;
@@ -23,5 +28,14 @@ public abstract class RequestValidator {
     }
   }
 
-  public abstract void validate(Object request);
+  public void validate(Object requestDto) {
+    validateDtoIsNotNull(requestDto);
+    validateFields(requestDto);
+  }
+
+  private void validateDtoIsNotNull(Object requestDto) {
+    if (requestDto == null) {
+      throw new InvalidFormatException("The body cannot be empty");
+    }
+  }
 }

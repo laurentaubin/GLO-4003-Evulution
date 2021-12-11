@@ -1,23 +1,23 @@
 [
-    {
-        "name": "STANDARD",
-        "base_NRCAN_range": "400",
-        "capacity": 60,
-        "price": 15000,
-        "time_to_produce": "3"
-    },
-    {
-        "name": "LONG_RANGE",
-        "base_NRCAN_range": "500",
-        "capacity": 82,
-        "price": 20000,
-        "time_to_produce": "4"
-    },
-    {
-        "name": "SHORT_RANGE",
-        "base_NRCAN_range": "300",
-        "capacity": 46,
-        "price": 12500,
-        "time_to_produce": "2"
-    }
+  {
+    "name": "STANDARD",
+    "base_NRCAN_range": "400",
+    "capacity": 60,
+    "price": 15000,
+    "time_to_produce": "3"
+  },
+  {
+    "name": "LONG_RANGE",
+    "base_NRCAN_range": "500",
+    "capacity": 82,
+    "price": 20000,
+    "time_to_produce": "4"
+  },
+  {
+    "name": "SHORT_RANGE",
+    "base_NRCAN_range": "300",
+    "capacity": 46,
+    "price": 12500,
+    "time_to_produce": "2"
+  }
 ]

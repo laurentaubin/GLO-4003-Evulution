@@ -9,7 +9,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FrequencyTest {
-
   @Test
   void givenValidFrequencyString_whenFromString_thenReturnCorrectFrequency() {
     // given

@@ -1,12 +1,12 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class CatchInvalidFormatExceptionMapperTest {
   private static final String A_PROPERTY = "Property";
@@ -21,7 +21,7 @@ class CatchInvalidFormatExceptionMapperTest {
   }
 
   @Test
-  void givenInvalidFormatException_whenToResponse_thenReturnRightResponse() {
+  void givenInvalidFormatException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     InvalidFormatException exception = new InvalidFormatException(A_PROPERTY);
 

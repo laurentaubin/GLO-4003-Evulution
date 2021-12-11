@@ -18,6 +18,10 @@ public class DeliveryId {
     return deliveryId;
   }
 
+  public static DeliveryId fromString(String deliveryId) {
+    return new DeliveryId(deliveryId);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

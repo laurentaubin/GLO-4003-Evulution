@@ -21,8 +21,6 @@
 
 ## Run the app on heroku
 
-> > > > > > > main
-
 * Install the Heroku CLI from [here](https://devcenter.heroku.com/articles/heroku-cli)
 * Run `sh deploy_main.sh` to deploy the `main` branch on heroku
     * You might need to do a `heroku login` to login before running the script

@@ -1,27 +1,27 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.api.shared.exception.EmptyTokenHeaderException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CatchEmptyTokenHeaderExceptionMapperTest {
-  private CatchEmptyTokenHeaderExceptionMapper exceptionMapper;
+import static com.google.common.truth.Truth.assertThat;
 
+public class CatchEmptyTokenHeaderExceptionMapperTest {
   private static final int EXPECTED_STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
   private static final String EXPECTED_ERROR = "EMPTY_TOKEN";
   private static final String EXPECTED_DESCRIPTION = "Authorization header is empty.";
 
+  private CatchEmptyTokenHeaderExceptionMapper exceptionMapper;
+  
   @BeforeEach
   void setUp() {
     exceptionMapper = new CatchEmptyTokenHeaderExceptionMapper();
   }
 
   @Test
-  void givenEmptyTokenHeaderException_whenToResponse_thenReturnRightResponse() {
+  void givenEmptyTokenHeaderException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     EmptyTokenHeaderException exception = new EmptyTokenHeaderException();
 

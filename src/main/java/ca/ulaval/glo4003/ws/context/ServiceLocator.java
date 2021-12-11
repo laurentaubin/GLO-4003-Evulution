@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.ws.context;
 
 import ca.ulaval.glo4003.ws.context.exception.ContractAlreadyRegisteredException;
 import ca.ulaval.glo4003.ws.context.exception.UnresolvedContractException;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,26 +1,18 @@
 package ca.ulaval.glo4003.ws.api.user;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-
+import ca.ulaval.glo4003.ws.api.shared.RequestValidator;
 import ca.ulaval.glo4003.ws.api.shared.exception.InvalidFormatException;
-import ca.ulaval.glo4003.ws.api.user.dto.LoginResponseDto;
-import ca.ulaval.glo4003.ws.api.user.dto.LoginUserDto;
-import ca.ulaval.glo4003.ws.api.user.dto.RegisterUserDto;
 import ca.ulaval.glo4003.ws.api.user.exception.EmailAlreadyInUseException;
-import ca.ulaval.glo4003.ws.api.user.validator.RegisterUserDtoValidator;
-import ca.ulaval.glo4003.ws.domain.auth.Session;
-import ca.ulaval.glo4003.ws.domain.auth.SessionToken;
-import ca.ulaval.glo4003.ws.domain.user.User;
-import ca.ulaval.glo4003.ws.domain.user.UserService;
+import ca.ulaval.glo4003.ws.api.user.request.LoginUserRequest;
+import ca.ulaval.glo4003.ws.api.user.request.RegisterUserRequest;
+import ca.ulaval.glo4003.ws.api.user.response.LoginResponse;
 import ca.ulaval.glo4003.ws.domain.user.exception.LoginFailedException;
-import ca.ulaval.glo4003.ws.testUtil.LoginResponseDtoBuilder;
-import ca.ulaval.glo4003.ws.testUtil.LoginUserDtoBuilder;
-import ca.ulaval.glo4003.ws.testUtil.RegisterUserDtoBuilder;
-import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
+import ca.ulaval.glo4003.ws.fixture.LoginResponseBuilder;
+import ca.ulaval.glo4003.ws.fixture.LoginUserRequestBuilder;
+import ca.ulaval.glo4003.ws.fixture.RegisterUserRequestBuilder;
+import ca.ulaval.glo4003.ws.service.user.UserService;
+import ca.ulaval.glo4003.ws.service.user.dto.RegisterUserDto;
+import ca.ulaval.glo4003.ws.service.user.dto.SessionDto;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,18 +21,21 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class UserResourceImplTest {
-  private static final String AN_EMAIL = "anEmail@mail.com";
-  private static final SessionToken A_TOKEN = new SessionToken("token123");
-
-  @Mock private UserAssembler userAssembler;
-
-  @Mock private LoginResponseAssembler loginResponseAssembler;
+  private static final String A_TOKEN = "token";
 
   @Mock private UserService userService;
-
-  @Mock private RegisterUserDtoValidator registerUserDtoValidator;
+  @Mock private RequestValidator registerUserDtoValidator;
+  @Mock private LoginUserDtoAssembler loginUserDtoAssembler;
+  @Mock private RegisterUserDtoAssembler registerUserDtoAssembler;
+  @Mock private RegisterUserDto registerUserDto;
 
   private UserResourceImpl userResource;
 
@@ -48,31 +43,30 @@ class UserResourceImplTest {
   public void setUp() {
     userResource =
         new UserResourceImpl(
-            userAssembler, loginResponseAssembler, userService, registerUserDtoValidator);
+            userService, registerUserDtoValidator, loginUserDtoAssembler, registerUserDtoAssembler);
   }
 
   @Test
   public void givenValidRegisterUserDto_whenRegisterUser_thenUserIsRegistered() {
     // given
-    RegisterUserDto aUserDto = new RegisterUserDtoBuilder().build();
-    User aUser = new UserBuilder().build();
-    given(userAssembler.assemble(aUserDto)).willReturn(aUser);
+    RegisterUserRequest request = new RegisterUserRequestBuilder().build();
+    given(registerUserDtoAssembler.assemble(request)).willReturn(registerUserDto);
 
     // when
-    userResource.registerUser(aUserDto);
+    userResource.registerUser(request);
 
     // then
-    verify(userService).registerUser(aUser);
+    verify(userService).registerUser(registerUserDto);
   }
 
   @Test
   public void givenInvalidRegisterUserDto_whenRegisterUser_thenThrowInvalidFormatException() {
     // given
-    RegisterUserDto aUserDto = new RegisterUserDtoBuilder().build();
-    doThrow(InvalidFormatException.class).when(registerUserDtoValidator).validateDto(aUserDto);
+    RegisterUserRequest request = new RegisterUserRequestBuilder().build();
+    doThrow(InvalidFormatException.class).when(registerUserDtoValidator).validate(request);
 
     // when
-    Executable registeringUser = () -> userResource.registerUser(aUserDto);
+    Executable registeringUser = () -> userResource.registerUser(request);
 
     // then
     assertThrows(InvalidFormatException.class, registeringUser);
@@ -82,13 +76,12 @@ class UserResourceImplTest {
   public void
       givenEmailAlreadyAssociatedToUser_whenRegisterUser_thenThrowEmailAlreadyInUseException() {
     // given
-    RegisterUserDto aUserDto = new RegisterUserDtoBuilder().build();
-    User aUser = new UserBuilder().build();
-    given(userAssembler.assemble(aUserDto)).willReturn(aUser);
-    doThrow(EmailAlreadyInUseException.class).when(userService).registerUser(aUser);
+    RegisterUserRequest request = new RegisterUserRequestBuilder().build();
+    given(registerUserDtoAssembler.assemble(request)).willReturn(registerUserDto);
+    doThrow(EmailAlreadyInUseException.class).when(userService).registerUser(registerUserDto);
 
     // when
-    Executable registeringUser = () -> userResource.registerUser(aUserDto);
+    Executable registeringUser = () -> userResource.registerUser(request);
 
     // then
     assertThrows(EmailAlreadyInUseException.class, registeringUser);
@@ -97,30 +90,30 @@ class UserResourceImplTest {
   @Test
   public void givenSuccessfulLogin_whenLogin_thenReturn200WithLoginToken() {
     // given
-    LoginUserDto aLoginDto = new LoginUserDtoBuilder().build();
-    LoginResponseDto aLoginResponseDto = new LoginResponseDtoBuilder().build();
-    Session aSession = new Session(A_TOKEN, AN_EMAIL);
-    given(userService.login(aLoginDto.getEmail(), aLoginDto.getPassword())).willReturn(aSession);
-    given(loginResponseAssembler.assemble(aSession)).willReturn(aLoginResponseDto);
+    LoginUserRequest request = new LoginUserRequestBuilder().build();
+    SessionDto sessionDto = new SessionDto(A_TOKEN);
+    LoginResponse loginResponse = new LoginResponseBuilder().build();
+    given(userService.login(request.getEmail(), request.getPassword())).willReturn(sessionDto);
+    given(loginUserDtoAssembler.assemble(sessionDto)).willReturn(loginResponse);
 
     // when
-    Response response = userResource.login(aLoginDto);
-    LoginResponseDto actualLoginResponseDto = (LoginResponseDto) response.getEntity();
+    Response response = userResource.login(request);
+    LoginResponse actualLoginResponse = (LoginResponse) response.getEntity();
 
     // then
     assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
-    assertThat(actualLoginResponseDto.getToken()).matches(aLoginResponseDto.getToken());
+    assertThat(actualLoginResponse.getToken()).matches(loginResponse.getToken());
   }
 
   @Test
   public void givenWrongEmailPasswordCombination_whenLogin_thenThrowLoginFailedException() {
     // given
-    LoginUserDto aLoginDto = new LoginUserDtoBuilder().build();
-    given(userService.login(aLoginDto.getEmail(), aLoginDto.getPassword()))
+    LoginUserRequest request = new LoginUserRequestBuilder().build();
+    given(userService.login(request.getEmail(), request.getPassword()))
         .willThrow(new LoginFailedException());
 
     // when
-    Executable loggingIn = () -> userResource.login(aLoginDto);
+    Executable loggingIn = () -> userResource.login(request);
 
     // then
     assertThrows(LoginFailedException.class, loggingIn);

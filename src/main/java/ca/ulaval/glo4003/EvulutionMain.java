@@ -1,18 +1,16 @@
 package ca.ulaval.glo4003;
 
-import ca.ulaval.glo4003.ws.api.filter.secured.AuthenticationFilter;
 import ca.ulaval.glo4003.ws.context.ApiContext;
 import ca.ulaval.glo4003.ws.context.ApplicationBinder;
-import ca.ulaval.glo4003.ws.context.ServiceLocator;
-import ca.ulaval.glo4003.ws.http.CorsResponseFilter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+
+import java.net.URI;
 
 /** RESTApi setup without using DI or spring */
 @SuppressWarnings("all")
@@ -28,8 +26,6 @@ public class EvulutionMain {
 
     final ResourceConfig config = new ResourceConfig();
     config.register(new ApplicationBinder());
-    config.register(new CorsResponseFilter());
-    config.register(ServiceLocator.getInstance().resolve(AuthenticationFilter.class));
     config.packages("ca.ulaval.glo4003.ws.api");
 
     ObjectMapper objectMapper = new ObjectMapper();

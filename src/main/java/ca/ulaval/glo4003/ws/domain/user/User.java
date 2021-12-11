@@ -11,17 +11,15 @@ public class User {
   private final BirthDate birthDate;
   private final String sex;
   private final String email;
-  private final String password;
   private final Set<Role> roles;
   private Map<TransactionId, DeliveryId> transactionIdToDeliveryId;
 
-  public User(String name, BirthDate birthDate, String sex, String email, String password) {
+  public User(String name, BirthDate birthDate, String sex, String email) {
     this.name = name;
     this.birthDate = birthDate;
     this.sex = sex;
     this.email = email;
-    this.password = password;
-    this.roles = new HashSet<>(List.of(Role.BASE));
+    this.roles = new HashSet<>();
     this.transactionIdToDeliveryId = new HashMap<>();
   }
 
@@ -41,10 +39,6 @@ public class User {
     return email;
   }
 
-  public String getPassword() {
-    return password;
-  }
-
   public void addRole(Role role) {
     this.roles.add(role);
   }
@@ -59,7 +53,13 @@ public class User {
   }
 
   public boolean isAllowed(List<Role> requestedRoles) {
-    return !Collections.disjoint(roles, requestedRoles);
+    for (Role role: requestedRoles) {
+      if (roles.contains(role)) {
+        return true;
+      }
+    }
+    return false;
+
   }
 
   public void addTransactionDelivery(TransactionId transactionId, DeliveryId deliveryId) {
@@ -80,11 +80,11 @@ public class User {
     throw new NoTransactionLinkedToDeliveryException(deliveryId);
   }
 
-  public boolean doesOwnTransaction(TransactionId transactionId) {
+  public boolean ownsTransaction(TransactionId transactionId) {
     return transactionIdToDeliveryId.containsKey(transactionId);
   }
 
-  public boolean doesOwnDelivery(DeliveryId deliveryId) {
+  public boolean ownDelivery(DeliveryId deliveryId) {
     return transactionIdToDeliveryId.containsValue(deliveryId);
   }
 

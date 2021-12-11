@@ -90,6 +90,19 @@ class PriceTest {
     boolean isEqual = aPrice.equals(aSecondPrice);
 
     // then
-    assertThat(isEqual).isEqualTo(true);
+    assertThat(isEqual).isTrue();
+  }
+
+  @Test
+  public void givenOnePriceInDoubleAndOneInInteger_whenIsEqual_thenReturnTrue() {
+    // given
+    Price aPrice = new Price(BigDecimal.valueOf(123));
+    Price anotherPrice = new Price(BigDecimal.valueOf(123.0));
+
+    // when
+    boolean isEqual = aPrice.equals(anotherPrice);
+
+    // then
+    assertThat(isEqual).isTrue();
   }
 }

@@ -1,14 +1,13 @@
 package ca.ulaval.glo4003.ws.domain.delivery;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import ca.ulaval.glo4003.ws.domain.delivery.exception.InvalidLocationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-class LocationTest {
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+class LocationTest {
   @Test
   void givenValidLocation_whenFromString_thenMatchesCorrectLocation() {
     // given

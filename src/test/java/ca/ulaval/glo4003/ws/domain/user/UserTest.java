@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.ws.domain.user;
 import ca.ulaval.glo4003.ws.domain.delivery.DeliveryId;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
 import ca.ulaval.glo4003.ws.domain.user.exception.NoTransactionLinkedToDeliveryException;
-import ca.ulaval.glo4003.ws.testUtil.UserBuilder;
+import ca.ulaval.glo4003.ws.fixture.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class UserTest {
-  private static final Role A_ROLE = Role.ADMIN;
+  private static final Role A_ROLE = Role.PRODUCTION_MANAGER;
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("1234");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("abcd");
 
@@ -34,7 +34,7 @@ class UserTest {
 
   @Test
   public void whenCreate_thenUserOnlyHasBaseRole() {
-    assertThat(user.getRoles()).contains(Role.BASE);
+    assertThat(user.getRoles()).contains(Role.CUSTOMER);
     assertThat(user.getRoles()).hasSize(1);
   }
 
@@ -48,7 +48,7 @@ class UserTest {
     user.addTransactionDelivery(transactionId, deliveryId);
 
     // then
-    assertThat(user.doesOwnDelivery(deliveryId)).isTrue();
+    assertThat(user.ownDelivery(deliveryId)).isTrue();
   }
 
   @Test
@@ -57,7 +57,7 @@ class UserTest {
     DeliveryId invalidDeliveryId = new DeliveryId("1234");
 
     // when
-    boolean result = user.doesOwnDelivery(invalidDeliveryId);
+    boolean result = user.ownDelivery(invalidDeliveryId);
 
     // then
     assertThat(result).isFalse();
@@ -75,8 +75,8 @@ class UserTest {
   @Test
   void givenUserPossessRequestedRole_whenIsAllowed_thenUserIsAllowed() {
     // given
-    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
-    List<Role> requestedRoles = List.of(Role.BASE, Role.ADMIN);
+    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.CUSTOMER)).build();
+    List<Role> requestedRoles = List.of(Role.CUSTOMER, Role.PRODUCTION_MANAGER);
 
     // when
     boolean isAllowed = userWithRequestedRoles.isAllowed(requestedRoles);
@@ -118,8 +118,8 @@ class UserTest {
   @Test
   void givenUserWithoutRequestedRole_whenIsAllowed_thenUserIsNotAllowed() {
     // given
-    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.BASE)).build();
-    List<Role> requestedRoles = List.of(Role.ADMIN);
+    User userWithRequestedRoles = new UserBuilder().withRoles(List.of(Role.PRODUCTION_MANAGER)).build();
+    List<Role> requestedRoles = List.of(Role.CUSTOMER);
 
     // when
     boolean isAllowed = userWithRequestedRoles.isAllowed(requestedRoles);
@@ -129,21 +129,21 @@ class UserTest {
   }
 
   @Test
-  void givenTransactionAddedToUser_whenDoesOwnTransaction_thenReturnTrue() {
+  void givenTransactionAddedToUser_whenOwnsTransaction_thenReturnTrue() {
     // given
     user.addTransactionDelivery(transactionId, deliveryId);
 
     // when
-    boolean doesUserOwnTransaction = user.doesOwnTransaction(transactionId);
+    boolean doesUserOwnTransaction = user.ownsTransaction(transactionId);
 
     // then
     assertThat(doesUserOwnTransaction).isTrue();
   }
 
   @Test
-  void givenTransactionNotAddedToUser_whenDoesOwnTransaction_thenReturnFalse() {
+  void givenTransactionNotAddedToUser_whenOwnsTransaction_thenReturnFalse() {
     // when
-    boolean doesUserOwnTransaction = user.doesOwnTransaction(transactionId);
+    boolean doesUserOwnTransaction = user.ownsTransaction(transactionId);
 
     // then
     assertThat(doesUserOwnTransaction).isFalse();

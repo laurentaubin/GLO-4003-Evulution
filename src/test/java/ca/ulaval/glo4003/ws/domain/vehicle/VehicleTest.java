@@ -20,28 +20,28 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class VehicleTest {
   private static final Integer A_BATTERY_RANGE = 100;
-  private static final int FIFTY_PERCENT = 50;
-  private static final int HUNDRED_PERCENT = 100;
+  private static final int A_FIFTY_PERCENT = 50;
+  private static final int A_HUNDRED_PERCENT = 100;
   private static final Color A_COLOR = Color.WHITE;
   private static final Price A_BATTERY_PRICE = new Price(500);
   private static final Price A_MODEL_PRICE = new Price(3000);
 
-  @Mock private Model aModel;
-  @Mock private Battery aBattery;
+  @Mock private Model model;
+  @Mock private Battery battery;
 
   private Vehicle vehicle;
 
   @BeforeEach
   public void setUp() {
-    vehicle = new Vehicle(aModel, A_COLOR);
+    vehicle = new Vehicle(model, A_COLOR);
   }
 
   @Test
   public void givenModelWithFiftyPercentEfficiency_whenComputeRange_thenReturnHalfBatteryRange() {
     // given
-    given(aModel.getEfficiency()).willReturn(BigDecimal.valueOf(FIFTY_PERCENT));
-    given(aBattery.getBaseNRCANRange()).willReturn(A_BATTERY_RANGE);
-    vehicle.addBattery(aBattery);
+    given(model.getEfficiency()).willReturn(BigDecimal.valueOf(A_FIFTY_PERCENT));
+    given(battery.getBaseNRCANRange()).willReturn(A_BATTERY_RANGE);
+    vehicle.addBattery(battery);
     BigDecimal expectedComputedRange = BigDecimal.valueOf(50);
 
     // when
@@ -53,9 +53,9 @@ class VehicleTest {
   @Test
   public void givenHundredPercentEfficiency_whenComputeRange_thenReturnFullBatteryRange() {
     // given
-    given(aModel.getEfficiency()).willReturn(BigDecimal.valueOf(HUNDRED_PERCENT));
-    given(aBattery.getBaseNRCANRange()).willReturn(A_BATTERY_RANGE);
-    vehicle.addBattery(aBattery);
+    given(model.getEfficiency()).willReturn(BigDecimal.valueOf(A_HUNDRED_PERCENT));
+    given(battery.getBaseNRCANRange()).willReturn(A_BATTERY_RANGE);
+    vehicle.addBattery(battery);
     BigDecimal expected = BigDecimal.valueOf(A_BATTERY_RANGE);
 
     // when
@@ -68,7 +68,7 @@ class VehicleTest {
   @Test
   public void givenANewVehicleWithNoBattery_whenHasBattery_thenReturnFalse() {
     // given
-    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
+    Vehicle vehicle = new Vehicle(model, A_COLOR);
 
     // when
     boolean hasBattery = vehicle.hasBattery();
@@ -80,8 +80,8 @@ class VehicleTest {
   @Test
   public void givenAVehicleWithBattery_whenHasBattery_thenReturnTrue() {
     // given
-    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
-    vehicle.addBattery(aBattery);
+    Vehicle vehicle = new Vehicle(model, A_COLOR);
+    vehicle.addBattery(battery);
 
     // when
     boolean hasBattery = vehicle.hasBattery();
@@ -93,22 +93,22 @@ class VehicleTest {
   @Test
   public void givenAValidVehicle_whenCalculatePrice_thenReturnPrice() {
     // given
-    given(aModel.getPrice()).willReturn(A_MODEL_PRICE);
-    given(aBattery.getPrice()).willReturn(A_BATTERY_PRICE);
-    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
-    vehicle.addBattery(aBattery);
+    given(model.getPrice()).willReturn(A_MODEL_PRICE);
+    given(battery.getPrice()).willReturn(A_BATTERY_PRICE);
+    Vehicle vehicle = new Vehicle(model, A_COLOR);
+    vehicle.addBattery(battery);
 
     // when
     int actualPrice = vehicle.getVehiclePrice().toInt();
 
     // then
-    assertThat(actualPrice).isEqualTo(aModel.getPrice().toInt() + aBattery.getPrice().toInt());
+    assertThat(actualPrice).isEqualTo(model.getPrice().toInt() + battery.getPrice().toInt());
   }
 
   @Test
   public void givenAnIncompleteVehicle_whenCalculatePrice_thenThrowIncompleteVehicleException() {
     // given
-    Vehicle vehicle = new Vehicle(aModel, A_COLOR);
+    Vehicle vehicle = new Vehicle(model, A_COLOR);
 
     // when
     Executable getVehiclePrice = vehicle::getVehiclePrice;

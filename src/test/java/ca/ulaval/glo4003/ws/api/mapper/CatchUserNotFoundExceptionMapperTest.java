@@ -1,12 +1,12 @@
 package ca.ulaval.glo4003.ws.api.mapper;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import ca.ulaval.glo4003.ws.api.shared.ExceptionResponse;
 import ca.ulaval.glo4003.ws.infrastructure.exception.UserNotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class CatchUserNotFoundExceptionMapperTest {
   private static final int EXPECTED_STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
@@ -21,7 +21,7 @@ public class CatchUserNotFoundExceptionMapperTest {
   }
 
   @Test
-  public void givenUserNotFoundException_whenToResponse_thenReturnRightResponse() {
+  public void givenUserNotFoundException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     UserNotFoundException exception = new UserNotFoundException();
 

@@ -1,11 +1,8 @@
 package ca.ulaval.glo4003.ws.infrastructure.transaction;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.BDDMockito.given;
-
-import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.transaction.Transaction;
 import ca.ulaval.glo4003.ws.domain.transaction.TransactionId;
+import ca.ulaval.glo4003.ws.domain.transaction.payment.Payment;
 import ca.ulaval.glo4003.ws.domain.vehicle.Vehicle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,12 +10,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.BDDMockito.given;
+
 @ExtendWith(MockitoExtension.class)
 public class TransactionAssemblerTest {
-
-  @Mock private TransactionId aTransactionId;
-  @Mock private Vehicle aVehicle;
-  @Mock private Payment aPayment;
+  @Mock private TransactionId transactionId;
+  @Mock private Vehicle vehicle;
+  @Mock private Payment payment;
 
   private TransactionAssembler transactionAssembler;
 
@@ -31,8 +30,8 @@ public class TransactionAssemblerTest {
   public void
       givenTransactionDtoWithAllAttributes_whenAssemble_thenReturnTransactionWithSameAttributes() {
     // given
-    given(aVehicle.hasBattery()).willReturn(true);
-    TransactionDto transactionDto = new TransactionDto(aTransactionId, aVehicle, aPayment);
+    given(vehicle.hasBattery()).willReturn(true);
+    TransactionDto transactionDto = new TransactionDto(transactionId, vehicle, payment);
 
     // when
     Transaction transaction = transactionAssembler.assemble(transactionDto);
@@ -47,8 +46,8 @@ public class TransactionAssemblerTest {
   public void
       givenTransactionDtoWithoutPayment_whenAssemble_thenReturnTransactionWithNullPayment() {
     // given
-    given(aVehicle.hasBattery()).willReturn(true);
-    TransactionDto transactionDto = new TransactionDto(aTransactionId, aVehicle, null);
+    given(vehicle.hasBattery()).willReturn(true);
+    TransactionDto transactionDto = new TransactionDto(transactionId, vehicle, null);
 
     // when
     Transaction transaction = transactionAssembler.assemble(transactionDto);
@@ -63,8 +62,8 @@ public class TransactionAssemblerTest {
   public void
       givenTransactionDtoWithoutBattery_whenAssemble_thenReturnTransactionWithNullPayment() {
     // given
-    given(aVehicle.hasBattery()).willReturn(false);
-    TransactionDto transactionDto = new TransactionDto(aTransactionId, aVehicle, null);
+    given(vehicle.hasBattery()).willReturn(false);
+    TransactionDto transactionDto = new TransactionDto(transactionId, vehicle, null);
 
     // when
     Transaction transaction = transactionAssembler.assemble(transactionDto);
@@ -79,7 +78,7 @@ public class TransactionAssemblerTest {
   public void
       givenTransactionDtoWithoutVehicle_whenAssemble_thenReturnTransactionWithNullVehicle() {
     // given
-    TransactionDto transactionDto = new TransactionDto(aTransactionId, null, null);
+    TransactionDto transactionDto = new TransactionDto(transactionId, null, null);
 
     // when
     Transaction transaction = transactionAssembler.assemble(transactionDto);
@@ -93,10 +92,10 @@ public class TransactionAssemblerTest {
   @Test
   public void givenTransaction_whenAssemble_thenReturnTransactionDtoWithSameAttributes() {
     // given
-    given(aVehicle.hasBattery()).willReturn(true);
-    Transaction transaction = new Transaction(aTransactionId);
-    transaction.addVehicle(aVehicle);
-    transaction.addPayment(aPayment);
+    given(vehicle.hasBattery()).willReturn(true);
+    Transaction transaction = new Transaction(transactionId);
+    transaction.addVehicle(vehicle);
+    transaction.addPayment(payment);
 
     // when
     TransactionDto transactionDto = transactionAssembler.assemble(transaction);

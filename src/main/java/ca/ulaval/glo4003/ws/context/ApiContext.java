@@ -6,10 +6,10 @@ public class ApiContext {
     new UserContext().registerContext();
     new InventoryContext().registerContext();
     new NotificationContext().registerContext();
-    new AssemblyContext().registerContext();
+    new WarehouseContext().registerContext();
     new DeliveryContext().registerContext();
     new SalesContext().registerContext();
+    new ManufacturerContext().registerContext();
     new TimeContext().registerContext();
-    new ProductionLineContext().registerContext();
   }
 }
