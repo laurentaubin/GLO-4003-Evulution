@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 class UserDtoAssemblerTest {
   private static final TransactionId A_TRANSACTION_ID = new TransactionId("xyz");
   private static final DeliveryId A_DELIVERY_ID = new DeliveryId("abc");
+
   private UserDtoAssembler assembler;
 
   @BeforeEach

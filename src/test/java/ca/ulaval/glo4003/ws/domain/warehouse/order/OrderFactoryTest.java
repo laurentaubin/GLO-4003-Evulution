@@ -21,10 +21,10 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class OrderFactoryTest {
   private static final String AN_ID = "3524133";
-  private static final LocalDate TODAY = LocalDate.of(10, 10, 10);
+  private static final LocalDate A_PRESENT_DATE = LocalDate.of(10, 10, 10);
 
-  @Mock private ModelOrder aModelOrder;
-  @Mock private BatteryOrder aBatteryOrder;
+  @Mock private ModelOrder modelOrder;
+  @Mock private BatteryOrder batteryOrder;
   @Mock private LocalDateProvider localDateProvider;
   @Mock private VehicleAssemblyPlanner vehicleAssemblyPlanner;
 
@@ -34,8 +34,8 @@ class OrderFactoryTest {
   @BeforeEach
   public void setUp() {
     given(vehicleAssemblyPlanner.getNormalAssemblyTime()).willReturn(new AssemblyTime(2));
-    given(aModelOrder.getAssemblyTime()).willReturn(new AssemblyTime(1));
-    given(aBatteryOrder.getAssemblyTime()).willReturn(new AssemblyTime(1));
+    given(modelOrder.getAssemblyTime()).willReturn(new AssemblyTime(1));
+    given(batteryOrder.getAssemblyTime()).willReturn(new AssemblyTime(1));
     transaction = new Transaction(new TransactionId(AN_ID));
 
     orderFactory = new OrderFactory(localDateProvider, vehicleAssemblyPlanner);
@@ -44,23 +44,23 @@ class OrderFactoryTest {
   @Test
   public void whenCreate_thenOrderIsCreatedFromTransactionInfo() {
     // when
-    Order order = orderFactory.create(transaction.getId().toString(), aModelOrder, aBatteryOrder);
+    Order order = orderFactory.create(transaction.getId().toString(), modelOrder, batteryOrder);
 
     // then
     assertThat(order.getId().toString()).isEqualTo(AN_ID);
-    assertThat(order.getModelOrder()).isEqualTo(aModelOrder);
-    assertThat(order.getBatteryOrder()).isEqualTo(aBatteryOrder);
+    assertThat(order.getModelOrder()).isEqualTo(modelOrder);
+    assertThat(order.getBatteryOrder()).isEqualTo(batteryOrder);
   }
 
   @Test
   public void givenLocalDate_whenCreate_thenOrderIsCreatedWithRightCreatedDate() {
     // given
-    given(localDateProvider.today()).willReturn(TODAY);
+    given(localDateProvider.today()).willReturn(A_PRESENT_DATE);
 
     // when
-    Order order = orderFactory.create(transaction.getId().toString(), aModelOrder, aBatteryOrder);
+    Order order = orderFactory.create(transaction.getId().toString(), modelOrder, batteryOrder);
 
     // then
-    assertThat(order.getCreatedAt()).isEqualTo(TODAY);
+    assertThat(order.getCreatedAt()).isEqualTo(A_PRESENT_DATE);
   }
 }

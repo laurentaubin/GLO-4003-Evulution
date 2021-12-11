@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ModelManufacturerAdapterImplTest {
-  private final BuildStatus ASSEMBLED_BUILD_STATUS = BuildStatus.ASSEMBLED;
+  private final BuildStatus AN_ASSEMBLED_BUILD_STATUS = BuildStatus.ASSEMBLED;
   private final BuildStatus AN_INVALID_BUILD_STATUS = null;
 
   @Mock private CommandID commandId;
@@ -66,7 +66,7 @@ class ModelManufacturerAdapterImplTest {
   void givenAValidStatus_whenGetAssemblyStatus_thenReturnExpectedAssemblyStatus() {
     // given
     given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
-    given(vehicleAssemblyLine.getBuildStatus(commandId)).willReturn(ASSEMBLED_BUILD_STATUS);
+    given(vehicleAssemblyLine.getBuildStatus(commandId)).willReturn(AN_ASSEMBLED_BUILD_STATUS);
 
     // when
     AssemblyStatus assemblyStatus = modelAssemblyLineAdapter.getAssemblyStatus(orderId);

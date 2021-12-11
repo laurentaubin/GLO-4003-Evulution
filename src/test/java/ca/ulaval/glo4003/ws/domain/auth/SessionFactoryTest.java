@@ -11,7 +11,6 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class SessionFactoryTest {
-
   private static final String AN_EMAIL = "ANEMAIL@ASD.com";
   private static final SessionToken A_TOKEN = new SessionToken("a token");
 

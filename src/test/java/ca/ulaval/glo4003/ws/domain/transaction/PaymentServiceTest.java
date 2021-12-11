@@ -14,11 +14,12 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
-  private PaymentService paymentService;
   @Mock private TransactionRepository transactionRepository;
   @Mock private ReceiptFactory receiptFactory;
-  @Mock private Transaction aTransaction;
-  @Mock private Receipt aReceipt;
+  @Mock private Transaction transaction;
+  @Mock private Receipt receipt;
+
+  private PaymentService paymentService;
 
   @BeforeEach
   void setUp() {
@@ -29,8 +30,8 @@ class PaymentServiceTest {
   void givenTransactionId_whenGetReceipt_thenTransactionIsFetched() {
     // given
     TransactionId transactionId = new TransactionId("lol");
-    given(transactionRepository.find(transactionId)).willReturn(aTransaction);
-    given(aTransaction.generateReceipt(receiptFactory)).willReturn(aReceipt);
+    given(transactionRepository.find(transactionId)).willReturn(transaction);
+    given(transaction.generateReceipt(receiptFactory)).willReturn(receipt);
 
     // when
     paymentService.generateReceipt(transactionId);

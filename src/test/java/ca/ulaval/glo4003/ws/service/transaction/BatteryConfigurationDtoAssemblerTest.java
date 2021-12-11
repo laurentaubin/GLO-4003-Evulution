@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static com.google.common.truth.Truth.assertThat;
 
 class BatteryConfigurationDtoAssemblerTest {
-  private static final BigDecimal ESTIMATED_RANGE = BigDecimal.valueOf(4324);
+  private static final BigDecimal AN_ESTIMATED_RANGE = BigDecimal.valueOf(4324);
 
   private BatteryConfigurationDtoAssembler batteryConfigurationDtoAssembler;
 
@@ -22,9 +22,9 @@ class BatteryConfigurationDtoAssemblerTest {
   public void givenAnEstimatedRange_whenAssemble_thenBatteryConfigurationDtoIsCorrectlyAssembled() {
     // when
     BatteryConfigurationDto batteryConfigurationDto =
-        batteryConfigurationDtoAssembler.assemble(ESTIMATED_RANGE);
+        batteryConfigurationDtoAssembler.assemble(AN_ESTIMATED_RANGE);
 
     // then
-    assertThat(batteryConfigurationDto.getEstimatedRange()).isEqualTo(ESTIMATED_RANGE);
+    assertThat(batteryConfigurationDto.getEstimatedRange()).isEqualTo(AN_ESTIMATED_RANGE);
   }
 }

@@ -21,7 +21,7 @@ class CatchLoginFailedMapperTest {
   }
 
   @Test
-  public void givenLoginFailedException_whenToResponse_thenReturnRightResponse() {
+  public void givenLoginFailedException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     LoginFailedException exception = new LoginFailedException();
 

@@ -17,6 +17,8 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryRequestValidatorTest {
+  private static final String AN_INVALID_LOCATION = "An invalid location";
+
   @Mock private Validator fieldValidator;
 
   private DeliveryRequestValidator deliveryRequestValidator;
@@ -43,7 +45,7 @@ class DeliveryRequestValidatorTest {
       givenFieldValidatorThrowsInvalidFormatException_whenValidate_thenThrowInvalidFormatException() {
     // given
     DeliveryLocationRequest deliveryLocationRequest = new DeliveryLocationRequest();
-    deliveryLocationRequest.setLocation("An invalid location");
+    deliveryLocationRequest.setLocation(AN_INVALID_LOCATION);
     doThrow(InvalidFormatException.class).when(fieldValidator).validate(deliveryLocationRequest);
     deliveryRequestValidator = new DeliveryRequestValidator(fieldValidator);
 

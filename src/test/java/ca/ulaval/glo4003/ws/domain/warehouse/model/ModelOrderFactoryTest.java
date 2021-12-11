@@ -9,6 +9,7 @@ import static com.google.common.truth.Truth.assertThat;
 class ModelOrderFactoryTest {
   private final String A_MODEL_TYPE = "a model";
   private final AssemblyTime AN_ASSEMBLY_TIME = new AssemblyTime(1);
+
   private ModelOrderFactory modelOrderFactory;
 
   @BeforeEach

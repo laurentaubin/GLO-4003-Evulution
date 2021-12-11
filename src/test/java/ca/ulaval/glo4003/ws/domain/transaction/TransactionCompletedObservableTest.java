@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class TransactionCompletedObservableTest {
 
-  @Mock private TransactionCompletedObserver anObserver;
+  @Mock private TransactionCompletedObserver observer;
   @Mock private TransactionCompletedObserver anotherObserver;
   @Mock private Transaction transaction;
 
@@ -27,14 +27,14 @@ class TransactionCompletedObservableTest {
   void
       givenAnObservers_whenNotifyTransactionCompleted_thenObserversAreNotifiedWithTransactionInformation() {
     // given
-    transactionCompletedObservable.register(anObserver);
+    transactionCompletedObservable.register(observer);
     transactionCompletedObservable.register(anotherObserver);
 
     // when
     transactionCompletedObservable.notifyTransactionCompleted(transaction);
 
     // then
-    verify(anObserver).listenToTransactionCompleted(transaction);
+    verify(observer).listenToTransactionCompleted(transaction);
     verify(anotherObserver).listenToTransactionCompleted(transaction);
   }
 }

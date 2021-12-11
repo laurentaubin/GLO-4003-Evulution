@@ -30,10 +30,9 @@ class SalesReportFactoryTest {
   private static final String A_BATTERY_TYPE = "Lithium";
   private static final String ANOTHER_BATTERY_TYPE = "Saline";
 
-  private Collection<TransactionLogEntry> transactionLogs;
-
   @Mock TransactionLogFinder transactionLogFinder;
-
+  
+  private Collection<TransactionLogEntry> transactionLogs;
   private SalesReportFactory salesReportFactory;
 
   @BeforeEach

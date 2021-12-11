@@ -34,7 +34,7 @@ class DeliveryResourceImplTest {
   private static final DeliveryId AN_ID = new DeliveryId("id");
   private static final String A_MODE = "At campus";
   private static final String A_LOCATION = "Vachon";
-  private static final String INVALID_MODE = "invalid mode";
+  private static final String AN_INVALID_MODE = "invalid mode";
 
   @Mock private DeliveryService deliveryService;
   @Mock private DeliveryRequestValidator deliveryRequestValidator;
@@ -171,7 +171,7 @@ class DeliveryResourceImplTest {
 
   private DeliveryLocationRequest createInvalidDeliveryLocationRequest() {
     DeliveryLocationRequest request = new DeliveryLocationRequest();
-    request.setMode(INVALID_MODE);
+    request.setMode(AN_INVALID_MODE);
     request.setLocation(A_LOCATION);
     return request;
   }

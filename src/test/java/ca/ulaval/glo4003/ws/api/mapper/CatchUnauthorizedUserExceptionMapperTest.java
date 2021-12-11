@@ -22,7 +22,7 @@ public class CatchUnauthorizedUserExceptionMapperTest {
   }
 
   @Test
-  public void givenUnauthorizedUserException_whenToResponse_thenReturnRightResponse() {
+  public void givenUnauthorizedUserException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     UnauthorizedUserException exception = new UnauthorizedUserException();
 

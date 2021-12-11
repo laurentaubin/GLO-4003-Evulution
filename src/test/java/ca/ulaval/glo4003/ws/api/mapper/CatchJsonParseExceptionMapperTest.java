@@ -13,14 +13,14 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class CatchJsonParseExceptionMapperTest {
-  private static final String INVALID_JSON_FORMAT_ERROR = "INVALID_JSON_FORMAT";
+  private static final String AN_INVALID_JSON_FORMAT_ERROR = "INVALID_JSON_FORMAT";
   private static final String A_DESCRIPTION = "sdidsauiha";
 
   @Mock private JsonParseException jsonParseException;
 
   @Test
   public void
-      givenExceptionMessage_whenToResponse_ThenReturnResponseWithRightErrorAndDescription() {
+      givenExceptionMessage_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     CatchJsonParseExceptionMapper exceptionMapper = new CatchJsonParseExceptionMapper();
     given(jsonParseException.getOriginalMessage()).willReturn(A_DESCRIPTION);
@@ -31,7 +31,7 @@ class CatchJsonParseExceptionMapperTest {
 
     // then
     assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
-    assertThat(exceptionResponse.getError()).matches(INVALID_JSON_FORMAT_ERROR);
+    assertThat(exceptionResponse.getError()).matches(AN_INVALID_JSON_FORMAT_ERROR);
     assertThat(exceptionResponse.getDescription()).matches(A_DESCRIPTION);
   }
 }

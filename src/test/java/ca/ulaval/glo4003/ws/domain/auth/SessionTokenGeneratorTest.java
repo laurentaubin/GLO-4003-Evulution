@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 
 class SessionTokenGeneratorTest {
-
   private SessionTokenGenerator tokenGenerator;
 
   @BeforeEach

@@ -9,7 +9,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryTest {
-
   @Mock private DeliveryId deliveryId;
   @Mock private DeliveryId anotherDeliveryId;
   @Mock private DeliveryDestination destination;

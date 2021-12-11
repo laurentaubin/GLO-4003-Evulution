@@ -13,7 +13,6 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class LocalDateProviderTest {
-
   private static final LocalDate A_DATE = LocalDate.of(3, 3, 3);
   private static final LocalDate A_DATE_A_WEEK_LATER = LocalDate.of(3, 3, 10);
 

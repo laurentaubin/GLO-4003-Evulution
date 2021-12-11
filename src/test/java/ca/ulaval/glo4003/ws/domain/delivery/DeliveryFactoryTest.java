@@ -9,7 +9,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryFactoryTest {
-
   private DeliveryFactory deliveryFactory;
 
   @BeforeEach

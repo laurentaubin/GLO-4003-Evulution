@@ -21,10 +21,10 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class InMemoryModelRepositoryTest {
   private static final String A_MODEL_NAME = "A MODEL NAME";
-  private static final String INVALID_MODEL_NAME = "invalid model name";
+  private static final String AN_INVALID_MODEL_NAME = "invalid model name";
 
-  @Mock private ModelDto aModelDto;
-  @Mock private Model aModel;
+  @Mock private ModelDto modelDto;
+  @Mock private Model model;
   @Mock private ModelAssembler modelAssembler;
 
   private InMemoryModelRepository repository;
@@ -32,26 +32,26 @@ class InMemoryModelRepositoryTest {
   @BeforeEach
   public void setUpRepository() {
     Map<String, ModelDto> models = new HashMap<>();
-    models.put(A_MODEL_NAME, aModelDto);
+    models.put(A_MODEL_NAME, modelDto);
     repository = new InMemoryModelRepository(models, modelAssembler);
   }
 
   @Test
   public void whenFindByModelName_thenReturnModel() {
     // given
-    given(modelAssembler.assembleModel(aModelDto)).willReturn(aModel);
+    given(modelAssembler.assembleModel(modelDto)).willReturn(model);
 
     // when
     Model model = repository.findByModel(A_MODEL_NAME);
 
     // then
-    assertThat(model).isEqualTo(aModel);
+    assertThat(model).isEqualTo(this.model);
   }
 
   @Test
   public void givenANonExistingModel_whenFindModelByName_thenThrowModelNotFoundException() {
     // when
-    Executable findingModel = () -> repository.findByModel(INVALID_MODEL_NAME);
+    Executable findingModel = () -> repository.findByModel(AN_INVALID_MODEL_NAME);
 
     // then
     assertThrows(ModelNotFoundException.class, findingModel);
@@ -61,8 +61,8 @@ class InMemoryModelRepositoryTest {
   public void givenModels_whenFindAllModels_thenReturnAllModels() {
     // given
     Collection<Model> expectedModels = new ArrayList<>();
-    expectedModels.add(aModel);
-    given(modelAssembler.assembleModel(aModelDto)).willReturn(aModel);
+    expectedModels.add(model);
+    given(modelAssembler.assembleModel(modelDto)).willReturn(model);
 
     // when
     Collection<Model> models = repository.findAllModels();

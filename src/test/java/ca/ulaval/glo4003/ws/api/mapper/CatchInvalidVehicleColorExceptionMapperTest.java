@@ -21,7 +21,7 @@ class CatchInvalidVehicleColorExceptionMapperTest {
   }
 
   @Test
-  public void givenInvalidVehicleColorException_whenToResponse_thenReturnRightResponse() {
+  public void givenInvalidVehicleColorException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     InvalidVehicleColorException exception = new InvalidVehicleColorException();
 

@@ -17,7 +17,7 @@ class VehicleFactoryTest {
   private static final Color A_COLOR = Color.WHITE;
 
   @Mock private ModelRepository modelRepository;
-  @Mock private Model aModel;
+  @Mock private Model model;
 
   private VehicleFactory vehicleFactory;
 
@@ -29,13 +29,13 @@ class VehicleFactoryTest {
   @Test
   public void givenValidModelAndColor_whenCreate_thenReturnVehicleWithRightModelAndColor() {
     // given
-    given(modelRepository.findByModel(A_MODEL)).willReturn(aModel);
+    given(modelRepository.findByModel(A_MODEL)).willReturn(model);
 
     // when
     Vehicle actualVehicle = vehicleFactory.create(A_MODEL, A_COLOR.toString());
 
     // then
-    assertThat(actualVehicle.getModel()).isEqualTo(aModel);
+    assertThat(actualVehicle.getModel()).isEqualTo(model);
     assertThat(actualVehicle.getColor()).isEquivalentAccordingToCompareTo(A_COLOR);
   }
 }

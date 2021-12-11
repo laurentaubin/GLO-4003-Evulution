@@ -21,7 +21,7 @@ public class CatchSessionDoesNotExistExceptionMapperTest {
   }
 
   @Test
-  public void givenSessionDoesNotExistException_whenToResponse_thenReturnRightResponse() {
+  public void givenSessionDoesNotExistException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     SessionDoesNotExistException exception = new SessionDoesNotExistException();
 

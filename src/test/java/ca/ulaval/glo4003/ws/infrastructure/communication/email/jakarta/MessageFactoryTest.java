@@ -25,7 +25,7 @@ import static com.google.common.truth.Truth.assertThat;
 class MessageFactoryTest {
   private static final String A_SENDER_EMAIL = "sender@email.com";
   private static final String A_RECIPIENT_EMAIL = "recipient@email.com";
-  private static final EmailContent EMAIL_CONTENT = new EmailContent("subject", "body");
+  private static final EmailContent AN_EMAIL_CONTENT = new EmailContent("subject", "body");
 
   @Mock private Session session;
 
@@ -39,7 +39,7 @@ class MessageFactoryTest {
   @Test
   public void whenCreate_thenReturnMessageWithRightSession() throws MessagingException {
     // when
-    Message actualMessage = messageFactory.create(A_SENDER_EMAIL, A_RECIPIENT_EMAIL, EMAIL_CONTENT);
+    Message actualMessage = messageFactory.create(A_SENDER_EMAIL, A_RECIPIENT_EMAIL, AN_EMAIL_CONTENT);
 
     // then
     assertThat(actualMessage.getSession()).isEqualTo(session);
@@ -48,7 +48,7 @@ class MessageFactoryTest {
   @Test
   public void whenCreate_thenReturnMessageWithRightSenderAndRecipient() throws MessagingException {
     // when
-    Message actualMessage = messageFactory.create(A_SENDER_EMAIL, A_RECIPIENT_EMAIL, EMAIL_CONTENT);
+    Message actualMessage = messageFactory.create(A_SENDER_EMAIL, A_RECIPIENT_EMAIL, AN_EMAIL_CONTENT);
 
     // then
     assertThat(Arrays.stream(actualMessage.getFrom()).findFirst().get().toString())
@@ -61,10 +61,10 @@ class MessageFactoryTest {
   public void whenCreate_thenReturnMessageWithSubjectAndBody()
       throws MessagingException, IOException {
     // when
-    Message actualMessage = messageFactory.create(A_SENDER_EMAIL, A_RECIPIENT_EMAIL, EMAIL_CONTENT);
+    Message actualMessage = messageFactory.create(A_SENDER_EMAIL, A_RECIPIENT_EMAIL, AN_EMAIL_CONTENT);
 
     // then
-    assertThat(actualMessage.getSubject()).matches(EMAIL_CONTENT.getSubject());
-    assertThat(actualMessage.getContent().toString()).matches(EMAIL_CONTENT.getBodyMessage());
+    assertThat(actualMessage.getSubject()).matches(AN_EMAIL_CONTENT.getSubject());
+    assertThat(actualMessage.getContent().toString()).matches(AN_EMAIL_CONTENT.getBodyMessage());
   }
 }

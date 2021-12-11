@@ -25,9 +25,9 @@ class TransactionTest {
   private static final BigDecimal A_RANGE = BigDecimal.valueOf(432243);
 
   @Mock private TransactionId transactionId;
-  @Mock private Vehicle aVehicle;
-  @Mock private Battery aBattery;
-  @Mock private Payment aPayment;
+  @Mock private Vehicle vehicle;
+  @Mock private Battery battery;
+  @Mock private Payment payment;
 
   private Transaction transaction;
 
@@ -39,28 +39,28 @@ class TransactionTest {
   @Test
   public void givenAVehicle_whenAddVehicle_thenVehicleIsAddedToTransaction() {
     // when
-    transaction.addVehicle(aVehicle);
+    transaction.addVehicle(vehicle);
 
     // then
-    assertThat(transaction.getVehicle()).isEqualTo(aVehicle);
+    assertThat(transaction.getVehicle()).isEqualTo(vehicle);
   }
 
   @Test
   public void givenAVehicle_whenAddBattery_thenBatteryIsAddedToVehicle() {
     // given
-    transaction.addVehicle(aVehicle);
+    transaction.addVehicle(vehicle);
 
     // when
-    transaction.addBattery(aBattery);
+    transaction.addBattery(battery);
 
     // then
-    verify(aVehicle).addBattery(aBattery);
+    verify(vehicle).addBattery(battery);
   }
 
   @Test
   public void givenNoVehicle_whenAddBattery_thenThrowCannotAddBatteryBeforeVehicleException() {
     // when
-    Executable addingBattery = () -> transaction.addBattery(aBattery);
+    Executable addingBattery = () -> transaction.addBattery(battery);
 
     // then
     assertThrows(CannotAddBatteryBeforeVehicleException.class, addingBattery);
@@ -70,7 +70,7 @@ class TransactionTest {
   public void
       givenAVehicleWithBattery_whenComputedEstimateVehicleRange_thenReturnVehicleEstimatedRange() {
     // given
-    given(aVehicle.computeRange()).willReturn(A_RANGE);
+    given(vehicle.computeRange()).willReturn(A_RANGE);
     givenATransactionReadyToBeCompleted();
 
     // when
@@ -84,9 +84,9 @@ class TransactionTest {
   public void
       givenAVehicleWithoutBattery_whenComputeEstimatedVehicleRange_thenThrowIncompleteTransactionException() {
     // given
-    aVehicle.addBattery(aBattery);
-    transaction.addVehicle(aVehicle);
-    given(aVehicle.hasBattery()).willReturn(false);
+    vehicle.addBattery(battery);
+    transaction.addVehicle(vehicle);
+    given(vehicle.hasBattery()).willReturn(false);
 
     // when
     Executable computingEstimatedRange = () -> transaction.computeEstimatedVehicleRange();
@@ -98,7 +98,7 @@ class TransactionTest {
   @Test
   public void givenNoVehicle_whenAddPayment_thenThrowIncompleteTransactionException() {
     // when
-    Executable addingPayment = () -> transaction.addPayment(aPayment);
+    Executable addingPayment = () -> transaction.addPayment(payment);
 
     // then
     assertThrows(IncompleteTransactionException.class, addingPayment);
@@ -107,11 +107,11 @@ class TransactionTest {
   @Test
   public void givenAVehicleWithoutBattery_whenAddPayment_thenThrowIncompleteTransactionException() {
     // given
-    transaction.addVehicle(aVehicle);
-    given(aVehicle.hasBattery()).willReturn(false);
+    transaction.addVehicle(vehicle);
+    given(vehicle.hasBattery()).willReturn(false);
 
     // when
-    Executable addingPayment = () -> transaction.addPayment(aPayment);
+    Executable addingPayment = () -> transaction.addPayment(payment);
 
     // then
     assertThrows(IncompleteTransactionException.class, addingPayment);
@@ -124,7 +124,7 @@ class TransactionTest {
     givenATransactionReadyToBeCompleted();
 
     // when
-    Executable addingPayment = () -> transaction.addPayment(aPayment);
+    Executable addingPayment = () -> transaction.addPayment(payment);
 
     // then
     assertDoesNotThrow(addingPayment);
@@ -136,14 +136,14 @@ class TransactionTest {
     givenATransactionReadyToBeCompleted();
 
     // when
-    transaction.addPayment(aPayment);
+    transaction.addPayment(payment);
 
     // then
-    assertThat(transaction.getPayment()).isEqualTo(aPayment);
+    assertThat(transaction.getPayment()).isEqualTo(payment);
   }
 
   private void givenATransactionReadyToBeCompleted() {
-    given(aVehicle.hasBattery()).willReturn(true);
-    transaction.addVehicle(aVehicle);
+    given(vehicle.hasBattery()).willReturn(true);
+    transaction.addVehicle(vehicle);
   }
 }

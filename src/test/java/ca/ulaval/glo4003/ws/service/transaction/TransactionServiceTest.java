@@ -35,10 +35,10 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceTest {
   private static final TransactionId AN_ID = TransactionId.fromString("id");
-  private static final String BATTERY_TYPE = "type";
+  private static final String A_BATTERY_TYPE = "type";
   private static final BigDecimal A_RANGE = BigDecimal.TEN;
   private static final String A_MODEL = "model";
-  private static final String WHITE = "White";
+  private static final String A_WHITE_COLOR = "White";
   private static final List<Role> PRIVILEGED_ROLES = new ArrayList<>(List.of(Role.CUSTOMER));
 
   @Mock private DeliveryService deliveryService;
@@ -152,14 +152,14 @@ class TransactionServiceTest {
       givenATransactionIdAndAConfigureVehicleDto_whenConfigureVehicle_thenVehicleIsCreatedFromDto() {
     // given
     given(configureVehicleDto.getModelName()).willReturn(A_MODEL);
-    given(configureVehicleDto.getColor()).willReturn(WHITE);
+    given(configureVehicleDto.getColor()).willReturn(A_WHITE_COLOR);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
     transactionService.configureVehicle(AN_ID, configureVehicleDto, tokenDto);
 
     // then
-    verify(vehicleFactory).create(A_MODEL, WHITE);
+    verify(vehicleFactory).create(A_MODEL, A_WHITE_COLOR);
   }
 
   @Test
@@ -206,7 +206,7 @@ class TransactionServiceTest {
   void whenConfigureVehicle_thenValidateTransactionOwnership() {
     // given
     given(configureVehicleDto.getModelName()).willReturn(A_MODEL);
-    given(configureVehicleDto.getColor()).willReturn(WHITE);
+    given(configureVehicleDto.getColor()).willReturn(A_WHITE_COLOR);
     given(transactionRepository.find(AN_ID)).willReturn(transaction);
 
     // when
@@ -221,13 +221,13 @@ class TransactionServiceTest {
       givenConfigureBatteryDtoAndATransactionId_whenConfigureBattery_thenDesiredBatteryIsFetch() {
     // given
     given(transactionRepository.find(any())).willReturn(transaction);
-    given(configureBatteryDto.getTypeName()).willReturn(BATTERY_TYPE);
+    given(configureBatteryDto.getTypeName()).willReturn(A_BATTERY_TYPE);
 
     // when
     transactionService.configureBattery(AN_ID, configureBatteryDto, tokenDto);
 
     // then
-    verify(batteryRepository).findByType(BATTERY_TYPE);
+    verify(batteryRepository).findByType(A_BATTERY_TYPE);
   }
 
   @Test

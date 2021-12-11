@@ -19,7 +19,6 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class WeeklyTaskExecutorTest {
-
   private WeeklyTaskExecutor weeklyTaskExecutor;
 
   @Mock private ReportsService reportsService;

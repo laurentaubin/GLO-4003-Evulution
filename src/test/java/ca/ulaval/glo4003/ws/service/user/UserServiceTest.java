@@ -44,8 +44,7 @@ class UserServiceTest {
   @Mock private UserRepository userRepository;
   @Mock private TokenDto tokenDto;
   @Mock private Session aSession;
-
-  @Mock private User aUser;
+  @Mock private User user;
 
   private UserService userService;
   private RegisterUserDto registerUserDto;
@@ -65,14 +64,14 @@ class UserServiceTest {
   @Test
   public void whenRegisterUser_thenUserIsRegistered() {
     // given
-    User aUser = new UserBuilder().build();
-    given(userAssembler.assemble(registerUserDto)).willReturn(aUser);
+    User user = new UserBuilder().build();
+    given(userAssembler.assemble(registerUserDto)).willReturn(user);
 
     // when
     userService.registerUser(registerUserDto);
 
     // then
-    verify(sessionAdministrator).registerUser(aUser, A_PASSWORD);
+    verify(sessionAdministrator).registerUser(user, A_PASSWORD);
   }
 
   @Test
@@ -114,59 +113,59 @@ class UserServiceTest {
     // given
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(sessionAdministrator.retrieveSession(tokenDto)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     userService.mapDeliveryIdToTransactionId(tokenDto, A_TRANSACTION_ID, A_DELIVERY_ID);
 
     // then
-    verify(aUser).addTransactionDelivery(A_TRANSACTION_ID, A_DELIVERY_ID);
+    verify(user).addTransactionDelivery(A_TRANSACTION_ID, A_DELIVERY_ID);
   }
 
   @Test public void whenMapDeliveryIdToTransactionId_thenSaveUser() {
     // given
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(sessionAdministrator.retrieveSession(tokenDto)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     userService.mapDeliveryIdToTransactionId(tokenDto, A_TRANSACTION_ID, A_DELIVERY_ID);
 
     // then
-    verify(userRepository).update(aUser);
+    verify(userRepository).update(user);
   }
 
   @Test public void whenGetTransactionIdFromDeliveryId_thenGetTransactionFromUser() {
     // given
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(sessionAdministrator.retrieveSession(tokenDto)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     userService.getTransactionIdFromDeliveryId(tokenDto, A_DELIVERY_ID);
 
     // then
-    verify(aUser).getTransactionIdFromDeliveryId(A_DELIVERY_ID);
+    verify(user).getTransactionIdFromDeliveryId(A_DELIVERY_ID);
   }
 
   @Test public void whenValidateTransactionOwnerShip_thenValidateTransactionOwnership() {
     // given
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(sessionAdministrator.retrieveSession(tokenDto)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     userService.validateTransactionOwnership(tokenDto, A_TRANSACTION_ID, PRIVILEGED_ROLES);
 
     // then
-    verify(ownershipDomainService).validateTransactionOwnership(aUser, A_TRANSACTION_ID);
+    verify(ownershipDomainService).validateTransactionOwnership(user, A_TRANSACTION_ID);
   }
 
   @Test public void whenValidateTransactionOwnerShip_thenVerifyUserIsAllowed() {
     // given
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(sessionAdministrator.retrieveSession(tokenDto)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     userService.validateTransactionOwnership(tokenDto, A_TRANSACTION_ID, PRIVILEGED_ROLES);
@@ -179,20 +178,20 @@ class UserServiceTest {
     // given
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(sessionAdministrator.retrieveSession(tokenDto)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     userService.validateDeliveryOwnership(tokenDto, A_DELIVERY_ID, PRIVILEGED_ROLES);
 
     // then
-    verify(ownershipDomainService).validateDeliveryOwnership(aUser, A_DELIVERY_ID);
+    verify(ownershipDomainService).validateDeliveryOwnership(user, A_DELIVERY_ID);
   }
 
   @Test public void whenValidateDeliveryOwnerShip_thenVerifyUserIsAllowed() {
     // given
     given(aSession.getEmail()).willReturn(AN_EMAIL);
     given(sessionAdministrator.retrieveSession(tokenDto)).willReturn(aSession);
-    given(userRepository.findUser(AN_EMAIL)).willReturn(aUser);
+    given(userRepository.findUser(AN_EMAIL)).willReturn(user);
 
     // when
     userService.validateDeliveryOwnership(tokenDto, A_DELIVERY_ID, PRIVILEGED_ROLES);

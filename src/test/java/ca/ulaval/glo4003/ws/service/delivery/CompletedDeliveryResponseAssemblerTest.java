@@ -15,10 +15,10 @@ import static com.google.common.truth.Truth.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class CompletedDeliveryResponseAssemblerTest {
-  private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
+  private static final Integer AN_AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
   private static final Price A_PRICE = new Price(new BigDecimal(1200));
-  private static final int A_PAYMENT_TAKEN = 17;
-  private static final int PAYMENTS_LEFT = 70;
+  private static final int A_NUMBER_OF_PAYMENT_TAKEN = 17;
+  private static final int A_NUMBER_OF_PAYMENTS_LEFT = 70;
 
   private CompletedDeliveryDtoAssembler completedDeliveryAssembler;
 
@@ -30,13 +30,13 @@ class CompletedDeliveryResponseAssemblerTest {
   @Test
   void givenReceipt_whenAssemble_thenReturnCorrectResponse() {
     // given
-    Receipt receipt = new Receipt(A_PRICE, Frequency.MONTHLY, AMOUNT_OF_YEARS_TO_PAY_OVER);
+    Receipt receipt = new Receipt(A_PRICE, Frequency.MONTHLY, AN_AMOUNT_OF_YEARS_TO_PAY_OVER);
 
     // when
     CompletedDeliveryDto actual = completedDeliveryAssembler.assemble(receipt);
 
     // then
-    assertThat(actual.getPaymentsLeft()).isEqualTo(PAYMENTS_LEFT);
-    assertThat(actual.getPaymentTaken()).isEqualTo(A_PAYMENT_TAKEN);
+    assertThat(actual.getPaymentsLeft()).isEqualTo(A_NUMBER_OF_PAYMENTS_LEFT);
+    assertThat(actual.getPaymentTaken()).isEqualTo(A_NUMBER_OF_PAYMENT_TAKEN);
   }
 }

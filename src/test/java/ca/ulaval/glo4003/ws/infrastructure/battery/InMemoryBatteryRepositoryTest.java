@@ -21,10 +21,10 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class InMemoryBatteryRepositoryTest {
   private static final String A_BATTERY_NAME = "A BATTERY NAME";
-  private static final String INVALID_BATTERY_NAME = "invalid battery name";
+  private static final String AN_INVALID_BATTERY_NAME = "invalid battery name";
 
-  @Mock private BatteryDto aBatteryDto;
-  @Mock private Battery aBattery;
+  @Mock private BatteryDto batteryDto;
+  @Mock private Battery battery;
   @Mock private BatteryAssembler batteryAssembler;
 
   private InMemoryBatteryRepository repository;
@@ -32,26 +32,26 @@ class InMemoryBatteryRepositoryTest {
   @BeforeEach
   public void setUpRepository() {
     Map<String, BatteryDto> batteries = new HashMap<>();
-    batteries.put(A_BATTERY_NAME, aBatteryDto);
+    batteries.put(A_BATTERY_NAME, batteryDto);
     repository = new InMemoryBatteryRepository(batteries, batteryAssembler);
   }
 
   @Test
   public void whenFindByBatteryName_thenReturnBattery() {
     // given
-    given(batteryAssembler.assembleBattery(aBatteryDto)).willReturn(aBattery);
+    given(batteryAssembler.assembleBattery(batteryDto)).willReturn(battery);
 
     // when
     Battery battery = repository.findByType(A_BATTERY_NAME);
 
     // then
-    assertThat(battery).isEqualTo(aBattery);
+    assertThat(battery).isEqualTo(this.battery);
   }
 
   @Test
   public void givenANonExistingBattery_whenFindBatteryByName_thenThrowBatteryNotFoundException() {
     // when
-    Executable findingBattery = () -> repository.findByType(INVALID_BATTERY_NAME);
+    Executable findingBattery = () -> repository.findByType(AN_INVALID_BATTERY_NAME);
 
     // then
     assertThrows(InvalidBatteryException.class, findingBattery);
@@ -61,8 +61,8 @@ class InMemoryBatteryRepositoryTest {
   public void givenBatteries_whenFindAllBatteries_thenReturnAllBatteries() {
     // given
     Collection<Battery> expectedBatteries = new ArrayList<>();
-    expectedBatteries.add(aBattery);
-    given(batteryAssembler.assembleBattery(aBatteryDto)).willReturn(aBattery);
+    expectedBatteries.add(battery);
+    given(batteryAssembler.assembleBattery(batteryDto)).willReturn(battery);
 
     // when
     Collection<Battery> batteries = repository.findAllBatteries();

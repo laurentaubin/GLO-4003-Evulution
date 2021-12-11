@@ -9,19 +9,19 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 
 public class CatchEmptyTokenHeaderExceptionMapperTest {
-  private CatchEmptyTokenHeaderExceptionMapper exceptionMapper;
-
   private static final int EXPECTED_STATUS_CODE = Response.Status.UNAUTHORIZED.getStatusCode();
   private static final String EXPECTED_ERROR = "EMPTY_TOKEN";
   private static final String EXPECTED_DESCRIPTION = "Authorization header is empty.";
 
+  private CatchEmptyTokenHeaderExceptionMapper exceptionMapper;
+  
   @BeforeEach
   void setUp() {
     exceptionMapper = new CatchEmptyTokenHeaderExceptionMapper();
   }
 
   @Test
-  void givenEmptyTokenHeaderException_whenToResponse_thenReturnRightResponse() {
+  void givenEmptyTokenHeaderException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     EmptyTokenHeaderException exception = new EmptyTokenHeaderException();
 

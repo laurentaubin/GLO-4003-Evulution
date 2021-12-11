@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BankAccountValidatorTest {
-
   private static final String A_VALID_BANK_NUMBER = "003";
   private static final String A_VALID_ACCOUNT_NUMBER = "0099999";
   private static final String AN_INVALID_BANK_NUMBER = "10";

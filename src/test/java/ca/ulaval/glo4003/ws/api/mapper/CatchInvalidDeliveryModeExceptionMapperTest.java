@@ -11,11 +11,11 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 
 class CatchInvalidDeliveryModeExceptionMapperTest {
-  private static final Set<String> DELIVERY_MODES = Set.of("At campus");
+  private static final Set<String> A_DELIVERY_MODE = Set.of("At campus");
   private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String EXPECTED_ERROR = "INVALID_DELIVERY_MODE";
   private static final String EXPECTED_DESCRIPTION =
-      String.format("Delivery mode must be one of the following mode: {%s}.", DELIVERY_MODES);
+      String.format("Delivery mode must be one of the following mode: {%s}.", A_DELIVERY_MODE);
 
   private CatchInvalidDeliveryModeExceptionMapper exceptionMapper;
 
@@ -27,7 +27,7 @@ class CatchInvalidDeliveryModeExceptionMapperTest {
   @Test
   void givenInvalidDeliveryModeException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
-    InvalidDeliveryModeException exception = new InvalidDeliveryModeException(DELIVERY_MODES);
+    InvalidDeliveryModeException exception = new InvalidDeliveryModeException(A_DELIVERY_MODE);
 
     // when
     Response response = exceptionMapper.toResponse(exception);

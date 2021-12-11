@@ -11,11 +11,11 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 
 class CatchInvalidFrequencyExceptionMapperTest {
-  private static final Set<String> FREQUENCIES = Set.of("monthly", "annually");
+  private static final Set<String> SOME_FREQUENCIES = Set.of("monthly", "annually");
   private static final int EXPECTED_STATUS_CODE = Response.Status.BAD_REQUEST.getStatusCode();
   private static final String EXPECTED_ERROR = "INVALID_FREQUENCY";
   private static final String EXPECTED_DESCRIPTION =
-      String.format("Frequency must be one of the following type: {%s}.", FREQUENCIES);
+      String.format("Frequency must be one of the following type: {%s}.", SOME_FREQUENCIES);
 
   private CatchInvalidFrequencyExceptionMapper exceptionMapper;
 
@@ -27,7 +27,7 @@ class CatchInvalidFrequencyExceptionMapperTest {
   @Test
   void givenInvalidFrequencyException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
-    InvalidFrequencyException exception = new InvalidFrequencyException(FREQUENCIES);
+    InvalidFrequencyException exception = new InvalidFrequencyException(SOME_FREQUENCIES);
 
     // when
     Response response = exceptionMapper.toResponse(exception);

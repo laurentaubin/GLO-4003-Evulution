@@ -21,7 +21,7 @@ class CatchBirthDateInTheFutureExceptionMapperTest {
   }
 
   @Test
-  public void givenBirthDateInTheFutureException_whenToResponse_thenReturnRightResponse() {
+  public void givenBirthDateInTheFutureException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     BirthDateInTheFutureException exception = new BirthDateInTheFutureException();
 

@@ -22,7 +22,7 @@ class CatchInvalidBankAccountExceptionMapperTest {
   }
 
   @Test
-  void givenInvalidBankAccountException_whenToResponse_thenReturnRightResponse() {
+  void givenInvalidBankAccountException_whenToResponse_thenResponseHasRightErrorAndDescription() {
     // given
     InvalidBankAccountException exception = new InvalidBankAccountException();
 

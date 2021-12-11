@@ -12,7 +12,7 @@ import static com.google.common.truth.Truth.assertThat;
 class ReceiptTest {
   private static final Price A_PRICE = new Price(new BigDecimal(72000));
   private static final Frequency A_MONTHLY_FREQUENCY = Frequency.MONTHLY;
-  private static final Integer AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
+  private static final Integer AN_AMOUNT_OF_YEARS_TO_PAY_OVER = 6;
 
   @Test
   void givenAReceipt_whenGetAmountPerPeriod_thenReturnCorrectAmountPerPeriod() {
@@ -41,6 +41,6 @@ class ReceiptTest {
   }
 
   private Receipt givenAReceipt() {
-    return new Receipt(A_PRICE, A_MONTHLY_FREQUENCY, AMOUNT_OF_YEARS_TO_PAY_OVER);
+    return new Receipt(A_PRICE, A_MONTHLY_FREQUENCY, AN_AMOUNT_OF_YEARS_TO_PAY_OVER);
   }
 }

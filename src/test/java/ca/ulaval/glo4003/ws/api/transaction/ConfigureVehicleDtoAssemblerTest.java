@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import static com.google.common.truth.Truth.assertThat;
 
 class ConfigureVehicleDtoAssemblerTest {
-  private static final String MODEL = "model";
-  private static final String COLOR = "color";
+  private static final String A_MODEL = "model";
+  private static final String A_COLOR = "color";
 
   private ConfigureVehicleDtoAssembler configureVehicleDtoAssembler;
 
@@ -20,16 +20,16 @@ class ConfigureVehicleDtoAssemblerTest {
 
   @Test
   public void
-      givenAConfigureVehicleRequest_whenAssemble_thenConfigureVehicleDtoIsCorrectlyAsssembled() {
+      givenAConfigureVehicleRequest_whenAssemble_thenConfigureVehicleDtoIsCorrectlyAssembled() {
     // given
-    ConfigureVehicleRequest configureVehicleRequest = new ConfigureVehicleRequest(MODEL, COLOR);
+    ConfigureVehicleRequest configureVehicleRequest = new ConfigureVehicleRequest(A_MODEL, A_COLOR);
 
     // when
     ConfigureVehicleDto configureVehicleDto =
         configureVehicleDtoAssembler.assemble(configureVehicleRequest);
 
     // then
-    assertThat(configureVehicleDto.getModelName()).isEqualTo(MODEL);
-    assertThat(configureVehicleDto.getColor()).isEqualTo(COLOR);
+    assertThat(configureVehicleDto.getModelName()).isEqualTo(A_MODEL);
+    assertThat(configureVehicleDto.getColor()).isEqualTo(A_COLOR);
   }
 }

@@ -14,9 +14,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PasswordAdministratorTest {
-  private static final String EMAIL = "anEmail@email.com";
-  private static final String PASSWORD = "password";
-  private static final String INVALID_PASSWORD = "invalidPassword";
+  private static final String AN_EMAIL = "anEmail@email.com";
+  private static final String A_PASSWORD = "password";
+  private static final String AN_INVALID_PASSWORD = "invalidPassword";
 
   @Mock private PasswordRegistry passwordRegistry;
 
@@ -30,19 +30,19 @@ class PasswordAdministratorTest {
   @Test
   public void givenCredentials_whenSave_thenCredentialsAreSavedInRegistry() {
     // when
-    passwordAdministrator.register(EMAIL, PASSWORD);
+    passwordAdministrator.register(AN_EMAIL, A_PASSWORD);
 
     // then
-    verify(passwordRegistry).save(EMAIL, PASSWORD);
+    verify(passwordRegistry).save(AN_EMAIL, A_PASSWORD);
   }
 
   @Test
   public void givenValidCredentials_whenAreCredentialsValid_thenReturnTrue() {
     // given
-    given(passwordRegistry.retrievePassword(EMAIL)).willReturn(Optional.of(PASSWORD));
+    given(passwordRegistry.retrievePassword(AN_EMAIL)).willReturn(Optional.of(A_PASSWORD));
 
     // when
-    boolean valid = passwordAdministrator.areCredentialsValid(EMAIL, PASSWORD);
+    boolean valid = passwordAdministrator.areCredentialsValid(AN_EMAIL, A_PASSWORD);
 
     // when, then
     assertThat(valid).isTrue();
@@ -51,10 +51,10 @@ class PasswordAdministratorTest {
   @Test
   public void givenInvalidPassword_whenAreCredentialsValid_thenReturnFalse() {
     // given
-    given(passwordRegistry.retrievePassword(EMAIL)).willReturn(Optional.of(PASSWORD));
+    given(passwordRegistry.retrievePassword(AN_EMAIL)).willReturn(Optional.of(A_PASSWORD));
 
     // when
-    boolean valid = passwordAdministrator.areCredentialsValid(EMAIL, INVALID_PASSWORD);
+    boolean valid = passwordAdministrator.areCredentialsValid(AN_EMAIL, AN_INVALID_PASSWORD);
 
     // then
     assertThat(valid).isFalse();

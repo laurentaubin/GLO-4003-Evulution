@@ -22,8 +22,8 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class BatteryManufacturerAdapterImplTest {
-  @Mock private OrderId anOrderId;
-  @Mock private CommandID aCommandId;
+  @Mock private OrderId orderId;
+  @Mock private CommandID commandId;
   @Mock private BatteryAssemblyLine batteryAssemblyLine;
   @Mock private CommandIdFactory commandIdFactory;
 
@@ -51,23 +51,23 @@ class BatteryManufacturerAdapterImplTest {
   public void givenABatteryOrder_whenAddOrder_thenSendBatteryOrderToAssemblyLine() {
     // given
     BatteryOrder batteryOrder = new BatteryOrderBuilder().build();
-    given(commandIdFactory.getOrCreateFromOrderId(any())).willReturn(aCommandId);
+    given(commandIdFactory.getOrCreateFromOrderId(any())).willReturn(commandId);
 
     // when
     batteryAssemblyLineAdapter.addOrder(batteryOrder);
 
     // then
-    verify(batteryAssemblyLine).newBatteryCommand(aCommandId, batteryOrder.getBatteryType());
+    verify(batteryAssemblyLine).newBatteryCommand(commandId, batteryOrder.getBatteryType());
   }
 
   @Test
   public void givenAnAssembledOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.ASSEMBLED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
+    given(batteryAssemblyLine.getBuildStatus(commandId)).willReturn(BuildStatus.ASSEMBLED);
 
     // when
-    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.ASSEMBLED);
@@ -76,11 +76,11 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenAnInProgressOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.IN_PROGRESS);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
+    given(batteryAssemblyLine.getBuildStatus(commandId)).willReturn(BuildStatus.IN_PROGRESS);
 
     // when
-    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.IN_PROGRESS);
@@ -89,11 +89,11 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenAReceivedOrder_whenGetAssemblyStatus_thenReturnTheOrderAssemblyStatus() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    given(batteryAssemblyLine.getBuildStatus(aCommandId)).willReturn(BuildStatus.RECEIVED);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
+    given(batteryAssemblyLine.getBuildStatus(commandId)).willReturn(BuildStatus.RECEIVED);
 
     // when
-    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.RECEIVED);
@@ -111,11 +111,11 @@ class BatteryManufacturerAdapterImplTest {
   @Test
   public void givenInvalidOrderId_whenGetAssemblyStatus_thenReturnTheOrderDoesNotExist() {
     // given
-    given(commandIdFactory.getOrCreateFromOrderId(anOrderId)).willReturn(aCommandId);
-    doThrow(NullPointerException.class).when(batteryAssemblyLine).getBuildStatus(aCommandId);
+    given(commandIdFactory.getOrCreateFromOrderId(orderId)).willReturn(commandId);
+    doThrow(NullPointerException.class).when(batteryAssemblyLine).getBuildStatus(commandId);
 
     // when
-    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(anOrderId);
+    AssemblyStatus assemblyStatus = batteryAssemblyLineAdapter.getAssemblyStatus(orderId);
 
     // then
     assertThat(assemblyStatus).isEquivalentAccordingToCompareTo(AssemblyStatus.DOES_NOT_EXIST);

@@ -9,8 +9,8 @@ import java.util.Optional;
 import static com.google.common.truth.Truth.assertThat;
 
 class InMemoryPasswordRegistryTest {
-  private static final String EMAIL = "anEmail@email.com";
-  private static final Optional<String> PASSWORD = Optional.of("password");
+  private static final String AN_EMAIL = "anEmail@email.com";
+  private static final Optional<String> A_PASSWORD = Optional.of("password");
 
   private InMemoryPasswordRegistry inMemoryPasswordRegistry;
 
@@ -22,16 +22,16 @@ class InMemoryPasswordRegistryTest {
   @Test
   public void givenAnEmailAndPassword_whenSave_thenCredentialsAreSaved() {
     // when
-    inMemoryPasswordRegistry.save(EMAIL, PASSWORD.get());
+    inMemoryPasswordRegistry.save(AN_EMAIL, A_PASSWORD.get());
 
     // then
-    assertThat(inMemoryPasswordRegistry.retrievePassword(EMAIL)).isEqualTo(PASSWORD);
+    assertThat(inMemoryPasswordRegistry.retrievePassword(AN_EMAIL)).isEqualTo(A_PASSWORD);
   }
 
   @Test
   public void givenNonExistentCredentials_whenRetrievePassword_thenReturnEmptyEmail() {
     // when
-    Optional<String> retrievedEmail = inMemoryPasswordRegistry.retrievePassword(EMAIL);
+    Optional<String> retrievedEmail = inMemoryPasswordRegistry.retrievePassword(AN_EMAIL);
 
     // then
     assertThat(retrievedEmail.isEmpty()).isTrue();
